@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<stringtables xmlns="http://sonos.com/sonosapi">
+
+    <stringtable rev="6" xml:lang="en-US">
+        <string stringId="Error0Message">Sorry, wrong Airsonic username or password.</string>
+    </stringtable>
+
+</stringtables>
