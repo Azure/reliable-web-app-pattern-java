@@ -50,9 +50,9 @@ resource "azurerm_linux_web_app" "application" {
 
   virtual_network_subnet_id = var.subnet_id
 
-  #identity {
-  #  type = "SystemAssigned"
-  #}
+  identity {
+    type = "SystemAssigned"
+  }
 
   tags = {
     "environment"      = var.environment

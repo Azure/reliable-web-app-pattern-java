@@ -554,8 +554,20 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.2.12</version>
+            <version>42.5.0</version>
             <scope>runtime</scope>
+            <exclusions>
+             <exclusion>
+              <groupId>org.checkerframework</groupId>
+              <artifactId>checker-qual</artifactId>
+             </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.azure/azure-identity-providers-jdbc-postgresql -->
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-identity-providers-jdbc-postgresql</artifactId>
+            <version>1.0.0-beta.1</version>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>
