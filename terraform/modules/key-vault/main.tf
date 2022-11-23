@@ -72,14 +72,14 @@ resource "azurerm_key_vault_secret" "airsonic_database_admin_password" {
 }
 
 
-resource "azurerm_key_vault_secret" "airsonic_database_username" {
-  name         = "airsonic-database-username"
-  value        = var.airsonic_database_username
+resource "azurerm_key_vault_secret" "airsonic_database_server" {
+  name         = "airsonic-database-server"
+  value        = var.airsonic_database_server
   key_vault_id = azurerm_key_vault.application.id
 }
 
-resource "azurerm_key_vault_secret" "airsonic_database_password" {
-  name         = "airsonic-database-password"
-  value        = var.airsonic_database_password
+resource "azurerm_key_vault_secret" "airsonic_database_dbname" {
+  name         = "airsonic-database-name"
+  value        = var.airsonic_database_dbname
   key_vault_id = azurerm_key_vault.application.id
 }

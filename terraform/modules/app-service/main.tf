@@ -80,7 +80,7 @@ resource "azurerm_linux_web_app" "application" {
 
   # https://airsonic.github.io/docs/database/#postgresql
   app_settings = {
-    DatabaseConfigType          = "embed"
+    DatabaseConfigType          = "azure"
     DatabaseConfigEmbedDriver   = "org.postgresql.Driver"
     DatabaseConfigEmbedUrl      = "jdbc:postgresql://${var.database_fqdn}:5432/${var.database_name}?stringtype=unspecified"
     DatabaseConfigEmbedUsername = var.database_username

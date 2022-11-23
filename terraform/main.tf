@@ -88,12 +88,6 @@ module "application" {
   storage_account_primary_access_key = module.storage.storage_primary_access_key
 }
 
-resource "random_password" "airsonic_db_user_password" {
-  length           = 32
-  special          = true
-  override_special = "_%@"
-}
-
 module "key-vault" {
   source           = "./modules/key-vault"
   resource_group   = azurerm_resource_group.main.name
@@ -106,8 +100,8 @@ module "key-vault" {
 
   airsonic_database_admin           = module.postresql_database.database_username
   airsonic_database_admin_password  = module.postresql_database.database_password
-  airsonic_database_username        = "airsonic-user"
-  airsonic_database_password        = random_password.airsonic_db_user_password.result
+  airsonic_database_server        = module.postresql_database.database_fqdn
+  airsonic_database_dbname        = module.postresql_database.database_name
 }
 
 resource "azurerm_storage_account_network_rules" "airsonic-storage-network-rules" {

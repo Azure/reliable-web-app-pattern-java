@@ -39,12 +39,12 @@ variable "airsonic_database_admin_password" {
   description = "The airsonic admin database password"
 }
 
-variable "airsonic_database_username" {
+variable "airsonic_database_server" {
   type        = string
-  description = "The airsonic admin database username"
+  description = "The airsonic database server"
 }
 
-variable "airsonic_database_password" {
+variable "airsonic_database_dbname" {
   type        = string
-  description = "The airsonic admin database password"
+  description = "The airsonic database name"
 }
