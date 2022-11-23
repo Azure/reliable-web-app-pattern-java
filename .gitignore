@@ -161,4 +161,6 @@ local.properties
 *.tfstate.backup
 *.tfstate.lock.info
 *.terraform.lock.hcl
+*.tfplan
 .terraform/
+
