@@ -8,6 +8,10 @@ This is a complete solution with deployable artifacts. The deployable artifacts 
 
 This solution is ideal for organizations that have an internal LOB application, but it can apply to other industries.
 
+### TODO Refine the below business story
+
+Airsonic internal training application with plans to expand by selling training material to the public. Onsite training facility grows up to training as a service in order to compete in a digital first world.
+
 ## Architecture
 
 The diagram depicts the web application solution that you can deploy with the implementation guidance.
