@@ -1,4 +1,4 @@
-# Reliable Java Eeb Application
+# Reliable Java Web Application
 
 The focus of this sample is to apply the principles of the [Well-Architected Framework](https://docs.microsoft.com/azure/architecture/framework/) while migrating and modernizing a legacy, line-of-business (LOB) web app to the cloud. The guide addresses the challenges in refactoring a monolithic Java application with a PostgreSQL database and developing a modern, reliable, and scalable Java application. 
 
