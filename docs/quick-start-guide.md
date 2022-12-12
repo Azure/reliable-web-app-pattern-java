@@ -16,7 +16,6 @@ Note - The following deployment has been tested on **macOS** and [Ubuntu on WSL]
 ```shell
 git clone https://github.com/Azure/reliable-web-app-pattern-java.git
 cd reliable-web-app-pattern-java
-git checkout airsonic
 ```
 
 ## Login using Azure CLI
