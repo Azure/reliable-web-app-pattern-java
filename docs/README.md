@@ -20,6 +20,7 @@ The diagram depicts the web application solution that you can deploy with the im
 
 ## Considerations
 
+### Azure Well-Architected Framework
 The five pillars of the Azure Well-Architected Framework provide guiding tenets that improve the quality of cloud applications.  Refer to the links below to see how each of the pillars were incorporated into the solution.
 
 - [Reliability](./reliability.md)
@@ -27,6 +28,10 @@ The five pillars of the Azure Well-Architected Framework provide guiding tenets 
 - [Cost Optimization](./cost-optimization.md)
 - [Operational Excellence](./operational-excellence.md)
 - [Performance Efficiency](./performance-efficiency.md)
+
+### Understand service level objectives and cost
+
+- [SLO nd Cost](./slo.md)
 
 ## Deploy the sample application
 
