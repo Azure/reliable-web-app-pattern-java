@@ -23,7 +23,7 @@ cd reliable-web-app-pattern-java
 Login to Azure using the Azure CLI and choose your active subscription. 
 
 ```shell
-az login
+az login --use-device-code
 az account list -o table
 az account set --subscription ${SUBSCRIPTION}
 ```
