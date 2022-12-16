@@ -48,7 +48,7 @@ resource "azurerm_postgresql_flexible_server" "postresql_database" {
   administrator_login    = var.administrator_login
   administrator_password = random_password.password.result
 
-  sku_name                     = "GP_Standard_D4s_v3"
+  sku_name                     = "B_Standard_B1ms"
   version                      = "12"
 
   delegated_subnet_id          = var.subnet_network_id
