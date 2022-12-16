@@ -6,7 +6,7 @@ Acme's solution has a 99.78% availability SLO.
 
 Acme uses multiple Azure Services to achieve a composite availability SLO of 99.78%.
 
-To calculate this they reviewed their business scenario and defined that the system is considered *available* when internal customers can view the training material. This means that we can determine the solution's availability by finding the availability of the Azure services that must be functioning to complete the checkout process.
+To calculate this, they reviewed their business scenario and defined that the system is considered *available* when internal customers can view the training material. This means that we can determine the solution's availability by finding the availability of the Azure services that must be functioning to view the training material.
 
 > This also means that the team *does not* consider Azure Monitor a part of their scope
 > for an available web app. This means the team accepts that the web app might miss an alert
