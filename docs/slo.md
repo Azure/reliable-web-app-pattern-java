@@ -1,4 +1,4 @@
-# Resulting service level and cost
+# Resulting Service Level
 
 Acme's solution has a 99.78% availability SLO.
 
