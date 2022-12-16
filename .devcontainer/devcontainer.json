@@ -2,6 +2,11 @@
     "name": "reliable-java-web-app",
     "image": "mcr.microsoft.com/devcontainers/base:jammy",
 
+	"remoteUser": "vscode",
+	"containerEnv": {
+		"M2": "/home/vscode" // required because the java feature is not setting this correctly
+	},
+	
     "features": {
 		"azure-cli": "latest",
 		"ghcr.io/devcontainers/features/java:1": {
