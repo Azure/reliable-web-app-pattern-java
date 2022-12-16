@@ -2,7 +2,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "3.31.0"
+      version = "3.35.0"
     }
     azurecaf = {
       source  = "aztfmod/azurecaf"
@@ -108,17 +108,6 @@ module "key-vault" {
   airsonic_database_admin_password  = module.postresql_database.database_password
   airsonic_database_username        = "airsonic-user"
   airsonic_database_password        = random_password.airsonic_db_user_password.result
-}
-
-resource "azurerm_storage_account_network_rules" "airsonic-storage-network-rules" {
-  storage_account_id = module.storage.storage_account_id
-
-  default_action             = "Deny"
-  virtual_network_subnet_ids = [module.network.app_subnet_id]
-
-  depends_on = [
-    module.storage
-  ]
 }
 
 #resource "azurerm_key_vault_access_policy" "application_access_policy" {
