@@ -637,14 +637,14 @@
                 <version>2.8.0</version>  
                 <configuration> 
                     <schemaVersion>V2</schemaVersion>  
-                    <appName>app-airsonic-nick-sql-dev</appName>
-                    <resourceGroup>rg-airsonic-nick-sql-dev</resourceGroup>
-                    <region>eastus</region>  
+                    <appName><!--application_name--></appName>
+                    <resourceGroup><!--application_resource_group--></resourceGroup>
+                    <region><!--application_region--></region>  
                     <pricingTier>P1v3</pricingTier>   
                     <runtime>
                         <os>Linux</os>      
-                        <webContainer>TOMCAT 9.0</webContainer>
-                        <javaVersion>jre8</javaVersion>
+                        <webContainer><!--application_runtime_webcontainer--></webContainer>
+                        <javaVersion><!--application_java_version--></javaVersion>
                     </runtime> 
                     <deployment> 
                         <resources> 
