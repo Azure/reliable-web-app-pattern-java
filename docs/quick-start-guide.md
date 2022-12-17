@@ -18,6 +18,20 @@ git clone https://github.com/Azure/reliable-web-app-pattern-java.git
 cd reliable-web-app-pattern-java
 ```
 
+## Prepare your environment
+
+Open `./scripts/setup-initial-env.sh` and update the following variables:
+
+```shell
+export SUBSCRIPTION=
+```
+
+Save and source the file.
+
+```shell
+source ./scripts/setup-initial-env.sh
+```
+
 ## Login using Azure CLI
 
 Login to Azure using the Azure CLI and choose your active subscription. 
@@ -65,5 +79,5 @@ mvn -Dmaven.test.skip=true -DskipTests package
 Now that we have a war file, we can deploy it to our Azure App Service.
 
 ```shell
-mvn com.microsoft.azure:azure-webapp-maven-plugin:2.6.1:deploy -pl airsonic-main
+mvn com.microsoft.azure:azure-webapp-maven-plugin:2.8.0:deploy -pl airsonic-main
 ```
