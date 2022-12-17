@@ -640,7 +640,7 @@
                     <appName><!--application_name--></appName>
                     <resourceGroup><!--application_resource_group--></resourceGroup>
                     <region><!--application_region--></region>  
-                    <pricingTier>P1v3</pricingTier>   
+                    <pricingTier>P1v2</pricingTier>   
                     <runtime>
                         <os>Linux</os>      
                         <webContainer><!--application_runtime_webcontainer--></webContainer>
