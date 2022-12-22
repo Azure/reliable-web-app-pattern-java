@@ -1,10 +1,10 @@
 # Resulting Service Level
 
-Acme's solution has a 99.87% availability SLO.
+Acme's solution has a 99.86% availability SLO.
 
 ## Service Level Objective
 
-Acme uses multiple Azure Services to achieve a composite availability SLO of 99.87%.
+Acme uses multiple Azure Services to achieve a composite availability SLO of 99.86%.
 
 To calculate this, they reviewed their business scenario and defined that the system is considered *available* when internal customers can view the training material. This means that we can determine the solution's availability by finding the availability of the Azure services that must be functioning to view the training material.
 
@@ -18,6 +18,7 @@ The next step to calculate the availability was to identify the SLA of the servi
 
 | Azure Service | SLA |
 | --- | --- |
+| [Azure Front Door](https://azure.microsoft.com/en-us/support/legal/sla/frontdoor/v1_1/) | 99.99% |
 | [Azure App Service](https://azure.microsoft.com/support/legal/sla/app-service/) | 99.95% |
 | [Azure Active Directory](https://azure.microsoft.com/support/legal/sla/active-directory/v1_1/) | 99.99% |
 | [Azure Private Link](https://azure.microsoft.com/support/legal/sla/private-link/v1_0/) | 99.99%|
@@ -27,4 +28,4 @@ The next step to calculate the availability was to identify the SLA of the servi
 To find the impact that one of these services has to our availability [we multiply each of these SLAs](https://learn.microsoft.com/en-us/azure/architecture/framework/resiliency/business-metrics#composite-slas).
 By combining the numbers we reach the percentage of time that all services are available.
 
-When combined the SLAs assert that training material can be viewed 99.87% of the time. This availability meant there could be as much as 12 hours of downtime in a year.
+When combined the SLAs assert that training material can be viewed 99.86% of the time. This availability meant there could be as much as 12 hours of downtime in a year.
