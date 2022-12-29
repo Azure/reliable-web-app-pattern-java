@@ -162,3 +162,4 @@ local.properties
 *.tfstate.lock.info
 *.terraform.lock.hcl
 .terraform/
+*.tfplan
