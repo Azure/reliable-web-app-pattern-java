@@ -7,6 +7,8 @@ terraform {
   }
 }
 
+data "azuread_client_config" "current" {}
+
 resource "azurerm_storage_share" "sashare" {
   name                 = "music"
   storage_account_name = var.storage_account_name
@@ -40,6 +42,45 @@ resource "azurecaf_name" "app_service" {
   suffixes      = [var.environment]
 }
 
+resource "random_uuid" "widgets_scope_id" {}
+
+resource "azuread_application" "app_registration" {
+  display_name     = "${azurecaf_name.app_service.result}-app"
+  owners           = [data.azuread_client_config.current.object_id]
+  sign_in_audience = "AzureADMyOrg"
+
+
+  api {
+    oauth2_permission_scope {
+        admin_consent_description  = "Allow the application to access ${azurecaf_name.app_service.result} on behalf of the signed-in user."
+        admin_consent_display_name = "Access ${azurecaf_name.app_service.result}"
+        id                         = random_uuid.widgets_scope_id.result
+        enabled                    = true
+        type                       = "User"
+        user_consent_description   = "Allow the application to access ${azurecaf_name.app_service.result} on your behalf."
+        user_consent_display_name  = "Access ${azurecaf_name.app_service.result}"
+        value                      = "user_impersonation"
+    }
+  }
+
+  required_resource_access {
+    resource_app_id = "00000003-0000-0000-c000-000000000000" # Microsoft Graph
+
+    resource_access {
+      id   = "e1fe6dd8-ba31-4d61-89e7-88639da4683d" # User.Read https://marketplace.visualstudio.com/items?itemName=stephane-eyskens.aadv1appprovisioning
+      type = "Scope"
+    }
+  }
+
+  web {
+    homepage_url  = "https://${azurecaf_name.app_service.result}.azurewebsites.net"
+    redirect_uris = ["https://${azurecaf_name.app_service.result}.azurewebsites.net/.auth/login/aad/callback"]
+    implicit_grant {
+      id_token_issuance_enabled     = true
+    }
+  }
+}
+
 # This creates the linux web app
 resource "azurerm_linux_web_app" "application" {
   name                = azurecaf_name.app_service.result
@@ -50,9 +91,9 @@ resource "azurerm_linux_web_app" "application" {
 
   virtual_network_subnet_id = var.subnet_id
 
-  #identity {
-  #  type = "SystemAssigned"
-  #}
+  identity {
+    type = "SystemAssigned"
+  }
 
   tags = {
     "environment"      = var.environment
@@ -86,5 +127,13 @@ resource "azurerm_linux_web_app" "application" {
     DatabaseConfigEmbedUsername = var.database_username
     DatabaseConfigEmbedPassword = var.database_password
     DatabaseUsertableQuote      = "\""
+  }
+
+  auth_settings {
+    enabled = true
+    runtime_version = "~2"
+    active_directory {
+      client_id = azuread_application.app_registration.application_id
+    }
   }
 }

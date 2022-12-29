@@ -1,7 +1,6 @@
 variable "application_name" {
   type        = string
   description = "The application name"
-  default     = "airsonic"
 }
 
 variable "environment" {
