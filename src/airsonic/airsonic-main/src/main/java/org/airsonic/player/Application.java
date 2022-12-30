@@ -1,5 +1,7 @@
 package org.airsonic.player;
 
+import com.microsoft.applicationinsights.attach.ApplicationInsights;
+
 import org.airsonic.player.filter.*;
 import org.airsonic.player.util.LegacyHsqlUtil;
 import org.directwebremoting.servlet.DwrServlet;
@@ -214,6 +216,7 @@ public class Application extends SpringBootServletInitializer implements WebServ
     }
 
     public static void main(String[] args) {
+        ApplicationInsights.attach();
         SpringApplicationBuilder builder = new SpringApplicationBuilder();
         doConfigure(builder).run(args);
     }
