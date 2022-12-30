@@ -35,7 +35,7 @@ resource "azurerm_application_insights" "app_insights" {
   name                = azurecaf_name.app_insights.result
   location            = var.location
   resource_group_name = var.resource_group
-  application_type    = "web"
+  application_type    = "java"
   workspace_id        = azurerm_log_analytics_workspace.app_workspace.id
 }
 
