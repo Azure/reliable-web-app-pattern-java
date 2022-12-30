@@ -24,3 +24,11 @@ To enable Application Insights Java programmatically, we added the following.
        doConfigure(builder).run(args);
    }
    ```
+
+## Logs
+
+Application logging is enabled. To view the logs, navigate to *Diagnose and solve problems*. From there, click on *Application Logs*.
+
+![Diagnose and solve problems](assets/appservice-diagnose-and-solve-problems.png)
+
+![Application Logs](assets/appservice-diagnose-and-solve-problems-application-logs.png)
