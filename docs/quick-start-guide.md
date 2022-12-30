@@ -45,7 +45,6 @@ Login to Azure using the Azure CLI and choose your active subscription.
 
 ```shell
 az login --scope https://graph.microsoft.com//.default
-az account list -o table
 az account set --subscription ${SUBSCRIPTION}
 ```
 
