@@ -162,6 +162,15 @@ resource "azurerm_linux_web_app" "application" {
     ApplicationInsightsAgent_EXTENSION_VERSION = "~3"
   }
 
+  logs {
+    http_logs {
+      file_system {
+        retention_in_mb   = 35
+        retention_in_days = 30
+      }
+    }
+  }
+
   auth_settings {
     enabled = true
     runtime_version = "~2"
