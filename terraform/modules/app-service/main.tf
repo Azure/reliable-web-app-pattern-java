@@ -9,6 +9,36 @@ terraform {
 
 data "azuread_client_config" "current" {}
 
+resource "azurecaf_name" "app_workspace" {
+  name          = var.application_name
+  resource_type = "azurerm_log_analytics_workspace"
+  suffixes      = [var.environment]
+}
+
+# Log Analiytics Workspace
+resource "azurerm_log_analytics_workspace" "app_workspace" {
+  name                = azurecaf_name.app_workspace.result
+  location            = var.location
+  resource_group_name = var.resource_group
+  sku                 = "PerGB2018"
+  retention_in_days   = 30
+}
+
+resource "azurecaf_name" "app_insights" {
+  name          = var.application_name
+  resource_type = "azurerm_application_insights"
+  suffixes      = [var.environment]
+}
+
+# Application Insight
+resource "azurerm_application_insights" "app_insights" {
+  name                = azurecaf_name.app_insights.result
+  location            = var.location
+  resource_group_name = var.resource_group
+  application_type    = "web"
+  workspace_id        = azurerm_log_analytics_workspace.app_workspace.id
+}
+
 resource "azurerm_storage_share" "sashare" {
   name                 = "music"
   storage_account_name = var.storage_account_name
@@ -127,6 +157,18 @@ resource "azurerm_linux_web_app" "application" {
     DatabaseConfigEmbedUsername = var.database_username
     DatabaseConfigEmbedPassword = var.database_password
     DatabaseUsertableQuote      = "\""
+    APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.app_insights.connection_string
+    APPLICATIONINSIGHTS_SAMPLING_REQUESTS_PER_SECOND = 10
+    ApplicationInsightsAgent_EXTENSION_VERSION = "~3"
+  }
+
+  logs {
+    http_logs {
+      file_system {
+        retention_in_mb   = 35
+        retention_in_days = 30
+      }
+    }
   }
 
   auth_settings {
@@ -134,6 +176,28 @@ resource "azurerm_linux_web_app" "application" {
     runtime_version = "~2"
     active_directory {
       client_id = azuread_application.app_registration.application_id
+    }
+  }
+}
+
+resource "azurecaf_name" "app_service_diagnostic" {
+  name          = var.application_name
+  resource_type = "azurerm_monitor_diagnostic_setting"
+  suffixes      = [var.environment]
+}
+
+# Configure Diagnostic Settings for App Service
+resource "azurerm_monitor_diagnostic_setting" "app_service_diagnostic" {
+  name                       = azurecaf_name.app_service_diagnostic.result
+  target_resource_id         = azurerm_linux_web_app.application.id
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.app_workspace.id
+
+  metric {
+    category = "AllMetrics"
+    enabled  = true
+    retention_policy {
+      enabled = false
+      days    = 0
     }
   }
 }
