@@ -28,4 +28,6 @@ The next step to calculate the availability was to identify the SLA of the servi
 To find the impact that one of these services has to our availability [we multiply each of these SLAs](https://learn.microsoft.com/en-us/azure/architecture/framework/resiliency/business-metrics#composite-slas).
 By combining the numbers we reach the percentage of time that all services are available.
 
+Certain design decisions were made in order to achieve the desired SLA. One of those decisions was to [use geo-redundancy storage](https://learn.microsoft.com/en-us/azure/storage/common/geo-redundant-design). With geo redundant storage, Airsonic can handle transient faults or significant outages by reading from the secondary region when there's an issue that interferes with reading from the primary region.
+
 When combined the SLAs assert that training material can be viewed 99.86% of the time. This availability meant there could be as much as 12 hours of downtime in a year.
