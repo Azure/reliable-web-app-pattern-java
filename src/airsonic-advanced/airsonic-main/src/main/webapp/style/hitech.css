@@ -1,0 +1,127 @@
+/*
+ * CSS styleshet for the "High Tech" theme.
+ *
+ * Author: Jeebs (Fisher Evans)
+ */
+
+@import "default-without-mediaelement.css";
+@import "mediaelement-dark.css";
+@import "dark-theme.css";
+
+table {
+	color: #d2f1d5;
+}
+
+/* The primary background color. */
+.bgcolor1, table.music tr:nth-of-type(even) {
+    background-color: #090a09;
+}
+
+/* The secondary background color. */
+.bgcolor2, .ruleTableHeader, .log, table.music tr:nth-of-type(odd) {
+    background-color: #090a09;
+}
+
+body.bgcolor2 {
+    border-bottom: 1px solid #272727;
+}
+
+.bgcolor2 {
+	background-image:url(../icons/hitech/bg.jpg);
+}
+
+/* The primary foreground color. */
+body {
+    color: #d2f1d5;
+}
+
+/* The secondary foreground color used for h1, details etc. */
+h1, .detail, .albumComment {
+    color: #d2f1d5;
+}
+
+/* Foreground color used for h2, bold and tr. */
+h2, b, tr {
+    color: #d2f1d5;
+}
+
+/* regular foreground color */
+.dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter, .dataTables_wrapper .dataTables_info, .dataTables_wrapper .dataTables_processing, .dataTables_wrapper .dataTables_paginate {
+    color: #d2f1d5;
+}
+
+/* a:link color */
+.dataTables_wrapper .dataTables_paginate .paginate_button, button.dt-button, div.dt-button, a.dt-button {
+    color: #00d61b !important;
+}
+
+/* a:hover color + .border1 border-color */
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover, button.dt-button:hover:not(.disabled), div.dt-button:hover:not(.disabled), a.dt-button:hover:not(.disabled) {
+    border-color: #272727;
+}
+
+/* regular color + .border1 border-color */
+.dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+    color: #d2f1d5 !important;
+    border-color: #272727;
+}
+
+table.dataTable.hover tbody tr:hover, table.dataTable.display tbody tr:hover {
+    background-color: #242824;
+}
+
+table.dataTable tbody>tr.selected, table.dataTable tbody>tr>.selected {
+    background-color: #555E55;
+}
+
+table.dataTable.hover tbody>tr.selected:hover, table.dataTable.hover tbody>tr>.selected:hover, table.dataTable.display tbody>tr.selected:hover, table.dataTable.display tbody>tr>.selected:hover {
+    background-color: #495049;
+}
+
+table.music.dataTable tbody tr.currently-playing {
+    background-color: #3D433D;
+}
+
+table.music.dataTable tbody tr.currently-playing:hover {
+    background-color: #303630;
+}
+
+/* Link color */
+a:link, a:active, a:visited, a:link *, a:active *, a:visited * {
+    color: #00d61b
+}
+
+/* Color for warning messages. */
+.warning {
+    color: white;
+}
+
+/* Simple border. */
+.border1, .ruleTableHeader, .ruleTableCell, .log {
+    border: 1px solid #272727;
+}
+
+/* Scrollbar colors (supported on IE and Opera) */
+body {
+    scrollbar-face-color: #253126;
+    scrollbar-highlight-color: #00c52c;
+    scrollbar-shadow-color: #253126;
+    scrollbar-3dlight-color: #253126;
+    scrollbar-arrow-color: #00c52c;
+    scrollbar-track-color: #00c52c;
+    scrollbar-darkshadow-color: #00c52c;
+}
+
+.back {
+    background-image:url("../icons/default_dark/back.png");background-position: 0px 3px; background-repeat:no-repeat; padding-left: 16px; line-height: 16px;
+}
+.forward {
+    background-image:url("../icons/default_dark/forward.png");background-position: 0px 3px; background-repeat:no-repeat; padding-left: 16px; line-height: 16px;
+}
+
+.mainframe {
+    background-image:url( "../icons/hitech/bg2.jpg" );
+    background-repeat:no-repeat;
+    background-attachment:fixed;
+    background-position:bottom right;
+}

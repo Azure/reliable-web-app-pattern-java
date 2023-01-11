@@ -1,0 +1,99 @@
+/*
+ * CSS styleshet for the "Groove" theme.
+ *
+ * Author: Thomas Bruce Dyrud (thomasbrucedyrud[at]gmail.com)
+ *
+ * Moified version of the "Cool and Clean" and "Monochrome Black" themes.
+ * (Cool and Clean created by: Dan Eriksen - dan.o.eriksen[at]gmail.com )
+ * (Monochrome Black created by: David D - ddavis1[at]gmail.com )
+ *
+ *
+ * Icons used are released under Creative Commons.
+ * Heading icons: (http://toffeenut.deviantart.com/art/Black-Neon-Agua-iPhone-Theme-85452072)
+ * Main theme icon part of itunes icon pack created by Michael Flarup (http://pixelresort.com)
+ */
+
+@import "default-without-mediaelement.css";
+@import "mediaelement-dark.css";
+@import "dark-theme.css";
+
+/* The primary background colour. */
+.bgcolor1, table.music tr:nth-of-type(even) {
+    background-color: #222;
+}
+
+/* The secondary background colour, light blue, primary theme colour. */
+.bgcolor2, .ruleTableHeader, .log, table.music tr:nth-of-type(odd) {
+    background-color: #222;
+    color: #FFFFFF;
+
+}
+
+/* Background colour for selected header, log etc. */
+.headerSelected {
+    color: #FFFFFF;
+    background-color: #222;
+    border: 1px solid #eee;
+}
+
+table.dataTable.hover tbody tr:hover, table.dataTable.display tbody tr:hover {
+    background-color: #333333;
+}
+
+table.dataTable tbody>tr.selected, table.dataTable tbody>tr>.selected {
+    background-color: #666666;
+}
+
+table.dataTable.hover tbody>tr.selected:hover, table.dataTable.hover tbody>tr>.selected:hover, table.dataTable.display tbody>tr.selected:hover, table.dataTable.display tbody>tr>.selected:hover {
+    background-color: #595959;
+}
+
+table.music.dataTable tbody tr.currently-playing {
+    background-color: #4D4D4D;
+}
+
+table.music.dataTable tbody tr.currently-playing:hover {
+    background-color: #404040;
+}
+
+/* Table sizing */
+table {
+    margin: 0 0 0 0;
+}
+
+/* Main frame image & colour */
+.mainframe {
+    background-image:url( "../icons/groove/background_main.png" );
+    background-repeat:no-repeat;
+    background-attachment:fixed;
+    background-color: #222;
+    background-position:right;
+}
+
+/* Back image */
+.back {
+    background-image:url( "../icons/groove/back.png" );
+}
+
+/* Button colors */
+input[type="button"], button {
+    color: #000000;
+}
+
+/* Colour for warning messages. */
+.warning {
+    color: #990099;
+}
+
+/* The primary foreground colour. */
+body {
+    background-color: #DDDDDD;
+}
+
+html {
+    background-color: transparent;
+}
+
+label, p {
+	color: #CCC;
+}

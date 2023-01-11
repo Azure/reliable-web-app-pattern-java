@@ -1,0 +1,103 @@
+name: 'Stable Deploy CI (Maven)'
+
+on:
+  push:
+    branches: [ stable/** ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: "github.repository == 'airsonic-advanced/airsonic-advanced' && startsWith(github.ref, 'refs/heads/stable/')"
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-m2-
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+        with:
+          install: true
+      - name: Available platforms
+        run: echo ${{ steps.buildx.outputs.platforms }}
+      - name: Remove snapshots
+        run: mvn versions:set -DremoveSnapshot=true -DgenerateBackupPoms=false
+      - name: Build with Maven
+        run: mvn -DskipTests -Dcheckstyle.skip=true package
+      - name: Calculate tags
+        if: success()
+        id: tagcalc
+        run: |
+          # Create tag
+          tag=$(grep "version=" airsonic-main/target/generated/build-metadata/build.properties | cut -d"=" -f2);
+          minor=$(echo $tag | cut -d"." -f1-2);
+          major=$(echo $minor | cut -d"." -f1);
+          echo $tag;
+          echo "::set-output name=tag::$tag"
+          echo "::set-output name=minor::$minor"
+          echo "::set-output name=major::$major"
+      - name: Import GPG Key for signing
+        run: echo "${{ secrets.GPG_SIGNING_PRIVATE_KEY }}" | gpg --quiet --batch --yes --import
+      - name: Sign artifacts
+        run: |
+          echo "${{ secrets.GPG_SIGNING_PASSPHRASE }}" | gpg --quiet --batch --yes --pinentry-mode loopback --clearsign --passphrase-fd 0 airsonic-main/target/artifacts-checksums.sha;
+          #echo "${{ secrets.GPG_SIGNING_PASSPHRASE }}" | gpg --quiet --batch --yes --pinentry-mode loopback --detach-sign --armor --passphrase-fd 0 airsonic-main/target/airsonic.war;
+      - name: Deploy to GitHub Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.tagcalc.outputs.tag }}
+          name: Stable Release ${{ steps.tagcalc.outputs.tag }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          body: |
+            List of issues addressed: https://github.com/airsonic-advanced/airsonic-advanced/issues?q=milestone%3A${{ steps.tagcalc.outputs.tag }}
+          files: |
+            airsonic-main/target/airsonic.war
+            airsonic-main/target/artifacts-checksums.sha.asc
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - run: mkdir install/docker/target
+      - run: copy airsonic-main/target/airsonic.war install/docker/target/airsonic-main.war
+      - name: Build and push multiplatform images to Dockerhub
+        uses: docker/build-push-action@v2
+        with:
+          file: install/docker/Dockerfile
+          context: install/docker
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          push: true
+          tags: |
+            airsonicadvanced/airsonic-advanced:stable
+            airsonicadvanced/airsonic-advanced:stable-latest
+            airsonicadvanced/airsonic-advanced:stable-${{ steps.tagcalc.outputs.tag }}
+            airsonicadvanced/airsonic-advanced:${{ steps.tagcalc.outputs.tag }}
+            airsonicadvanced/airsonic-advanced:gitcommit-${{ github.sha }}
+            airsonicadvanced/airsonic-advanced:gitrun-${{ github.run_id }}
+            ghcr.io/airsonic-advanced/airsonic-advanced:stable
+            ghcr.io/airsonic-advanced/airsonic-advanced:stable-latest
+            ghcr.io/airsonic-advanced/airsonic-advanced:stable-${{ steps.tagcalc.outputs.tag }}
+            ghcr.io/airsonic-advanced/airsonic-advanced:${{ steps.tagcalc.outputs.tag }}
+            ghcr.io/airsonic-advanced/airsonic-advanced:gitcommit-${{ github.sha }}
+            ghcr.io/airsonic-advanced/airsonic-advanced:gitrun-${{ github.run_id }}
