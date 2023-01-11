@@ -73,11 +73,13 @@ resource "azurecaf_name" "app_service" {
 }
 
 resource "random_uuid" "widgets_scope_id" {}
+resource "random_uuid" "admin_role_id" {}
+resource "random_uuid" "user_role_id" {}
 
 resource "azuread_application" "app_registration" {
   display_name     = "${azurecaf_name.app_service.result}-app"
   owners           = [data.azuread_client_config.current.object_id]
-  sign_in_audience = "AzureADMyOrg"
+  sign_in_audience = "AzureADMyOrg"  # single tenant
 
 
   api {
@@ -93,6 +95,24 @@ resource "azuread_application" "app_registration" {
     }
   }
 
+  app_role {
+    allowed_member_types = ["User"]
+    description          = "Admins can manage perform all task actions"
+    display_name         = "Admin"
+    enabled              = true
+    id                   = random_uuid.admin_role_id.result
+    value                = "admin"
+  }
+
+  app_role {
+    allowed_member_types = ["User"]
+    description          = "ReadOnly roles have limited query access"
+    display_name         = "ReadOnly"
+    enabled              = true
+    id                   = random_uuid.user_role_id.result
+    value                = "User"
+  }
+
   required_resource_access {
     resource_app_id = "00000003-0000-0000-c000-000000000000" # Microsoft Graph
 
@@ -106,9 +126,33 @@ resource "azuread_application" "app_registration" {
     homepage_url  = "https://${azurecaf_name.app_service.result}.azurewebsites.net"
     redirect_uris = ["https://${azurecaf_name.app_service.result}.azurewebsites.net/.auth/login/aad/callback"]
     implicit_grant {
+      access_token_issuance_enabled = true
       id_token_issuance_enabled     = true
     }
   }
+}
+
+resource "azuread_application_password" "application_password" {
+  application_object_id = azuread_application.app_registration.object_id
+}
+
+# Retrieve domain information
+data "azuread_domains" "domain" {
+  only_initial = true
+}
+
+# Create a user
+resource "azuread_user" "airsonic_user" {
+  user_principal_name = "airsonic-user@${data.azuread_domains.domain.domains.0.domain_name}"
+  display_name        = "airsonic-user"
+  password            = "Airsonic@123456"
+}
+
+# Create a user
+resource "azuread_user" "airsonic_admin" {
+  user_principal_name = "airsonic-admin@${data.azuread_domains.domain.domains.0.domain_name}"
+  display_name        = "airsonic-admin"
+  password            = "Airsonic@123456"
 }
 
 # This creates the linux web app
@@ -160,6 +204,8 @@ resource "azurerm_linux_web_app" "application" {
     APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.app_insights.connection_string
     APPLICATIONINSIGHTS_SAMPLING_REQUESTS_PER_SECOND = 10
     ApplicationInsightsAgent_EXTENSION_VERSION = "~3"
+    AAD_SECRET = azuread_application_password.application_password.value
+    AAD_CLIENTID = azuread_application.app_registration.application_id
   }
 
   logs {
