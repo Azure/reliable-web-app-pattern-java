@@ -10,6 +10,7 @@ output "resource_group" {
 
 output "app_service_module_outputs" {
   value = module.application
+  sensitive = true
 }
 
 output "postresql_database_module_outputs" {

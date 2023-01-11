@@ -40,6 +40,33 @@ output "application_java_version" {
   description = "The value for <runtime/javaVersion> for the azure-webapp-maven-plugin in airsonic-main/pom.xml."
 }
 
+output "application_registration_id" {
+  value = azuread_application.app_registration.application_id
+  description = "The id of application registration  (also called Client ID)."
+}
+
+output "airsonic_user" {
+  value = azuread_user.airsonic_user.user_principal_name
+  description = "The read-only user name."
+}
+
+output "airsonic_user_password" {
+  value     = azuread_user.airsonic_user.password
+  sensitive = true
+  description = "The password of the read-only user."
+}
+
+output "airsonic_admin" {
+  value = azuread_user.airsonic_admin.user_principal_name
+  description = "The admin user name."
+}
+
+output "airsonic_admin_password" {
+  value     = azuread_user.airsonic_admin.password
+  sensitive = true
+  description = "The password of the admin user."
+}
+
 #output "application_principal_id" {
 #  value       = azurerm_linux_web_app.application.identity[0].principal_id
 #  description = "The id of system assigned managed identity"
