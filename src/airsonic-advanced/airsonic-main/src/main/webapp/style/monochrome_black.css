@@ -1,0 +1,110 @@
+/*
+ * CSS styleshet for monochrome style
+ *
+ * Author: David D ddavis1@gmail.com
+ */
+
+@import "default-without-mediaelement.css";
+@import "mediaelement-dark.css";
+@import "dark-theme.css";
+
+/* The primary background colour. */
+.bgcolor1, table.music tr:nth-of-type(even) {
+    background-color: #222;
+}
+
+/* The secondary background colour, light blue, primary theme colour. */
+.bgcolor2, .ruleTableHeader, .log, table.music tr:nth-of-type(odd) {
+    background-color: #000000;
+}
+
+table.dataTable.hover tbody tr:hover, table.dataTable.display tbody tr:hover {
+    background-color: #333333;
+}
+
+table.dataTable tbody>tr.selected, table.dataTable tbody>tr>.selected {
+    background-color: #666666;
+}
+
+table.dataTable.hover tbody>tr.selected:hover, table.dataTable.hover tbody>tr>.selected:hover, table.dataTable.display tbody>tr.selected:hover, table.dataTable.display tbody>tr>.selected:hover {
+    background-color: #595959;
+}
+
+table.music.dataTable tbody tr.currently-playing {
+    background-color: #4D4D4D;
+}
+
+table.music.dataTable tbody tr.currently-playing:hover {
+    background-color: #404040;
+}
+
+body {
+    color: #CCC;
+}
+
+.back {
+    background-image:url("../icons/default_dark/back.png");
+}
+
+table {
+    margin: 0 0 0 0;
+}
+
+/* Main frame image & colour */
+.mainframe, .rightframe {
+    background-color: #222;
+}
+
+/* Colour for warning messages. */
+.warning {
+    color: #990099;
+}
+
+/* Background colour for form controls. */
+input, select {
+    color: #000;
+    background-color: #EEE;
+}
+
+/* Background colour for option controls. */
+option {
+    font-weight: bold;
+    background-color: #666666;
+    color: #FFFFFF;
+}
+
+/* The primary foreground colour. */
+body {
+    background-color: #DDDDDD;
+}
+
+/* The album comments. */
+.albumComment {
+    width: 50em;
+    font-size: 8pt;
+    line-height: 1.4em;
+    padding-top: 0.25em;
+    color: #000000;
+}
+
+/* The log. */
+.log {
+    font-weight: bold;
+    white-space: nowrap;
+    font-size: 8pt;
+    line-height: 1em;
+    color: #000000;
+    background-color: #C0C0C0;
+}
+
+/* The help, status & web payer settings tables. */
+.ruleTableHeader, .ruleTableCell {
+    margin: 5px;
+    padding: 5px;
+    color: #FFFFFF;
+    background-color: #C0C0C0;
+}
+
+label, p {
+	color: #CCC;
+}

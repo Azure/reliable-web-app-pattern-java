@@ -1,0 +1,33 @@
+/*
+ * CSS styleshet for the "Sonic White" theme.
+ *
+ * Author: Thomas Bruce Dyrud (thomasbrucedyrud[at]gmail.com)
+ *
+ */
+
+@import "sonic.css";
+
+/* The primary background colour. */
+.bgcolor1, table.music tr:nth-of-type(even) {
+    background-color: #FFFFFF;
+}
+
+/* The secondary background colour, light blue, primary theme colour. */
+.bgcolor2, .ruleTableHeader, .log, table.music tr:nth-of-type(odd) {
+    background-color: #FFFFFF;
+}
+
+/* Background colour for selected header, log etc. */
+.headerSelected {
+    background-color: #FFFFFF;
+}
+
+/* Main frame image & colour */
+.mainframe {
+    background-color: #FFFFFF;
+}
+
+/* Back image */
+.back {
+    background-image:url( "../icons/sonic_white/back.png" );
+}

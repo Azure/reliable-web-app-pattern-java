@@ -1,0 +1,57 @@
+[Unit]
+Description=Airsonic Media Server
+After=remote-fs.target network.target
+AssertPathExists=/var/airsonic
+
+[Service]
+Type=simple
+Environment="JAVA_JAR=/var/airsonic/airsonic.war"
+Environment="JAVA_OPTS=-Xmx700m"
+Environment="AIRSONIC_HOME=/var/airsonic"
+Environment="PORT=8080"
+Environment="CONTEXT_PATH=/airsonic"
+Environment="JAVA_ARGS="
+EnvironmentFile=-/etc/sysconfig/airsonic
+ExecStart=/usr/bin/java \
+          $JAVA_OPTS \
+          -Dairsonic.home=${AIRSONIC_HOME} \
+          -Dserver.servlet.context-path=${CONTEXT_PATH} \
+          -Dserver.port=${PORT} \
+          -jar ${JAVA_JAR} $JAVA_ARGS
+User=airsonic
+Group=airsonic
+
+# See https://www.freedesktop.org/software/systemd/man/systemd.exec.html
+# for details
+DevicePolicy=closed
+NoNewPrivileges=yes
+PrivateDevices=yes
+PrivateTmp=yes
+PrivateUsers=yes
+ProtectControlGroups=yes
+ProtectKernelModules=yes
+ProtectKernelTunables=yes
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+RestrictNamespaces=yes
+RestrictRealtime=yes
+SystemCallFilter=~@clock @debug @module @mount @obsolete @privileged @reboot @setuid @swap
+ReadWritePaths=/var/airsonic
+
+# You can change the following line to `strict` instead of `full`
+# if you don't want airsonic to be able to
+# write anything on your filesystem outside of AIRSONIC_HOME.
+ProtectSystem=full
+
+# You can uncomment the following line if you don't have any media
+# in /home/…. This will prevent airsonic from ever reading/writing anything there.
+#ProtectHome=true
+
+# You can uncomment the following line if you're not using the OpenJDK.
+# This will prevent processes from having a memory zone that is both writeable
+# and executeable, making hacker's lifes a bit harder.
+#MemoryDenyWriteExecute=yes
+
+
+[Install]
+WantedBy=multi-user.target
+
