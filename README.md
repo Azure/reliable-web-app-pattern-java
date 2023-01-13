@@ -8,6 +8,24 @@ This repository provides resources to help developers build a Reliable Java web 
 
 **This project is currently under active development.**
 
+The project has the following directory structure:
+
+```console
+.
+├── docs                         # Documentation on how to build and install the app on Azure
+├── scripts                      # Scripts to setup the environment
+├── src
+│   └── airsonic                 # Airsonic app code
+│       ├── airsonic-main
+│       ├── airsonic-sonos-api
+│       ├── docs                 # Initial Airsonic documentation
+│       ├── install
+│       ├── integration-test
+│       ├── repo                 # Airsonic librairies to install on local Maven repo
+│       └── subsonic-rest-api
+└── terraform                    # Terraform templates to deploy the application to Azure
+```
+
 ---
 
 ## Overview
