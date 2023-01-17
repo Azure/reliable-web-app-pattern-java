@@ -12,7 +12,7 @@ The [Quickstart: Register an application with the Microsoft identity platform](h
 
 ### App Registration
 
-```json
+```
 resource "azuread_application" "app_registration" {
   display_name     = "${azurecaf_name.app_service.result}-app"
   owners           = [data.azuread_client_config.current.object_id]
@@ -25,7 +25,7 @@ resource "azuread_application" "app_registration" {
 
 We define 3 app roles, *Admin*, *User*, and *Creator*. The *Admin* role is allowed to configure the overall application settings for Airsonic. The *Creator* role is allowed to upload videos and create playlists.  The *User* Role is allowed to view the videos. Use following guide [add app roles in your application](https://docs.microsoft.com/azure/active-directory/develop/howto-add-app-roles-in-azure-ad-apps) to understand the concept of `App Roles`.
 
-```json
+```
 app_role {
     allowed_member_types = ["User"]
     description          = "Admins can manage perform all task actions"
@@ -73,7 +73,7 @@ Enabling the `appRoles` feature in AAD, `roles` claim generated from `appRoles` 
     ```
 1. Refactor GlobalSecurityConfig.java
 
-    Adding Authentication was done by extending the `AadWebSecurityConfigurerAdapter` class and allowing only the roles configured in AAD.
+    Adding Authentication was done by extending the `AadWebSecurityConfigurerAdapter` class and allowing only the roles configured in AAD. Below is a sample `Security Configuration` class.
 
     ```java
     @Configuration
@@ -86,42 +86,17 @@ Enabling the `appRoles` feature in AAD, `roles` claim generated from `appRoles` 
             // add custom configuration:
 
             http
-                    .cors()
-                    .and()
-                    .csrf()
-                    .requireCsrfProtectionMatcher(csrfSecurityRequestMatcher)
-                    .and()
-                    .headers()
-                    .frameOptions()
-                    .sameOrigin()
-                    .and().authorizeRequests()
+                    .authorizeRequests()
                     .antMatchers("/recover*", "/accessDenied*", "/style/**", "/icons/**", "/flash/**", "/script/**", "/error")
                     .permitAll()
                     .antMatchers("/personalSettings*",
                             "/playerSettings*", "/shareSettings*", "/credentialsSettings*")
                     .hasAnyAuthority("APPROLE_User", "APPROLE_Admin", "APPROLE_Creator")
-                    .antMatchers("/generalSettings*", "/advancedSettings*", "/userSettings*",
-                            "/musicFolderSettings*", "/databaseSettings*", "/transcodeSettings*", "/rest/startScan*")
-                    .hasAnyAuthority("APPROLE_User", "APPROLE_Admin")
-                    .antMatchers("/deletePlaylist*", "/savePlaylist*")
-                    .hasAnyAuthority("APPROLE_Creator")
-                    .antMatchers("/download*")
-                    .hasAnyAuthority("APPROLE_User", "APPROLE_Creator")
-                    .antMatchers("/upload*")
-                    .hasAnyAuthority("APPROLE_Creator")
-                    .antMatchers("/createShare*")
-                    .hasAnyAuthority("APPROLE_Creator")
-                    .antMatchers("/changeCoverArt*", "/editTags*")
-                    .hasAnyAuthority("APPROLE_Creator")
-                    .antMatchers("/setMusicFileInfo*")
-                    .hasAnyAuthority("APPROLE_Creator")
-                    .antMatchers("/podcastReceiverAdmin*")
-                    .hasAnyAuthority("APPROLE_Creator")
                     .antMatchers("/**")
                     .hasAnyAuthority("APPROLE_User", "APPROLE_Admin", "APPROLE_Creator")
                     .anyRequest().authenticated()
                     .and()
-                    .addFilterBefore(aadAddAuthorizedUsersFilter, UsernamePasswordAuthenticationFilter.class)
+                    .addFilterBefore(aadAddAuthorizedUsersFilter UsernamePasswordAuthenticationFilter.class)
                     .logout(logout -> logout
                             .deleteCookies("JSESSIONID", "XSRF-TOKEN")
                             .clearAuthentication(true)
@@ -160,3 +135,5 @@ Enabling the `appRoles` feature in AAD, `roles` claim generated from `appRoles` 
 * https://learn.microsoft.com/en-us/azure/developer/java/spring-framework/configure-spring-boot-starter-java-app-with-azure-active-directory
 
 * https://learn.microsoft.com/en-us/azure/active-directory/develop/howto-add-app-roles-in-azure-ad-apps
+
+* https://learn.microsoft.com/en-us/azure/active-directory/develop/active-directory-configurable-token-lifetimes

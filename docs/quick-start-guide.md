@@ -53,9 +53,9 @@ az account set --subscription ${SUBSCRIPTION}
 Create the Azure resources by running the following commands:
 
 ```shell
-terraform -chdir=./infra init
-terraform -chdir=./infra plan -var application_name=${APP_NAME} -out airsonic.tfplan
-terraform -chdir=./infra apply airsonic.tfplan
+terraform -chdir=./terraform init
+terraform -chdir=./terraform plan -var application_name=${APP_NAME} -out airsonic.tfplan
+terraform -chdir=./terraform apply airsonic.tfplan
 ```
 ## Azure Active Directory
 
