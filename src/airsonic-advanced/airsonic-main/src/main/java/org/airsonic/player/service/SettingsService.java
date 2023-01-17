@@ -27,7 +27,6 @@ import org.airsonic.player.dao.AvatarDao;
 import org.airsonic.player.dao.InternetRadioDao;
 import org.airsonic.player.dao.UserDao;
 import org.airsonic.player.domain.*;
-import org.airsonic.player.service.sonos.SonosServiceRegistration;
 import org.airsonic.player.util.StringUtil;
 import org.airsonic.player.util.Util;
 import org.apache.commons.lang3.StringUtils;
@@ -233,7 +232,7 @@ public class SettingsService {
     private static final boolean DEFAULT_SONOS_ENABLED = false;
     private static final String DEFAULT_SONOS_SERVICE_NAME = "Airsonic";
     private static final int DEFAULT_SONOS_SERVICE_ID = 242;
-    private static final String DEFAULT_SONOS_LINK_METHOD = SonosServiceRegistration.AuthenticationType.APPLICATION_LINK.name();
+    private static final String DEFAULT_SONOS_LINK_METHOD = "unused";
     private static final String DEFAULT_EXPORT_PLAYLIST_FORMAT = "m3u";
     private static final boolean DEFAULT_IGNORE_SYMLINKS = false;
     private static final String DEFAULT_EXCLUDE_PATTERN_STRING = null;

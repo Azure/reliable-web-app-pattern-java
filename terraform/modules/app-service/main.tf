@@ -72,21 +72,21 @@ resource "azurecaf_name" "app_service" {
   suffixes      = [var.environment]
 }
 
-resource "random_uuid" "widgets_scope_id" {}
+resource "random_uuid" "airsonic_scope_id" {}
 resource "random_uuid" "admin_role_id" {}
 resource "random_uuid" "user_role_id" {}
+resource "random_uuid" "creator_role_id" {}
 
 resource "azuread_application" "app_registration" {
   display_name     = "${azurecaf_name.app_service.result}-app"
   owners           = [data.azuread_client_config.current.object_id]
   sign_in_audience = "AzureADMyOrg"  # single tenant
 
-
   api {
     oauth2_permission_scope {
         admin_consent_description  = "Allow the application to access ${azurecaf_name.app_service.result} on behalf of the signed-in user."
         admin_consent_display_name = "Access ${azurecaf_name.app_service.result}"
-        id                         = random_uuid.widgets_scope_id.result
+        id                         = random_uuid.airsonic_scope_id.result
         enabled                    = true
         type                       = "User"
         user_consent_description   = "Allow the application to access ${azurecaf_name.app_service.result} on your behalf."
@@ -101,7 +101,7 @@ resource "azuread_application" "app_registration" {
     display_name         = "Admin"
     enabled              = true
     id                   = random_uuid.admin_role_id.result
-    value                = "admin"
+    value                = "Admin"
   }
 
   app_role {
@@ -111,6 +111,15 @@ resource "azuread_application" "app_registration" {
     enabled              = true
     id                   = random_uuid.user_role_id.result
     value                = "User"
+  }
+
+  app_role {
+    allowed_member_types = ["User"]
+    description          = "Creator roles allows users to create content"
+    display_name         = "Creator"
+    enabled              = true
+    id                   = random_uuid.creator_role_id.result
+    value                = "Creator"
   }
 
   required_resource_access {
@@ -123,10 +132,10 @@ resource "azuread_application" "app_registration" {
   }
 
   web {
-    homepage_url  = "https://${azurecaf_name.app_service.result}.azurewebsites.net"
+    homepage_url  = "https://${azurecaf_name.app_service.result}.azurewebsites.net/index"
+    logout_url    = "https://${azurecaf_name.app_service.result}.azurewebsites.net/logout"
     redirect_uris = ["https://${azurecaf_name.app_service.result}.azurewebsites.net/.auth/login/aad/callback"]
     implicit_grant {
-      access_token_issuance_enabled = true
       id_token_issuance_enabled     = true
     }
   }
@@ -139,20 +148,6 @@ resource "azuread_application_password" "application_password" {
 # Retrieve domain information
 data "azuread_domains" "domain" {
   only_initial = true
-}
-
-# Create a user
-resource "azuread_user" "airsonic_user" {
-  user_principal_name = "airsonic-user@${data.azuread_domains.domain.domains.0.domain_name}"
-  display_name        = "airsonic-user"
-  password            = "Airsonic@123456"
-}
-
-# Create a user
-resource "azuread_user" "airsonic_admin" {
-  user_principal_name = "airsonic-admin@${data.azuread_domains.domain.domains.0.domain_name}"
-  display_name        = "airsonic-admin"
-  password            = "Airsonic@123456"
 }
 
 # This creates the linux web app
@@ -180,7 +175,7 @@ resource "azurerm_linux_web_app" "application" {
     application_stack {
       java_server = "TOMCAT"
       java_server_version = "9.0"
-      java_version = "jre8"
+      java_version = "11"
     }
   }
 
@@ -206,6 +201,7 @@ resource "azurerm_linux_web_app" "application" {
     ApplicationInsightsAgent_EXTENSION_VERSION = "~3"
     AAD_SECRET = azuread_application_password.application_password.value
     AAD_CLIENTID = azuread_application.app_registration.application_id
+    AAD_TENANTID = data.azuread_client_config.current.tenant_id
   }
 
   logs {

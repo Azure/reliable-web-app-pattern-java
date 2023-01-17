@@ -37,12 +37,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.dao.DataAccessException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 import org.springframework.stereotype.Service;
 
@@ -71,7 +69,7 @@ import java.util.stream.Stream;
  */
 @Service
 @CacheConfig(cacheNames = "userCache")
-public class SecurityService implements UserDetailsService {
+public class SecurityService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SecurityService.class);
 
@@ -81,38 +79,6 @@ public class SecurityService implements UserDetailsService {
     private SettingsService settingsService;
     @Autowired
     private MediaFolderService mediaFolderService;
-
-    /**
-     * Locates the user based on the username.
-     *
-     * @param username The username
-     * @return A fully populated user record (never <code>null</code>)
-     * @throws UsernameNotFoundException if the user could not be found or the user has no GrantedAuthority.
-     * @throws DataAccessException       If user could not be found for a repository-specific reason.
-     */
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
-        return loadUserByUsername(username, true);
-    }
-
-    public UserDetails loadUserByUsername(String username, boolean caseSensitive)
-            throws UsernameNotFoundException, DataAccessException {
-        User user = getUserByName(username, caseSensitive);
-        if (user == null) {
-            throw new UsernameNotFoundException("User \"" + username + "\" was not found.");
-        }
-
-        List<GrantedAuthority> authorities = getGrantedAuthorities(user);
-
-        return new UserDetail(
-                username,
-                getCredentials(user.getUsername(), App.AIRSONIC),
-                true,
-                true,
-                true,
-                true,
-                authorities);
-    }
 
     public boolean updateCredentials(UserCredential oldCreds, UserCredential newCreds, String comment,
             boolean reencodePlaintextNewCreds) {
@@ -260,7 +226,15 @@ public class SecurityService implements UserDetailsService {
      * @return The name of the logged-in user, or <code>null</code>.
      */
     public String getCurrentUsername(HttpServletRequest request) {
-        return new SecurityContextHolderAwareRequestWrapper(request, null).getRemoteUser();
+        String name = new SecurityContextHolderAwareRequestWrapper(request, null).getRemoteUser();
+        if (null == name) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (null != authentication) {
+                name = authentication.getName();
+            }
+        }
+
+        return name;
     }
 
     /**

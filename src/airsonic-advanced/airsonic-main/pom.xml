@@ -27,12 +27,6 @@
             <version>${project.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.airsonic.player</groupId>
-            <artifactId>airsonic-sonos-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
         <!-- Metrics
              Metrics is a cool framework used here
              to compute musures and statistics during automated testing
@@ -69,6 +63,14 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.azure.spring</groupId>
+            <artifactId>spring-cloud-azure-starter-active-directory</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-client</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -615,12 +617,7 @@
                     <schemaVersion>V2</schemaVersion>  
                     <appName><!--application_name--></appName>
                     <resourceGroup><!--application_resource_group--></resourceGroup>
-                    <region><!--application_region--></region>  
-                    <runtime>
-                        <os>Linux</os>      
-                        <webContainer><!--application_runtime_webcontainer--></webContainer>
-                        <javaVersion><!--application_java_version--></javaVersion>
-                    </runtime> 
+                    <region><!--application_region--></region>
                     <deployment> 
                         <resources> 
                         <resource>
