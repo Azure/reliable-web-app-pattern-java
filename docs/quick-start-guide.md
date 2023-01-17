@@ -53,26 +53,29 @@ az account set --subscription ${SUBSCRIPTION}
 Create the Azure resources by running the following commands:
 
 ```shell
-cd terraform
-terraform init
-terraform plan -var application_name=${APP_NAME} -out airsonic.tfplan
-terraform apply airsonic.tfplan
-./setup-airsonic-pom.sh
-cd ..
+terraform -chdir=./infra init
+terraform -chdir=./infra plan -var application_name=${APP_NAME} -out airsonic.tfplan
+terraform -chdir=./infra apply airsonic.tfplan
 ```
+## Azure Active Directory
+
+Set Application ID URI.
+
+```shell
+source ./scripts/setup-application-uir.sh
+```
+
+## Set up Your Local Build Environment
+
+```shell
+source ./scripts/setup-local-build-env.sh
+```
+
+## Upgrade to Auth version 2
 
 Due to the following [issue](https://github.com/hashicorp/terraform-provider-azurerm/issues/12928), We have to manually upgrade the auth settings to version 2.
 
 ```shell
-
-export application_resource_group=$(terraform show -json | jq .values.outputs.app_service_module_outputs.value.application_resource_group  | tr -d \")
-
-export application_name=$(terraform show -json | jq .values.outputs.app_service_module_outputs.value.application_name  | tr -d \")
-echo "application_name = $application_name"
-
-echo "application_resource_group = ${application_name}"
-echo "application_resource_group = $application_resource_group"
-
 az webapp auth config-version upgrade --name ${application_name} --resource-group ${application_resource_group}
 ```
 
@@ -81,12 +84,13 @@ az webapp auth config-version upgrade --name ${application_name} --resource-grou
 It's now time to compile and package Airsonic, skipping the unit tests. 
 
 ```shell
-cd src/airsonic
-mvn -Dmaven.test.skip=true -DskipTests package
+cd src/airsonic-advanced
+mvn -Dmaven.test.skip=true -DskipTests clean package
 ```
 
 Now that we have a war file, we can deploy it to our Azure App Service.
 
 ```shell
+az login --use-device-code
 mvn com.microsoft.azure:azure-webapp-maven-plugin:2.8.0:deploy -pl airsonic-main
 ```
