@@ -10,8 +10,7 @@
     "features": {
 		"azure-cli": "latest",
 		"ghcr.io/devcontainers/features/java:1": {
-			"version": "8",
-            "jdkDistro": "tem",
+			"version": "11",
 			"installMaven": true
 		},
         "ghcr.io/devcontainers/features/terraform:1": {

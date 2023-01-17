@@ -45,26 +45,10 @@ output "application_registration_id" {
   description = "The id of application registration  (also called Client ID)."
 }
 
-output "airsonic_user" {
-  value = azuread_user.airsonic_user.user_principal_name
-  description = "The read-only user name."
-}
-
-output "airsonic_user_password" {
-  value     = azuread_user.airsonic_user.password
-  sensitive = true
-  description = "The password of the read-only user."
-}
-
-output "airsonic_admin" {
-  value = azuread_user.airsonic_admin.user_principal_name
-  description = "The admin user name."
-}
-
-output "airsonic_admin_password" {
-  value     = azuread_user.airsonic_admin.password
-  sensitive = true
-  description = "The password of the admin user."
+output "application_client_secret" {
+  value       = azuread_application_password.application_password.value
+  sensitive   = true
+  description = "The client secret of the application"
 }
 
 #output "application_principal_id" {
