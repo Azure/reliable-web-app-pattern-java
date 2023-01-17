@@ -1,6 +1,6 @@
 # Active Directory
 
-Airsonic uses [Azure Active Directory (AAD)](https://learn.microsoft.com/en-us/azure/active-directory/develop/) as the identity platfor to sign in users.  
+Airsonic uses [Azure Active Directory (AAD)](https://learn.microsoft.com/en-us/azure/active-directory/develop/) as the identity platform to sign in users.  
 
 ## Adding authentication to Airsonic running on Azure App Service
 
