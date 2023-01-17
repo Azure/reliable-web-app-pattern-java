@@ -134,11 +134,17 @@ resource "azuread_application" "app_registration" {
   web {
     homepage_url  = "https://${azurecaf_name.app_service.result}.azurewebsites.net/index"
     logout_url    = "https://${azurecaf_name.app_service.result}.azurewebsites.net/logout"
-    redirect_uris = ["https://${azurecaf_name.app_service.result}.azurewebsites.net/.auth/login/aad/callback"]
+    redirect_uris = ["https://${azurecaf_name.app_service.result}.azurewebsites.net/login/oauth2/code/"]
     implicit_grant {
       id_token_issuance_enabled     = true
     }
   }
+}
+
+resource "azuread_service_principal" "application_service_principal" {
+  application_id               = azuread_application.app_registration.application_id
+  app_role_assignment_required = false
+  owners                       = [data.azuread_client_config.current.object_id]
 }
 
 resource "azuread_application_password" "application_password" {
