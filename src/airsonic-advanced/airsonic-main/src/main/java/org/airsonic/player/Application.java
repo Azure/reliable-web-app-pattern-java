@@ -1,5 +1,6 @@
 package org.airsonic.player;
 
+import com.microsoft.applicationinsights.attach.ApplicationInsights;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.WebApplicationType;
@@ -67,6 +68,7 @@ public class Application extends SpringBootServletInitializer implements WebServ
 
     public static void main(String[] args) {
         SpringApplicationBuilder builder = new SpringApplicationBuilder();
+        ApplicationInsights.attach();
         doConfigure(builder).run(args);
     }
 
