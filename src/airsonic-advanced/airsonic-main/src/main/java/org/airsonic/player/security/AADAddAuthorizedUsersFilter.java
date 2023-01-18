@@ -72,6 +72,8 @@ public class AADAddAuthorizedUsersFilter extends OncePerRequestFilter {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         final String userName = authentication.getName();
 
+        addUserToDatabase(userName);
+
         User user = securityService.getUserByName(userName, true);
 
         final String authority = authentication.getAuthorities().stream()
