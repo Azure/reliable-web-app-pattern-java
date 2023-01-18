@@ -134,7 +134,7 @@ resource "azuread_application" "app_registration" {
   web {
     homepage_url  = "https://${azurecaf_name.app_service.result}.azurewebsites.net/index"
     logout_url    = "https://${azurecaf_name.app_service.result}.azurewebsites.net/logout"
-    redirect_uris = ["https://${azurecaf_name.app_service.result}.azurewebsites.net/login/oauth2/code/"]
+    redirect_uris = ["https://${azurecaf_name.app_service.result}.azurewebsites.net/login/oauth2/code/", "https://${azurecaf_name.app_service.result}.azurewebsites.net/.auth/login/aad/callback"]
     implicit_grant {
       id_token_issuance_enabled     = true
     }

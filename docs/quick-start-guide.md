@@ -102,3 +102,11 @@ The next step is to add a user to the application and assign them a role. To do 
 ![Aisonic Azure Active Directory Enterprise Applications](assets/AAD-Enterprise-Application.png)
 
 After adding the user, open the browser and navigate to https://{AIRSONIC_SITE}/index. *Don't forget to add the /index at the end".
+
+![Aisonic AAD](assets/airsonic-aad.png)
+
+## Teardown
+
+```shell
+terraform -chdir=./terraform destroy -var application_name=${APP_NAME}
+```
