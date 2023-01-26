@@ -4,21 +4,30 @@ import com.azure.spring.cloud.autoconfigure.aad.AadWebSecurityConfigurerAdapter;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import org.airsonic.player.service.JWTSecurityService;
+import org.airsonic.player.service.SettingsService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -30,6 +39,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @EnableWebSecurity
+@Order(SecurityProperties.BASIC_AUTH_ORDER - 2)
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class GlobalSecurityConfig {
 
@@ -85,7 +95,72 @@ public class GlobalSecurityConfig {
     @Autowired
     private CsrfSecurityRequestMatcher csrfSecurityRequestMatcher;
 
+    @Autowired
+    SettingsService settingsService;
+
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        String jwtKey = settingsService.getJWTKey();
+        if (StringUtils.isBlank(jwtKey)) {
+            LOG.warn("Generating new jwt key");
+            jwtKey = JWTSecurityService.generateKey();
+            settingsService.setJWTKey(jwtKey);
+            settingsService.save();
+        }
+        JWTAuthenticationProvider jwtAuth = new JWTAuthenticationProvider(jwtKey);
+        auth.authenticationProvider(jwtAuth);
+    }
+
     @Configuration
+    @Order(1)
+    public class ExtSecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+        public ExtSecurityConfiguration() {
+            super(true);
+        }
+
+        @Override
+        @Bean
+        public AuthenticationManager authenticationManagerBean() throws Exception {
+            return super.authenticationManagerBean();
+        }
+
+        @Bean(name = "jwtAuthenticationFilter")
+        public JWTRequestParameterProcessingFilter jwtAuthFilter() throws Exception {
+            return new JWTRequestParameterProcessingFilter(authenticationManager(), FAILURE_URL);
+        }
+
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+
+            http = http.addFilter(new WebAsyncManagerIntegrationFilter());
+            http = http.addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class);
+
+            http
+                    .antMatcher("/ext/**")
+                    .csrf()
+                    // .disable()
+                    .requireCsrfProtectionMatcher(csrfSecurityRequestMatcher).and()
+                    .headers().frameOptions().sameOrigin().and()
+                    .authorizeRequests()
+                    .antMatchers(
+                            "/ext/stream/**",
+                            "/ext/coverArt*",
+                            "/ext/share/**",
+                            "/ext/hls/**",
+                            "/ext/captions**")
+                    .hasAnyRole("TEMP", "USER").and()
+                    .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).sessionFixation().none().and()
+                    .exceptionHandling().and()
+                    .securityContext().and()
+                    .requestCache().and()
+                    .anonymous().and()
+                    .servletApi();
+        }
+    }
+
+    @Configuration
+    @Order(2)
     public class WebSecurityConfiguration extends AadWebSecurityConfigurerAdapter {
 
         @Override
