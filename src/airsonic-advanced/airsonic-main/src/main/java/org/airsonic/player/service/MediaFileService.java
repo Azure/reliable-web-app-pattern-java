@@ -20,6 +20,11 @@
 package org.airsonic.player.service;
 
 import com.google.common.io.MoreFiles;
+import io.github.resilience4j.retry.Retry;
+import io.github.resilience4j.retry.RetryConfig;
+import io.github.resilience4j.retry.RetryRegistry;
+import io.vavr.CheckedFunction0;
+import io.vavr.control.Try;
 import org.airsonic.player.ajax.MediaFileEntry;
 import org.airsonic.player.dao.AlbumDao;
 import org.airsonic.player.dao.MediaFileDao;
@@ -42,6 +47,8 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -81,7 +88,18 @@ public class MediaFileService {
     private CoverArtService coverArtService;
     @Autowired
     private LocaleResolver localeResolver;
+    @Autowired
+    private RetryRegistry retryRegistry;
+
     private boolean memoryCacheEnabled = true;
+
+    @PostConstruct
+    public void init() {
+        Retry retry = retryRegistry.retry("media");
+        RetryConfig config = retry.getRetryConfig();
+        LOG.info("Retry max attemps is {}", config.getMaxAttempts());
+        retry.getEventPublisher().onRetry(event -> LOG.info("****{}****", event));
+    }
 
     public MediaFile getMediaFile(String pathName) {
         return getMediaFile(Paths.get(pathName));
@@ -171,9 +189,17 @@ public class MediaFileService {
     }
 
     private MediaFile checkLastModified(MediaFile mediaFile, MusicFolder folder, boolean minimizeDiskAccess) {
+        Retry retry = retryRegistry.retry("media");
+        CheckedFunction0<MediaFile> supplier = () -> doCheckLastModified(mediaFile, folder, minimizeDiskAccess);
+        CheckedFunction0<MediaFile> retryableSupplier = Retry.decorateCheckedSupplier(retry, supplier);
+        Try<MediaFile> result = Try.of(retryableSupplier).recover((IOException) -> mediaFile);
+        return result.get();
+    }
+
+    private MediaFile doCheckLastModified(MediaFile mediaFile, MusicFolder folder, boolean minimizeDiskAccess) throws IOException {
         if (minimizeDiskAccess || (mediaFile.getVersion() >= MediaFileDao.VERSION
                 && !settingsService.getFullScan()
-                && mediaFile.getChanged().compareTo(FileUtil.lastModified(mediaFile.getFullPath(folder.getPath()))) > -1)) {
+                && mediaFile.getChanged().compareTo(Files.getLastModifiedTime(mediaFile.getFullPath(folder.getPath())).toInstant()) > -1)) {
             LOG.debug("Detected unmodified file (id {}, path {} in folder {} ({}))", mediaFile.getId(), mediaFile.getPath(), folder.getId(), folder.getName());
             return mediaFile;
         }
@@ -203,6 +229,7 @@ public class MediaFileService {
      * @param sort               Whether to sort files in the same directory.
      * @return All children media files.
      */
+    //@Retry(name = "media3")
     public List<MediaFile> getChildrenOf(MediaFile parent, boolean includeFiles, boolean includeDirectories, boolean sort, boolean minimizeDiskAccess) {
 
         if (!parent.isDirectory()) {
