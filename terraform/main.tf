@@ -110,11 +110,29 @@ module "key-vault" {
   airsonic_database_password        = random_password.airsonic_db_user_password.result
 }
 
+module "frontdoor" {
+  source           = "./modules/frontdoor"
+  resource_group   = azurerm_resource_group.main.name
+  application_name = var.application_name
+  environment      = local.environment
+  location         = var.location
+  host_name        = module.application.application_fqdn
+}
+
+data "http" "myip" {
+  url = "http://whatismyip.akamai.com"
+}
+
+locals {
+  myip = chomp(data.http.myip.body)
+}
+
 resource "azurerm_storage_account_network_rules" "airsonic-storage-network-rules" {
   storage_account_id = module.storage.storage_account_id
 
   default_action             = "Deny"
   virtual_network_subnet_ids = [module.network.app_subnet_id]
+  ip_rules                   = [local.myip]
 
   depends_on = [
     module.storage
