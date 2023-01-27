@@ -8,6 +8,11 @@ output "database_id" {
   description = "The id of the database"
 }
 
+output "database_server_name" {
+  value       = azurerm_postgresql_flexible_server.postresql_database.name
+  description = "The name of the database server"
+}
+
 output "database_fqdn" {
   value       = azurerm_postgresql_flexible_server.postresql_database.fqdn
   description = "The FQDN of the database"
