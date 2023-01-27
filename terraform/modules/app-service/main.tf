@@ -201,13 +201,12 @@ resource "azurerm_linux_web_app" "application" {
     DatabaseConfigEmbedUrl      = "jdbc:postgresql://${var.database_fqdn}:5432/${var.database_name}?stringtype=unspecified"
     DatabaseConfigEmbedUsername = var.database_username
     DatabaseConfigEmbedPassword = var.database_password
-    DatabaseUsertableQuote      = "\""
+
     APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.app_insights.connection_string
     APPLICATIONINSIGHTS_SAMPLING_REQUESTS_PER_SECOND = 10
     ApplicationInsightsAgent_EXTENSION_VERSION = "~3"
-    AAD_SECRET = azuread_application_password.application_password.value
-    AAD_CLIENTID = azuread_application.app_registration.application_id
-    AAD_TENANTID = data.azuread_client_config.current.tenant_id
+    
+    SPRING_CLOUD_AZURE_KEYVAULT_SECRET_PROPERTY_SOURCES_0_ENDPOINT=var.key_vault_uri
   }
 
   logs {
