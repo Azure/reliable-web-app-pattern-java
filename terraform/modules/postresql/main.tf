@@ -60,6 +60,13 @@ resource "azurerm_postgresql_flexible_server" "postresql_database" {
 
   storage_mb = 32768
 
+   authentication {
+    active_directory_auth_enabled  = true
+    password_auth_enabled          = true
+    
+    tenant_id = var.azure_ad_tenant_id
+  }
+
   tags = {
     "environment"      = var.environment
     "application-name" = var.application_name
