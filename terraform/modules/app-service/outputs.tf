@@ -51,8 +51,8 @@ output "application_client_secret" {
   description = "The client secret of the application"
 }
 
-#output "application_principal_id" {
-#  value       = azurerm_linux_web_app.application.identity[0].principal_id
-#  description = "The id of system assigned managed identity"
-#}
+output "application_principal_id" {
+  value       = azurerm_linux_web_app.application.identity[0].principal_id
+  description = "The id of system assigned managed identity"
+}
 

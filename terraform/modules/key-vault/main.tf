@@ -83,3 +83,21 @@ resource "azurerm_key_vault_secret" "airsonic_database_password" {
   value        = var.airsonic_database_password
   key_vault_id = azurerm_key_vault.application.id
 }
+
+resource "azurerm_key_vault_secret" "airsonic_application_client_id" {
+  name         = "airsonic-application-client-id"
+  value        = var.airsonic_application_client_id
+  key_vault_id = azurerm_key_vault.application.id
+}
+
+resource "azurerm_key_vault_secret" "airsonic_application_client_secret" {
+  name         = "airsonic-application-client-secret"
+  value        = var.airsonic_application_client_secret
+  key_vault_id = azurerm_key_vault.application.id
+}
+
+resource "azurerm_key_vault_secret" "airsonic_application_tenant_id" {
+  name         = "airsonic-application-tenant-id"
+  value        = var.azure_ad_tenant_id
+  key_vault_id = azurerm_key_vault.application.id
+}

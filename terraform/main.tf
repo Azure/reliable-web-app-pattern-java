@@ -2,7 +2,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "3.39.0"
+      version = "3.40.0"
     }
     azurecaf = {
       source  = "aztfmod/azurecaf"
@@ -61,6 +61,7 @@ module "storage" {
 
 module "postresql_database" {
   source             = "./modules/postresql"
+  azure_ad_tenant_id = data.azurerm_client_config.current.tenant_id
   resource_group     = azurerm_resource_group.main.name
   application_name   = var.application_name
   environment        = local.environment
@@ -77,10 +78,11 @@ module "application" {
   location         = var.location
   subnet_id        = module.network.app_subnet_id
 
+  database_id       = module.postresql_database.database_id
   database_fqdn     = module.postresql_database.database_fqdn
   database_name     = module.postresql_database.database_name
-  #database_username = "@Microsoft.KeyVault(SecretUri=${module.key-vault.vault_uri}secrets/database-username)"
-  #database_password = "@Microsoft.KeyVault(SecretUri=${module.key-vault.vault_uri}secrets/database-password)"
+
+  key_vault_uri     = module.key-vault.vault_uri
   database_username = module.postresql_database.database_username
   database_password = module.postresql_database.database_password
 
@@ -104,10 +106,25 @@ module "key-vault" {
   azure_ad_tenant_id = data.azurerm_client_config.current.tenant_id
   azure_ad_object_id = data.azurerm_client_config.current.object_id
 
-  airsonic_database_admin           = module.postresql_database.database_username
-  airsonic_database_admin_password  = module.postresql_database.database_password
-  airsonic_database_username        = "airsonic-user"
-  airsonic_database_password        = random_password.airsonic_db_user_password.result
+  airsonic_database_admin            = module.postresql_database.database_username
+  airsonic_database_admin_password   = module.postresql_database.database_password
+  airsonic_database_username         = "airsonic-user"
+  airsonic_database_password         = random_password.airsonic_db_user_password.result
+  airsonic_application_client_id     = module.application.application_registration_id
+  airsonic_application_client_secret = module.application.application_client_secret
+}
+
+data "azuread_user" "current_user" {
+  object_id = data.azurerm_client_config.current.object_id
+}
+
+resource "azurerm_postgresql_flexible_server_active_directory_administrator" "airsonic-ad-admin" {
+  server_name         = module.postresql_database.database_server_name
+  resource_group_name = azurerm_resource_group.main.name
+  tenant_id           = data.azurerm_client_config.current.tenant_id
+  object_id           = data.azuread_user.current_user.object_id
+  principal_name      = data.azuread_user.current_user.user_principal_name
+  principal_type      = "User"
 }
 
 resource "azurerm_storage_account_network_rules" "airsonic-storage-network-rules" {
@@ -121,12 +138,13 @@ resource "azurerm_storage_account_network_rules" "airsonic-storage-network-rules
   ]
 }
 
-#resource "azurerm_key_vault_access_policy" "application_access_policy" {
-#  key_vault_id = module.key-vault.vault_id
-#  tenant_id    = data.azurerm_client_config.current.tenant_id
-#  object_id    = module.application.application_principal_id
+resource "azurerm_key_vault_access_policy" "application_access_policy" {
+  key_vault_id = module.key-vault.vault_id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+  object_id    = module.application.application_principal_id
 
-#  secret_permissions = [
-#    "Get"
-#  ]
-#}
+  secret_permissions = [
+    "Get",
+    "List"
+  ]
+}
