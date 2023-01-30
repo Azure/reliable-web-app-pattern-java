@@ -63,3 +63,8 @@ variable "key_vault_uri" {
   type        = string
   description = "The uri of the key vault"
 }
+
+variable "frontdoor_host_name" {
+  type        = string
+  description = "The front door host name."
+}

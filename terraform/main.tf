@@ -2,7 +2,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "3.40.0"
+      version = "3.41.0"
     }
     azurecaf = {
       source  = "aztfmod/azurecaf"
@@ -88,6 +88,8 @@ module "application" {
 
   storage_account_name = module.storage.storage_account_name
   storage_account_primary_access_key = module.storage.storage_primary_access_key
+
+  frontdoor_host_name     = module.frontdoor.host_name
 }
 
 resource "random_password" "airsonic_db_user_password" {
@@ -127,11 +129,29 @@ resource "azurerm_postgresql_flexible_server_active_directory_administrator" "ai
   principal_type      = "User"
 }
 
+module "frontdoor" {
+  source           = "./modules/frontdoor"
+  resource_group   = azurerm_resource_group.main.name
+  application_name = var.application_name
+  environment      = local.environment
+  location         = var.location
+  host_name        = module.application.application_fqdn
+}
+
+data "http" "myip" {
+  url = "http://whatismyip.akamai.com"
+}
+
+locals {
+  myip = chomp(data.http.myip.body)
+}
+
 resource "azurerm_storage_account_network_rules" "airsonic-storage-network-rules" {
   storage_account_id = module.storage.storage_account_id
 
   default_action             = "Deny"
   virtual_network_subnet_ids = [module.network.app_subnet_id]
+  ip_rules                   = [local.myip]
 
   depends_on = [
     module.storage

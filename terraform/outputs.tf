@@ -3,6 +3,11 @@ output "application_url" {
   description = "The Web application URL."
 }
 
+output "frontdoor_url" {
+  value       = "https://${module.frontdoor.host_name}/index"
+  description = "The Web application Front Door URL."
+}
+
 output "resource_group" {
   value       = azurerm_resource_group.main.name
   description = "The resource group."

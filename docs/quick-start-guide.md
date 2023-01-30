@@ -91,7 +91,6 @@ mvn -Dmaven.test.skip=true -DskipTests clean package
 Now that we have a war file, we can deploy it to our Azure App Service.
 
 ```shell
-az login --use-device-code
 mvn com.microsoft.azure:azure-webapp-maven-plugin:2.8.0:deploy -pl airsonic-main
 ```
 
@@ -101,7 +100,11 @@ The next step is to add a user to the application and assign them a role. To do 
 
 ![Aisonic Azure Active Directory Enterprise Applications](assets/AAD-Enterprise-Application.png)
 
-After adding the user, open the browser and navigate to https://{AIRSONIC_SITE}/index. *Don't forget to add the /index at the end".
+After adding the user, open the browser and navigate to https://{AIRSONIC_SITE}/index. Use the following command to get the site name.
+
+```shell
+terraform -chdir=$PROJECT_ROOT/terraform output -raw frontdoor_url
+```
 
 ![Aisonic AAD](assets/airsonic-aad.png)
 
