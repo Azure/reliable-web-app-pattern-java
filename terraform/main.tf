@@ -88,6 +88,8 @@ module "application" {
 
   storage_account_name = module.storage.storage_account_name
   storage_account_primary_access_key = module.storage.storage_primary_access_key
+
+  frontdoor_host_name     = module.frontdoor.host_name
 }
 
 resource "random_password" "airsonic_db_user_password" {
