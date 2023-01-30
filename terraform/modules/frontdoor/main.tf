@@ -22,7 +22,7 @@ resource "azurerm_cdn_frontdoor_profile" "my_front_door" {
 resource "azurecaf_name" "cdn_frontdoor_endpoint_name" {
   name          = var.application_name
   resource_type = "azurerm_frontdoor"
-  suffixes      = ["endpoint", var.environment]
+  suffixes      = [var.environment]
 }
 
 resource "azurerm_cdn_frontdoor_endpoint" "my_endpoint" {
@@ -93,3 +93,40 @@ resource "azurerm_cdn_frontdoor_route" "my_route" {
   https_redirect_enabled = true
 }
 
+resource "azurecaf_name" "front_door_firewall_policy_name" {
+  name          = var.application_name
+  resource_type = "azurerm_frontdoor_firewall_policy"
+  suffixes      = [var.environment]
+}
+
+resource "azurerm_cdn_frontdoor_firewall_policy" "my_firewall_policy" {
+  name                              = azurecaf_name.front_door_firewall_policy_name.result
+  resource_group_name               = var.resource_group
+  sku_name                          = azurerm_cdn_frontdoor_profile.my_front_door.sku_name
+  enabled                           = true
+  mode                              = "Prevention"
+}
+
+resource "azurecaf_name" "front_door_security_policy_name" {
+  name          = var.application_name
+  resource_type = "azurerm_frontdoor"
+  suffixes      = ["security", "policy", var.environment]
+}
+
+resource "azurerm_cdn_frontdoor_security_policy" "example" {
+  name                     = azurecaf_name.front_door_security_policy_name.result
+  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.my_front_door.id
+
+  security_policies {
+    firewall {
+      cdn_frontdoor_firewall_policy_id = azurerm_cdn_frontdoor_firewall_policy.my_firewall_policy.id
+
+      association {
+        domain {
+          cdn_frontdoor_domain_id = azurerm_cdn_frontdoor_endpoint.my_endpoint.id
+        }
+        patterns_to_match = ["/*"]
+      }
+    }
+  }
+}
