@@ -39,16 +39,6 @@ variable "airsonic_database_admin_password" {
   description = "The airsonic admin database password"
 }
 
-variable "airsonic_database_username" {
-  type        = string
-  description = "The airsonic admin database username"
-}
-
-variable "airsonic_database_password" {
-  type        = string
-  description = "The airsonic admin database password"
-}
-
 variable "airsonic_application_client_id" {
   type        = string
   description = "The client id of the application"

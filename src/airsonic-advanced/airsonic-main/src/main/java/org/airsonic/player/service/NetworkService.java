@@ -86,17 +86,7 @@ public class NetworkService {
             }
 
             if (!isValidXForwardedHost(xForwardedHost)) {
-                xForwardedHost = request.getHeader(X_FORWARDED_FOR);
-
-                // If the request has been through multiple reverse proxies,
-                // We need to return the original Host that the client used
-                if (xForwardedHost != null) {
-                    xForwardedHost = xForwardedHost.split(",")[0];
-                }
-
-                if (!isValidXForwardedHost(xForwardedHost)) {
-                    throw new RuntimeException("Cannot calculate proxy uri without HTTP headers: " + X_FORWARDED_HOST + ", " + X_FORWARDED_SERVER + ", " + X_FORWARDED_FOR);
-                }
+                throw new RuntimeException("Cannot calculate proxy uri without HTTP headers: " + X_FORWARDED_HOST + ", " + X_FORWARDED_SERVER);
             }
         }
 
