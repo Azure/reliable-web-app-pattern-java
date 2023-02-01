@@ -57,26 +57,11 @@ terraform -chdir=./terraform init
 terraform -chdir=./terraform plan -var application_name=${APP_NAME} -out airsonic.tfplan
 terraform -chdir=./terraform apply airsonic.tfplan
 ```
-## Azure Active Directory
-
-Set Application ID URI.
-
-```shell
-source ./scripts/setup-application-uir.sh
-```
 
 ## Set up Your Local Build Environment
 
 ```shell
 source ./scripts/setup-local-build-env.sh
-```
-
-## Upgrade to Auth version 2
-
-Due to the following [issue](https://github.com/hashicorp/terraform-provider-azurerm/issues/12928), We have to manually upgrade the auth settings to version 2.
-
-```shell
-az webapp auth config-version upgrade --name ${application_name} --resource-group ${application_resource_group}
 ```
 
 ## Package and Deploy Airsonic
@@ -91,6 +76,7 @@ mvn -Dmaven.test.skip=true -DskipTests clean package
 Now that we have a war file, we can deploy it to our Azure App Service.
 
 ```shell
+az login --use-device-code
 mvn com.microsoft.azure:azure-webapp-maven-plugin:2.8.0:deploy -pl airsonic-main
 ```
 
