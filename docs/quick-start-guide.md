@@ -102,6 +102,4 @@ terraform -chdir=$PROJECT_ROOT/terraform output -raw frontdoor_url
 
 ## Teardown
 
-```shell
-terraform -chdir=./terraform destroy -var application_name=${APP_NAME}
-```
+TODO
