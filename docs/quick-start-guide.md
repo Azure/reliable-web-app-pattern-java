@@ -48,6 +48,12 @@ az login --scope https://graph.microsoft.com//.default
 az account set --subscription ${SUBSCRIPTION}
 ```
 
+## Allow installing AZ CLI extensions without prompt
+
+```shell
+az config set extension.use_dynamic_install=yes_without_prompt
+```
+
 ## Deploy Azure Infrastructure
 
 Create the Azure resources by running the following commands:
