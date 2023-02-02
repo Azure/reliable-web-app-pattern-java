@@ -83,19 +83,14 @@ module "application" {
   database_name     = module.postresql_database.database_name
 
   key_vault_uri     = module.key-vault.vault_uri
-  database_username = module.postresql_database.database_username
-  database_password = module.postresql_database.database_password
+
+  database_username = "@Microsoft.KeyVault(SecretUri=${module.key-vault.vault_uri}secrets/${module.key-vault.airsonic_database_admin_secret_name})"
+  database_password = "@Microsoft.KeyVault(SecretUri=${module.key-vault.vault_uri}secrets/${module.key-vault.airsonic_database_admin_password_secret_name})"
 
   storage_account_name = module.storage.storage_account_name
   storage_account_primary_access_key = module.storage.storage_primary_access_key
 
   frontdoor_host_name     = module.frontdoor.host_name
-}
-
-resource "random_password" "airsonic_db_user_password" {
-  length           = 32
-  special          = true
-  override_special = "_%@"
 }
 
 module "key-vault" {
@@ -110,8 +105,6 @@ module "key-vault" {
 
   airsonic_database_admin            = module.postresql_database.database_username
   airsonic_database_admin_password   = module.postresql_database.database_password
-  airsonic_database_username         = "airsonic-user"
-  airsonic_database_password         = random_password.airsonic_db_user_password.result
   airsonic_application_client_id     = module.application.application_registration_id
   airsonic_application_client_secret = module.application.application_client_secret
 }
@@ -167,4 +160,46 @@ resource "azurerm_key_vault_access_policy" "application_access_policy" {
     "Get",
     "List"
   ]
+}
+
+# Set Azure AD Application ID URI.
+resource "null_resource" "setup-application-uri" {
+  depends_on = [
+    module.application
+  ]
+
+  provisioner "local-exec" {
+    command = "az ad app update --id ${module.application.application_registration_id} --identifier-uris api://${module.application.application_registration_id}"
+  }
+}
+
+#Due to the following [issue](https://github.com/hashicorp/terraform-provider-azurerm/issues/12928), We have to manually upgrade the auth settings to version 2.
+resource "null_resource" "upgrade_auth_v2" {
+  depends_on = [
+    module.application
+  ]
+
+  provisioner "local-exec" {
+    command = "az webapp auth config-version upgrade --name ${module.application.application_name} --resource-group ${azurerm_resource_group.main.name}"
+  }
+}
+
+resource "null_resource" "app_service_startup_script" {
+  depends_on = [
+    module.application
+  ]
+
+  provisioner "local-exec" {
+    command = "az webapp deploy --name ${module.application.application_name} --resource-group ${azurerm_resource_group.main.name} --src-path scripts/startup.sh --type=startup"
+  }
+}
+
+resource "null_resource" "app_service_startup_command" {
+  depends_on = [
+    module.application
+  ]
+
+  provisioner "local-exec" {
+    command = "az webapp config set --name ${module.application.application_name} --resource-group ${azurerm_resource_group.main.name} --startup-file /home/site/scripts/startup.sh"
+  }
 }
