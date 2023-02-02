@@ -179,9 +179,9 @@ public class SettingsService {
     private static final String DEFAULT_COVER_ART_SOURCE = CoverArtSource.FILETAG.name();
     private static final int DEFAULT_COVER_ART_CONCURRENCY = 4;
     private static final int DEFAULT_COVER_ART_QUALITY = 90;
-    private static final String DEFAULT_WELCOME_TITLE = "Welcome to Airsonic!";
+    private static final String DEFAULT_WELCOME_TITLE = "Welcome to Proseware, Inc. Trainings!";
     private static final String DEFAULT_WELCOME_SUBTITLE = null;
-    private static final String DEFAULT_WELCOME_MESSAGE = "__Welcome to Airsonic!__\n" +
+    private static final String DEFAULT_WELCOME_MESSAGE = "__Welcome to Proseware, Inc. Trainings, powered by Airsonic!__\n" +
             "\\\\ \\\\\n" +
             "Airsonic is a free, web-based media streamer, providing ubiquitous access to your music. \n" +
             "\\\\ \\\\\n" +
