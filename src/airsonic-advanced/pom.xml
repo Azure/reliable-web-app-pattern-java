@@ -37,6 +37,13 @@
             <url>file://${project.basedir}/../repo</url>
         </repository>
         <repository>
+            <id>maven-repo</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
             <id>4thline-repo</id>
             <url>http://4thline.org/m2</url>
             <snapshots>
