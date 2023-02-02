@@ -1,6 +1,11 @@
 {
     "name": "reliable-java-web-app",
-    "image": "mcr.microsoft.com/devcontainers/base:jammy",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "args": {
+            "VARIANT": "jammy"
+        }
+    },
 
 	"remoteUser": "vscode",
 	"containerEnv": {
@@ -9,6 +14,7 @@
 	
     "features": {
 		"azure-cli": "latest",
+		"docker-from-docker": "latest",
 		"ghcr.io/devcontainers/features/java:1": {
 			"version": "11",
 			"installMaven": true

@@ -39,7 +39,7 @@
 </c:if>
 
 <p>
-    <c:forTokens items="random newest starred highest frequent recent decade genre alphabetical" delims=" " var="cat" varStatus="loopStatus">
+    <c:forTokens items="newest starred highest recent alphabetical" delims=" " var="cat" varStatus="loopStatus">
         <c:if test="${loopStatus.count > 1}">&nbsp;|&nbsp;</c:if>
         <sub:url var="url" value="home.view">
             <sub:param name="listType" value="${cat}"/>
