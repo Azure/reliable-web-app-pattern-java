@@ -64,6 +64,12 @@ terraform -chdir=./terraform plan -var application_name=${APP_NAME} -out airsoni
 terraform -chdir=./terraform apply airsonic.tfplan
 ```
 
+## Upload Training Videos and Playlists
+
+```shell
+./scripts/upload-trainings.sh
+```
+
 ## Set up Your Local Build Environment
 
 ```shell
@@ -82,8 +88,7 @@ mvn -Dmaven.test.skip=true -DskipTests clean package
 Now that we have a war file, we can deploy it to our Azure App Service.
 
 ```shell
-az login --use-device-code
-mvn com.microsoft.azure:azure-webapp-maven-plugin:2.8.0:deploy -pl airsonic-main
+mvn com.microsoft.azure:azure-webapp-maven-plugin:2.6.1:deploy -pl airsonic-main
 ```
 
 ## Add Users To Azure Active Directory Enterprise Applications

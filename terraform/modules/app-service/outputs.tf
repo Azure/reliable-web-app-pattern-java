@@ -56,3 +56,8 @@ output "application_principal_id" {
   description = "The id of system assigned managed identity"
 }
 
+output "application_share_name" {
+  value       = azurerm_storage_share.sashare.name
+  description = "The storage share name used for playlists and training videos"
+}
+
