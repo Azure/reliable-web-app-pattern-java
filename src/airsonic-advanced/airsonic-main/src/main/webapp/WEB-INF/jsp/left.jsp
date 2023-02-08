@@ -122,11 +122,13 @@
     </div>
 </c:if>
 
+<c:if test="false">
 <div style="margin-bottom:0.5em;padding-left: 2px" class="bgcolor1">
     <c:forEach items="${model.indexes}" var="index">
         <a href="#${index.index}" accesskey="${index.index}">${index.index}</a>
     </c:forEach>
 </div>
+</c:if>
 
 <div style="padding-bottom:0.5em">
     <div class="forward">
@@ -227,6 +229,7 @@
     </p>
 </c:forEach>
 
+<c:if test="false">
 <c:if test="${model.statistics.songCount gt 0}">
     <div class="detail" style="padding-top: 0.6em; padding-left: 2px">
         <fmt:message key="left.statistics">
@@ -237,6 +240,7 @@
             <fmt:param value="${model.hours}"/>
         </fmt:message>
     </div>
+</c:if>
 </c:if>
 
 <div style="height:5em"></div>
