@@ -30,7 +30,12 @@ output "storage_module_storage_account_name" {
   value = module.storage.storage_account_name
 }
 
-#output "storage_module_storage_dns_a_record" {
-#  value = module.storage.storage_dns_a_record
-#}
+output "storage_module_storage_primary_access_key" {
+  value = module.storage.storage_primary_access_key
+  sensitive = true
+}
 
+output "application_storage_share_name" {
+  value       = module.application.application_share_name
+  description = "The storage share name used for playlists and training videos"
+}
