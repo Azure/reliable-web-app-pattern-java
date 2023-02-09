@@ -163,3 +163,6 @@ local.properties
 *.terraform.lock.hcl
 .terraform/
 *.tfplan
+
+# VSCode
+.vscode/
