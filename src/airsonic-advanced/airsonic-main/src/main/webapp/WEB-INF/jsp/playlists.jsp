@@ -66,7 +66,7 @@
                   searchable: false,
                   name: "play",
                   className: "fit not-draggable centeralign",
-                  defaultContent: "<img class='playSong' src=\"<spring:theme code='playImage'/>\" style='height:18px;' alt=\"<fmt:message key='common.play'/>\" title=\"<fmt:message key='common.play'/>\">"
+                  defaultContent: ""
                 },
                 { data: null,
                   searchable: false,

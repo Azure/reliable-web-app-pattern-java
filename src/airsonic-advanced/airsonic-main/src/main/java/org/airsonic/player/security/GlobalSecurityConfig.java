@@ -186,7 +186,7 @@ public class GlobalSecurityConfig {
                     .hasAnyAuthority("APPROLE_Admin", "APPROLE_Creator", "APPROLE_User")
                     .antMatchers("/generalSettings*", "/advancedSettings*", "/userSettings*",
                             "/musicFolderSettings*", "/databaseSettings*", "/transcodeSettings*", "/rest/startScan*")
-                    .hasAnyAuthority("APPROLE_Admin")
+                    .hasAnyAuthority("APPROLE_Admin", "APPROLE_Creator")
                     .antMatchers("/deletePlaylist*", "/savePlaylist*")
                     .hasAnyAuthority("APPROLE_Admin", "APPROLE_Creator")
                     .antMatchers("/download*")
