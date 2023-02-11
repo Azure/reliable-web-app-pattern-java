@@ -1226,6 +1226,7 @@
 
 <table class="music indent hover nowrap stripe compact <c:if test='${!model.visibility.headerVisible}'>hide-table-header</c:if>" id="playQueueMusic" style="cursor:pointer; width: 100%;"></table>
 
+<!-- Proseware
 <div class="bgcolor2 playqueue-controlbar">
   <c:if test="${model.user.settingsRole and model.players.size() > 1}">
     <div style="padding-right: 5px">
@@ -1355,6 +1356,7 @@
   </c:if>
 
 </div>
+-->
 
 <div id="dialog-select-playlist" title="<fmt:message key='playlist.append'/>" style="display: none;">
     <p><fmt:message key="main.addtoplaylist.text"/></p>

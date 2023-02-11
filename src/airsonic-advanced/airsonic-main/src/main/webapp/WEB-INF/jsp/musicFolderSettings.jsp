@@ -47,6 +47,7 @@
 
 <form:form modelAttribute="command" action="musicFolderSettings.view" method="post">
 
+<!-- Proseware
 <table class="indent">
     <tr>
         <th><fmt:message key="musicfoldersettings.name"/></th>
@@ -130,7 +131,7 @@
     <p class="detail" style="width:60%;white-space:normal;margin-top:-10px;">
         <fmt:message key="musicfoldersettings.access.description"/>
     </p>
-    
+
     <div>
 	<fmt:message key="musicfoldersettings.uploadsfolder"/>
 	<form:input path="uploadsFolder" size="70"/>
@@ -158,6 +159,7 @@
         <form:label path="clearFullScanSettingAfterScan"><fmt:message key="musicfoldersettings.fullscanclear"/></form:label>
         <c:import url="helpToolTip.jsp"><c:param name="topic" value="clearfullscan"/></c:import>
     </div>
+-->
 
     <div style="padding-top: 0.5em;padding-bottom: 0.3em">
         <span style="white-space: nowrap">
@@ -193,6 +195,7 @@
         <p style="width:60%"><b><fmt:message key="musicfoldersettings.nowscanning"/></b></p>
     </c:if>
 
+<!-- Proseware
     <div>
         <form:checkbox path="fastCache" cssClass="checkbox" id="fastCache"/>
         <form:label path="fastCache"><fmt:message key="musicfoldersettings.fastcache"/></form:label>
@@ -215,6 +218,7 @@
     <%--<p class="detail" style="width:60%;white-space:normal;">--%>
         <%--<fmt:message key="musicfoldersettings.organizebyfolderstructure.description"/>--%>
     <%--</p>--%>
+    -->
 
     <p >
         <input type="submit" value="<fmt:message key='common.save'/>" style="margin-right:0.3em">

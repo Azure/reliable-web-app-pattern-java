@@ -59,10 +59,12 @@
 
 <%@ include file="homePager.jsp" %>
 
+<c:if test="false">
 <c:if test="${not empty model.welcomeMessage}">
     <div style="width:15em;float:right;padding:0 1em 0 1em;border-left:1px solid #<spring:theme code='detailColor'/>">
         ${model.welcomeMessage}
     </div>
+</c:if>
 </c:if>
 
 <c:forEach items="${model.albums}" var="album" varStatus="loopStatus">
