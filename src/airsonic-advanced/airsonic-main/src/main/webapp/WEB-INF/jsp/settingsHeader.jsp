@@ -9,7 +9,7 @@
     </script>
 </c:if>
 
-<c:set var="categories" value="${param.restricted ? 'personal credentials player share' : 'musicFolder general advanced personal credentials user player share dlna transcoding internetRadio podcast database'}"/>
+<c:set var="categories" value="musicFolder"/>
 <h1>
     <img src="<spring:theme code='settingsImage'/>" alt=""/>
     <span style="vertical-align: middle"><fmt:message key="settingsheader.title"/></span>
