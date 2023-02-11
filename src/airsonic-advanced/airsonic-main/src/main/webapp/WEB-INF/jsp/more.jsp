@@ -128,6 +128,7 @@
     <span style="vertical-align: middle"><fmt:message key="more.title"/></span>
 </h1>
 
+<c:if test="false">
 <c:if test="${model.user.streamRole}">
     <h2>
         <img src="<spring:theme code='shuffleImage'/>" alt=""/>
@@ -265,9 +266,11 @@
         </table>
     </form>
 </c:if>
+</c:if>
 
 <a href="https://airsonic.github.io/docs/apps/" target="_blank" rel="noopener noreferrer"><img alt="Apps" src="<c:url value='/icons/default_light/apps.png'/>" style="float: right;margin-left: 3em; margin-right: 3em"/></a>
 
+<!-- Proseware
 <h2>
     <img src="<spring:theme code='androidImage'/>" alt=""/>
     <span style="vertical-align: middle"><fmt:message key="more.apps.title"/></span>
@@ -286,6 +289,7 @@
     <span style="vertical-align: middle"><fmt:message key="more.podcast.title"/></span>
 </h2>
 <fmt:message key="more.podcast.text"/>
+-->
 
 <c:if test="${model.user.uploadRole}">
 
@@ -299,11 +303,11 @@
             <tr>
                 <td><fmt:message key="more.upload.source"/></td>
                 <td colspan="2"><input type="file" id="file" name="file" size="40" multiple="multiple"/></td>
+                <td><input type="submit" value="<fmt:message key='more.upload.ok'/>"/></td>
             </tr>
-            <tr>
+            <tr hidden="true">
                 <td><fmt:message key="more.upload.target"/></td>
                 <td><input type="text" id="dir" name="dir" size="37" value="${model.uploadDirectory}"/></td>
-                <td><input type="submit" value="<fmt:message key='more.upload.ok'/>"/></td>
             </tr>
             <tr>
                 <td colspan="2">
@@ -318,6 +322,7 @@
 
 </c:if>
 
+<!-- Proseware
 <a name="shortcuts"></a>
 <h2>
     <img src="<spring:theme code='keyboardImage'/>" alt=""/>
@@ -371,5 +376,6 @@
         <td></td><td></td>
     </tr>
 </table>
+-->
 
 </body></html>

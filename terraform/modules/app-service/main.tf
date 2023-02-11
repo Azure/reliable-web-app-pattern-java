@@ -193,16 +193,7 @@ resource "azurerm_linux_web_app" "application" {
     account_name = var.storage_account_name
     access_key = var.storage_account_primary_access_key
     share_name = azurerm_storage_share.sashare.name 
-    mount_path = "/var/music"
-  }
-
-  storage_account {
-    name = "playlist_content"
-    type = "AzureFiles"
-    account_name = var.storage_account_name
-    access_key = var.storage_account_primary_access_key
-    share_name = azurerm_storage_share.sashare.name 
-    mount_path = "/var/playlists"
+    mount_path = "/var/proseware"
   }
 
   # https://airsonic.github.io/docs/database/#postgresql

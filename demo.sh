@@ -44,13 +44,15 @@ pe "terraform -chdir=./terraform apply airsonic.tfplan"
 p ">>> Set Up Your Local Build Environment <<<"
 pe "source ./scripts/setup-local-build-env.sh"
 
+p ">>> Upload Training Videos and Playlists <<<"
+pe "./scripts/upload-trainings.sh"
+
 p ">>> Build and package <<<"
 pe "cd src/airsonic-advanced"
 pe "mvn -Dmaven.test.skip=true -DskipTests package"
 
 p ">>> Deploy Airsonic to Azure App Service <<<"
-pe "az login --use-device-code"
-pe "mvn com.microsoft.azure:azure-webapp-maven-plugin:2.8.0:deploy -pl airsonic-main"
+pe "mvn com.microsoft.azure:azure-webapp-maven-plugin:2.6.1:deploy -pl airsonic-main"
 
 p ">>> Get the Frontdoor URL <<<"
-pe "terraform -chdir=$PROJECT_ROOT/terraform output -raw frontdoor_url"
+pe "echo $(terraform -chdir=$PROJECT_ROOT/terraform output -raw frontdoor_url)"

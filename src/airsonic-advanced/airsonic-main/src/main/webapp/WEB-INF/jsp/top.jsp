@@ -141,40 +141,52 @@
             <a href="home.view?" target="main"><img src="<spring:theme code='homeImage'/>" title="${home}" alt="${home}"></a>
             <div class="topHeader"><a href="home.view?" target="main">${home}</a></div>
         </td>
+        <c:if test="false">
         <td style="min-width:3em;padding-right:1em;text-align: center">
             <a href="nowPlaying.view?" target="main"><img src="<spring:theme code='nowPlayingImage'/>" title="${nowPlaying}" alt="${nowPlaying}"></a>
             <div class="topHeader"><a href="nowPlaying.view?" target="main">${nowPlaying}</a></div>
         </td>
+        </c:if>
         <td style="min-width:3em;padding-right:1em;text-align: center">
             <a href="starred.view?" target="main"><img src="<spring:theme code='starredImage'/>" title="${starred}" alt="${starred}"></a>
             <div class="topHeader"><a href="starred.view?" target="main">${starred}</a></div>
         </td>
+        <c:if test="${model.user.settingsRole}">
         <td style="min-width:3em;padding-right:1em;text-align: center">
             <a href="playlists.view?" target="main"><img src="<spring:theme code='playlistImage'/>" title="${playlists}" alt="${playlists}"></a>
             <div class="topHeader"><a href="playlists.view?" target="main">${playlists}</a></div>
         </td>
+        </c:if>
+        <!-- Proseware
         <td style="min-width:4em;padding-right:1em;text-align: center">
             <a href="bookmarks.view?" target="main"><img src="<spring:theme code='bookmarkImage'/>" title="${bookmarks}" alt="${bookmarks}"></a>
             <div class="topHeader"><a href="bookmarks.view?" target="main">${bookmarks}</a></div>
         </td>
+        -->
         <c:if test="${model.user.settingsRole}">
             <td style="min-width:3em;padding-right:1em;text-align: center">
                 <a href="settings.view?" target="main"><img src="<spring:theme code='settingsImage'/>" title="${settings}" alt="${settings}"></a>
                 <div class="topHeader"><a href="settings.view?" target="main">${settings}</a></div>
             </td>
         </c:if>
+        <c:if test="${model.user.settingsRole}">
         <td style="min-width:3em;padding-right:1em;text-align: center">
             <a href="status.view?" target="main"><img src="<spring:theme code='statusImage'/>" title="${status}" alt="${status}"></a>
             <div class="topHeader"><a href="status.view?" target="main">${status}</a></div>
         </td>
+        </c:if>
+        <c:if test="${model.user.settingsRole}">
         <td style="min-width:3em;padding-right:1em;text-align: center">
             <a href="more.view?" target="main"><img src="<spring:theme code='moreImage'/>" title="${more}" alt="${more}"></a>
             <div class="topHeader"><a href="more.view?" target="main">${more}</a></div>
         </td>
+        </c:if>
+        <!-- Proseware
         <td style="min-width:3em;padding-right:1em;text-align: center">
             <a href="help.view?" target="main"><img src="<spring:theme code='helpImage'/>" title="${help}" alt="${help}"></a>
             <div class="topHeader"><a href="help.view?" target="main">${help}</a></div>
         </td>
+        -->
 
         <td style="padding-left:1em">
             <form method="post" action="search.view" target="main" name="searchForm">
@@ -215,6 +227,7 @@
             </div>
         </td>
 
+        <c:if test="false">
         <td style="padding-left:15pt;padding-right:5pt;vertical-align: right;width: 100%;text-align: center">
             <a id="connectionStatus" href="javascript:void(0)" onclick="toggleConnectionStatus();">
                 <img src="<spring:theme code='disconnectedImage'/>" alt="connect" height="24">
@@ -232,6 +245,7 @@
                 </div>
             </a>
         </td>
+        </c:if>
 
     </tr></table>
     <form id="logoutForm" action="<c:url value='/logout'/>"  method="POST" style="display:none">
