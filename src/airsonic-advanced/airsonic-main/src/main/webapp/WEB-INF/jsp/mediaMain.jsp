@@ -790,7 +790,7 @@
         var ancestors = $("#ancestors").empty();
         for (var len = mediaDir.ancestors.length, i = len - 1; i >= 0; i--) {
             var ancestor = mediaDir.ancestors[i];
-            ancestors.append($("<a>").attr("href", "#").attr("onclick", "getMediaDirectory(" + ancestor.id + ")").text(ancestor.title));
+            ancestors.append($("<a>").attr("href", "#").attr("onclick", "getMediaDirectory(" + ancestor.id + ")").text("Trainings"));
             ancestors.append(" » ");
         }
         ancestors.append(mediaDir.title);
@@ -1144,6 +1144,7 @@
 <table id="filesTable" class="music indent hover nowrap stripe compact <c:if test='${!model.visibility.headerVisible}'>hide-table-header</c:if>" style="width: 100%;">
 </table>
 
+<c:if test="${model.user.shareRole}">
 <select id="moreActions" class="pagetype-dependent type-album type-video" onchange="actionSelected(this.options[selectedIndex].id);" style="margin-bottom:1.0em">
     <option id="top" selected="selected"><fmt:message key="main.more.selection"/></option>
     <option id="selectAll">&nbsp;&nbsp;<fmt:message key="playlist.more.selectall"/></option>
@@ -1158,6 +1159,7 @@
     <option id="star">&nbsp;&nbsp;<fmt:message key="playlist.more.star"/></option>
     <option id="unstar">&nbsp;&nbsp;<fmt:message key="playlist.more.unstar"/></option>
 </select>
+</c:if>
 
 <div class="tableSpacer"></div>
 
