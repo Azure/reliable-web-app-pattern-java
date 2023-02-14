@@ -1,10 +1,23 @@
 resilience4j.retry:
+    retryAspectOrder: 2
     instances:
-        media:
-            maxRetryAttempts: 8
-            waitDuration: 10s
+        default:
+            maxRetryAttempts: 3
+            waitDuration: 2s
             enableExponentialBackoff: true
             exponentialBackoffMultiplier: 2
             retryExceptions:
                 - java.nio.file.FileSystemException
                 - java.io.IOException
+resilience4j.circuitbreaker:
+    circuitBreakerAspectOrder: 1
+    instances:
+        default:
+            registerHealthIndicator: true
+            slidingWindowSize: 10
+            permittedNumberOfCallsInHalfOpenState: 3
+            slidingWindowType: TIME_BASED
+            minimumNumberOfCalls: 3
+            waitDurationInOpenState: 60s
+            failureRateThreshold: 50
+            eventConsumerBufferSize: 10
