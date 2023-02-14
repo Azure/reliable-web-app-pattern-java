@@ -39,8 +39,14 @@ resource "azurerm_application_insights" "app_insights" {
   workspace_id        = azurerm_log_analytics_workspace.app_workspace.id
 }
 
-resource "azurerm_storage_share" "sashare" {
+resource "azurerm_storage_share" "sashare_trainings" {
   name                 = "trainings"
+  storage_account_name = var.storage_account_name
+  quota                = 50
+}
+
+resource "azurerm_storage_share" "sashare_playlist" {
+  name                 = "playlist"
   storage_account_name = var.storage_account_name
   quota                = 50
 }
@@ -192,8 +198,17 @@ resource "azurerm_linux_web_app" "application" {
     type = "AzureFiles"
     account_name = var.storage_account_name
     access_key = var.storage_account_primary_access_key
-    share_name = azurerm_storage_share.sashare.name 
+    share_name = azurerm_storage_share.sashare_trainings.name 
     mount_path = "/var/proseware"
+  }
+
+  storage_account {
+    name = "playlist_content"
+    type = "AzureFiles"
+    account_name = var.storage_account_name
+    access_key = var.storage_account_primary_access_key
+    share_name = azurerm_storage_share.sashare_playlist.name 
+    mount_path = "/var/playlists"
   }
 
   # https://airsonic.github.io/docs/database/#postgresql

@@ -190,7 +190,7 @@ public class MediaFileService {
 
     private MediaFile checkLastModified(MediaFile mediaFile, MusicFolder folder, boolean minimizeDiskAccess) {
         Retry retry = retryRegistry.retry("media");
-        CheckedFunction0<MediaFile> supplier = () -> doCheckLastModified(mediaFile, folder, minimizeDiskAccess);
+        CheckedFunction0<MediaFile> supplier = () -> doCheckLastModified(mediaFile, folder, false);
         CheckedFunction0<MediaFile> retryableSupplier = Retry.decorateCheckedSupplier(retry, supplier);
         Try<MediaFile> result = Try.of(retryableSupplier).recover((IOException) -> mediaFile);
         return result.get();
