@@ -284,7 +284,7 @@
                 onStar(playlistMusicTable.row( $(this).parents('tr') ).index());
             } );
             $("#playlistMusic tbody").on( "click", ".playSong", function () {
-                onPlay(playlistMusicTable.row( $(this).parents('tr') ).index());
+                onPlay(playlistMusicTable.row( $(this).parents('tr') ));
             } );
             $("#playlistMusic tbody").on( "click", ".addSongLast", function () {
                 onAdd(playlistMusicTable.row( $(this).parents('tr') ).index());
@@ -397,8 +397,15 @@
             playlistMusicTable.ajax.reload().columns.adjust();
         }
 
-        function onPlay(index) {
-            top.playQueue.onPlayPlaylist(playlistId, index);
+        function onPlay(row) {
+            var data = row.data();
+            if (data.entryType == 'VIDEO') {
+                var urlBase = "<c:url value='/videoPlayer.view'/>";
+                var url = urlBase + "?id=" + playlistId;
+                top.main.location = url;
+            } else {
+                top.playQueue.onPlay(data.id);
+            }
         }
         function onPlayAll() {
             top.playQueue.onPlayPlaylist(playlistId);
@@ -489,6 +496,8 @@
 </div>
 
 <h1><a href="playlists.view"><fmt:message key="left.playlists"/></a> &raquo; <span id="name"></span></h1>
+
+<!-- Proseware
 <h2>
     <span class="header"><a href="javascript:void(0)" onclick="onPlayAll();"><fmt:message key="common.play"/></a></span>
         | <span class="header"><a href="javascript:void(0)" onclick="onAddAll();"><fmt:message key="main.addall"/></a></span>
@@ -527,6 +536,7 @@
 <div class="detail" style="padding-top:0.2em">
     <span id="shared"></span>.
 </div>
+-->
 
 <div style="height:0.7em;clear:both"></div>
 
