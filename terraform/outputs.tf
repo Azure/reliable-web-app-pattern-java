@@ -35,7 +35,12 @@ output "storage_module_storage_primary_access_key" {
   sensitive = true
 }
 
-output "application_storage_share_name" {
-  value       = module.application.application_share_name
-  description = "The storage share name used for playlists and training videos"
+output "application_playlist_share_name" {
+  value       = module.application.application_playlist_share_name
+  description = "The storage share name used for playlists"
+}
+
+output "application_video_share_name" {
+  value       = module.application.application_video_share_name
+  description = "The storage share name used for training videos"
 }

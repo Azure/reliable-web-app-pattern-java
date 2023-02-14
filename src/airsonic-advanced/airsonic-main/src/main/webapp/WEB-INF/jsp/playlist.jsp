@@ -497,8 +497,9 @@
 
 <h1><a href="playlists.view"><fmt:message key="left.playlists"/></a> &raquo; <span id="name"></span></h1>
 
-<!-- Proseware
+
 <h2>
+<!-- Proseware
     <span class="header"><a href="javascript:void(0)" onclick="onPlayAll();"><fmt:message key="common.play"/></a></span>
         | <span class="header"><a href="javascript:void(0)" onclick="onAddAll();"><fmt:message key="main.addall"/></a></span>
     <c:if test="${model.user.downloadRole}">
@@ -509,15 +510,18 @@
         <c:url value="createShare.view" var="shareUrl"><c:param name="playlist" value="${model.playlist.id}"/></c:url>
         | <span class="header"><a href="${shareUrl}"><fmt:message key="share.title"/></a></span>
     </c:if>
+-->
     <c:if test="${model.editAllowed}">
         | <span class="header"><a href="javascript:void(0)" onclick="onEditPlaylist();"><fmt:message key="common.edit"/></a></span>
         | <span class="header"><a href="javascript:void(0)" onclick="onDeletePlaylist();"><fmt:message key="common.delete"/></a></span>
     </c:if>
+<!-- Proseware
     <c:url value="exportPlaylist.view" var="exportUrl"><c:param name="id" value="${model.playlist.id}"/></c:url>
     | <span class="header"><a href="${exportUrl}"><fmt:message key="playlist2.export"/></a></span>
-
+-->
 </h2>
 
+<!-- Proseware
 <div id="comment" class="detail" style="padding-top:0.2em"></div>
 
 <div class="detail" style="padding-top:0.2em">
