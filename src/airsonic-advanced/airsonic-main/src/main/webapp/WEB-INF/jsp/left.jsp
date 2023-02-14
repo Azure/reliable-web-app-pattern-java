@@ -122,11 +122,13 @@
     </div>
 </c:if>
 
+<c:if test="false">
 <div style="margin-bottom:0.5em;padding-left: 2px" class="bgcolor1">
     <c:forEach items="${model.indexes}" var="index">
         <a href="#${index.index}" accesskey="${index.index}">${index.index}</a>
     </c:forEach>
 </div>
+</c:if>
 
 <div style="padding-bottom:0.5em">
     <div class="forward">
@@ -141,6 +143,7 @@
     </div>
 </div>
 
+<!-- Proseware
 <c:if test="${not empty model.shortcuts}">
     <h2 class="bgcolor1" style="padding-left: 2px"><fmt:message key="left.shortcut"/></h2>
     <c:forEach items="${model.shortcuts}" var="shortcut">
@@ -152,6 +155,7 @@
         </p>
     </c:forEach>
 </c:if>
+-->
 
 <h2 class="bgcolor1" style="padding-left: 2px"><fmt:message key="left.playlists"/></h2>
 <div id="playlistWrapper" style='padding-left:2px'>
@@ -159,8 +163,10 @@
     <div id="playlistOverflow" style="display:none"></div>
     <div style="padding-top: 0.3em"></div>
     <div class="forward" id="showAllPlaylists" style="display: none"><a href="#" onclick="showAllPlaylists()"><fmt:message key="left.showallplaylists"/></a></div>
+    <!-- Proseware
     <div class="forward"><a href="#" onclick="createEmptyPlaylist()"><fmt:message key="left.createplaylist"/></a></div>
     <div class="forward"><a href="importPlaylist.view" target="main"><fmt:message key="left.importplaylist"/></a></div>
+    -->
 </div>
 
 <c:if test="${not empty model.radios}">
@@ -184,6 +190,7 @@
     </c:forEach>
 </c:if>
 
+<!-- Proseware
 <c:forEach items="${model.indexedArtists}" var="entry">
     <table class="bgcolor1" style="width:100%;padding:0;margin:1em 0 0 0;border:0">
         <tr style="padding:0;margin:0;border:0">
@@ -209,6 +216,7 @@
         </p>
     </c:forEach>
 </c:forEach>
+-->
 
 <div style="padding-top:1em"></div>
 
@@ -227,6 +235,7 @@
     </p>
 </c:forEach>
 
+<!-- Proseware
 <c:if test="${model.statistics.songCount gt 0}">
     <div class="detail" style="padding-top: 0.6em; padding-left: 2px">
         <fmt:message key="left.statistics">
@@ -239,6 +248,7 @@
     </div>
 </c:if>
 
+
 <div style="height:5em"></div>
 
 
@@ -248,5 +258,6 @@
         <a href="#${index.index}">${index.index}</a>
     </c:forEach>
 </div>
+-->
 
 </body></html>

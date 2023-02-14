@@ -6,7 +6,7 @@ STORAGE_SHARE_NAME=$(terraform -chdir=$PROJECT_ROOT/terraform output -raw applic
 
 echo "account $STORAGE_ACCOUNT_NAME share $STORAGE_SHARE_NAME"
 
-TRAININGS_DIR=Incoming
+TRAININGS_DIR=AllTrainings
 PLAYLIST_DIR=playlists
 
 az storage directory create --name $PLAYLIST_DIR --share-name $STORAGE_SHARE_NAME --account-name $STORAGE_ACCOUNT_NAME --account-key $STORAGE_PRIMARY_KEY
@@ -16,6 +16,13 @@ MEDIA_DIR=${PROJECT_ROOT}/trainings
 
 for file in $MEDIA_DIR/*; do
   echo "Processing $file"
+
+  if [[ -d $file ]]; then
+    # Skip directories
+    echo "Skipping directory $file"
+    continue
+  fi
+
   base_name=$(basename "${file}")
 
   # if it's a playlist, upload it to the playlist share

@@ -80,6 +80,7 @@
             </a>
         </td>
 
+        <!-- Proseware
         <c:if test="${not empty model.albums}">
             <td>
                 <a href="javascript:playShuffle()">
@@ -88,5 +89,6 @@
                 </a>
             </td>
         </c:if>
+        -->
     </tr>
 </table>
