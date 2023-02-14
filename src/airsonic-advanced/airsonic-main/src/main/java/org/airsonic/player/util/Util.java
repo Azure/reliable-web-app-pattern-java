@@ -69,7 +69,7 @@ public final class Util {
     }
 
     public static String getDefaultPlaylistFolder() {
-        String def = isWindows() ? "c:\\playlists" : "/var/proseware/playlists";
+        String def = isWindows() ? "c:\\playlists" : "/var/playlists";
         return System.getProperty("airsonic.defaultPlaylistFolder", def);
     }
 
