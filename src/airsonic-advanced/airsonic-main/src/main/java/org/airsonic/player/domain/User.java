@@ -19,6 +19,9 @@
  */
 package org.airsonic.player.domain;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.airsonic.player.util.Util;
 
 import java.util.Collections;
@@ -43,8 +46,10 @@ public class User {
     private long bytesUploaded;
     private Set<Role> roles;
 
-    public User(String username, String email, boolean ldapAuthenticated,
-            long bytesStreamed, long bytesDownloaded, long bytesUploaded, Set<Role> roles) {
+    @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+    public User(@JsonProperty("username")String username, @JsonProperty("email")String email, @JsonProperty("ldapAuthenticated")boolean ldapAuthenticated,
+                @JsonProperty("bytesStreamed")long bytesStreamed, @JsonProperty("bytesDownloaded")long bytesDownloaded, @JsonProperty("bytesUploaded")long bytesUploaded,
+                @JsonProperty("roles")Set<Role> roles) {
         this.username = username;
         this.email = email;
         this.ldapAuthenticated = ldapAuthenticated;
@@ -58,6 +63,7 @@ public class User {
         this(username, email, false, 0, 0, 0, Collections.emptySet());
     }
 
+    @JsonProperty("username")
     public String getUsername() {
         return username;
     }
@@ -102,6 +108,7 @@ public class User {
         this.bytesUploaded = bytesUploaded;
     }
 
+    @JsonProperty("roles")
     public Set<Role> getRoles() {
         return roles;
     }
@@ -110,46 +117,57 @@ public class User {
         this.roles = roles;
     }
 
+    @JsonIgnore
     public boolean isAdminRole() {
         return roles.contains(Role.ADMIN);
     }
 
+    @JsonIgnore
     public boolean isSettingsRole() {
         return roles.contains(Role.SETTINGS);
     }
 
+    @JsonIgnore
     public boolean isCommentRole() {
         return roles.contains(Role.COMMENT);
     }
 
+    @JsonIgnore
     public boolean isDownloadRole() {
         return roles.contains(Role.DOWNLOAD);
     }
 
+    @JsonIgnore
     public boolean isUploadRole() {
         return roles.contains(Role.UPLOAD);
     }
 
+    @JsonIgnore
     public boolean isPlaylistRole() {
         return roles.contains(Role.PLAYLIST);
     }
 
+    @JsonIgnore
     public boolean isCoverArtRole() {
         return roles.contains(Role.COVERART);
     }
 
+    @JsonIgnore
     public boolean isPodcastRole() {
         return roles.contains(Role.PODCAST);
     }
 
+    @JsonIgnore
     public boolean isStreamRole() {
         return roles.contains(Role.STREAM);
     }
 
+    @JsonIgnore
     public boolean isJukeboxRole() {
         return roles.contains(Role.JUKEBOX);
     }
 
+    @JsonIgnore
     public boolean isShareRole() {
         return roles.contains(Role.SHARE);
     }
