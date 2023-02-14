@@ -20,6 +20,11 @@
 package org.airsonic.player.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
+import io.github.resilience4j.retry.RetryConfig;
+import io.github.resilience4j.retry.RetryRegistry;
+import io.github.resilience4j.retry.annotation.Retry;
 import org.airsonic.player.domain.Version;
 import org.airsonic.player.util.Util;
 import org.apache.commons.lang3.StringUtils;
@@ -33,8 +38,11 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
 
 import java.io.*;
 import java.time.Instant;
@@ -68,8 +76,27 @@ public class VersionService {
     private Instant localBuildDate;
     private String localBuildNumber;
 
+    @Autowired
+    private RetryRegistry retryRegistry;
+
+    @Autowired
+    private CircuitBreakerRegistry circuitBreakerRegistry;
+
     public VersionService() throws IOException {
         build = PropertiesLoaderUtils.loadAllProperties("build.properties");
+    }
+
+    @PostConstruct
+    public void init() {
+        io.github.resilience4j.retry.Retry retry = retryRegistry.retry("default");
+        RetryConfig config = retry.getRetryConfig();
+        LOG.info("Retry max attemps is {}", config.getMaxAttempts());
+        retry.getEventPublisher().onRetry(event -> LOG.info("****{}****", event));
+
+        io.github.resilience4j.circuitbreaker.CircuitBreaker circuitBreaker = circuitBreakerRegistry.circuitBreaker("default");
+        CircuitBreakerConfig circuitBreakerConfig = circuitBreaker.getCircuitBreakerConfig();
+        LOG.info("Circuit breaker minimum number of calls {}", circuitBreakerConfig.getMinimumNumberOfCalls());
+        circuitBreaker.getEventPublisher().onCallNotPermitted(event -> LOG.info("****{}****", event));
     }
 
     /**
@@ -192,17 +219,18 @@ public class VersionService {
      * Refreshes the latest final and beta versions.
      */
     private void refreshLatestVersion() {
-        long now = System.currentTimeMillis();
-        boolean isOutdated = now - lastVersionFetched > LAST_VERSION_FETCH_INTERVAL;
+        // In order to simulate circuit breaker, we're going to fetch latest version from GitHub regardless
+        //long now = System.currentTimeMillis();
+        //boolean isOutdated = now - lastVersionFetched > LAST_VERSION_FETCH_INTERVAL;
 
-        if (isOutdated) {
-            try {
-                lastVersionFetched = now;
-                readLatestVersion();
-            } catch (Exception x) {
-                LOG.warn("Failed to resolve latest Airsonic version.", x);
-            }
+        //if (isOutdated) {
+        try {
+            //lastVersionFetched = now;
+            readLatestVersion();
+        } catch (Exception x) {
+            LOG.warn("Failed to resolve latest Airsonic version.", x);
         }
+        //}
     }
 
     private static final String VERSION_URL = "https://api.github.com/repos/airsonic-advanced/airsonic-advanced/releases";
@@ -227,11 +255,18 @@ public class VersionService {
                     (List<Map<String,Object>>) r.get("assets")
                     );
 
-    /**
-     * Resolves the latest available Airsonic version by inspecting github.
-     */
-    private void readLatestVersion() throws IOException {
+    private static int requestCount = 0;
 
+    //@CircuitBreaker(name = "default", fallbackMethod = "readFallbackVersion")
+    @Retry(name = "default", fallbackMethod = "readFallbackVersion")
+    private Version readLatestVersion() throws IOException, NumberFormatException {
+        // Check to see if we should be simulating failure. If it is not set, proceed as usual.
+        String retryDemo = System.getenv("AIRSONIC_RETRY_DEMO");
+        if (!StringUtils.isEmpty(retryDemo)) {
+            int errorRate = Integer.parseInt(retryDemo);
+            if (requestCount++ % errorRate == 0)
+                throw new IOException("Simulated exception trying to get version info from GitHub");
+        }
         LOG.debug("Starting to read latest version");
         RequestConfig requestConfig = RequestConfig.custom()
                 .setConnectTimeout(10000)
@@ -246,19 +281,18 @@ public class VersionService {
             content = client.execute(method, respHandler);
         } catch (ConnectTimeoutException e) {
             LOG.warn("Got a timeout when trying to reach {}", VERSION_URL);
-            return;
+            throw e;
         }
 
         List<Map<String, Object>> releases = content.stream()
                 .sorted(Comparator.<Map<String, Object>,Instant>comparing(r -> Instant.parse((String) r.get("published_at")), Comparator.reverseOrder()))
                 .collect(Collectors.toList());
 
-
         Optional<Map<String, Object>> betaR = releases.stream().findFirst();
         Optional<Map<String, Object>> finalR = releases.stream().filter(x -> !((Boolean)x.get("draft")) && !((Boolean)x.get("prerelease"))).findFirst();
         Optional<Map<String,Object>> currentR = releases.stream().filter(x ->
-            StringUtils.equals(build.getProperty("version") + "." + build.getProperty("timestamp"), (String) x.get("tag_name")) ||
-            StringUtils.equals(build.getProperty("version"), (String) x.get("tag_name"))).findAny();
+                StringUtils.equals(build.getProperty("version") + "." + build.getProperty("timestamp"), (String) x.get("tag_name")) ||
+                        StringUtils.equals(build.getProperty("version"), (String) x.get("tag_name"))).findAny();
 
         LOG.debug("Got {} for beta version", betaR.map(x -> x.get("tag_name")).orElse(null));
         LOG.debug("Got {} for final version", finalR.map(x -> x.get("tag_name")).orElse(null));
@@ -266,5 +300,12 @@ public class VersionService {
         latestBetaVersion = betaR.map(releaseToVersionMapper).orElse(null);
         latestFinalVersion = finalR.map(releaseToVersionMapper).orElse(null);
         localVersion = currentR.map(releaseToVersionMapper).orElse(localVersion);
+
+        return latestBetaVersion;
+    }
+
+    private Version readFallbackVersion(Throwable t) {
+        LOG.debug("Fallback sets the version to default, IOException: {}", t.toString());
+        return null;
     }
 }

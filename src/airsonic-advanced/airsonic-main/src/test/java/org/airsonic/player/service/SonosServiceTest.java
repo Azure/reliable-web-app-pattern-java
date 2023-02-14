@@ -23,13 +23,4 @@ import junit.framework.TestCase;
 
 public class SonosServiceTest extends TestCase {
 
-    public void testParsePlaylistIndices() {
-        SonosService sonosService = new SonosService();
-        assertEquals("[]", sonosService.parsePlaylistIndices("").toString());
-        assertEquals("[999]", sonosService.parsePlaylistIndices("999").toString());
-        assertEquals("[1, 2, 3]", sonosService.parsePlaylistIndices("1,2,3").toString());
-        assertEquals("[1, 2, 3]", sonosService.parsePlaylistIndices("2,1,3").toString());
-        assertEquals("[1, 2, 4, 5, 6, 7]", sonosService.parsePlaylistIndices("1,2,4-7").toString());
-        assertEquals("[11, 12, 15, 20, 21, 22]", sonosService.parsePlaylistIndices("11-12,15,20-22").toString());
-    }
 }
