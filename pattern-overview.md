@@ -146,7 +146,7 @@ Azure Files offers fully managed file shares in the cloud that are accessible vi
 - **Secure communication:** It lets the application privately access services on the Azure platform and reduces the network footprint of data stores to protect against data leakage.
 - **Minimal effort:** The private endpoints support the web application platform and database platform the web app uses. Both platforms mirror existing on-premises setup for minimal change.
 
-### Deploy the reference implementation
+## Deploy the reference implementation
 
 You can deploy the reference implementation by following the instructions in the [reliable web app pattern for Java repository](README.md#steps-to-deploy-the-reference-implementation). Follow the deployment guide to set up a local development environment and deploy the solution to Azure.
 

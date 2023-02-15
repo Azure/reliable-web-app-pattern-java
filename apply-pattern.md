@@ -16,11 +16,13 @@ A reliable web application is one that is both resilient and available. Resilien
 
 ### Use the retry pattern
 
-The retry pattern is a technique for handling temporary service interruptions. These temporary service interruptions are known as transient faults. They're transient because they typically resolve themselves in a few seconds. In the cloud, the leading causes of transient faults are service throttling, dynamic load distribution, and network connectivity. The retry pattern handles transient faults by resending failed requests to the service. You can configure the amount of time between retries and how many retries to attempt before throwing an exception.
+The retry pattern is a technique for handling temporary service interruptions. These temporary service interruptions are known as transient faults. They're transient because they typically resolve themselves in a few seconds. In the cloud, the leading causes of transient faults are service throttling, dynamic load distribution, and network connectivity. The retry pattern handles transient faults by resending failed requests to the service. You can configure the amount of time between retries and how many retries to attempt before throwing an exception. For more information, see [transient fault handling](https://review.learn.microsoft.com/en-us/azure/architecture/best-practices/transient-faults).
 
-If your code already uses the retry pattern, you should update your code to use the retry mechanisms available in Azure services and client SDKs. If your application doesn't have a retry pattern, then you should add it based on the following guidance. For more information, see [transient fault handling](https://review.learn.microsoft.com/en-us/azure/architecture/best-practices/transient-faults).
+If your code already uses the retry pattern, you should update your code to use the retry mechanisms available in Azure services and client SDKs. If your application doesn't have a retry pattern, then you should use [Resilience4j](https://github.com/resilience4j/resilience4j).
 
-To implement the Retry Pattern in Java, we use [Resilience4j](https://github.com/resilience4j/resilience4j). Resilience4j is a lightweight fault tolerance library inspired by Netflix Hystrix, designed for functional programming. It provides higher-order functions (decorators) to enhance any functional interface, lambda expression or method reference with a Circuit Breaker, Rate Limiter, Retry or Bulkhead. The following example shows how to decorate a lambda expression with a Circuit Breaker and Retry in order to retry the call to get the media file from disk.
+Resilience4j is a lightweight fault tolerance library inspired by Netflix Hystrix and designed for functional programming. It provides higher-order functions (decorators) to enhance any functional interface, lambda expression or method reference with a Circuit Breaker, Rate Limiter, Retry or Bulkhead.
+
+*Reference implementation.* The reference implementation decorates a lambda expression with a Circuit Breaker and Retry in order to retry the call to get the media file from disk. The folowing code demonstrates how to use Resilience4j to retry a filesystem call to Azure Files to get the last modified time.
 
 ```java
 private MediaFile checkLastModified(MediaFile mediaFile, MusicFolder folder, boolean minimizeDiskAccess) {
@@ -32,11 +34,7 @@ private MediaFile checkLastModified(MediaFile mediaFile, MusicFolder folder, boo
     }
 ```
 
-Sample code demonstrates how to use Resilience4j to retry a filesystem call to Azure Files to get the last modified time.
-Link to MediaFileService.java
-
-In this sample, we see how the retry registry is used to get a Retry object. We use a functional approach with the vavr library to recover from an exception and invoke another lambda expression as a fallback. In this case, the original MediaFile is returned if the maximum amount of retries has occurred.
-You can configure your Retry properties in the application.yaml file.
+The retry registry gets a Retry object. It uses a functional approach with the `vavr` library to recover from an exception and invoke another lambda expression as a fallback. In this case, the original MediaFile is returned if the maximum amount of retries has occurred. You can configure your Retry properties in the `application.yml` file.
 
 ```java
 resilience4j.retry:
@@ -57,9 +55,7 @@ For more ways to configure Resiliency4J, see [Resilliency4J documentation](https
   
 ### Use the circuit-breaker pattern
 
-You should pair the retry pattern with the circuit breaker pattern. The circuit breaker pattern handles faults that aren't transient. The goal is to prevent an application from repeatedly invoking a service that is clearly faulted. It releases the application and avoids wasting CPU cycles so the application retains its performance integrity for end users. For more information, see the circuit breaker pattern.
-
-*Reference implementation:* This pattern is forthcoming.
+You should pair the retry pattern with the circuit breaker pattern. The circuit breaker pattern handles faults that aren't transient. The goal is to prevent an application from repeatedly invoking a service that is clearly faulted. It releases the application and avoids wasting CPU cycles so the application retains its performance integrity for end users. For more information, see the [circuit breaker pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/circuit-breaker).
 
 ## Security
 
