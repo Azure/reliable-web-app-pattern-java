@@ -23,36 +23,6 @@ resource "azurerm_key_vault" "application" {
 
   sku_name = "standard"
 
-  access_policy {
-    tenant_id = var.azure_ad_tenant_id
-    object_id = var.azure_ad_object_id
-
-    secret_permissions = [
-      "Set",
-      "Get",
-      "List",
-      "Delete",
-      "Purge"
-    ]
-
-    key_permissions = [
-      "Create",
-      "Get",
-      "List",
-      "Delete",
-      "Update",
-      "Purge"
-    ]
-
-    storage_permissions = [
-      "Set",
-      "Get",
-      "List",
-      "Delete",
-      "Purge"
-    ]
-  }
-
   tags = {
     "environment"      = var.environment
     "application-name" = var.application_name

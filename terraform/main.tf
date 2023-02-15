@@ -151,6 +151,37 @@ resource "azurerm_storage_account_network_rules" "airsonic-storage-network-rules
   ]
 }
 
+resource "azurerm_key_vault_access_policy" "user_access_policy" {
+  key_vault_id = module.key-vault.vault_id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+  object_id    = data.azurerm_client_config.current.object_id
+
+  secret_permissions = [
+      "Set",
+      "Get",
+      "List",
+      "Delete",
+      "Purge"
+    ]
+
+    key_permissions = [
+      "Create",
+      "Get",
+      "List",
+      "Delete",
+      "Update",
+      "Purge"
+    ]
+
+    storage_permissions = [
+      "Set",
+      "Get",
+      "List",
+      "Delete",
+      "Purge"
+    ]
+}
+
 resource "azurerm_key_vault_access_policy" "application_access_policy" {
   key_vault_id = module.key-vault.vault_id
   tenant_id    = data.azurerm_client_config.current.tenant_id
