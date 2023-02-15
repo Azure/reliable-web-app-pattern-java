@@ -18,17 +18,13 @@ Forthcoming is a video series that details the reliable web app pattern for Java
 
 ## Architecture
 
-[![Diagram showing the architecture of the reference implementation](docs/assets/java-architecture.png)]((docs/assets/java-architecture.png)).png)
+[![Diagram showing the architecture of the reference implementation](docs/assets/java-architecture.png)](docs/assets/java-architecture.png)
 
 ## Workflow
 
 A detailed workflow of the reference implementation is forthcoming.
 
 ## Steps to deploy the reference implementation
-
-This reference implementation provides you with the instructions and templates you need to deploy this solution.
-
-### What you need
 
 There are two ways to deploy the solution. The recommended way is to use [Visual Studio Code](https://code.visualstudio.com/) with [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension.
 
