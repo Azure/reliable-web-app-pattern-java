@@ -1,68 +1,152 @@
-# Reliable Web App Pattern
+# Reliable web app pattern for Java
 
-This repository provides resources to help developers build a Reliable Java web app on Azure. A Reliable Web App is a set of services, code, and infrastructure deployed in Azure that applies practices from the [Well-Architected Framework](https://learn.microsoft.com/en-us/azure/architecture/framework). This pattern is designed to help you build a web app that follows Microsoft's recommended guidance for achieving reliability, scalability, and security in the cloud.
+This reference implementation provides a production-grade web application that uses best practices from our guidance and gives developers concrete examples to build their own Reliable Web Application in Azure. It simulates the journey from an on-premises Java application to a migration to Azure. It shows you what changes to make to maximize the benefits of the cloud in the initial cloud adoption phase. Here's an outline of the contents in this readme:
 
-## Project Status
+- [Architecture guidance](#architecture-guidance)
+- [Videos](#videos)
+- [Architecture](#architecture)
+- [Workflow](#workflow)
+- [Steps to deploy the reference implementation](#steps-to-deploy-the-reference-implementation)
 
-**Project status:** *alpha*
+## Architecture guidance
 
-**This project is currently under active development.**
+This project has [companion architecture guidance](pattern-overview.md) that describes design patterns and best practices for migrating to the cloud. We suggest you read it as it will give important context to the considerations applied in this implementation.
 
----
+## Videos
 
-## Overview
+Forthcoming is a video series that details the reliable web app pattern for Java.
 
-The goal of this project is to put ourselves in the customer's shoes as they would experience migrating a *legacy* Java application to Azure while applying practices from the [Well-Architected Framework](https://learn.microsoft.com/en-us/azure/architecture/framework). We chose [Airsonic](https://github.com/airsonic/airsonic) to demonstrate a customer's migration journey to Azure.
+## Architecture
 
-### What is Airsonic?
+[![Diagram showing the architecture of the reference implementation](docs/assets/java-architecture.png)]((docs/assets/java-architecture.png)).png)
 
-Airsonic is a free, web-based media streamer, providing ubiquitous access to your music. 
+## Workflow
 
-### Why did we pick Airsonic?
+A detailed workflow of the reference implementation is forthcoming.
 
-1. Airsonic was chosen as our representative Java application because of the legacy Tomcat deployment. Airsonic is packaged as a war file and runs inside of an [Apache Tomcat](https://tomcat.apache.org/) server. This is a different deployment than what customers with a more modern tech stack may have. A modern tech stack may include Java [Spring Boot](https://spring.io/projects/spring-boot) applications with an embedded tomcat.
+## Steps to deploy the reference implementation
 
-1. Airsonic is a typical Java [N-tier application](https://learn.microsoft.com/en-us/azure/architecture/guide/architecture-styles/n-tier) consisting of a database and local storage. The UI is written using Java Server Pages (JSP) and the backend is written using the [Java Spring Framework](https://spring.io/).
+This reference implementation provides you with the instructions and templates you need to deploy this solution.
 
-## Architecture 
+### What you need
 
-Below is the architecture diagram of Airsonic deployed to Azure.
+There are two ways to deploy the solution. The recommended way is to use [Visual Studio Code](https://code.visualstudio.com/) with [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension.
 
-![Aisonic Azure architecture](docs/assets/airsonic-azure-architecture.png)
+To deploy the solution without [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers), install the following.
 
-### Overview Videos
----
+- [Java 8](https://openjdk.org/install/)
+- [Maven](https://maven.apache.org/install.html)
+- [Terraform](https://www.terraform.io/)
+- [Azure CLI](https://aka.ms/nubesgen-install-az-cli)
+- [jq](https://stedolan.github.io/jq/download/)
+- [Git](https://git-scm.com/)
 
-[Introduction Video (12~ mins)](https://microsoftapc-my.sharepoint.com/:v:/g/personal/nanil_microsoft_com/EVeC0AjLPxdBjUke0tRpe_IBua-phq4_qvFP2TcOHLtbZg?e=aQfW6o)
+Note - The following deployment has been tested on **macOS** and [Ubuntu on WSL](https://ubuntu.com/wsl).
 
-[Airsonic Application on Azure App Service Video (~9 mins)](https://microsoft-my.sharepoint.com/:v:/p/ndalalelis/EUqaE9TY9UdJpGvJRqvyowABruJSWaxaNvpNfsAXvMBK5Q?e=GRr995)
+### Clone the repo
 
-## Get Started
+```shell
+git clone https://github.com/Azure/reliable-web-app-pattern-java.git
+cd reliable-web-app-pattern-java
+```
 
-Get started quickly by deploying Airsonic on Azure using the [Quick Start Guide](docs/quick-start-guide.md).
+### Prepare for deployment
 
-## Design Docs
+Open *./scripts/setup-initial-env.sh* and update the following variables:
 
-For details on the design, please refer to the [Design Docs](docs/README.md).
+```shell
+export SUBSCRIPTION=
+export APP_NAME=
+```
+
+*The variable APP_NAME needs to be globally unique across all of Azure* 
+
+Run the following to set up the environment:
+
+```shell
+source ./scripts/setup-initial-env.sh
+```
+
+### Login using Azure CLI
+
+Login to Azure using the Azure CLI and choose your active subscription. 
+
+```shell
+az login --scope https://graph.microsoft.com//.default
+az account set --subscription ${SUBSCRIPTION}
+```
+
+### Allow AZ CLI extensions to install without prompt
+
+```shell
+az config set extension.use_dynamic_install=yes_without_prompt
+```
+
+### Deploy Azure Infrastructure
+
+Create the Azure resources by running the following commands:
+
+```shell
+terraform -chdir=./terraform init
+terraform -chdir=./terraform plan -var application_name=${APP_NAME} -out airsonic.tfplan
+terraform -chdir=./terraform apply airsonic.tfplan
+```
+
+### Upload training videos and playlists
+
+```shell
+./scripts/upload-trainings.sh
+```
+
+## Set up local build environment
+
+```shell
+source ./scripts/setup-local-build-env.sh
+```
+
+## Package and deploy Airsonic
+
+It's now time to compile and package Airsonic, skipping the unit tests.
+
+```shell
+cd src/airsonic-advanced
+mvn -Dmaven.test.skip=true -DskipTests clean package
+```
+
+Now that we have a war file, we can deploy it to our Azure App Service.
+
+```shell
+mvn com.microsoft.azure:azure-webapp-maven-plugin:2.6.1:deploy -pl airsonic-main
+```
+
+### Add Users to Azure Active Directory enterprise applications
+
+The next step is to add a user to the application and assign them a role. To do this, go to Azure Portal --> Azure Active Directory --> Enterprise Applications and search for the Airsonic application. Add a user to the application.
+
+![Aisonic Azure Active Directory Enterprise Applications](assets/AAD-Enterprise-Application.png)
+
+After adding the user, open the browser and navigate to https://{AIRSONIC_SITE}/index. Use the following command to get the site name.
+
+```shell
+terraform -chdir=$PROJECT_ROOT/terraform output -raw frontdoor_url
+```
+
+![Aisonic AAD](assets/airsonic-aad.png)
+
+### Teardown
+
+Guidance on the teardown is forthcoming.
 
 ## Contributing
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
-Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit https://cla.opensource.microsoft.com.
+This project welcomes contributions and suggestions.  Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.opensource.microsoft.com.
 
-When you submit a pull request, a CLA bot will automatically determine whether you need to provide
-a CLA and decorate the PR appropriately (e.g., status check, comment). Simply follow the instructions
-provided by the bot. You will only need to do this once across all repos using our CLA.
+When you submit a pull request, a CLA bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., status check, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
 
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
-For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
-contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
 ## Trademarks
 
-This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft 
-trademarks or logos is subject to and must follow 
-[Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general).
-Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship.
-Any use of third-party trademarks or logos are subject to those third-party's policies.
+This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft trademarks or logos is subject to and must follow [Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general).
+
+Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship. Any use of third-party trademarks or logos are subject to those third-party's policies.
