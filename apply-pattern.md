@@ -79,10 +79,10 @@ Managed identities are similar to connection strings in on-premises applications
 
 Managed identities provide a secure and traceable way to control access to Azure resources. For more information, see:
 
-- [Developer introduction and guidelines for credentials](https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview-for-developers)
-- [Managed identities for Azure resources](https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview)
-- [Azure services supporting managed identities](https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/managed-identities-status)
-- [Web app managed identity](https://learn.microsoft.com/azure/active-directory/develop/multi-service-web-app-access-storage)
+- [Developer introduction and guidelines for credentials](https://learn.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview-for-developers)
+- [Managed identities for Azure resources](https://learn.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview)
+- [Azure services supporting managed identities](https://learn.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/managed-identities-status)
+- [Web app managed identity](https://learn.microsoft.com/en-us/azure/active-directory/develop/multi-service-web-app-access-storage)
 
 ### Use a central secrets store
 
@@ -98,14 +98,14 @@ You should use private endpoints to provide more secure communication between yo
 
 This network security is transparent from the code perspective. It doesn't involve any app configuration, connection string, or code changes.
 
-- [How to create a private endpoint](https://learn.microsoft.com/azure/architecture/example-scenario/private-web-app/private-web-app#deploy-this-scenario)
-- [Best practices for endpoint security](https://learn.microsoft.com/azure/architecture/framework/security/design-network-endpoints)
+- [How to create a private endpoint](https://learn.microsoft.com/en-us/azure/architecture/example-scenario/private-web-app/private-web-app#deploy-this-scenario)
+- [Best practices for endpoint security](https://learn.microsoft.com/en-us/azure/architecture/framework/security/design-network-endpoints)
 
 ### Use a web application firewall
 
 You should protect web applications with a web application firewall. The web application firewall provides a level protection against common security attacks and botnets. To take advantage of the value of the web application firewall, you have to prevent traffic from bypassing the web application firewall. In Azure, you should restrict access on the application platform (App Service) to only accept inbound communication from Azure Front Door.
 
-*Reference implementation:* The reference implementation uses Front Door as the host name URL. In production, you should use your own host name and follow the guidance in [Preserve the original HTTP host name](https://learn.microsoft.com/azure/architecture/best-practices/host-name-preservation).
+*Reference implementation:* The reference implementation uses Front Door as the host name URL. In production, you should use your own host name and follow the guidance in [Preserve the original HTTP host name](https://learn.microsoft.com/en-us/azure/architecture/best-practices/host-name-preservation).
 
 ## Cost optimization
 
