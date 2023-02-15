@@ -67,7 +67,7 @@ public class CoverArtService {
         }
     }
 
-    @Cacheable(key = "#type.toString().concat('-').concat(#id)", unless = "#result == null") // 'unless' condition should never happen, because of null-object pattern
+    //@Cacheable(key = "#type.toString().concat('-').concat(#id)", unless = "#result == null") // 'unless' condition should never happen, because of null-object pattern
     public CoverArt get(EntityType type, int id) {
         return Optional.ofNullable(coverArtDao.get(type, id)).orElse(CoverArt.NULL_ART);
     }

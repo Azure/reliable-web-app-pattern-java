@@ -141,7 +141,7 @@ public class MediaFileService {
         return getMediaFile(Paths.get(relativePath), mediaFolderService.getMusicFolderById(folderId), minimizeDiskAccess);
     }
 
-    @Cacheable(cacheNames = "mediaFilePathCache", key = "#relativePath.toString().concat('-').concat(#folder.id)", condition = "#root.target.memoryCacheEnabled", unless = "#result == null")
+    //@Cacheable(cacheNames = "mediaFilePathCache", key = "#relativePath.toString().concat('-').concat(#folder.id)", condition = "#root.target.memoryCacheEnabled", unless = "#result == null")
     public MediaFile getMediaFile(Path relativePath, MusicFolder folder, boolean minimizeDiskAccess) {
         // Look in database.
         MediaFile result = mediaFileDao.getMediaFile(relativePath.toString(), folder.getId());
@@ -163,7 +163,7 @@ public class MediaFileService {
         return result;
     }
 
-    @Cacheable(cacheNames = "mediaFileIdCache", condition = "#root.target.memoryCacheEnabled", unless = "#result == null")
+    //@Cacheable(cacheNames = "mediaFileIdCache", condition = "#root.target.memoryCacheEnabled", unless = "#result == null")
     public MediaFile getMediaFile(int id) {
         MediaFile mediaFile = mediaFileDao.getMediaFile(id);
         if (mediaFile == null) {

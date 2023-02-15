@@ -147,12 +147,12 @@ public class PlaylistService {
         return playlistDao.getWritablePlaylistsForUser(username);
     }
 
-    @Cacheable(cacheNames = "playlistCache", unless = "#result == null")
+    //@Cacheable(cacheNames = "playlistCache", unless = "#result == null")
     public Playlist getPlaylist(int id) {
         return playlistDao.getPlaylist(id);
     }
 
-    @Cacheable(cacheNames = "playlistUsersCache", unless = "#result == null")
+    //@Cacheable(cacheNames = "playlistUsersCache", unless = "#result == null")
     public List<String> getPlaylistUsers(int playlistId) {
         return playlistDao.getPlaylistUsers(playlistId);
     }
