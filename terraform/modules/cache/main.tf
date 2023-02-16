@@ -37,15 +37,15 @@ resource "azurerm_private_dns_zone" "dns_for_cache" {
   resource_group_name = var.resource_group
 }
 
-resource "azurerm_private_dns_zone_virtual_network_link" "virtual_network_link_example" {
+resource "azurerm_private_dns_zone_virtual_network_link" "virtual_network_link_redis" {
   name                  = "privatednsforredis"
   private_dns_zone_name = azurerm_private_dns_zone.dns_for_cache.name
   virtual_network_id    = var.private_endpoint_vnet_id
   resource_group_name   = var.resource_group
 }
 
-resource "azurerm_private_endpoint" "redis_pe_example" {
-  name                = "redis-private-endpoint-ex"
+resource "azurerm_private_endpoint" "redis_pe_redis" {
+  name                = "private-endpoint-redis"
   location            = var.location
   resource_group_name = var.resource_group
   subnet_id           = var.private_endpoint_subnet_id
@@ -56,7 +56,7 @@ resource "azurerm_private_endpoint" "redis_pe_example" {
   }
 
   private_service_connection {
-    name                           = "peconnection-example"
+    name                           = "peconnection-redis"
     private_connection_resource_id = azurerm_redis_cache.cache.id
     is_manual_connection           = false
     subresource_names              = ["redisCache"]
