@@ -165,6 +165,25 @@ resource "azurerm_key_vault_secret" "airsonic_application_tenant_id" {
   ]
 }
 
+resource "azurerm_key_vault_secret" "airsonic_cache_secret" {
+  name         = "airsonic-cache-secret"
+  value        = module.cache.cache_secret
+  key_vault_id = module.key-vault.vault_id
+}
+
+resource "azurerm_key_vault_secret" "airsonic_cache_hostname" {
+  name         = "airsonic-cache-hostname"
+  value        = module.cache.cache_hostname
+  key_vault_id = module.key-vault.vault_id
+}
+
+module "cache" {
+  source = "./modules/cache"
+  resource_group  = azurerm_resource_group.main.name
+  environment      = local.environment
+  location         = var.location
+}
+
 module "application" {
   source           = "./modules/app-service"
   resource_group   = azurerm_resource_group.main.name

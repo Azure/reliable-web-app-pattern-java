@@ -3,16 +3,6 @@ variable "resource_group" {
   description = "The resource group"
 }
 
-variable "azure_ad_tenant_id" {
-  type        = string
-  description = "The AD tenant id"
-}
-
-variable "application_name" {
-  type        = string
-  description = "The name of your application"
-}
-
 variable "environment" {
   type        = string
   description = "The environment (dev, test, prod...)"
