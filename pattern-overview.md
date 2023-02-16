@@ -59,9 +59,9 @@ Choosing the right Azure services is an important part of the planning phase bef
 
 [Azure Active Directory (Azure AD)](https:/learn.microsoft.com/en-us/azure/active-directory/fundamentals/active-directory-whatis) is a cloud-based identity and access management service. It authenticates and authorizes users based on roles that integrate with our application. Azure AD provides the application with the following abilities:
 
-- **Authentication and authorization:** The application needed to authenticate and authorize call center employees.
+- **Authentication and authorization:** The application needed to authenticate and authorize employees.
 - **Scalable:** It scale to support larger scenarios.
-- **User-identity control:** Call center employees can use their existing enterprise identity.
+- **User-identity control:** Employees can use their existing enterprise identity.
 - **Support authorization protocols:** It supports OAuth 2.0 for managed identities and OpenID Connect for future B2C support.
 
 ### Database
