@@ -22,6 +22,10 @@ locals {
 
 data "azurerm_client_config" "current" {}
 
+data "azuread_user" "current_user" {
+  object_id = data.azurerm_client_config.current.object_id
+}
+
 resource "azurecaf_name" "resource_group" {
   name          = var.application_name
   resource_type = "azurerm_resource_group"
@@ -70,6 +74,97 @@ module "postresql_database" {
   subnet_network_id  = module.network.postgresql_subnet_id
 }
 
+module "key-vault" {
+  source           = "./modules/key-vault"
+  resource_group   = azurerm_resource_group.main.name
+  application_name = var.application_name
+  environment      = local.environment
+  location         = var.location
+  
+  azure_ad_tenant_id = data.azurerm_client_config.current.tenant_id
+}
+
+resource "azurerm_key_vault_access_policy" "user_access_policy" {
+  key_vault_id = module.key-vault.vault_id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+  object_id    = data.azurerm_client_config.current.object_id
+
+  secret_permissions = [
+      "Set",
+      "Get",
+      "List",
+      "Delete",
+      "Purge"
+    ]
+
+    key_permissions = [
+      "Create",
+      "Get",
+      "List",
+      "Delete",
+      "Update",
+      "Purge"
+    ]
+
+    storage_permissions = [
+      "Set",
+      "Get",
+      "List",
+      "Delete",
+      "Purge"
+    ]
+}
+
+resource "azurerm_key_vault_secret" "airsonic_database_admin" {
+  name         = "airsonic-database-admin"
+  value        = module.postresql_database.database_username
+  key_vault_id = module.key-vault.vault_id
+
+  depends_on = [
+    azurerm_key_vault_access_policy.user_access_policy
+  ]
+}
+
+resource "azurerm_key_vault_secret" "airsonic_database_admin_password" {
+  name         = "airsonic-database-admin-password"
+  value        = module.postresql_database.database_password
+  key_vault_id = module.key-vault.vault_id
+
+  depends_on = [
+    azurerm_key_vault_access_policy.user_access_policy
+  ]
+}
+
+resource "azurerm_key_vault_secret" "airsonic_application_client_id" {
+  name         = "airsonic-application-client-id"
+  value        = module.application.application_registration_id
+  key_vault_id = module.key-vault.vault_id
+
+  depends_on = [
+    azurerm_key_vault_access_policy.user_access_policy
+  ]
+}
+
+resource "azurerm_key_vault_secret" "airsonic_application_client_secret" {
+  name         = "airsonic-application-client-secret"
+  value        = module.application.application_client_secret
+  key_vault_id = module.key-vault.vault_id
+
+  depends_on = [
+    azurerm_key_vault_access_policy.user_access_policy
+  ]
+}
+
+resource "azurerm_key_vault_secret" "airsonic_application_tenant_id" {
+  name         = "airsonic-application-tenant-id"
+  value        = data.azurerm_client_config.current.tenant_id
+  key_vault_id = module.key-vault.vault_id
+
+  depends_on = [
+    azurerm_key_vault_access_policy.user_access_policy
+  ]
+}
+
 module "application" {
   source           = "./modules/app-service"
   resource_group   = azurerm_resource_group.main.name
@@ -84,8 +179,8 @@ module "application" {
 
   key_vault_uri     = module.key-vault.vault_uri
 
-  database_username = "@Microsoft.KeyVault(SecretUri=${module.key-vault.vault_uri}secrets/${module.key-vault.airsonic_database_admin_secret_name})"
-  database_password = "@Microsoft.KeyVault(SecretUri=${module.key-vault.vault_uri}secrets/${module.key-vault.airsonic_database_admin_password_secret_name})"
+  database_username = "@Microsoft.KeyVault(SecretUri=${module.key-vault.vault_uri}secrets/${azurerm_key_vault_secret.airsonic_database_admin.name})"
+  database_password = "@Microsoft.KeyVault(SecretUri=${module.key-vault.vault_uri}secrets/${azurerm_key_vault_secret.airsonic_database_admin_password.name})"
 
   storage_account_name = module.storage.storage_account_name
   storage_account_primary_access_key = module.storage.storage_primary_access_key
@@ -93,24 +188,15 @@ module "application" {
   frontdoor_host_name     = module.frontdoor.host_name
 }
 
-module "key-vault" {
-  source           = "./modules/key-vault"
-  resource_group   = azurerm_resource_group.main.name
-  application_name = var.application_name
-  environment      = local.environment
-  location         = var.location
-  
-  azure_ad_tenant_id = data.azurerm_client_config.current.tenant_id
-  azure_ad_object_id = data.azurerm_client_config.current.object_id
+resource "azurerm_key_vault_access_policy" "application_access_policy" {
+  key_vault_id = module.key-vault.vault_id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+  object_id    = module.application.application_principal_id
 
-  airsonic_database_admin            = module.postresql_database.database_username
-  airsonic_database_admin_password   = module.postresql_database.database_password
-  airsonic_application_client_id     = module.application.application_registration_id
-  airsonic_application_client_secret = module.application.application_client_secret
-}
-
-data "azuread_user" "current_user" {
-  object_id = data.azurerm_client_config.current.object_id
+  secret_permissions = [
+    "Get",
+    "List"
+  ]
 }
 
 resource "azurerm_postgresql_flexible_server_active_directory_administrator" "airsonic-ad-admin" {
@@ -148,48 +234,6 @@ resource "azurerm_storage_account_network_rules" "airsonic-storage-network-rules
 
   depends_on = [
     module.storage
-  ]
-}
-
-resource "azurerm_key_vault_access_policy" "user_access_policy" {
-  key_vault_id = module.key-vault.vault_id
-  tenant_id    = data.azurerm_client_config.current.tenant_id
-  object_id    = data.azurerm_client_config.current.object_id
-
-  secret_permissions = [
-      "Set",
-      "Get",
-      "List",
-      "Delete",
-      "Purge"
-    ]
-
-    key_permissions = [
-      "Create",
-      "Get",
-      "List",
-      "Delete",
-      "Update",
-      "Purge"
-    ]
-
-    storage_permissions = [
-      "Set",
-      "Get",
-      "List",
-      "Delete",
-      "Purge"
-    ]
-}
-
-resource "azurerm_key_vault_access_policy" "application_access_policy" {
-  key_vault_id = module.key-vault.vault_id
-  tenant_id    = data.azurerm_client_config.current.tenant_id
-  object_id    = module.application.application_principal_id
-
-  secret_permissions = [
-    "Get",
-    "List"
   ]
 }
 
