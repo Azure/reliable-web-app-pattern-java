@@ -17,7 +17,8 @@
 		"docker-from-docker": "latest",
 		"ghcr.io/devcontainers/features/java:1": {
 			"version": "11",
-			"installMaven": true
+			"installMaven": true,
+			"mavenVersion": "3.8.6"
 		},
         "ghcr.io/devcontainers/features/terraform:1": {
         },

@@ -8,11 +8,6 @@ variable "azure_ad_tenant_id" {
   description = "The AD tenant id"
 }
 
-variable "azure_ad_object_id" {
-  type        = string
-  description = "The AD object id"
-}
-
 variable "application_name" {
   type        = string
   description = "The name of your application"
@@ -29,22 +24,3 @@ variable "location" {
   description = "The Azure region where all resources in this example should be created"
 }
 
-variable "airsonic_database_admin" {
-  type        = string
-  description = "The airsonic admin database username"
-}
-
-variable "airsonic_database_admin_password" {
-  type        = string
-  description = "The airsonic admin database password"
-}
-
-variable "airsonic_application_client_id" {
-  type        = string
-  description = "The client id of the application"
-}
-
-variable "airsonic_application_client_secret" {
-  type        = string
-  description = "The client secret of the application"
-}

@@ -88,7 +88,20 @@ terraform -chdir=./terraform plan -var application_name=${APP_NAME} -out airsoni
 terraform -chdir=./terraform apply airsonic.tfplan
 ```
 
+### Download training videos
+
+If you plan on seeding the Proseware with videos and playlists, you may want to run the following scripts while the Azure resources defined in Terraform are being provisioned.  In a separate terminal, run the following.
+
+```shell
+source ./scripts/setup-initial-env.sh
+./scripts/download-trainings.sh
+```
+
+After the completion of this step, you should see a videos directory that contains training videos.
+
 ### Upload training videos and playlists
+
+The following command uploads the training videos and playlists to the `Azure Storage` account.  Run the following after Terraform has successfully completed deploying the Azure resources.
 
 ```shell
 ./scripts/upload-trainings.sh
@@ -119,7 +132,7 @@ mvn com.microsoft.azure:azure-webapp-maven-plugin:2.6.1:deploy -pl airsonic-main
 
 The next step is to add a user to the application and assign them a role. To do this, go to Azure Portal --> Azure Active Directory --> Enterprise Applications and search for the Airsonic application. Add a user to the application.
 
-![Aisonic Azure Active Directory Enterprise Applications](assets/AAD-Enterprise-Application.png)
+![Aisonic Azure Active Directory Enterprise Applications](docs/assets/AAD-Enterprise-Application.png)
 
 After adding the user, open the browser and navigate to https://{AIRSONIC_SITE}/index. Use the following command to get the site name.
 
@@ -127,11 +140,40 @@ After adding the user, open the browser and navigate to https://{AIRSONIC_SITE}/
 terraform -chdir=$PROJECT_ROOT/terraform output -raw frontdoor_url
 ```
 
-![Aisonic AAD](assets/airsonic-aad.png)
+![Aisonic AAD](docs/assets/airsonic-aad.png)
 
 ### Teardown
 
-Guidance on the teardown is forthcoming.
+```shell
+RESOURCE_GROUP=$(terraform -chdir=$PROJECT_ROOT/terraform output -raw resource_group)
+echo $RESOURCE_GROUP
+az group delete --name $RESOURCE_GROUP --no-wait
+
+APP_REGISTRATION_ID=$(terraform -chdir=$PROJECT_ROOT/terraform show -json | jq .values.outputs.app_service_module_outputs.value.application_registration_id | tr -d \")
+echo $APP_REGISTRATION_ID
+az ad app delete --id $APP_REGISTRATION_ID
+```
+
+### Troubleshooting Guide
+
+Follow the following steps if you need to restart the deployment process.
+
+1. Delete azure resource group and app registration by following the steps in the `Teardown` section.
+1. Delete the Terraform files (lock, plan, and state)
+
+    ```shell
+    rm -rf terraform/.terraform*
+    rm -rf terraform/terraform.tfstate*
+    rm terraform/airsonic.tfplan
+    ```
+
+1. Use source control to revert change to pom.xml as needed
+
+    ```shell
+    git checkout src/airsonic-advanced/airsonic-main/pom.xml
+    ```
+
+1. Retry from setup-initial-env step entering a new name in the script for APP_NAME
 
 ## Contributing
 
