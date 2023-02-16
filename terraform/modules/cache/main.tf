@@ -17,9 +17,9 @@ resource "azurerm_redis_cache" "cache" {
   name                = azurecaf_name.cache.result
   location            = var.location
   resource_group_name = var.resource_group
-  capacity            = 0
+  capacity            = var.environment == "prod" ? 1 : 0
   family              = "C"
-  sku_name            = "Standard"
+  sku_name            = var.environment == "prod" ? "Standard" : "Basic"
   enable_non_ssl_port = false
   minimum_tls_version = "1.2"
 
