@@ -2,9 +2,7 @@
 
 The reliable web app pattern is a set of best practices built on the [Azure Well-Architected Framework](https:/learn.microsoft.com/en-us/azure/architecture/framework/) that helps developers successfully migrate web applications to the cloud. The goal is to improve the cost, performance, security, operations, and reliability of your web application with minimal changes. The reliable web app pattern is an essential first step for web applications converging on the cloud and sets a foundation for future modernizations in Azure.
 
-This article defines objectives of the reliable web app pattern and details the business drivers, on-premises context, and the reasons the web app uses each Azure service. There's a companion article that shows you how to [apply the reliable web app pattern for java and a reference implementation you can deploy. The following diagram shows the architecture of the reference implementation that applies the reliable web app pattern
-
-This article provides an overview of the pattern. There's a companion article that shows you how to [apply the pattern](apply-pattern.md) and a [reference implementation](README.md#steps-to-deploy-the-reference-implementation) of the reliable web app pattern that you can deploy. The reference implementation is an employee-facing, line of business, concert ticketing app, and the guidance refers to it throughout.
+This article provides an overview of the pattern. There's a companion article that shows you how to [apply the pattern](apply-pattern.md) and a [reference implementation](README.md#steps-to-deploy-the-reference-implementation) that you can deploy. The guidance refers to the code and architecture of the reference implementation throughout, and the following diagram illustrates its architecture.
 
 [![Diagram showing the architecture of the reference implementation](docs/assets/java-architecture.png)](docs/assets/java-architecture.png)
 
@@ -97,7 +95,7 @@ Azure Monitor is a comprehensive suite of monitoring tools to collect data from 
 
 ### Cache
 
-[Azure Cache for Redis](https://learn.microsoft.com/azure/en-us/azure-cache-for-redis/cache-overview) is a managed in-memory data store based on the Redis software. Our load is heavily skewed toward viewing concerts and venue details. The web app needed a cache that provided the following benefits:
+[Azure Cache for Redis](https://learn.microsoft.com/azure/en-us/azure-cache-for-redis/cache-overview) is a managed in-memory data store based on the Redis software. The web app needed a cache that provided the following benefits:
 
 - **Reduce management overhead:** It's a fully managed service.
 - **Speed and volume:** It has high-data throughput and low latency reads for commonly accessed, slow changing data.
