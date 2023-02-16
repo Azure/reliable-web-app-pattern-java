@@ -178,10 +178,12 @@ resource "azurerm_key_vault_secret" "airsonic_cache_hostname" {
 }
 
 module "cache" {
-  source = "./modules/cache"
-  resource_group  = azurerm_resource_group.main.name
-  environment      = local.environment
-  location         = var.location
+  source                      = "./modules/cache"
+  resource_group              = azurerm_resource_group.main.name
+  environment                 = local.environment
+  location                    = var.location
+  private_endpoint_vnet_id    = module.network.vnet_id
+  private_endpoint_subnet_id  = module.network.private_endpoint_subnet_id
 }
 
 module "application" {
