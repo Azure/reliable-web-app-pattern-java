@@ -6,7 +6,7 @@ variable "application_name" {
 variable "environment" {
   type        = string
   description = "The environment (dev, test, prod...)"
-  default     = ""
+  default     = "dev"
 }
 
 variable "location" {

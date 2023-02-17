@@ -197,12 +197,6 @@ public class MediaFileService {
     }
 
     private MediaFile doCheckLastModified(MediaFile mediaFile, MusicFolder folder, boolean minimizeDiskAccess) throws IOException {
-        if (minimizeDiskAccess || (mediaFile.getVersion() >= MediaFileDao.VERSION
-                && !settingsService.getFullScan()
-                && mediaFile.getChanged().compareTo(Files.getLastModifiedTime(mediaFile.getFullPath(folder.getPath())).toInstant()) > -1)) {
-            LOG.debug("Detected unmodified file (id {}, path {} in folder {} ({}))", mediaFile.getId(), mediaFile.getPath(), folder.getId(), folder.getName());
-            return mediaFile;
-        }
         LOG.debug("Updating database file from disk (id {}, path {} in folder {} ({}))", mediaFile.getId(), mediaFile.getPath(), folder.getId(), folder.getName());
         mediaFile = createMediaFile(mediaFile.getRelativePath(), folder, mediaFile);
         updateMediaFile(mediaFile);
