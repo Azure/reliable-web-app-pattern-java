@@ -24,3 +24,13 @@ variable "location" {
   description = "The Azure region where all resources in this example should be created"
 }
 
+variable "network_acls" {
+  description = "Network rules to apply to key vault."
+  type = object({
+    bypass                     = string
+    default_action             = string
+    ip_rules                   = list(string)
+    virtual_network_subnet_ids = list(string)
+  })
+  default = null
+}

@@ -33,7 +33,7 @@ resource "azurerm_subnet" "app_subnet" {
   virtual_network_name = azurerm_virtual_network.network.name
   address_prefixes     = ["10.0.1.0/24"]
 
-  service_endpoints = [ "Microsoft.Storage" ]
+  service_endpoints = [ "Microsoft.Storage", "Microsoft.KeyVault"]
 
   delegation {
     name = "app-service"

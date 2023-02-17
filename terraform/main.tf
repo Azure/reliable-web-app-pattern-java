@@ -1,16 +1,3 @@
-terraform {
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "3.43.0"
-    }
-    azurecaf = {
-      source  = "aztfmod/azurecaf"
-      version = "1.2.16"
-    }
-  }
-}
-
 provider "azurerm" {
   features {}
 }
@@ -80,7 +67,14 @@ module "key-vault" {
   application_name = var.application_name
   environment      = local.environment
   location         = var.location
-  
+
+  network_acls = {
+    bypass                     = "None"
+    default_action             = "Deny"
+    ip_rules                   = [local.myip]
+    virtual_network_subnet_ids = [module.network.app_subnet_id]
+  }
+
   azure_ad_tenant_id = data.azurerm_client_config.current.tenant_id
 }
 
