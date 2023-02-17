@@ -8,6 +8,10 @@ terraform {
       source  = "aztfmod/azurecaf"
       version = "1.2.16"
     }
+    azuread = {
+      source = "hashicorp/azuread"
+      version = "2.33.0"
+    }
   }
 }
 
@@ -163,6 +167,33 @@ resource "azurerm_key_vault_secret" "airsonic_application_tenant_id" {
   depends_on = [
     azurerm_key_vault_access_policy.user_access_policy
   ]
+}
+
+resource "azurerm_key_vault_secret" "airsonic_cache_secret" {
+  name         = "airsonic-redis-password"
+  value        = module.cache.cache_secret
+  key_vault_id = module.key-vault.vault_id
+}
+
+resource "azurerm_key_vault_secret" "airsonic_cache_hostname" {
+  name         = "airsonic-redis-host"
+  value        = module.cache.cache_hostname
+  key_vault_id = module.key-vault.vault_id
+}
+
+resource "azurerm_key_vault_secret" "airsonic_cache_port" {
+  name         = "airsonic-redis-port"
+  value        = module.cache.cache_port
+  key_vault_id = module.key-vault.vault_id
+}
+
+module "cache" {
+  source                      = "./modules/cache"
+  resource_group              = azurerm_resource_group.main.name
+  environment                 = local.environment
+  location                    = var.location
+  private_endpoint_vnet_id    = module.network.vnet_id
+  private_endpoint_subnet_id  = module.network.private_endpoint_subnet_id
 }
 
 module "application" {
