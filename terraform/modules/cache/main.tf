@@ -20,7 +20,7 @@ resource "azurerm_redis_cache" "cache" {
   capacity            = var.environment == "prod" ? 1 : 0
   family              = "C"
   sku_name            = var.environment == "prod" ? "Standard" : "Basic"
-  enable_non_ssl_port = false
+  enable_non_ssl_port = var.environment == "prod" ? false : true
   minimum_tls_version = "1.2"
   # public network access will be allowed for non-prod so devs can do integration testing while debugging locally
   public_network_access_enabled = var.environment == "prod" ? false : true
