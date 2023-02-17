@@ -7,3 +7,8 @@ output "cache_hostname" {
   value       = azurerm_redis_cache.cache.hostname
   description = "The hostname to use when connecting to Azure Cache for Redis"
 }
+
+output "cache_port" {
+  value       = azurerm_redis_cache.cache.port
+  description = "The port to use when connecting to Azure Cache for Redis"
+}

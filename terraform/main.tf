@@ -170,14 +170,20 @@ resource "azurerm_key_vault_secret" "airsonic_application_tenant_id" {
 }
 
 resource "azurerm_key_vault_secret" "airsonic_cache_secret" {
-  name         = "airsonic-cache-secret"
+  name         = "airsonic-redis-password"
   value        = module.cache.cache_secret
   key_vault_id = module.key-vault.vault_id
 }
 
 resource "azurerm_key_vault_secret" "airsonic_cache_hostname" {
-  name         = "airsonic-cache-hostname"
+  name         = "airsonic-redis-host"
   value        = module.cache.cache_hostname
+  key_vault_id = module.key-vault.vault_id
+}
+
+resource "azurerm_key_vault_secret" "airsonic_cache_port" {
+  name         = "airsonic-redis-port"
+  value        = module.cache.cache_port
   key_vault_id = module.key-vault.vault_id
 }
 
