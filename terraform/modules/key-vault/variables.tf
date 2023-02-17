@@ -34,3 +34,14 @@ variable "network_acls" {
   })
   default = null
 }
+
+variable "virtual_network_id" {
+  type        = string
+  description = "The id of the vnet with the address space of 10.0.0.0/16"
+}
+
+variable "private_endpoint_subnet_id" {
+  type        = string
+  description = "The id of the subnet to use for private endpoint"
+}
+

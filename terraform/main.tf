@@ -68,6 +68,9 @@ module "key-vault" {
   environment      = local.environment
   location         = var.location
 
+  virtual_network_id         = module.network.vnet_id
+  private_endpoint_subnet_id = module.network.private_endpoint_subnet_id
+
   network_acls = {
     bypass                     = "None"
     default_action             = "Deny"
