@@ -33,7 +33,9 @@ resource "azurerm_subnet" "app_subnet" {
   virtual_network_name = azurerm_virtual_network.network.name
   address_prefixes     = ["10.0.1.0/24"]
 
-  service_endpoints = [ "Microsoft.Storage" ]
+  private_endpoint_network_policies_enabled = true
+
+  service_endpoints = [ "Microsoft.Storage", "Microsoft.KeyVault"]
 
   delegation {
     name = "app-service"
@@ -44,7 +46,7 @@ resource "azurerm_subnet" "app_subnet" {
   }
 }
 
-# Create the private endpoint subnet
+# Create the private endpoint subnet. Private endpoint cannot be created in a subnet that's delegated
 resource "azurecaf_name" "private_endpoint_subnet_name" {
   name          = var.application_name
   resource_type = "azurerm_subnet"
