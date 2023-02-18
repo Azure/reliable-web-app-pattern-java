@@ -223,6 +223,8 @@ resource "azurerm_linux_web_app" "application" {
     DatabaseConfigEmbedUsername = var.database_username
     DatabaseConfigEmbedPassword = var.database_password
 
+    AIRSONIC_RETRY_DEMO = ""
+
     APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.app_insights.connection_string
     APPLICATIONINSIGHTS_SAMPLING_REQUESTS_PER_SECOND = 10
     ApplicationInsightsAgent_EXTENSION_VERSION = "~3"

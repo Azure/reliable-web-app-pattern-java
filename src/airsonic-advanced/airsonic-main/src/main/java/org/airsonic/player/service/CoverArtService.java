@@ -10,7 +10,6 @@ import org.airsonic.player.domain.MusicFolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Path;
@@ -67,7 +66,7 @@ public class CoverArtService {
         }
     }
 
-    @Cacheable(key = "#type.toString().concat('-').concat(#id)", unless = "#result == null") // 'unless' condition should never happen, because of null-object pattern
+    //@Cacheable(key = "#type.toString().concat('-').concat(#id)", unless = "#result == null") // 'unless' condition should never happen, because of null-object pattern
     public CoverArt get(EntityType type, int id) {
         return Optional.ofNullable(coverArtDao.get(type, id)).orElse(CoverArt.NULL_ART);
     }

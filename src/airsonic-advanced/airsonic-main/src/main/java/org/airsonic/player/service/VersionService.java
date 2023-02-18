@@ -19,34 +19,18 @@
  */
 package org.airsonic.player.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
+import org.airsonic.player.component.ExternalAPICaller;
 import org.airsonic.player.domain.Version;
-import org.airsonic.player.util.Util;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.conn.ConnectTimeoutException;
-import org.apache.http.impl.client.AbstractResponseHandler;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.support.PropertiesLoaderUtils;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.io.*;
+import java.io.IOException;
 import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Provides version-related services, including functionality for determining whether a newer
@@ -54,33 +38,17 @@ import java.util.stream.Collectors;
  *
  * @author Sindre Mehus
  */
-@Service
+@RestController
 public class VersionService {
+
+    private final ExternalAPICaller externalAPICaller;
+
     private static final Logger LOG = LoggerFactory.getLogger(VersionService.class);
 
-    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyyMMddHHmmss").withZone(ZoneId.of("UTC"));
-
-    private final Properties build;
-
-    private Version localVersion;
-    private Version latestFinalVersion;
-    private Version latestBetaVersion;
-    private Instant localBuildDate;
-    private String localBuildNumber;
-
-    public VersionService() throws IOException {
-        build = PropertiesLoaderUtils.loadAllProperties("build.properties");
+    @Autowired
+    public VersionService(ExternalAPICaller externalApi) throws IOException {
+        this.externalAPICaller = externalApi;
     }
-
-    /**
-     * Time when latest version was fetched (in milliseconds).
-     */
-    private long lastVersionFetched;
-
-    /**
-     * Only fetch last version this often (in milliseconds.).
-     */
-    private static final long LAST_VERSION_FETCH_INTERVAL = 7L * 24L * 3600L * 1000L; // One week
 
     /**
      * Returns the version number for the locally installed Airsonic version.
@@ -88,37 +56,7 @@ public class VersionService {
      * @return The version number for the locally installed Airsonic version.
      */
     public Version getLocalVersion() {
-        if (localVersion == null) {
-            try {
-                localVersion = new Version(build.getProperty("version") + "." + build.getProperty("timestamp"));
-                LOG.info("Resolved local Airsonic version to: {}", localVersion);
-            } catch (Exception x) {
-                LOG.warn("Failed to resolve local Airsonic version.", x);
-            }
-        }
-        return localVersion;
-    }
-
-    /**
-     * Returns the version number for the latest available Airsonic final version.
-     *
-     * @return The version number for the latest available Airsonic final version, or <code>null</code>
-     *         if the version number can't be resolved.
-     */
-    public synchronized Version getLatestFinalVersion() {
-        refreshLatestVersion();
-        return latestFinalVersion;
-    }
-
-    /**
-     * Returns the version number for the latest available Airsonic beta version.
-     *
-     * @return The version number for the latest available Airsonic beta version, or <code>null</code>
-     *         if the version number can't be resolved.
-     */
-    public synchronized Version getLatestBetaVersion() {
-        refreshLatestVersion();
-        return latestBetaVersion;
+        return externalAPICaller.getLocalVersion();
     }
 
     /**
@@ -128,15 +66,7 @@ public class VersionService {
      *         if the build date can't be resolved.
      */
     public Instant getLocalBuildDate() {
-        if (localBuildDate == null) {
-            try {
-                String date = build.getProperty("timestamp");
-                localBuildDate = DATE_FORMAT.parse(date, Instant::from);
-            } catch (Exception x) {
-                LOG.warn("Failed to resolve local Airsonic build date.", x);
-            }
-        }
-        return localBuildDate;
+        return externalAPICaller.getLocalBuildDate();
     }
 
     /**
@@ -146,14 +76,7 @@ public class VersionService {
      *         if the build number can't be resolved.
      */
     public String getLocalBuildNumber() {
-        if (localBuildNumber == null) {
-            try {
-                localBuildNumber = build.getProperty("revision");
-            } catch (Exception x) {
-                LOG.warn("Failed to resolve local Airsonic build commit.", x);
-            }
-        }
-        return localBuildNumber;
+        return externalAPICaller.getLocalBuildNumber();
     }
 
     /**
@@ -161,15 +84,11 @@ public class VersionService {
      *
      * @return Whether a new final version of Airsonic is available.
      */
+    @Retry(name = "retryApi", fallbackMethod = "isNewVersionAvailableFallback")
+    @CircuitBreaker(name = "CircuitBreakerService")
+    @GetMapping("/isNewFinalVersionAvailable")
     public boolean isNewFinalVersionAvailable() {
-        Version latest = getLatestFinalVersion();
-        Version local = getLocalVersion();
-
-        if (latest == null || local == null) {
-            return false;
-        }
-
-        return local.compareTo(latest) < 0;
+        return externalAPICaller.isNewFinalVersionAvailable();
     }
 
     /**
@@ -177,94 +96,53 @@ public class VersionService {
      *
      * @return Whether a new beta version of Airsonic is available.
      */
+    @Retry(name = "retryApi", fallbackMethod = "isNewVersionAvailableFallback")
+    @CircuitBreaker(name = "CircuitBreakerService")
+    @GetMapping("/isNewBetaVersionAvailable")
     public boolean isNewBetaVersionAvailable() {
-        Version latest = getLatestBetaVersion();
-        Version local = getLocalVersion();
-
-        if (latest == null || local == null) {
-            return false;
-        }
-
-        return local.compareTo(latest) < 0;
+        return externalAPICaller.isNewBetaVersionAvailable();
     }
 
     /**
-     * Refreshes the latest final and beta versions.
+     * Returns the version number for the latest available Airsonic beta version.
+     *
+     * @return The version number for the latest available Airsonic beta version, or <code>null</code>
+     *         if the version number can't be resolved.
      */
-    private void refreshLatestVersion() {
-        long now = System.currentTimeMillis();
-        boolean isOutdated = now - lastVersionFetched > LAST_VERSION_FETCH_INTERVAL;
-
-        if (isOutdated) {
-            try {
-                lastVersionFetched = now;
-                readLatestVersion();
-            } catch (Exception x) {
-                LOG.warn("Failed to resolve latest Airsonic version.", x);
-            }
-        }
+    @Retry(name = "retryApi", fallbackMethod = "getVersionFallback")
+    public synchronized Version getLatestBetaVersion() {
+        return externalAPICaller.getLatestBetaVersion();
     }
 
-    private static final String VERSION_URL = "https://api.github.com/repos/airsonic-advanced/airsonic-advanced/releases";
-
-    private static ResponseHandler<List<Map<String, Object>>> respHandler = new AbstractResponseHandler<List<Map<String,Object>>>() {
-        @Override
-        public List<Map<String, Object>> handleEntity(HttpEntity entity) throws IOException {
-            try (InputStream is = entity.getContent(); InputStream bis = new BufferedInputStream(is)) {
-                return Util.getObjectMapper().readValue(bis, new TypeReference<List<Map<String, Object>>>() {});
-            }
-        }
-    };
-
-    private static Function<Map<String,Object>, Version> releaseToVersionMapper = r ->
-            new Version(
-                    (String) r.get("tag_name"),
-                    (String) r.get("target_commitish"),
-                    (Boolean) r.get("draft") || (Boolean) r.get("prerelease"),
-                    (String) r.get("html_url"),
-                    Instant.parse((String) r.get("published_at")),
-                    Instant.parse((String) r.get("created_at")),
-                    (List<Map<String,Object>>) r.get("assets")
-                    );
+    /**
+     * Returns the version number for the latest available Airsonic final version.
+     *
+     * @return The version number for the latest available Airsonic final version, or <code>null</code>
+     *         if the version number can't be resolved.
+     */
+    @Retry(name = "retryApi", fallbackMethod = "getVersionFallback")
+    public synchronized Version getLatestFinalVersion() {
+        return externalAPICaller.getLatestFinalVersion();
+    }
 
     /**
-     * Resolves the latest available Airsonic version by inspecting github.
+     * Handles fallback for calls to check whether updated versions exist
+     *
+     * @param t Exception returned from the failed Resilience4j-protected call
+     *          to GitHub to look for updated version information.
+     * @return false, we will ignore new remote versions if the call fails
      */
-    private void readLatestVersion() throws IOException {
+    public boolean isNewVersionAvailableFallback(Throwable t) {
+        return false;
+    }
 
-        LOG.debug("Starting to read latest version");
-        RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectTimeout(10000)
-                .setSocketTimeout(10000)
-                .build();
-        HttpGet method = new HttpGet(VERSION_URL);
-        method.setConfig(requestConfig);
-        method.setHeader("accept", "application/vnd.github.v3+json");
-        method.setHeader("User-Agent", "Airsonic/" + getLocalVersion());
-        List<Map<String, Object>> content;
-        try (CloseableHttpClient client = HttpClients.createDefault()) {
-            content = client.execute(method, respHandler);
-        } catch (ConnectTimeoutException e) {
-            LOG.warn("Got a timeout when trying to reach {}", VERSION_URL);
-            return;
-        }
-
-        List<Map<String, Object>> releases = content.stream()
-                .sorted(Comparator.<Map<String, Object>,Instant>comparing(r -> Instant.parse((String) r.get("published_at")), Comparator.reverseOrder()))
-                .collect(Collectors.toList());
-
-
-        Optional<Map<String, Object>> betaR = releases.stream().findFirst();
-        Optional<Map<String, Object>> finalR = releases.stream().filter(x -> !((Boolean)x.get("draft")) && !((Boolean)x.get("prerelease"))).findFirst();
-        Optional<Map<String,Object>> currentR = releases.stream().filter(x ->
-            StringUtils.equals(build.getProperty("version") + "." + build.getProperty("timestamp"), (String) x.get("tag_name")) ||
-            StringUtils.equals(build.getProperty("version"), (String) x.get("tag_name"))).findAny();
-
-        LOG.debug("Got {} for beta version", betaR.map(x -> x.get("tag_name")).orElse(null));
-        LOG.debug("Got {} for final version", finalR.map(x -> x.get("tag_name")).orElse(null));
-
-        latestBetaVersion = betaR.map(releaseToVersionMapper).orElse(null);
-        latestFinalVersion = finalR.map(releaseToVersionMapper).orElse(null);
-        localVersion = currentR.map(releaseToVersionMapper).orElse(localVersion);
+    /**
+     * Handles fallback for calls to get version identifier
+     *
+     * @param t Exception return from failed call to get version
+     * @return the local version information
+     */
+    public Version getVersionFallback(Throwable t) {
+        return externalAPICaller.getLocalVersion();
     }
 }

@@ -1,6 +1,7 @@
 package org.airsonic.player;
 
 import com.microsoft.applicationinsights.attach.ApplicationInsights;
+import io.github.resilience4j.common.circuitbreaker.configuration.CircuitBreakerConfigCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.WebApplicationType;
@@ -12,6 +13,7 @@ import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.AdviceMode;
+import org.springframework.context.annotation.Bean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.util.ReflectionUtils;
 
@@ -21,6 +23,7 @@ import java.lang.reflect.Method;
     JmxAutoConfiguration.class,
     MultipartAutoConfiguration.class // TODO: update to use spring boot builtin multipart support
 })
+
 @EnableTransactionManagement(mode = AdviceMode.ASPECTJ)
 public class Application extends SpringBootServletInitializer implements WebServerFactoryCustomizer<ConfigurableServletWebServerFactory> {
 
@@ -70,6 +73,12 @@ public class Application extends SpringBootServletInitializer implements WebServ
         SpringApplicationBuilder builder = new SpringApplicationBuilder();
         ApplicationInsights.attach();
         doConfigure(builder).run(args);
+    }
+
+    @Bean
+    public CircuitBreakerConfigCustomizer configureCustomizer() {
+        return CircuitBreakerConfigCustomizer
+                .of("default", builder -> builder.slidingWindowSize(100));
     }
 
 }

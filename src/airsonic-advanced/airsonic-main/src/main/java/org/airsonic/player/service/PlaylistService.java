@@ -37,7 +37,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -147,12 +146,12 @@ public class PlaylistService {
         return playlistDao.getWritablePlaylistsForUser(username);
     }
 
-    @Cacheable(cacheNames = "playlistCache", unless = "#result == null")
+    //@Cacheable(cacheNames = "playlistCache", unless = "#result == null")
     public Playlist getPlaylist(int id) {
         return playlistDao.getPlaylist(id);
     }
 
-    @Cacheable(cacheNames = "playlistUsersCache", unless = "#result == null")
+    //@Cacheable(cacheNames = "playlistUsersCache", unless = "#result == null")
     public List<String> getPlaylistUsers(int playlistId) {
         return playlistDao.getPlaylistUsers(playlistId);
     }

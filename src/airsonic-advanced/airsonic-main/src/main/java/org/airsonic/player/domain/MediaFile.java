@@ -19,6 +19,7 @@
  */
 package org.airsonic.player.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.io.FilenameUtils;
 
 import java.nio.file.Path;
@@ -175,6 +176,7 @@ public class MediaFile {
         return mediaType != MediaType.DIRECTORY && mediaType != MediaType.ALBUM;
     }
 
+    @JsonIgnore
     public boolean isAlbum() {
         return mediaType == MediaType.ALBUM;
     }

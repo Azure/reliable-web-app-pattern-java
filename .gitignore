@@ -163,3 +163,4 @@ local.properties
 *.terraform.lock.hcl
 .terraform/
 *.tfplan
+src/airsonic-advanced/applicationinsights.log
