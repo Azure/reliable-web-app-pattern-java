@@ -14,7 +14,7 @@ This project has [companion architecture guidance](pattern-overview.md) that des
 
 ## Videos
 
-Forthcoming is a video series that details the reliable web app pattern for Java.
+The internally accessible video covers the details of reliable web app pattern for Java. For more information, see [Reliable web app pattern videos (Sharepoint)](https://aka.ms/rwa-java-video). 
 
 ## Architecture
 
