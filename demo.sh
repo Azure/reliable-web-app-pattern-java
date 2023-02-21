@@ -44,6 +44,9 @@ pe "terraform -chdir=./terraform apply airsonic.tfplan"
 p ">>> Set Up Your Local Build Environment <<<"
 pe "source ./scripts/setup-local-build-env.sh"
 
+p ">>> Download Training Videos <<<"
+pe "./scripts/download-trainings.sh"
+
 p ">>> Upload Training Videos and Playlists <<<"
 pe "./scripts/upload-trainings.sh"
 

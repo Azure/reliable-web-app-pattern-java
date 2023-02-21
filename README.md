@@ -30,25 +30,26 @@ A detailed workflow of the reference implementation is forthcoming.
 
 ## Steps to deploy the reference implementation
 
-There are two ways to deploy the solution. The recommended way is to use [Visual Studio Code](https://code.visualstudio.com/) with [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension.
+The recommended way to deploy the samle is to use [Visual Studio Code](https://code.visualstudio.com/) with [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension.
 
-To deploy the solution without [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers), install the following.
-
-- [Java 8](https://openjdk.org/install/)
-- [Maven](https://maven.apache.org/install.html)
-- [Terraform](https://www.terraform.io/)
-- [Azure CLI](https://aka.ms/nubesgen-install-az-cli)
-- [jq](https://stedolan.github.io/jq/download/)
-- [Git](https://git-scm.com/)
-
-Note - The following deployment has been tested on **macOS** and [Ubuntu on WSL](https://ubuntu.com/wsl).
+Note - The following deployment has been tested using devcontainers on **macOS** and [Ubuntu on WSL](https://ubuntu.com/wsl).
 
 ### Clone the repo
+
+If using WSL, start a WSL Ubuntu terminal and clone the repo to a WSL directory.
 
 ```shell
 git clone https://github.com/Azure/reliable-web-app-pattern-java.git
 cd reliable-web-app-pattern-java
 ```
+
+*Note - There is a [demo.sh](./demo.sh) script that you can run that will execute the deployment steps. You may choose to do this manually by following the deployment steps starting with [Prepare for deployment](#prepare-for-deployment)*
+
+```shell
+./demo.sh
+```
+
+Once the demo script completes, skip to the [Add Users to Azure Active Directory enterprise applications](#add-users-to-azure-active-directory-enterprise-applications) section.
 
 ### Prepare for deployment
 
