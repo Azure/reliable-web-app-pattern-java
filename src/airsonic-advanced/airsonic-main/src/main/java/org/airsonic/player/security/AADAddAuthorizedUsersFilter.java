@@ -29,7 +29,7 @@ public class AADAddAuthorizedUsersFilter extends OncePerRequestFilter {
 
     private static final Logger LOG = LoggerFactory.getLogger(AADAddAuthorizedUsersFilter.class);
 
-    private static final List<String> APPROLES = new ArrayList<>(Arrays.asList("APPROLE_User", "APPROLE_Admin", "APPROLE_Creator"));
+    private static final List<String> APPROLES = new ArrayList<>(Arrays.asList("APPROLE_User", "APPROLE_Creator"));
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -84,7 +84,7 @@ public class AADAddAuthorizedUsersFilter extends OncePerRequestFilter {
 
         Set<User.Role> roles = new HashSet<>();
 
-        if ("APPROLE_Admin".equals(authority)) {
+        if ("APPROLE_Creator".equals(authority)) {
             LOG.debug("Associating {} as an admin", userName);
 
             roles.add(User.Role.ADMIN);
@@ -103,17 +103,6 @@ public class AADAddAuthorizedUsersFilter extends OncePerRequestFilter {
 
             roles.add(User.Role.DOWNLOAD);
             roles.add(User.Role.STREAM);
-        } else if ("APPROLE_Creator".equals(authority)) {
-            LOG.debug("Associating {} as a creator", userName);
-
-            roles.add(User.Role.DOWNLOAD);
-            roles.add(User.Role.STREAM);
-            roles.add(User.Role.UPLOAD);
-            roles.add(User.Role.PLAYLIST);
-            roles.add(User.Role.COVERART);
-            roles.add(User.Role.COMMENT);
-            roles.add(User.Role.PODCAST);
-            roles.add(User.Role.SHARE);
         } else {
             LOG.debug("There are no roles associated with user {}", userName);
         }

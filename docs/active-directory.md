@@ -91,9 +91,9 @@ Enabling the `appRoles` feature in AAD, `roles` claim generated from `appRoles` 
                     .permitAll()
                     .antMatchers("/personalSettings*",
                             "/playerSettings*", "/shareSettings*", "/credentialsSettings*")
-                    .hasAnyAuthority("APPROLE_User", "APPROLE_Admin", "APPROLE_Creator")
+                    .hasAnyAuthority("APPROLE_User", "APPROLE_Creator")
                     .antMatchers("/**")
-                    .hasAnyAuthority("APPROLE_User", "APPROLE_Admin", "APPROLE_Creator")
+                    .hasAnyAuthority("APPROLE_User", "APPROLE_Creator")
                     .anyRequest().authenticated()
                     .and()
                     .addFilterBefore(aadAddAuthorizedUsersFilter UsernamePasswordAuthenticationFilter.class)
