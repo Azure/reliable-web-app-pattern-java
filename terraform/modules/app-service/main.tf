@@ -107,15 +107,6 @@ resource "azuread_application" "app_registration" {
 
   app_role {
     allowed_member_types = ["User"]
-    description          = "Admins can manage perform all task actions"
-    display_name         = "Admin"
-    enabled              = true
-    id                   = random_uuid.admin_role_id.result
-    value                = "Admin"
-  }
-
-  app_role {
-    allowed_member_types = ["User"]
     description          = "ReadOnly roles have limited query access"
     display_name         = "ReadOnly"
     enabled              = true
