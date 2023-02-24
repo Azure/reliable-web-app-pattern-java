@@ -149,7 +149,7 @@ The next step is to add a user to the application and assign them a role. To do 
 After adding the user, open the browser and navigate to https://{AIRSONIC_SITE}. Use the following command to get the site name.
 
 ```shell
-terraform -chdir=$PROJECT_ROOT/terraform output -raw frontdoor_url
+echo $(terraform -chdir=$PROJECT_ROOT/terraform output -raw frontdoor_url)
 ```
 
 ![Aisonic AAD](docs/assets/proseware.png)

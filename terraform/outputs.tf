@@ -4,7 +4,7 @@ output "application_url" {
 }
 
 output "frontdoor_url" {
-  value       = "https://${module.frontdoor.host_name}/index"
+  value       = "https://${module.frontdoor.host_name}"
   description = "The Web application Front Door URL."
 }
 
