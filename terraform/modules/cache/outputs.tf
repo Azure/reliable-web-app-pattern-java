@@ -12,3 +12,8 @@ output "cache_port" {
   value       = azurerm_redis_cache.cache.port
   description = "The port to use when connecting to Azure Cache for Redis"
 }
+
+output "cache_ssl_port" {
+  value       = azurerm_redis_cache.cache.ssl_port
+  description = "The ssl port to use when connecting to Azure Cache for Redis"
+}

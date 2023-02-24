@@ -180,7 +180,7 @@ resource "azurerm_key_vault_secret" "airsonic_cache_hostname" {
 
 resource "azurerm_key_vault_secret" "airsonic_cache_port" {
   name         = "airsonic-redis-port"
-  value        = module.cache.cache_port
+  value        = (local.environment == "prod" ? module.cache.cache_ssl_port : module.cache.cache_port)
   key_vault_id = module.key-vault.vault_id
 }
 
