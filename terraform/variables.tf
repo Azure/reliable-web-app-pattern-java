@@ -1,6 +1,11 @@
 variable "application_name" {
   type        = string
   description = "The application name"
+
+  validation {
+    condition     = length(var.application_name) < 18
+    error_message = "The length of the application_name must be less than 18 characters."
+  }
 }
 
 variable "environment" {
