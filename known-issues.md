@@ -2,8 +2,6 @@
 
 This document helps with troubleshooting and provides an introduction to the most requested features, gotchas, and questions.
 
-## Troubleshooting
-
 * Follow the following steps if you need to restart the deployment process.
 
     1. Delete azure resource group and app registration by following the steps in the `Teardown` section in [README.md](./README.md).
@@ -28,6 +26,10 @@ This document helps with troubleshooting and provides an introduction to the mos
     ![Aisonic AAD](docs/assets/azureauthtimeout.png)
 
     Refresh the browser to recover from the above error.
+
+* Some of the videos may not play correctly.  Skip the video and choose a different one to play.
+
+    ![Aisonic Video Playing Error](docs/assets/error-playing-video.png)
 
 * In some cases, the deployment of Redis Cache can take a long time.
     
