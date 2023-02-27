@@ -60,7 +60,14 @@ export SUBSCRIPTION=
 export APP_NAME=
 ```
 
-*The variable APP_NAME needs to be globally unique across all of Azure* 
+*The variable APP_NAME needs to be globally unique across all of Azure and less than 16 characters.  This sample uses the APP_NAME as the base for names the Azure Resources. Some Azure Resources have a limit to the length of the name.* 
+
+You may change the `APP_ENVIRONMENT` variable to either *prod* or *dev*. The following table describes the differences in the resources deployed in the 2 environments.
+
+| Resource | Dev | Prod | Notes |
+|:-----------------:|:-----------------:|:-----------------:|:-----------------:|
+| PostgreSQL Flexible Server | Burstable B1ms (B_Standard_B1ms) | General Purpose D4s_v3 (GP_Standard_D4s_v3) | https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-compute-storage |
+| App Service | P1v2 | P2v2 | https://azure.microsoft.com/en-us/pricing/details/app-service/linux/ |
 
 Run the following to set up the environment:
 
@@ -89,7 +96,7 @@ Create the Azure resources by running the following commands:
 
 ```shell
 terraform -chdir=./terraform init
-terraform -chdir=./terraform plan -var application_name=${APP_NAME} -out airsonic.tfplan
+terraform -chdir=./terraform plan -var application_name=${APP_NAME} -var environment=${APP_ENVIRONMENT} -out airsonic.tfplan
 terraform -chdir=./terraform apply airsonic.tfplan
 ```
 
@@ -139,10 +146,10 @@ The next step is to add a user to the application and assign them a role. To do 
 
 ![Aisonic Azure Active Directory Enterprise Applications](docs/assets/AAD-Enterprise-Application.png)
 
-After adding the user, open the browser and navigate to https://{AIRSONIC_SITE}/index. Use the following command to get the site name.
+After adding the user, open the browser and navigate to https://{AIRSONIC_SITE}. Use the following command to get the site name.
 
 ```shell
-terraform -chdir=$PROJECT_ROOT/terraform output -raw frontdoor_url
+echo $(terraform -chdir=$PROJECT_ROOT/terraform output -raw frontdoor_url)
 ```
 
 ![Aisonic AAD](docs/assets/proseware.png)

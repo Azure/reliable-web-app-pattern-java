@@ -4,4 +4,7 @@ export PROJECT_ROOT=${PWD}
 export SUBSCRIPTION=
 export APP_NAME=
 
+# APP_ENVIRONMENT can either be prod or dev
+export APP_ENVIRONMENT=dev
+
 export TRAININGS_DIR="$PROJECT_ROOT/videos"

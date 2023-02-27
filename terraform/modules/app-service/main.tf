@@ -133,7 +133,7 @@ resource "azuread_application" "app_registration" {
   }
 
   web {
-    homepage_url  = "https://${azurecaf_name.app_service.result}.azurewebsites.net/index"
+    homepage_url  = "https://${azurecaf_name.app_service.result}.azurewebsites.net"
     logout_url    = "https://${azurecaf_name.app_service.result}.azurewebsites.net/logout"
     redirect_uris = ["https://${azurecaf_name.app_service.result}.azurewebsites.net/login/oauth2/code/", "https://${azurecaf_name.app_service.result}.azurewebsites.net/.auth/login/aad/callback", "https://${var.frontdoor_host_name}/.auth/login/aad/callback"]
     implicit_grant {
@@ -179,7 +179,8 @@ resource "azurerm_linux_web_app" "application" {
   site_config {
     ftps_state              = "Disabled"
     minimum_tls_version     = "1.2"
-    always_on               = false
+    always_on               = true
+    health_check_path       = "/actuator/health"
 
     application_stack {
       java_server = "TOMCAT"
@@ -213,6 +214,8 @@ resource "azurerm_linux_web_app" "application" {
     DatabaseConfigEmbedUrl      = "jdbc:postgresql://${var.database_fqdn}:5432/${var.database_name}?stringtype=unspecified"
     DatabaseConfigEmbedUsername = var.database_username
     DatabaseConfigEmbedPassword = var.database_password
+
+    SPRING_REDIS_SSL = (var.environment == "prod" ? true : false)
 
     AIRSONIC_RETRY_DEMO = ""
 
