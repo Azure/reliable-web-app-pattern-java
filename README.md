@@ -175,5 +175,5 @@ Use of Microsoft trademarks or logos in modified versions of this project must n
 ## Additional links
 
 - [Known issues](known-issues.md)
-- [Developer patterns](simulate-patterns.md)
+- [Simulating developer patterns](simulate-patterns.md)
 - [Contributing](CONTRIBUTING.md)
