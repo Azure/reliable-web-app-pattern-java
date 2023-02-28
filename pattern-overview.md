@@ -12,11 +12,11 @@ The reliable web app pattern is a set of objectives that follow the pillars of [
 
 | Objectives | Implementation for Java |
 | --- | --- |
-|▪ Low-cost high-value wins<br>▪ Minimal code changes<br>▪ Security best practices<br> ▪ Reliability design patterns<br>▪ Improve operational excellence<br>▪ Cost-optimized environments<br>▪ Well Architected Framework principles<br>▪ Service level objective: 99.86% |▪ Retry pattern <br> ▪ Circuit-breaker pattern <br>▪ Cache-aside pattern <br>▪ Right-size resource <br>▪ Managed identities <br>▪ Private endpoints <br>▪ Secrets management <br>▪ Repeatable infrastructure <br>▪ Telemetry, logging, monitoring|
+|▪ Low-cost high-value wins<br>▪ Minimal code changes<br>▪ Security best practices<br> ▪ Reliability design patterns<br>▪ Improve operational excellence<br>▪ Cost-optimized environments<br>▪ Well Architected Framework principles<br>▪ Business driven service level objective |▪ Retry pattern <br> ▪ Circuit-breaker pattern <br>▪ Cache-aside pattern <br>▪ Right-size resource <br>▪ Managed identities <br>▪ Private endpoints <br>▪ Secrets management <br>▪ Repeatable infrastructure <br>▪ Telemetry, logging, monitoring <br>▪ Composite availability 99.86% |
 
 ## Business context
 
-This guidance mirrors the journey of a fictional company, Proseware, Inc, that wants to take their on-premises, line of business (LOB) web application to the cloud. Proseware’s leadership decided to expand their business into the EdTech application market. After their initial technical research, they concluded they could use their existing internal training platform as a starting point and modernize them into a B2C EdTech App. The current on-premises training application is a customized version of the open-source monolithic Airsonic web-based media streamer. To expand its business into a highly competitive EdTech market, the on-premises infrastructure needs to provide a cost-efficient means to scale, and a migration to the cloud offers the most return on investment. The migration of their application should meet the increasing business demand with minimal investments in the existing monolithic app. Here are some short-term and long-term goals for the application.
+This guidance mirrors the journey of a fictional company, Proseware, Inc. Proseware wants to take their on-premises, line of business (LOB) web application to the cloud, and company leadership decided to expand their business into the EdTech application market. After their initial technical research, they concluded they could use their existing internal training platform as a starting point and modernize them into a B2C EdTech App. The current on-premises training application is a customized version of the open-source monolithic Airsonic web-based media streamer. To expand its business into a highly competitive EdTech market, the on-premises infrastructure needs to provide a cost-efficient means to scale, and a migration to the cloud offers the most return on investment. The migration of their application should meet the increasing business demand with minimal investments in the existing monolithic app. Here are some short-term and long-term goals for the application.
 
 | Short term goals | Long term goals |
 | --- | --- |
@@ -34,6 +34,8 @@ For each dependency in the critical path, you need to assign an availability goa
 
 For example, Proseware used Azure SLAs for Azure services. The following diagram illustrates Proseware's dependency list with availability goals for each dependency.
 
+[![Diagram showing Proseware's dependencies on the critical path and the assigned availability metric for each dependency.](docs/assets/java-slo-dependecies.png)](docs/assets/java-slo-dependecies.png)
+
 Finally, use the formulas for composite SLAs to estimate the composite availability of the dependencies on the critical path. This number should meet or exceed your SLO. For more information, see:
 
 - [Composite SLA formula](https:/learn.microsoft.com/en-us/azure/architecture/framework/resiliency/business-metrics#composite-slas)
@@ -41,7 +43,7 @@ Finally, use the formulas for composite SLAs to estimate the composite availabil
 
 ## Choose the right services
 
-Choosing the right Azure services is an important part of the planning phase before moving your app to Azure. Understanding the level of performance and availability you need for your app will have an impact on the total cost to run your solution. You should start by defining a target SLO for your solution and use that information to determine which products and SKUs you should be using.  We provide our decision process for each service in the solution. Our two main requirements - an SLA of 99.86% for the production environment and an average daily-user load will be around 1,000 users.
+Choosing the right Azure services is an important part of the planning phase before moving your app to Azure. Understanding the level of performance and availability you need for your app will have an impact on the total cost to run your solution. You should start by defining a target SLO for your solution and use that information to determine which products and SKUs you should be using.  We provide our decision process for each service in the solution. Our two main requirements were (1) having an SLA of 99.86% for the production environment and (2) handling an average load of 1,000 users daily.
 
 ### Application Platform
 

@@ -120,6 +120,29 @@ Production environments need SKUs that meet the service level agreements (SLA), 
 - [Azure Reservations](https://learn.microsoft.com/azure/cost-management-billing/reservations/save-compute-costs-reservations)
 - [Azure savings plans for compute](https://learn.microsoft.com/azure/cost-management-billing/savings-plan/savings-plan-compute-overview)
 
+*Reference implementation:* The reference implementation has an optional parameter to deploy different SKUs. It uses cheaper SKUs for Azure Cache for Redis, App Service, and Azure PostgreSQL Flexible Server when deploying to the development environment. You can choose any SKUs that meet your needs, but the reference implementation uses the following SKUs:
+
+| Service | Dev SKU | Prod SKU | SKU options |
+| --- | --- | --- | --- |
+| Cache for Redis | Basic | Standard | [Redis Cache SKU options](https://azure.microsoft.com/en-in/pricing/details/cache/)
+| App Service | P1v2 | P2v2 | [App Service SKU options](https://azure.microsoft.com/en-us/pricing/details/app-service/linux/)
+| PostgreSQL Flexible Server | Burstable B1ms (B_Standard_B1ms) | General Purpose D4s_v3 (GP_Standard_D4s_v3) | [PostgreSQL SKU options](https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-compute-storage)
+
+The following parameter tells the Terraform template the SKUs to select development SKUs. In `scripts/setup-initial-env.sh`, you can set `APP_ENVIRONMENT` to either be prod or dev.
+
+```bash
+# APP_ENVIRONMENT can either be prod or dev
+export APP_ENVIRONMENT=dev
+```
+
+[See code in context](https://github.com/Azure/reliable-web-app-pattern-java/blob/main/scripts/setup-initial-env.sh)
+
+The Terraform uses the `APP_ENVIRONMENT` as the `environment` value when deploying.
+
+```shell
+terraform -chdir=./terraform plan -var application_name=${APP_NAME} -var environment=${APP_ENVIRONMENT} -out airsonic.tfplan
+```
+
 ### Automate scaling the environment
 
 You should use autoscale to automate horizontal scaling for production environments. Autoscaling adapts to user demand to save you money. Horizontal scaling automatically increases compute capacity to meet user demand and decreases compute capacity when demand drops. Don't increase the size of your application platform (vertical scaling) to meet frequent changes in demand. It's less cost efficient. For more information, see:
