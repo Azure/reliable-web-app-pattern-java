@@ -67,6 +67,7 @@ You may change the `APP_ENVIRONMENT` variable to either *prod* or *dev*. The fol
 | Resource | Dev | Prod | Notes |
 |:-----------------:|:-----------------:|:-----------------:|:-----------------:|
 | PostgreSQL Flexible Server | Burstable B1ms (B_Standard_B1ms) | General Purpose D4s_v3 (GP_Standard_D4s_v3) | https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-compute-storage |
+| Redis Cache | Basic | Standard | https://azure.microsoft.com/en-in/pricing/details/cache/ |
 | App Service | P1v2 | P2v2 | https://azure.microsoft.com/en-us/pricing/details/app-service/linux/ |
 
 Run the following to set up the environment:
