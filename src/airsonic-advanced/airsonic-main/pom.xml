@@ -13,7 +13,7 @@
     </parent>
 
     <properties>
-        <chameleon.version>2.0.0-RELEASE</chameleon.version>
+        <chameleon.version>1.2.1-RELEASE</chameleon.version>
         <tomcat.server.scope>provided</tomcat.server.scope>
         <!-- For fixing import/export due to https://github.com/liquibase/liquibase/issues/1598 -->
         <liquibase.version>4.6.2</liquibase.version>
@@ -313,12 +313,6 @@
         <dependency>
             <groupId>jakarta.mail</groupId>
             <artifactId>jakarta.mail-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.hoodcomputing</groupId>
-            <artifactId>natpmp</artifactId>
-            <version>0.1</version>
         </dependency>
 
         <dependency>
@@ -634,9 +628,9 @@
                 <version>2.6.1</version>  
                 <configuration> 
                     <schemaVersion>V2</schemaVersion>  
-                    <appName><!--application_name--></appName>
-                    <resourceGroup><!--application_resource_group--></resourceGroup>
-                    <region><!--application_region--></region>
+                    <appName>app-proseware-nickd5-dev</appName>
+                    <resourceGroup>rg-proseware-nickd5-dev</resourceGroup>
+                    <region>eastus</region>
                     <deployment> 
                         <resources> 
                         <resource>

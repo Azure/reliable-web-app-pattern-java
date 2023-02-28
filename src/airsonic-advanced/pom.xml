@@ -32,11 +32,6 @@
 
     <repositories>
         <repository>
-            <id>local1</id>
-            <name>Local Repository</name>
-            <url>file://${project.basedir}/../repo</url>
-        </repository>
-        <repository>
             <id>maven-repo</id>
             <url>https://repo.maven.apache.org/maven2</url>
             <snapshots>
@@ -51,14 +46,6 @@
             </snapshots>
         </repository>
     </repositories>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>local1</id>
-            <name>Local Repository</name>
-            <url>file://${project.basedir}/../repo</url>
-        </pluginRepository>
-    </pluginRepositories>
 
     <scm>
         <connection>scm:git:git://github.com/airsonic-advanced/airsonic-advanced.git</connection>
