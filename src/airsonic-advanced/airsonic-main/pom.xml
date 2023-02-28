@@ -628,9 +628,9 @@
                 <version>2.6.1</version>  
                 <configuration> 
                     <schemaVersion>V2</schemaVersion>  
-                    <appName>app-proseware-nickd5-dev</appName>
-                    <resourceGroup>rg-proseware-nickd5-dev</resourceGroup>
-                    <region>eastus</region>
+                    <appName><!--application_name--></appName>
+                    <resourceGroup><!--application_resource_group--></resourceGroup>
+                    <region><!--application_region--></region>
                     <deployment> 
                         <resources> 
                         <resource>
