@@ -1,6 +1,6 @@
 # Reliable web app pattern planning (Java)
 
-The reliable web app pattern is a set of best practices built on the [Azure Well-Architected Framework](https:/learn.microsoft.com/en-us/azure/architecture/framework/) that helps developers successfully migrate web applications to the cloud. The goal is to improve the cost, performance, security, operations, and reliability of your web application with minimal changes. The reliable web app pattern is an essential first step for web applications converging on the cloud and sets a foundation for future modernizations in Azure.
+The reliable web app pattern is a set of best practices built on the [Azure Well-Architected Framework](https://learn.microsoft.com/en-us/azure/architecture/framework/) that helps developers successfully migrate web applications to the cloud. The goal is to improve the cost, performance, security, operations, and reliability of your web application with minimal changes. The reliable web app pattern is an essential first step for web applications converging on the cloud and sets a foundation for future modernizations in Azure.
 
 This article provides an overview of the pattern. There's a companion article that shows you how to [apply the pattern](apply-pattern.md) and a [reference implementation](README.md#steps-to-deploy-the-reference-implementation) that you can deploy. The guidance refers to the code and architecture of the reference implementation throughout, and the following diagram illustrates its architecture.
 
@@ -8,7 +8,7 @@ This article provides an overview of the pattern. There's a companion article th
 
 ## Pattern objectives and implementation
 
-The reliable web app pattern is a set of objectives that follow the pillars of [Azure Well-Architected Framework](https:/learn.microsoft.com/en-us/azure/architecture/framework/) and 12 Factor Apps. How you implement this pattern varies based on the web application and language. The following table outlines the pattern objectives and how the reference implementation met these objectives.
+The reliable web app pattern is a set of objectives that follow the pillars of [Azure Well-Architected Framework](https://learn.microsoft.com/en-us/azure/architecture/framework/) and 12 Factor Apps. How you implement this pattern varies based on the web application and language. The following table outlines the pattern objectives and how the reference implementation met these objectives.
 
 | Objectives | Implementation for Java |
 | --- | --- |
@@ -38,8 +38,8 @@ For example, Proseware used Azure SLAs for Azure services. The following diagram
 
 Finally, use the formulas for composite SLAs to estimate the composite availability of the dependencies on the critical path. This number should meet or exceed your SLO. For more information, see:
 
-- [Composite SLA formula](https:/learn.microsoft.com/en-us/azure/architecture/framework/resiliency/business-metrics#composite-slas)
-- [Multiregional SLA formula](https:/learn.microsoft.com/en-us/azure/architecture/framework/resiliency/business-metrics#slas-for-multiregion-deployments)
+- [Composite SLA formula](https://learn.microsoft.com/en-us/azure/architecture/framework/resiliency/business-metrics#composite-slas)
+- [Multiregional SLA formula](https://learn.microsoft.com/en-us/azure/architecture/framework/resiliency/business-metrics#slas-for-multiregion-deployments)
 
 ## Choose the right services
 
@@ -47,7 +47,7 @@ Choosing the right Azure services is an important part of the planning phase bef
 
 ### Application Platform
 
-[Azure App Service](https:/learn.microsoft.com/en-us/azure/app-service/overview) for Tomcat on Linux allows developers to quickly build, deploy and scale their Tomcat web apps on a fully managed Linux-based service. The open-source Maven Plugin for App Service helps Java developers deploy Maven projects. App Service is an HTTP-based, managed service for hosting web applications, REST APIs, and mobile back ends. App Service isn’t the only compute option, see: compute decision tree. We chose Azure App Service because it met the following requirements:
+[Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/overview) for Tomcat on Linux allows developers to quickly build, deploy and scale their Tomcat web apps on a fully managed Linux-based service. The open-source Maven Plugin for App Service helps Java developers deploy Maven projects. App Service is an HTTP-based, managed service for hosting web applications, REST APIs, and mobile back ends. App Service isn’t the only compute option, see: compute decision tree. We chose Azure App Service because it met the following requirements:
 
 - **High SLA:** It has a 99.95% uptime SLA and meets our requirements for the production environment.
 - **Reduced management overhead:** It’s a fully managed hosting solution.
@@ -57,7 +57,7 @@ Choosing the right Azure services is an important part of the planning phase bef
 
 ### Identity management
 
-[Azure Active Directory (Azure AD)](https:/learn.microsoft.com/en-us/azure/active-directory/fundamentals/active-directory-whatis) is a cloud-based identity and access management service. It authenticates and authorizes users based on roles that integrate with our application. Azure AD provides the application with the following abilities:
+[Azure Active Directory (Azure AD)](https://learn.microsoft.com/en-us/azure/active-directory/fundamentals/active-directory-whatis) is a cloud-based identity and access management service. It authenticates and authorizes users based on roles that integrate with our application. Azure AD provides the application with the following abilities:
 
 - **Authentication and authorization:** The application needed to authenticate and authorize employees.
 - **Scalable:** It scale to support larger scenarios.
@@ -141,7 +141,7 @@ Azure Files offers fully managed file shares in the cloud that are accessible vi
 
 ### Endpoint security
 
-[Azure Private Link](https:/learn.microsoft.com/en-us/azure/private-link/private-link-overview) provides access to PaaS Services (such as, Azure Cache for Redis and PostgreSQL Database) over a private endpoint in your virtual network. Traffic between your virtual network and the service travels across the Microsoft backbone network. Azure Private DNS with Azure Private Link enables your solution to communicate securely with Azure services like Azure Database for PostgreSQL. The web app uses Azure Private Link for the following reasons:
+[Azure Private Link](https://learn.microsoft.com/en-us/azure/private-link/private-link-overview) provides access to PaaS Services (such as, Azure Cache for Redis and PostgreSQL Database) over a private endpoint in your virtual network. Traffic between your virtual network and the service travels across the Microsoft backbone network. Azure Private DNS with Azure Private Link enables your solution to communicate securely with Azure services like Azure Database for PostgreSQL. The web app uses Azure Private Link for the following reasons:
 
 - **Secure communication:** It lets the application privately access services on the Azure platform and reduces the network footprint of data stores to protect against data leakage.
 - **Minimal effort:** The private endpoints support the web application platform and database platform the web app uses. Both platforms mirror existing on-premises setup for minimal change.
