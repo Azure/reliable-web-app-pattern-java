@@ -44,3 +44,16 @@ This document helps with troubleshooting and provides an introduction to the mos
     module.cache.azurerm_redis_cache.cache: Still creating... [19m20s elapsed]
     ````
 
+* Access to the Azure Redis Cache console error
+
+    You can launch the console for Azure Redis Cache through the Azure Portal.
+
+    ![Aisonic AAD](docs/assets/azure-redis-console.png)
+
+    You may encounter the following errors when issuing Redis commands.
+
+    ![Aisonic AAD](docs/assets/azure-redis-private-console-error.png)
+
+    Enable *public network access* to use the console.
+
+    ![Aisonic AAD](docs/assets/azure-redis-enable-public-network-access.png)
