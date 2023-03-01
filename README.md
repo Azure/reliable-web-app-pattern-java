@@ -30,26 +30,29 @@ A detailed workflow of the reference implementation is forthcoming.
 
 ## Steps to deploy the reference implementation
 
-The recommended way to deploy the samle is to use [Visual Studio Code](https://code.visualstudio.com/) with [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension.
+Deploy this sample using [Visual Studio Code](https://code.visualstudio.com/) with [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension.
 
-Note - The following deployment has been tested using devcontainers on **macOS** and [Ubuntu on WSL](https://ubuntu.com/wsl).
+Note - The following deployment has been tested using devcontainers on **macOS** and **Windows with [Ubuntu on WSL](https://ubuntu.com/wsl)**.
 
 ### Clone the repo
 
 If using WSL, start a WSL Ubuntu terminal and clone the repo to a WSL directory.
 
+[![WSL Ubuntu](docs/assets/wsl-ubuntu.png)
+
 ```shell
 git clone https://github.com/Azure/reliable-web-app-pattern-java.git
 cd reliable-web-app-pattern-java
+code .
 ```
 
-*Note - There is a [demo.sh](./demo.sh) script that you can run that will execute the deployment steps. You may choose to do this manually by following the deployment steps starting with [Prepare for deployment](#prepare-for-deployment)*
+Once Visual Studio Code is launched, you should see a popup allowing you to click on the button **Reopen in Container**.
 
-```shell
-./demo.sh
-```
+[![WSL Ubuntu](docs/assets/vscode-reopen-in-container.png)
 
-Once the demo script completes, skip to the [Add Users to Azure Active Directory enterprise applications](#add-users-to-azure-active-directory-enterprise-applications) section.
+If you don't see the popup, open up the Visual Studio Code Command Palette with the keyboard shortcut ⇧⌘P (Windows, Linux Ctrl+Shift+P) or navigating to View -> Command Palette... in the VS Code UI.
+
+[![WSL Ubuntu](docs/assets/vscode-reopen-in-container-command.png)
 
 ### Prepare for deployment
 
@@ -67,7 +70,20 @@ You may change the `APP_ENVIRONMENT` variable to either *prod* or *dev*. The fol
 | Resource | Dev | Prod | Notes |
 |:-----------------:|:-----------------:|:-----------------:|:-----------------:|
 | PostgreSQL Flexible Server | Burstable B1ms (B_Standard_B1ms) | General Purpose D4s_v3 (GP_Standard_D4s_v3) | https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-compute-storage |
+| Redis Cache | Basic | Standard | https://azure.microsoft.com/en-in/pricing/details/cache/ |
 | App Service | P1v2 | P2v2 | https://azure.microsoft.com/en-us/pricing/details/app-service/linux/ |
+
+*Note - There is a guided [demo.sh](./demo.sh) script that you can run that will execute the deployment steps.*
+
+```shell
+./demo.sh
+```
+
+Once the demo script completes, skip to the [Add Users to Azure Active Directory enterprise applications](#add-users-to-azure-active-directory-enterprise-applications) section.
+
+*You may choose to do this manually by following the steps below starting with [Start the deployment](#start-the-deployment)*
+
+### Start the Deployment
 
 Run the following to set up the environment:
 
