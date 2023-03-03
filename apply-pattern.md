@@ -260,9 +260,30 @@ Performance efficiency is the ability of a workload to scale and meet the demand
 
 The cache-aside pattern is a technique that's used to manage in-memory data caching. The cache-aside pattern makes the application responsible for managing data requests and data consistency between the cache and a persistent data store, like a database. When a data request reaches the application, the application first checks the cache to see if the cache has the data in memory. If it doesn't, the application queries the database, replies to the requester, and stores that data in the cache. For more information, see [Cache-aside pattern overview](https://learn.microsoft.com/azure/architecture/patterns/cache-aside).
 
+**Simulate the Cache-Aside pattern:** You can simulate the Cache-Aside pattern in the reference implementation. For instructions, see [Simulate the Cache-Aside pattern](./simulate-patterns.md#cache-aside-pattern).
+
 The cache-aside pattern introduces a few benefits to the web application. It reduces the request response time and can lead to increased response throughput. This efficiency reduces the number of horizontal scaling events, making the app more capable of handling traffic bursts. It also improves service availability by reducing the load on the primary data store and decreasing the likelihood of service outages.
 
-**Cache high-need data.** Most applications have pages that get more viewers than other pages. You should cache data that supports the most-viewed pages of your application to improve responsiveness for the end user and reduce demand on the database. You should use Azure Monitor and Azure SQL Analytics to track the CPU, memory, and storage of the database. You can use these metrics to determine whether you can use a smaller database SKU.
+*Reference implementation:* The reference implementation uses the Cache-Aside pattern to improve the performance of the Azure PostgreSQL database, minimize cost, and increase application performance. It caches user settings, which is used throughout the application. To put something into the cache, we use @Cacheable annotation:
+
+```java
+@Cacheable(cacheNames = "userSettingsCache")
+public UserSettings getUserSettings(String username) {
+    UserSettings settings = userDao.getUserSettings(username);
+    return settings == null ? createDefaultUserSettings(username) : settings;
+}
+```
+[See code in context](https://github.com/Azure/reliable-web-app-pattern-java/blob/eb73a37be3d011112286df4e5853228f55cb377f/src/airsonic-advanced/airsonic-main/src/main/java/org/airsonic/player/service/SettingsService.java#L1290). 
+
+In the above mapping, getUserSettings method will put a *UserSettings* into a cache named as userSettingsCache.
+
+![Redis Cache for UserSettings](docs/assets/proseware-redis.png)
+
+For more information on how to use Use Azure Redis Cache in Spring, see:
+
+* [Use Azure Redis Cache in Spring](https://learn.microsoft.com/en-us/azure/developer/java/spring-framework/configure-spring-boot-initializer-java-app-with-redis-cache)
+
+**Cache high-need data.** Most applications have pages that get more viewers than other pages. You should cache data that supports the most-viewed pages of your application to improve responsiveness for the end user and reduce demand on the database. You should use [Azure Monitor](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/data-platform-metrics) to track the CPU, memory, and storage of the database. You can use these metrics to determine whether you can use a smaller database SKU.  See [Monitor metrics on Azure Database for PostgreSQL - Flexible Server](https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-monitoring) for mor information.
 
 **Keep cache data fresh.** You should periodically refresh the data in the cache to keep it relevant. The process involves getting the latest version of the data from the database to ensure that the cache has the most requested data and the most current information. The goal is to ensure that users get current data fast. The frequency of the refreshes depends on the application.
 
