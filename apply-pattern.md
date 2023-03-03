@@ -120,12 +120,92 @@ Production environments need SKUs that meet the service level agreements (SLA), 
 - [Azure Reservations](https://learn.microsoft.com/azure/cost-management-billing/reservations/save-compute-costs-reservations)
 - [Azure savings plans for compute](https://learn.microsoft.com/azure/cost-management-billing/savings-plan/savings-plan-compute-overview)
 
+The reference implementation has optional parameters to trigger different behaviors. One of those parameters tells the bicep Terraform templates which SKUs to select. The following code gives Azure Cache for Redis, App Service, and Azure PostgreSQL Flexible Server different SKUs for production than for non-prod environments. 
+
+In scripts/setup-initial-env.sh, set APP_ENVIRONMENT to either be prod or dev. 
+
+```shell
+# APP_ENVIRONMENT can either be prod or dev 
+export APP_ENVIRONMENT=prod 
+```
+
+Then pass the APP_ENVIRONMENT variable to the `environment` variable in terraform 
+
+```shell
+terraform -chdir=./terraform plan -var application_name=${APP_NAME} -var environment=${APP_ENVIRONMENT} -out airsonic.tfplan 
+```
+
+The following table shows the SKUs that the reference implementation uses for the development and production environments.  
+
+| Resource | Dev | Prod | Notes |
+|:-----------------:|:-----------------:|:-----------------:|:-----------------:|
+| PostgreSQL Flexible Server | Burstable B1ms (B_Standard_B1ms) | General Purpose D4s_v3 (GP_Standard_D4s_v3) | https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-compute-storage |
+| Redis Cache | Basic | Standard | https://azure.microsoft.com/en-in/pricing/details/cache/ |
+| App Service | P1v2 | P2v2 | https://azure.microsoft.com/en-us/pricing/details/app-service/linux/ |
+
 ### Automate scaling the environment
 
 You should use autoscale to automate horizontal scaling for production environments. Autoscaling adapts to user demand to save you money. Horizontal scaling automatically increases compute capacity to meet user demand and decreases compute capacity when demand drops. Don't increase the size of your application platform (vertical scaling) to meet frequent changes in demand. It's less cost efficient. For more information, see:
 
 - [Scaling in Azure App Service](https://learn.microsoft.com/azure/app-service/manage-scale-up)
 - [Autoscale in Microsoft Azure](https://learn.microsoft.com/azure/azure-monitor/autoscale/autoscale-overview)
+
+**Reference implementation:** The reference implementation uses the following configuration in Terraform. It creates an autoscale rule for the Azure App Service. The rule scales up to 10 instances and defaults to one instance.
+
+```
+resource "azurerm_monitor_autoscale_setting" "airsonicscaling" {
+  name                = "airsonicscaling"
+  resource_group_name = var.resource_group
+  location            = var.location
+  target_resource_id  = azurerm_service_plan.application.id
+  profile {
+    name = "default"
+    capacity {
+      default = 1
+      minimum = 1
+      maximum = 10
+    }
+    rule {
+      metric_trigger {
+        metric_name         = "CpuPercentage"
+        metric_resource_id  = azurerm_service_plan.application.id
+        time_grain          = "PT1M"
+        statistic           = "Average"
+        time_window         = "PT5M"
+        time_aggregation    = "Average"
+        operator            = "GreaterThan"
+        threshold           = 85
+      }
+      scale_action {
+        direction = "Increase"
+        type      = "ChangeCount"
+        value     = "1"
+        cooldown  = "PT1M"
+      }
+    }
+    rule {
+      metric_trigger {
+        metric_name         = "CpuPercentage"
+        metric_resource_id  = azurerm_service_plan.application.id
+        time_grain          = "PT1M"
+        statistic           = "Average"
+        time_window         = "PT5M"
+        time_aggregation    = "Average"
+        operator            = "LessThan"
+        threshold           = 65
+      }
+      scale_action {
+        direction = "Decrease"
+        type      = "ChangeCount"
+        value     = "1"
+        cooldown  = "PT1M"
+      }
+    }
+  }
+}
+```
+<sup>Sample code demonstrates how to configure  AutoScale Setting, [link to main.tf](https://github.com/Azure/reliable-web-app-pattern-java/blob/08b00043f26a580fc6a37d665b173aca4f346c03/terraform/modules/app-service/main.tf#L278).</sup>
+
 
 ### Delete non-production environments
 
