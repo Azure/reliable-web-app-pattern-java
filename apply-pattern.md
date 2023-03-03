@@ -18,6 +18,8 @@ A reliable web application is one that is both resilient and available. Resilien
 
 The retry pattern is a technique for handling temporary service interruptions. These temporary service interruptions are known as transient faults. They're transient because they typically resolve themselves in a few seconds. In the cloud, the leading causes of transient faults are service throttling, dynamic load distribution, and network connectivity. The retry pattern handles transient faults by resending failed requests to the service. You can configure the amount of time between retries and how many retries to attempt before throwing an exception. For more information, see [transient fault handling](https://review.learn.microsoft.com/en-us/azure/architecture/best-practices/transient-faults).
 
+*Simulate the retry pattern:* You can simulate the Retry pattern in the reference implementation. For instructions, see [Simulate the Retry pattern](https://github.com/Azure/reliable-web-app-pattern-java/blob/main/simulate-patterns.md#retry-and-circuit-break-pattern).
+
 If your code already uses the retry pattern, you should update your code to use the retry mechanisms available in Azure services and client SDKs. If your application doesn't have a retry pattern, then you should use [Resilience4j](https://github.com/resilience4j/resilience4j).
 
 Resilience4j is a lightweight fault tolerance library inspired by Netflix Hystrix and designed for functional programming. It provides higher-order functions (decorators) to enhance any functional interface, lambda expression or method reference with a Circuit Breaker, Rate Limiter, Retry or Bulkhead.
@@ -50,12 +52,12 @@ resilience4j.retry:
 ```
 
 For more ways to configure Resiliency4J, see [Resilliency4J documentation](https://resilience4j.readme.io/v1.7.0/docs/getting-started-3).
-
-*Simulate the retry pattern:* The reference implementation uses the `Spring Boot Actuator` to monitor retries in our application. After deploying the application, navigate to your site’s `/actuator` endpoint to see a list of Spring Boot Actuator endpoints. Navigate to `/actuator/retries` to see retried calls.
   
 ### Use the circuit-breaker pattern
 
 You should pair the retry pattern with the circuit breaker pattern. The circuit breaker pattern handles faults that aren't transient. The goal is to prevent an application from repeatedly invoking a service that is clearly faulted. It releases the application and avoids wasting CPU cycles so the application retains its performance integrity for end users. For more information, see the [circuit breaker pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/circuit-breaker).
+
+*Simulate the Circuit Breaker pattern:* You can simulate the Circuit Breaker pattern in the reference implementation. For instructions, see [Simulate the Circuit Breaker pattern](https://github.com/Azure/reliable-web-app-pattern-java/blob/main/simulate-patterns.md#retry-and-circuit-break-pattern).
 
 ## Security
 
@@ -87,6 +89,137 @@ Not every service supports managed identities, so sometimes you have to use secr
 Many on-premises environments don't have a central secrets store. The absence makes key rotation uncommon and auditing to see who has access to a secret difficult. However, with Key Vault you can store secrets, rotate keys, and audit key access. You can also enable monitor in Key Vault. For more information, see Monitoring Azure Key Vault.
 
 *Reference implementation:* The reference implementation uses an Azure AD client secret stored in Key Vault. The secret verifies the identity of the web app. To rotate the secret, generate a new client secret and then save the new value to Key Vault. In the reference implementation, the web app must restart so the code will start using the new secret. After the web app has been restarted, the team can delete the previous client secret.
+
+### Use role-based authorization
+
+A role is a set of permissions, and Role-based access control (RBAC) allows you to grant fine-grained permissions to different roles. You should grant roles the least privilege to start and add more based on need. Align roles to application needs and provide clear guidance to your technical teams that implement permissions.
+
+*Reference implementation:* App Service provides built-in authentication and authorization support, so you can sign in users and access data by writing minimal or no code in your web app. The steps below shows how to secure Airsonic with the App Service using Azure Active Directory (Azure AD) as the identity provider. The following code demonstrates how the reference implementation configures the app registration.
+
+```terraform
+resource "azuread_application" "app_registration" {
+  display_name     = "${azurecaf_name.app_service.result}-app"
+  owners           = [data.azuread_client_config.current.object_id]
+  sign_in_audience = "AzureADMyOrg"  # single tenant
+}
+```
+
+[See code in context](https://github.com/Azure/reliable-web-app-pattern-java/blob/eb73a37be3d011112286df4e5853228f55cb377f/terraform/modules/app-service/main.tf#L80). For more information, see [Register an application with the Microsoft identity platform](https://learn.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app).
+
+The reference implementation creates three app roles (*Admin*, *User*, and *Creator*). Roles translate into permissions during authorization. The *Admin* role has permissions to configure Airsonic application settings. The *Creator* role can upload videos and create playlists.  The *User* Role can view the videos. The following code from the reference implementation demonstrates how to configure App Roles.
+
+```terraform
+app_role {
+    allowed_member_types = ["User"]
+    description          = "Admins can manage perform all task actions"
+    display_name         = "Admin"
+    enabled              = true
+    id                   = random_uuid.admin_role_id.result
+    value                = "Admin"
+  }
+
+  app_role {
+    allowed_member_types = ["User"]
+    description          = "ReadOnly roles have limited query access"
+    display_name         = "ReadOnly"
+    enabled              = true
+    id                   = random_uuid.user_role_id.result
+    value                = "User"
+  }
+
+  app_role {
+    allowed_member_types = ["User"]
+    description          = "Creator roles allows users to create content"
+    display_name         = "Creator"
+    enabled              = true
+    id                   = random_uuid.creator_role_id.result
+    value                = "Creator"
+  }
+```
+
+[See code in context](https://github.com/Azure/reliable-web-app-pattern-java/blob/eb73a37be3d011112286df4e5853228f55cb377f/terraform/modules/app-service/main.tf#L98) For more information, see [Add app roles to your application and receive them in the token](https://learn.microsoft.com/en-us/azure/active-directory/develop/howto-add-app-roles-in-azure-ad-apps).
+
+The reference implementation uses the OAuth 2.0 authorization code grant flow to log in a user with an Azure AD account. The following XML snippet defines the two required dependencies to enable this flow:
+
+```xml
+    <dependency>
+        <groupId>com.azure.spring</groupId>
+        <artifactId>spring-cloud-azure-starter-active-directory</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-oauth2-client</artifactId>
+    </dependency>
+```
+
+`com.azure.spring : spring-cloud-azure-starter-active-directory` enables Azure Active Directory authentication and authorization in a Spring Boot application.
+
+`org.springframework.boot : spring-boot-starter-oauth2-client` supports OAuth2 authentication and authorization in a Spring Boot application.
+
+By adding these dependencies to the project, the developer can integrate Azure Active Directory and OAuth 2.0 authentication and authorization into their Spring Boot application without manually configuring the required libraries and settings. For more information, see [Spring Security with Azure Active Directory](https://learn.microsoft.com/en-us/azure/developer/java/spring-framework/spring-security-support).
+
+The `appRoles` attribute in Azure AD defines the roles that an app can declare in the application manifest. The attribute allows applications to define their own roles. When a user signs in to the application, Azure AD generates an ID token that contains various claims. This token includes a `roles` claim that lists the roles assigned to the user. In the following code, the `WebSecurityConfiguration` class extends the `AadWebSecurityConfigurerAdapter` class to add authentication. It only grants access to the three roles configured in Azure AD, and it adds the `APPROLE_` as a prefix each role.
+
+```java
+@Configuration
+public class WebSecurityConfiguration extends AadWebSecurityConfigurerAdapter {
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        // use required configuration from AADWebSecurityAdapter.configure:
+        super.configure(http);
+        // add custom configuration:
+
+         http
+                .authorizeRequests()
+                .antMatchers("/recover*", "/accessDenied*", "/style/**", "/icons/**", "/flash/**", "/script/**", "/error")
+                .permitAll()
+                .antMatchers("/personalSettings*",
+                            "/playerSettings*", "/shareSettings*", "/credentialsSettings*")
+                .hasAnyAuthority("APPROLE_User", "APPROLE_Creator")
+                .antMatchers("/**")
+                .hasAnyAuthority("APPROLE_User", "APPROLE_Creator")
+                .anyRequest().authenticated()
+                .and()
+                .addFilterBefore(aadAddAuthorizedUsersFilter UsernamePasswordAuthenticationFilter.class)
+                .logout(logout -> logout
+                        .deleteCookies("JSESSIONID", "XSRF-TOKEN")
+                        .clearAuthentication(true)
+                        .invalidateHttpSession(true)
+                        .logoutSuccessUrl("/index"))
+                    ;
+        }
+```
+
+For more information, see [Application roles](https://learn.microsoft.com/en-us/azure/architecture/multitenant-identity/app-roles) and [appRoles attribute](https://learn.microsoft.com/en-us/azure/active-directory/develop/reference-app-manifest#approles-attribute).
+
+The reference implementation uses a Spring Filter to add the authenticated users to the Airsonic database. The `doFilterInternal()` method checks whether the incoming request is from a valid Airsonic user. If the user is valid, the filter adds the user to the database by calling the addUserToDatabase() method. Finally, the filter calls doFilter() method on the FilterChain object to continue processing the request. The `LOG.debug()` method provides information about the execution status of the filter.
+
+```java
+public class AADAddAuthorizedUsersFilter extends OncePerRequestFilter {
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
+        LOG.debug("In the AADAddAuthorizedUsersFilter filter");
+
+        // Add the user to the User database table if and only if they have a valid app role.
+        if (isAirsonicUser(request)) {
+            LOG.debug("user is an airsonic user");
+            addUserToDatabase(request);
+        }
+
+        LOG.debug("AADAddAuthorizedUsersFilter calling doFilter");
+        filterChain.doFilter(request, response);
+    }
+}
+```
+
+For more information, see:
+
+- [Spring Boot Starter for Azure Active Directory developer's guide](https://learn.microsoft.com/en-us/azure/developer/java/spring-framework/spring-boot-starter-for-azure-active-directory-developer-guide)
+- [Add sign-in with Azure Active Directory account to a Spring web app](https://learn.microsoft.com/en-us/azure/developer/java/spring-framework/configure-spring-boot-starter-java-app-with-azure-active-directory)
+- [Add app roles to your application and receive them in the token](https://learn.microsoft.com/en-us/azure/active-directory/develop/howto-add-app-roles-in-azure-ad-apps)
+- [Configurable token lifetimes in the Microsoft identity platform](https://learn.microsoft.com/en-us/azure/active-directory/develop/active-directory-configurable-token-lifetimes)
 
 ### Secure communication with private endpoints
 
@@ -202,6 +335,8 @@ Performance efficiency is the ability of a workload to scale and meet the demand
 ### Use the cache-aside pattern
 
 The cache-aside pattern is a technique that's used to manage in-memory data caching. The cache-aside pattern makes the application responsible for managing data requests and data consistency between the cache and a persistent data store, like a database. When a data request reaches the application, the application first checks the cache to see if the cache has the data in memory. If it doesn't, the application queries the database, replies to the requester, and stores that data in the cache. For more information, see [Cache-aside pattern overview](https://learn.microsoft.com/azure/architecture/patterns/cache-aside).
+
+*Simulate the Cache-Aside pattern:* You can simulate the Cache-Aside pattern in the reference implementation. For instructions, see [Simulate the Cache-Aside pattern](https://github.com/Azure/reliable-web-app-pattern-java/blob/main/simulate-patterns.md#cache-aside-pattern).
 
 The cache-aside pattern introduces a few benefits to the web application. It reduces the request response time and can lead to increased response throughput. This efficiency reduces the number of horizontal scaling events, making the app more capable of handling traffic bursts. It also improves service availability by reducing the load on the primary data store and decreasing the likelihood of service outages.
 
