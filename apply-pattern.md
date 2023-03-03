@@ -154,7 +154,7 @@ The reference implementation uses the OAuth 2.0 authorization code grant flow to
 
 `com.azure.spring : spring-cloud-azure-starter-active-directory` enables Azure Active Directory authentication and authorization in a Spring Boot application.
 
-`org.springframework.boot : spring-boot-starter-oauth2-client` supports OAuth2 authentication and authorization in a Spring Boot application.
+`org.springframework.boot : spring-boot-starter-oauth2-client` supports OAuth 2.0 authentication and authorization in a Spring Boot application.
 
 By adding these dependencies to the project, the developer can integrate Azure Active Directory and OAuth 2.0 authentication and authorization into their Spring Boot application without manually configuring the required libraries and settings. For more information, see [Spring Security with Azure Active Directory](https://learn.microsoft.com/en-us/azure/developer/java/spring-framework/spring-security-support).
 
