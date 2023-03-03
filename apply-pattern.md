@@ -24,34 +24,52 @@ If your code already uses the retry pattern, you should update your code to use 
 
 Resilience4j is a lightweight fault tolerance library inspired by Netflix Hystrix and designed for functional programming. It provides higher-order functions (decorators) to enhance any functional interface, lambda expression or method reference with a Circuit Breaker, Rate Limiter, Retry or Bulkhead.
 
-*Reference implementation.* The reference implementation decorates a lambda expression with a Circuit Breaker and Retry in order to retry the call to get the media file from disk. The folowing code demonstrates how to use Resilience4j to retry a filesystem call to Azure Files to get the last modified time.
+*Reference implementation.* The reference implementation decorates a lambda expression with a Circuit Breaker and Retry in order to retry the call to get the media file from disk. The following code demonstrates how to use Resilience4j to retry a filesystem call to Azure Files to get the last modified time.
 
 ```java
-private MediaFile checkLastModified(MediaFile mediaFile, MusicFolder folder, boolean minimizeDiskAccess) {
-        Retry retry = retryRegistry.retry("media");
-        CheckedFunction0<MediaFile> supplier = () -> doCheckLastModified(mediaFile, folder, minimizeDiskAccess);
-        CheckedFunction0<MediaFile> retryableSupplier = Retry.decorateCheckedSupplier(retry, supplier);
-        Try<MediaFile> result = Try.of(retryableSupplier).recover((IOException) -> mediaFile);
-        return result.get();
-    }
+@Retry(name = "retryApi", fallbackMethod = "isNewVersionAvailableFallback")
+@CircuitBreaker(name = "CircuitBreakerService")
+@GetMapping("/isNewFinalVersionAvailable")
+public boolean isNewFinalVersionAvailable() {
+    return externalAPICaller.isNewFinalVersionAvailable();
+}
+
+
+@Retry(name = "retryApi", fallbackMethod = "isNewVersionAvailableFallback")
+@CircuitBreaker(name = "CircuitBreakerService")
+@GetMapping("/isNewBetaVersionAvailable")
+public boolean isNewBetaVersionAvailable() {
+    return externalAPICaller.isNewBetaVersionAvailable();
+}
 ```
 
-The retry registry gets a Retry object. It uses a functional approach with the `vavr` library to recover from an exception and invoke another lambda expression as a fallback. In this case, the original MediaFile is returned if the maximum amount of retries has occurred. You can configure your Retry properties in the `application.yml` file.
+You can configure your Cirtcuit Breaker and Retry properties in the `application.properties` file.
 
 ```java
-resilience4j.retry:
-    instances:
-        media:
-            maxRetryAttempts: 8
-            waitDuration: 10s
-            enableExponentialBackoff: true
-            exponentialBackoffMultiplier: 2
-            retryExceptions:
-                - java.nio.file.FileSystemException
-                - java.io.IOException
+resilience4j.circuitbreaker.instances.CircuitBreakerService.failure-rate-threshold=50
+resilience4j.circuitbreaker.instances.CircuitBreakerService.minimum-number-of-calls=6
+resilience4j.circuitbreaker.instances.CircuitBreakerService.automatic-transition-from-open-to-half-open-enabled=true
+resilience4j.circuitbreaker.instances.CircuitBreakerService.wait-duration-in-open-state=15s
+resilience4j.circuitbreaker.instances.CircuitBreakerService.permitted-number-of-calls-in-half-open-state=3
+resilience4j.circuitbreaker.instances.CircuitBreakerService.sliding-window-size=10
+resilience4j.circuitbreaker.instances.CircuitBreakerService.sliding-window-type=count_based
+
+resilience4j.circuitbreaker.metrics.enabled=true
+resilience4j.circuitbreaker.metrics.legacy.enabled=true
+resilience4j.circuitbreaker.instances.CircuitBreakerService.register-health-indicator=true
+resilience4j.circuitbreaker.instances.CircuitBreakerService.event-consumer-buffer-size=10
+resilience4j.circuitbreaker.configs.CircuitBreakerService.registerHealthIndicator=true
+
+resilience4j.retry.instances.retryApi.max-attempts=3
+resilience4j.retry.instances.retryApi.wait-duration=3s
+resilience4j.retry.metrics.legacy.enabled=true
+resilience4j.retry.metrics.enabled=true
 ```
 
-For more ways to configure Resiliency4J, see [Resilliency4J documentation](https://resilience4j.readme.io/v1.7.0/docs/getting-started-3).
+For more ways to configure Resiliency4J, see 
+
+* [Resilliency4J documentation](https://resilience4j.readme.io/v1.7.0/docs/getting-started-3)
+* [Spring Cloud Circuit Breaker](https://docs.spring.io/spring-cloud-circuitbreaker/docs/current/reference/html/#usage-documentation)
   
 ### Use the circuit-breaker pattern
 
