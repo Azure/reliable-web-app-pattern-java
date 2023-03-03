@@ -54,8 +54,8 @@ module "storage" {
   subnet_network_id  = module.network.app_subnet_id
 }
 
-module "postresql_database" {
-  source             = "./modules/postresql"
+module "postgresql_database" {
+  source             = "./modules/postgresql"
   azure_ad_tenant_id = data.azurerm_client_config.current.tenant_id
   resource_group     = azurerm_resource_group.main.name
   application_name   = var.application_name
@@ -118,7 +118,7 @@ resource "azurerm_key_vault_access_policy" "user_access_policy" {
 
 resource "azurerm_key_vault_secret" "airsonic_database_admin" {
   name         = "airsonic-database-admin"
-  value        = module.postresql_database.database_username
+  value        = module.postgresql_database.database_username
   key_vault_id = module.key-vault.vault_id
 
   depends_on = [
@@ -128,7 +128,7 @@ resource "azurerm_key_vault_secret" "airsonic_database_admin" {
 
 resource "azurerm_key_vault_secret" "airsonic_database_admin_password" {
   name         = "airsonic-database-admin-password"
-  value        = module.postresql_database.database_password
+  value        = module.postgresql_database.database_password
   key_vault_id = module.key-vault.vault_id
 
   depends_on = [
@@ -201,9 +201,9 @@ module "application" {
   location         = var.location
   subnet_id        = module.network.app_subnet_id
 
-  database_id       = module.postresql_database.database_id
-  database_fqdn     = module.postresql_database.database_fqdn
-  database_name     = module.postresql_database.database_name
+  database_id       = module.postgresql_database.database_id
+  database_fqdn     = module.postgresql_database.database_fqdn
+  database_name     = module.postgresql_database.database_name
 
   key_vault_uri     = module.key-vault.vault_uri
 
@@ -228,7 +228,7 @@ resource "azurerm_key_vault_access_policy" "application_access_policy" {
 }
 
 resource "azurerm_postgresql_flexible_server_active_directory_administrator" "airsonic-ad-admin" {
-  server_name         = module.postresql_database.database_server_name
+  server_name         = module.postgresql_database.database_server_name
   resource_group_name = azurerm_resource_group.main.name
   tenant_id           = data.azurerm_client_config.current.tenant_id
   object_id           = data.azuread_user.current_user.object_id

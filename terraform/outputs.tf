@@ -18,8 +18,8 @@ output "app_service_module_outputs" {
   sensitive = true
 }
 
-output "postresql_database_module_outputs" {
-  value = module.postresql_database.database_url
+output "postgresql_database_module_outputs" {
+  value = module.postgresql_database.database_url
 }
 
 output "keyvault_module_outputs" {
