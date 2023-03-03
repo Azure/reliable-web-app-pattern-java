@@ -38,7 +38,7 @@ In the next request we see that the API call was only 55ms because it didn't hav
 
 Using the (PREVIEW) Redis Console we can see this data stored in Redis.
 
-![image of Azure Cache for Redis Console shows sure settings](docs/assets/proseware-redis.png)
+![image of Azure Cache for Redis Console shows user settings](docs/assets/proseware-redis.png)
 
 ## Logs
 
