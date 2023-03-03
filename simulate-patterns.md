@@ -4,7 +4,7 @@ You can test and configure the three code-level design patterns with this implem
 
 ## Retry and Circuit Break Pattern
 
-We built an app configuration setting that lets you simulate and test a transient failure when making a web request to GitHub. Set the `AIRSONIC_RETRY_DEMO` application setting to 1. This will simulate a failure for every web request to GitHub. A value of 2 generates a 503 error for every other request.
+We built an app configuration setting that lets you simulate and test a transient failure when making a web request to GitHub. The reference implementation uses the `Spring Boot Actuator` to monitor retries. After deploying the application, navigate to your site’s `/actuator` endpoint to see a list of Spring Boot Actuator endpoints. Navigate to `/actuator/retries` to see retried calls. Set the `AIRSONIC_RETRY_DEMO` application setting to 1. This will simulate a failure for every web request to GitHub. A value of 2 generates a 503 error for every other request.
 
 ![airsonic-retry-demo](docs/assets/airsonic-retry-demo.png)
 

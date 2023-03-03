@@ -1,6 +1,6 @@
 # Reliable web app pattern planning (Java)
 
-The reliable web app pattern is a set of best practices built on the [Azure Well-Architected Framework](https:/learn.microsoft.com/en-us/azure/architecture/framework/) that helps developers successfully migrate web applications to the cloud. The goal is to improve the cost, performance, security, operations, and reliability of your web application with minimal changes. The reliable web app pattern is an essential first step for web applications converging on the cloud and sets a foundation for future modernizations in Azure.
+The reliable web app pattern is a set of best practices built on the [Azure Well-Architected Framework](https://learn.microsoft.com/en-us/azure/architecture/framework/) that helps developers successfully migrate web applications to the cloud. The goal is to improve the cost, performance, security, operations, and reliability of your web application with minimal changes. The reliable web app pattern is an essential first step for web applications converging on the cloud and sets a foundation for future modernizations in Azure.
 
 This article provides an overview of the pattern. There's a companion article that shows you how to [apply the pattern](apply-pattern.md) and a [reference implementation](README.md#steps-to-deploy-the-reference-implementation) that you can deploy. The guidance refers to the code and architecture of the reference implementation throughout, and the following diagram illustrates its architecture.
 
@@ -8,15 +8,15 @@ This article provides an overview of the pattern. There's a companion article th
 
 ## Pattern objectives and implementation
 
-The reliable web app pattern is a set of objectives that follow the pillars of [Azure Well-Architected Framework](https:/learn.microsoft.com/en-us/azure/architecture/framework/) and 12 Factor Apps. How you implement this pattern varies based on the web application and language. The following table outlines the pattern objectives and how the reference implementation met these objectives.
+The reliable web app pattern is a set of objectives that follow the pillars of [Azure Well-Architected Framework](https://learn.microsoft.com/en-us/azure/architecture/framework/) and 12 Factor Apps. How you implement this pattern varies based on the web application and language. The following table outlines the pattern objectives and how the reference implementation met these objectives.
 
 | Objectives | Implementation for Java |
 | --- | --- |
-|▪ Low-cost high-value wins<br>▪ Minimal code changes<br>▪ Security best practices<br> ▪ Reliability design patterns<br>▪ Improve operational excellence<br>▪ Cost-optimized environments<br>▪ Well Architected Framework principles<br>▪ Service level objective: 99.86% |▪ Retry pattern <br> ▪ Circuit-breaker pattern <br>▪ Cache-aside pattern <br>▪ Right-size resource <br>▪ Managed identities <br>▪ Private endpoints <br>▪ Secrets management <br>▪ Repeatable infrastructure <br>▪ Telemetry, logging, monitoring|
+|▪ Low-cost high-value wins<br>▪ Minimal code changes<br>▪ Security best practices<br> ▪ Reliability design patterns<br>▪ Improve operational excellence<br>▪ Cost-optimized environments<br>▪ Well Architected Framework principles<br>▪ Business driven service level objective |▪ Retry pattern <br> ▪ Circuit-breaker pattern <br>▪ Cache-aside pattern <br>▪ Right-size resource <br>▪ Managed identities <br>▪ Private endpoints <br>▪ Secrets management <br>▪ Repeatable infrastructure <br>▪ Telemetry, logging, monitoring <br>▪ Composite availability 99.86% |
 
 ## Business context
 
-This guidance mirrors the journey of a fictional company, Proseware, Inc, that wants to take their on-premises, line of business (LOB) web application to the cloud. Proseware’s leadership decided to expand their business into the EdTech application market. After their initial technical research, they concluded they could use their existing internal training platform as a starting point and modernize them into a B2C EdTech App. The current on-premises training application is a customized version of the open-source monolithic Airsonic web-based media streamer. To expand its business into a highly competitive EdTech market, the on-premises infrastructure needs to provide a cost-efficient means to scale, and a migration to the cloud offers the most return on investment. The migration of their application should meet the increasing business demand with minimal investments in the existing monolithic app. Here are some short-term and long-term goals for the application.
+This guidance mirrors the journey of a fictional company, Proseware, Inc. Proseware wants to take their on-premises, line of business (LOB) web application to the cloud, and company leadership decided to expand their business into the EdTech application market. After their initial technical research, they concluded they could use their existing internal training platform as a starting point and modernize them into a B2C EdTech App. The current on-premises training application is a customized version of the open-source monolithic Airsonic web-based media streamer. To expand its business into a highly competitive EdTech market, the on-premises infrastructure needs to provide a cost-efficient means to scale, and a migration to the cloud offers the most return on investment. The migration of their application should meet the increasing business demand with minimal investments in the existing monolithic app. Here are some short-term and long-term goals for the application.
 
 | Short term goals | Long term goals |
 | --- | --- |
@@ -34,18 +34,20 @@ For each dependency in the critical path, you need to assign an availability goa
 
 For example, Proseware used Azure SLAs for Azure services. The following diagram illustrates Proseware's dependency list with availability goals for each dependency.
 
+[![Diagram showing Proseware's dependencies on the critical path and the assigned availability metric for each dependency.](docs/assets/java-slo-dependecies.png)](docs/assets/java-slo-dependecies.png)
+
 Finally, use the formulas for composite SLAs to estimate the composite availability of the dependencies on the critical path. This number should meet or exceed your SLO. For more information, see:
 
-- [Composite SLA formula](https:/learn.microsoft.com/en-us/azure/architecture/framework/resiliency/business-metrics#composite-slas)
-- [Multiregional SLA formula](https:/learn.microsoft.com/en-us/azure/architecture/framework/resiliency/business-metrics#slas-for-multiregion-deployments)
+- [Composite SLA formula](https://learn.microsoft.com/en-us/azure/architecture/framework/resiliency/business-metrics#composite-slas)
+- [Multiregional SLA formula](https://learn.microsoft.com/en-us/azure/architecture/framework/resiliency/business-metrics#slas-for-multiregion-deployments)
 
 ## Choose the right services
 
-Choosing the right Azure services is an important part of the planning phase before moving your app to Azure. Understanding the level of performance and availability you need for your app will have an impact on the total cost to run your solution. You should start by defining a target SLO for your solution and use that information to determine which products and SKUs you should be using.  We provide our decision process for each service in the solution. Our two main requirements - an SLA of 99.86% for the production environment and an average daily-user load will be around 1,000 users.
+Choosing the right Azure services is an important part of the planning phase before moving your app to Azure. Understanding the level of performance and availability you need for your app will have an impact on the total cost to run your solution. You should start by defining a target SLO for your solution and use that information to determine which products and SKUs you should be using.  We provide our decision process for each service in the solution. Our two main requirements were (1) having an SLA of 99.86% for the production environment and (2) handling an average load of 1,000 users daily.
 
 ### Application Platform
 
-[Azure App Service](https:/learn.microsoft.com/en-us/azure/app-service/overview) for Tomcat on Linux allows developers to quickly build, deploy and scale their Tomcat web apps on a fully managed Linux-based service. The open-source Maven Plugin for App Service helps Java developers deploy Maven projects. App Service is an HTTP-based, managed service for hosting web applications, REST APIs, and mobile back ends. App Service isn’t the only compute option, see: compute decision tree. We chose Azure App Service because it met the following requirements:
+[Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/overview) for Tomcat on Linux allows developers to quickly build, deploy and scale their Tomcat web apps on a fully managed Linux-based service. The open-source Maven Plugin for App Service helps Java developers deploy Maven projects. App Service is an HTTP-based, managed service for hosting web applications, REST APIs, and mobile back ends. App Service isn’t the only compute option, see: compute decision tree. We chose Azure App Service because it met the following requirements:
 
 - **High SLA:** It has a 99.95% uptime SLA and meets our requirements for the production environment.
 - **Reduced management overhead:** It’s a fully managed hosting solution.
@@ -55,7 +57,7 @@ Choosing the right Azure services is an important part of the planning phase bef
 
 ### Identity management
 
-[Azure Active Directory (Azure AD)](https:/learn.microsoft.com/en-us/azure/active-directory/fundamentals/active-directory-whatis) is a cloud-based identity and access management service. It authenticates and authorizes users based on roles that integrate with our application. Azure AD provides the application with the following abilities:
+[Azure Active Directory (Azure AD)](https://learn.microsoft.com/en-us/azure/active-directory/fundamentals/active-directory-whatis) is a cloud-based identity and access management service. It authenticates and authorizes users based on roles that integrate with our application. Azure AD provides the application with the following abilities:
 
 - **Authentication and authorization:** The application needed to authenticate and authorize employees.
 - **Scalable:** It scale to support larger scenarios.
@@ -139,7 +141,7 @@ Azure Files offers fully managed file shares in the cloud that are accessible vi
 
 ### Endpoint security
 
-[Azure Private Link](https:/learn.microsoft.com/en-us/azure/private-link/private-link-overview) provides access to PaaS Services (such as, Azure Cache for Redis and PostgreSQL Database) over a private endpoint in your virtual network. Traffic between your virtual network and the service travels across the Microsoft backbone network. Azure Private DNS with Azure Private Link enables your solution to communicate securely with Azure services like Azure Database for PostgreSQL. The web app uses Azure Private Link for the following reasons:
+[Azure Private Link](https://learn.microsoft.com/en-us/azure/private-link/private-link-overview) provides access to PaaS Services (such as, Azure Cache for Redis and PostgreSQL Database) over a private endpoint in your virtual network. Traffic between your virtual network and the service travels across the Microsoft backbone network. Azure Private DNS with Azure Private Link enables your solution to communicate securely with Azure services like Azure Database for PostgreSQL. The web app uses Azure Private Link for the following reasons:
 
 - **Secure communication:** It lets the application privately access services on the Azure platform and reduces the network footprint of data stores to protect against data leakage.
 - **Minimal effort:** The private endpoints support the web application platform and database platform the web app uses. Both platforms mirror existing on-premises setup for minimal change.
