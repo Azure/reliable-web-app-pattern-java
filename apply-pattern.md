@@ -357,7 +357,7 @@ resource "azurerm_monitor_autoscale_setting" "airsonicscaling" {
 }
 ```
 
-[See this code in context](https://github.com/Azure/reliable-web-app-pattern-java/blob/08b00043f26a580fc6a37d665b173aca4f346c03/terraform/modules/app-service/main.tf#L278) The code snippet demonstrates how to configure the autoscale setting.
+[See this code in context](https://github.com/Azure/reliable-web-app-pattern-java/blob/08b00043f26a580fc6a37d665b173aca4f346c03/terraform/modules/app-service/main.tf#L278)
 
 ### Delete non-production environments
 
