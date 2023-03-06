@@ -24,17 +24,17 @@ The following table lists the principles of the reliable web app pattern and how
 
 A reliable web application is one that is both resilient and available. Resiliency is the ability of the system to recover from failures and continue to function. The goal of resiliency is to return the application to a fully functioning state after a failure occurs. Availability is whether your users can access your web application when they need to. We recommend using the retry and circuit-breaker patterns as a critical first step toward improving application reliability. These design patterns introduce self-healing qualities and help your application maximize the reliability features of the cloud. Here are our reliability recommendations.
 
-### Use the retry pattern
+### Use the Retry pattern
 
-The retry pattern is a technique for handling temporary service interruptions. These temporary service interruptions are known as transient faults. They're transient because they typically resolve themselves in a few seconds. In the cloud, the leading causes of transient faults are service throttling, dynamic load distribution, and network connectivity. The retry pattern handles transient faults by resending failed requests to the service. You can configure the amount of time between retries and how many retries to attempt before throwing an exception. For more information, see [transient fault handling](https://review.learn.microsoft.com/azure/architecture/best-practices/transient-faults).
+The Retry pattern is a technique for handling temporary service interruptions. These temporary service interruptions are known as transient faults. They're transient because they typically resolve themselves in a few seconds. In the cloud, the leading causes of transient faults are service throttling, dynamic load distribution, and network connectivity. The Retry pattern handles transient faults by resending failed requests to the service. You can configure the amount of time between retries and how many retries to attempt before throwing an exception. For more information, see [transient fault handling](https://review.learn.microsoft.com/azure/architecture/best-practices/transient-faults).
 
-*Simulate the retry pattern:* You can simulate the Retry pattern in the reference implementation. For instructions, see [Simulate the Retry pattern](https://github.com/Azure/reliable-web-app-pattern-java/blob/main/simulate-patterns.md#retry-and-circuit-break-pattern).
+*Simulate the Retry pattern:* You can simulate the Retry pattern in the reference implementation. For instructions, see [Simulate the Retry pattern](https://github.com/Azure/reliable-web-app-pattern-java/blob/main/simulate-patterns.md#retry-and-circuit-break-pattern).
 
-If your code already uses the retry pattern, you should update your code to use the retry mechanisms available in Azure services and client SDKs. If your application doesn't have a retry pattern, then you should use [Resilience4j](https://github.com/resilience4j/resilience4j).
+If your code already uses the Retry pattern, you should update your code to use the retry mechanisms available in Azure services and client SDKs. If your application doesn't have a Retry pattern, then you should use [Resilience4j](https://github.com/resilience4j/resilience4j).
 
 Resilience4j is a lightweight fault tolerance library inspired by Netflix Hystrix and designed for functional programming. It provides higher-order functions (decorators) to enhance any functional interface, lambda expression or method reference with a Circuit Breaker, Rate Limiter, Retry or Bulkhead.
 
-*Reference implementation.* The reference implementation decorates a lambda expression with a Circuit Breaker and Retry in order to retry the call to get the media file from disk. The following code demonstrates how to use Resilience4j to retry a filesystem call to Azure Files to get the last modified time.
+*Reference implementation.* The reference implementation adds the Retry pattern by decorating a lambda expression with the Retry annotations. The code retries the call to get the media file from disk. The following code demonstrates how to use Resilience4j to retry a filesystem call to Azure Files to get the last modified time.
 
 ```java
 @Retry(name = "retryApi", fallbackMethod = "isNewVersionAvailableFallback")
@@ -44,7 +44,6 @@ public boolean isNewFinalVersionAvailable() {
     return externalAPICaller.isNewFinalVersionAvailable();
 }
 
-
 @Retry(name = "retryApi", fallbackMethod = "isNewVersionAvailableFallback")
 @CircuitBreaker(name = "CircuitBreakerService")
 @GetMapping("/isNewBetaVersionAvailable")
@@ -53,7 +52,7 @@ public boolean isNewBetaVersionAvailable() {
 }
 ```
 
-You can configure your Cirtcuit Breaker and Retry properties in the `application.properties` file.
+You can configure the properties of the Retry pattern in the `application.properties` file.
 
 ```java
 resilience4j.circuitbreaker.instances.CircuitBreakerService.failure-rate-threshold=50
@@ -76,16 +75,51 @@ resilience4j.retry.metrics.legacy.enabled=true
 resilience4j.retry.metrics.enabled=true
 ```
 
-For more ways to configure Resiliency4J, see:
-
-- [Resilliency4J documentation](https://resilience4j.readme.io/v1.7.0/docs/getting-started-3)
-- [Spring Cloud Circuit Breaker](https://docs.spring.io/spring-cloud-circuitbreaker/docs/current/reference/html/#usage-documentation)
+For more ways to configure Resiliency4J, see [Spring Retry](https://docs.spring.io/spring-batch/docs/current/reference/html/retry.html) and [Resilliency4J documentation](https://resilience4j.readme.io/v1.7.0/docs/getting-started-3)
   
-### Use the circuit-breaker pattern
+### Use the Circuit Breaker pattern
 
-You should pair the retry pattern with the circuit breaker pattern. The circuit breaker pattern handles faults that aren't transient. The goal is to prevent an application from repeatedly invoking a service that is clearly faulted. It releases the application and avoids wasting CPU cycles so the application retains its performance integrity for end users. For more information, see the [circuit breaker pattern](https://learn.microsoft.com/azure/architecture/patterns/circuit-breaker).
+You should pair the Retry pattern with the Circuit Breaker pattern. The Circuit Breaker pattern handles faults that aren't transient. The goal is to prevent an application from repeatedly invoking a service that is clearly faulted. It releases the application and avoids wasting CPU cycles so the application retains its performance integrity for end users. For more information, see the [Circuit Breaker pattern](https://learn.microsoft.com/azure/architecture/patterns/circuit-breaker).
 
 *Simulate the Circuit Breaker pattern:* You can simulate the Circuit Breaker pattern in the reference implementation. For instructions, see [Simulate the Circuit Breaker pattern](https://github.com/Azure/reliable-web-app-pattern-java/blob/main/simulate-patterns.md#retry-and-circuit-break-pattern).
+
+*Reference implementation:* The reference implementation adds the Circuit Breaker pattern by decorating a lambda expression with the Circuit Breaker annotation.
+
+```java
+@Retry(name = "retryApi", fallbackMethod = "isNewVersionAvailableFallback")
+@CircuitBreaker(name = "CircuitBreakerService")
+@GetMapping("/isNewFinalVersionAvailable")
+public boolean isNewFinalVersionAvailable() {
+    return externalAPICaller.isNewFinalVersionAvailable();
+}
+
+@Retry(name = "retryApi", fallbackMethod = "isNewVersionAvailableFallback")
+@CircuitBreaker(name = "CircuitBreakerService")
+@GetMapping("/isNewBetaVersionAvailable")
+public boolean isNewBetaVersionAvailable() {
+    return externalAPICaller.isNewBetaVersionAvailable();
+}
+```
+
+You can configure the properties of the Circuit Breaker pattern in the `application.properties` file.
+
+```java
+resilience4j.circuitbreaker.instances.CircuitBreakerService.failure-rate-threshold=50
+resilience4j.circuitbreaker.instances.CircuitBreakerService.minimum-number-of-calls=6
+resilience4j.circuitbreaker.instances.CircuitBreakerService.automatic-transition-from-open-to-half-open-enabled=true
+resilience4j.circuitbreaker.instances.CircuitBreakerService.wait-duration-in-open-state=15s
+resilience4j.circuitbreaker.instances.CircuitBreakerService.permitted-number-of-calls-in-half-open-state=3
+resilience4j.circuitbreaker.instances.CircuitBreakerService.sliding-window-size=10
+resilience4j.circuitbreaker.instances.CircuitBreakerService.sliding-window-type=count_based
+
+resilience4j.circuitbreaker.metrics.enabled=true
+resilience4j.circuitbreaker.metrics.legacy.enabled=true
+resilience4j.circuitbreaker.instances.CircuitBreakerService.register-health-indicator=true
+resilience4j.circuitbreaker.instances.CircuitBreakerService.event-consumer-buffer-size=10
+resilience4j.circuitbreaker.configs.CircuitBreakerService.registerHealthIndicator=true
+```
+
+For more ways to configure Resiliency4J, see [Spring Circuit Breaker](https://docs.spring.io/spring-cloud-circuitbreaker/docs/current/reference/html/#usage-documentation) and [Resilliency4J documentation](https://resilience4j.readme.io/v1.7.0/docs/getting-started-3).
 
 ## Security
 
@@ -120,9 +154,9 @@ Many on-premises environments don't have a central secrets store. The absence ma
 
 ### Use role-based authorization
 
-A role is a set of permissions, and Role-based access control (RBAC) allows you to grant fine-grained permissions to different roles. You should grant roles the least privilege to start and add more based on need. Align roles to application needs and provide clear guidance to your technical teams that implement permissions.
+A role is a set of permissions, and Role-based access control (RBAC) allows you to grant fine-grained permissions to different roles. You should grant roles the least privilege to start and add more based on need. Align roles to application needs and provide clear guidance to your technical teams that implement permissions. You should use Azure Active Directory (Azure AD) as the identity provider.
 
-*Reference implementation:* App Service provides built-in authentication and authorization support, so you can sign in users and access data by writing minimal or no code in your web app. The steps below shows how to secure Airsonic with the App Service using Azure Active Directory (Azure AD) as the identity provider. The following code demonstrates how the reference implementation configures the app registration.
+*Reference implementation:* App Service provides built-in authentication and authorization support, so you can sign in users and access data by writing minimal or no code in your web app. The following code demonstrates how the reference implementation configures the app registration.
 
 ```terraform
 resource "azuread_application" "app_registration" {
@@ -134,7 +168,7 @@ resource "azuread_application" "app_registration" {
 
 [See code in context](https://github.com/Azure/reliable-web-app-pattern-java/blob/eb73a37be3d011112286df4e5853228f55cb377f/terraform/modules/app-service/main.tf#L80). For more information, see [Register an application with the Microsoft identity platform](https://learn.microsoft.com/azure/active-directory/develop/quickstart-register-app).
 
-The reference implementation creates three app roles ( *User* *Creator*). Roles translate into permissions during authorization. The *Creator* role has permissions to configure Airsonic application settings, upload videos, and create playlists.  The *User* Role can view the videos. The following code from the reference implementation demonstrates how to configure App Roles.
+The reference implementation creates two app roles (*User* and *Creator*). Roles translate into permissions during authorization. The *Creator* role has permissions to configure the Airsonic application settings, upload videos, and create playlists.  The *User* Role can view the videos. The following code from the reference implementation demonstrates how to configure App Roles.
 
 ```terraform
   app_role {

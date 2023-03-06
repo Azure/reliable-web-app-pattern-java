@@ -6,7 +6,7 @@ This article shows you how to adopt the reliable web app pattern. There's a comp
 
 ## Pattern and architecture
 
-The business context, existing web app, service level objective (SLO), and coding language determine (1) how you implement the reliable web app pattern and (2) the resulting architecture of the web app. The following diagram shows the architecture of the reference implementation with the reliable web app pattern.
+The business context, existing web app, service level objective (SLO), and coding language determine (1) how you implement the reliable web app pattern and (2) the resulting architecture of the web app. The following diagram shows the architecture of the reference implementation.
 
 [![Diagram showing the architecture of the reference implementation](docs/assets/java-architecture.png)](docs/assets/java-architecture.png)
 *Download a [Visio file](https://arch-center.azureedge.net/reliable-web-app-java.vsdx) of this architecture. For the estimated cost, see:*
@@ -18,7 +18,7 @@ The following table lists the principles of the reliable web app pattern and how
 
 | Reliable web app principles | Implementation for Java |
 | --- | --- |
-|▪ Low-cost high-value wins<br>▪ Minimal code changes to:<ol>▫ Meet security best practices<br>▫ Apply reliability design patterns<br>▫ Improve operational excellence</ol>▪ Cost-optimized environment(s)<br>▪ Follow Azure Well-Architected Framework principles<br>▪ Business-driven service level objective |▪ Retry pattern <br> ▪ Circuit-breaker pattern <br>▪ Cache-aside pattern <br>▪ Right-size resource <br>▪ Managed identities <br>▪ Private endpoints <br>▪ Secrets management <br>▪ Repeatable infrastructure <br>▪ Telemetry, logging, monitoring |
+|▪ Low-cost high-value wins<br>▪ Minimal code changes to:<ol>▫ Meet security best practices<br>▫ Apply reliability design patterns<br>▫ Improve operational excellence</ol>▪ Cost-optimized environment(s)<br>▪ Follow Azure Well-Architected Framework principles<br>▪ Business-driven service level objective |▪ Retry pattern <br> ▪ Circuit breaker pattern <br>▪ Cache-aside pattern <br>▪ Right-size resource <br>▪ Managed identities <br>▪ Private endpoints <br>▪ Secrets management <br>▪ Repeatable infrastructure <br>▪ Telemetry, logging, monitoring |
 
 ## Business context
 
