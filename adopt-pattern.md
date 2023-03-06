@@ -1,6 +1,6 @@
 # Adopt the reliable web app pattern (Java)
 
-The reliable web app pattern is a set of principles that help developers successfully optimize web apps converging on the cloud. This pattern is an essential first step for on-premises web apps transitioning to the cloud. It sets the foundation for future modernizations in Azure. The reliable web app pattern adheres to the pillars of the [Azure Well-Architected Framework](https://learn.microsoft.com/en-us/azure/architecture/framework/). It focuses on low-cost, high-value wins and the minimal changes you should make to improve the cost, performance, security, and reliability of web apps.
+The reliable web app pattern is a set of principles that help developers successfully optimize web apps converging on the cloud. This pattern is an essential first step for on-premises web apps transitioning to the cloud. It sets the foundation for future modernizations in Azure. The reliable web app pattern adheres to the pillars of the [Azure Well-Architected Framework](https://learn.microsoft.com/azure/architecture/framework/) (WAF). It focuses on low-cost, high-value wins and the minimal changes you should make to improve the cost, performance, security, and reliability of web apps.
 
 This article shows you how to adopt the reliable web app pattern. There's a companion article that shows you how to [apply the pattern](apply-pattern.md) and a [reference implementation](README.md#steps-to-deploy-the-reference-implementation) that you can deploy.
 
