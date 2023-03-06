@@ -38,4 +38,12 @@ In the next request we see that the API call was only 55ms because it didn't hav
 
 Using the (PREVIEW) Redis Console we can see this data stored in Redis.
 
-![image of Azure Cache for Redis Console shows data for upcoming concerts](docs/assets/proseware-redis.png)
+![image of Azure Cache for Redis Console shows user settings](docs/assets/proseware-redis.png)
+
+## Logs
+
+Application logging is enabled. To view the logs, navigate to *Diagnose and solve problems*. From there, click on *Application Logs*.
+
+![Diagnose and solve problems](assets/appservice-diagnose-and-solve-problems.png)
+
+![Application Logs](assets/appservice-diagnose-and-solve-problems-application-logs.png)
