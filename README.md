@@ -147,7 +147,7 @@ It's now time to compile and package Airsonic, skipping the unit tests.
 
 ```shell
 cd src/airsonic-advanced
-mvn -Dmaven.test.skip=true -DskipTests clean package
+mvn -DskipTests clean package
 ```
 
 Now that we have a war file, we can deploy it to our Azure App Service.
@@ -190,6 +190,8 @@ Use of Microsoft trademarks or logos in modified versions of this project must n
 
 ## Additional links
 
-- [Known issues](known-issues.md)
+- [Patterns overview](pattern-overview.md)
+- [Applying the patterns](apply-pattern.md)
 - [Simulating developer patterns](simulate-patterns.md)
+- [Known issues](known-issues.md)
 - [Contributing](CONTRIBUTING.md)
