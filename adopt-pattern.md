@@ -156,6 +156,9 @@ Azure Files offers fully managed file shares in the cloud that are accessible vi
 
 You can deploy the reference implementation by following the instructions in the [reliable web app pattern for Java repository](README.md#steps-to-deploy-the-reference-implementation). Follow the deployment guide to set up a local development environment and deploy the solution to Azure.
 
-## Next Steps
+## Next step
 
-This article covered the architecture and planning details around the reliable web app pattern. The following article shows you [how to apply the reliable web app pattern](apply-pattern.md).
+You learned how to adopt the reliable web app pattern. The next step is to apply the reliable web app pattern, and the following article provides this guidance.
+
+>[!div class="nextstepaction"]
+>[Apply the reliable web app pattern](apply-pattern.md).
