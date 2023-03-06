@@ -1,22 +1,28 @@
-# Reliable web app pattern planning (Java)
+# Adopt the reliable web app pattern (Java)
 
-The reliable web app pattern is a set of best practices built on the [Azure Well-Architected Framework](https://learn.microsoft.com/en-us/azure/architecture/framework/) that helps developers successfully migrate web applications to the cloud. The goal is to improve the cost, performance, security, operations, and reliability of your web application with minimal changes. The reliable web app pattern is an essential first step for web applications converging on the cloud and sets a foundation for future modernizations in Azure.
+The reliable web app pattern is a set of principles that help developers successfully optimize web apps converging on the cloud. This pattern is an essential first step for on-premises web apps transitioning to the cloud. It sets the foundation for future modernizations in Azure. The reliable web app pattern adheres to the pillars of the [Azure Well-Architected Framework](https://learn.microsoft.com/en-us/azure/architecture/framework/). It focuses on low-cost, high-value wins and the minimal changes you should make to improve the cost, performance, security, and reliability of web apps.
 
-This article provides an overview of the pattern. There's a companion article that shows you how to [apply the pattern](apply-pattern.md) and a [reference implementation](README.md#steps-to-deploy-the-reference-implementation) that you can deploy. The guidance refers to the code and architecture of the reference implementation throughout, and the following diagram illustrates its architecture.
+This article shows you how to adopt the reliable web app pattern. There's a companion article that shows you how to [apply the pattern](apply-pattern.md) and a [reference implementation](README.md#steps-to-deploy-the-reference-implementation) that you can deploy.
+
+## Pattern and architecture
+
+The business context, existing web app, service level objective (SLO), and coding language determine (1) how you implement the reliable web app pattern and (2) the resulting architecture of the web app. The following diagram shows the architecture of the reference implementation with the reliable web app pattern.
 
 [![Diagram showing the architecture of the reference implementation](docs/assets/java-architecture.png)](docs/assets/java-architecture.png)
+*Download a [Visio file](https://arch-center.azureedge.net/reliable-web-app-java.vsdx) of this architecture. For the estimated cost, see:*
 
-## Pattern objectives and implementation
+- [Production environment estimated cost](https://azure.com/e/c530c133f36c423e9774de286f7dd28a)
+- [Non-production environment estimated cost](https://azure.com/e/48201e05118243e089ded6855839594a)
 
-The reliable web app pattern is a set of objectives that follow the pillars of [Azure Well-Architected Framework](https://learn.microsoft.com/en-us/azure/architecture/framework/) and 12 Factor Apps. How you implement this pattern varies based on the web application and language. The following table outlines the pattern objectives and how the reference implementation met these objectives.
+The following table lists the principles of the reliable web app pattern and how the reference implementation applied these principles.
 
-| Objectives | Implementation for Java |
+| Reliable web app principles | Implementation for Java |
 | --- | --- |
-|▪ Low-cost high-value wins<br>▪ Minimal code changes<br>▪ Security best practices<br> ▪ Reliability design patterns<br>▪ Improve operational excellence<br>▪ Cost-optimized environments<br>▪ Well Architected Framework principles<br>▪ Business driven service level objective |▪ Retry pattern <br> ▪ Circuit-breaker pattern <br>▪ Cache-aside pattern <br>▪ Right-size resource <br>▪ Managed identities <br>▪ Private endpoints <br>▪ Secrets management <br>▪ Repeatable infrastructure <br>▪ Telemetry, logging, monitoring <br>▪ Composite availability 99.86% |
+|▪ Low-cost high-value wins<br>▪ Minimal code changes to:<ol>▫ Meet security best practices<br>▫ Apply reliability design patterns<br>▫ Improve operational excellence</ol>▪ Cost-optimized environment(s)<br>▪ Follow Azure Well-Architected Framework principles<br>▪ Business-driven service level objective |▪ Retry pattern <br> ▪ Circuit-breaker pattern <br>▪ Cache-aside pattern <br>▪ Right-size resource <br>▪ Managed identities <br>▪ Private endpoints <br>▪ Secrets management <br>▪ Repeatable infrastructure <br>▪ Telemetry, logging, monitoring |
 
 ## Business context
 
-This guidance mirrors the journey of a fictional company, Proseware, Inc. Proseware wants to take their on-premises, line of business (LOB) web application to the cloud, and company leadership decided to expand their business into the EdTech application market. After their initial technical research, they concluded they could use their existing internal training platform as a starting point and modernize them into a B2C EdTech App. The current on-premises training application is a customized version of the open-source monolithic Airsonic web-based media streamer. To expand its business into a highly competitive EdTech market, the on-premises infrastructure needs to provide a cost-efficient means to scale, and a migration to the cloud offers the most return on investment. The migration of their application should meet the increasing business demand with minimal investments in the existing monolithic app. Here are some short-term and long-term goals for the application.
+The reference implementation assumes the business context of a fictional company (Proseware, Inc.). Proseware wants to take their on-premises, line of business (LOB) web application to the cloud. Company leadership decided to expand their business into the EdTech application market. After their initial technical research, they concluded they could use their existing internal training platform as a starting point and modernize them into a B2C EdTech App. The current on-premises training application is a customized version of the open-source monolithic Airsonic web-based media streamer. To expand its business into a highly competitive EdTech market, the on-premises infrastructure needs to provide a cost-efficient means to scale, and a migration to the cloud offers the most return on investment. The migration of their application should meet the increasing business demand with minimal investments in the existing monolithic app. Here are the short-term and long-term goals for the application.
 
 | Short term goals | Long term goals |
 | --- | --- |
@@ -24,7 +30,7 @@ This guidance mirrors the journey of a fictional company, Proseware, Inc. Prosew
 
 ## Web application starting point
 
-The on-premises starting point is a monolithic Java web application running on an Apache Tomcat web server with a PostgreSQL database. It’s an employee-facing LOB training application. Employees use the application to complete required HR training. The web application suffers from common legacy challenges, including extended timelines to build and ship new features and difficulty scaling different application components under higher load.
+The on-premises starting point is a monolithic Java web application running on an Apache Tomcat web server with a PostgreSQL database. It’s an employee-facing LOB training application. Employees use the application to complete required HR training. The on-premises web application suffers from common challenges. These challenges include extended timelines to build and ship new features difficulty scaling different components of the application under a higher load.
 
 ## Service level objective
 
@@ -38,8 +44,8 @@ For example, Proseware used Azure SLAs for Azure services. The following diagram
 
 Finally, use the formulas for composite SLAs to estimate the composite availability of the dependencies on the critical path. This number should meet or exceed your SLO. For more information, see:
 
-- [Composite SLA formula](https://learn.microsoft.com/en-us/azure/architecture/framework/resiliency/business-metrics#composite-slas)
-- [Multiregional SLA formula](https://learn.microsoft.com/en-us/azure/architecture/framework/resiliency/business-metrics#slas-for-multiregion-deployments)
+- [Composite SLA formula](https://learn.microsoft.com/azure/architecture/framework/resiliency/business-metrics#composite-slas)
+- [Multiregional SLA formula](https://learn.microsoft.com/azure/architecture/framework/resiliency/business-metrics#slas-for-multiregion-deployments)
 
 ## Choose the right services
 
@@ -47,7 +53,7 @@ Choosing the right Azure services is an important part of the planning phase bef
 
 ### Application Platform
 
-[Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/overview) for Tomcat on Linux allows developers to quickly build, deploy and scale their Tomcat web apps on a fully managed Linux-based service. The open-source Maven Plugin for App Service helps Java developers deploy Maven projects. App Service is an HTTP-based, managed service for hosting web applications, REST APIs, and mobile back ends. App Service isn’t the only compute option, see: compute decision tree. We chose Azure App Service because it met the following requirements:
+[Azure App Service](https://learn.microsoft.com/azure/app-service/overview) for Tomcat on Linux allows developers to quickly build, deploy and scale their Tomcat web apps on a fully managed Linux-based service. The open-source Maven Plugin for App Service helps Java developers deploy Maven projects. App Service is an HTTP-based, managed service for hosting web applications, REST APIs, and mobile back ends. App Service isn’t the only compute option, see: compute decision tree. We chose Azure App Service because it met the following requirements:
 
 - **High SLA:** It has a 99.95% uptime SLA and meets our requirements for the production environment.
 - **Reduced management overhead:** It’s a fully managed hosting solution.
@@ -57,7 +63,7 @@ Choosing the right Azure services is an important part of the planning phase bef
 
 ### Identity management
 
-[Azure Active Directory (Azure AD)](https://learn.microsoft.com/en-us/azure/active-directory/fundamentals/active-directory-whatis) is a cloud-based identity and access management service. It authenticates and authorizes users based on roles that integrate with our application. Azure AD provides the application with the following abilities:
+[Azure Active Directory (Azure AD)](https://learn.microsoft.com/azure/active-directory/fundamentals/active-directory-whatis) is a cloud-based identity and access management service. It authenticates and authorizes users based on roles that integrate with our application. Azure AD provides the application with the following abilities:
 
 - **Authentication and authorization:** The application needed to authenticate and authorize employees.
 - **Scalable:** It scale to support larger scenarios.
@@ -73,9 +79,9 @@ Azure Database for PostgreSQL includes single-server and Flexible Server options
 - **Reliability:** we chose a single-zone high availability configuration, ideal for infrastructure redundancy with lower network latency. It provides high availability without the need to configure app redundancy across zones. Same-zone HA is available in all Azure regions where you can deploy Flexible Server and offers an uptime SLA of 99.95%.
 - **Performance:** Flexible Server provides your apps with predictable performance and intelligent tuning to automatically improve your database’s performance based on real usage data.
 - **Reduced management overhead:** Flexible Server is a fully managed database-as-a-service offering.
-- **Migration support:** Flexible Server supports database migration from on-premises Single Server PostgreSQL databases. Microsoft has a [preview migration tool](https://learn.microsoft.com/en-us/azure/postgresql/migrate/concepts-single-to-flexible) to simplify the migration process.
+- **Migration support:** Flexible Server supports database migration from on-premises Single Server PostgreSQL databases. Microsoft has a [preview migration tool](https://learn.microsoft.com/azure/postgresql/migrate/concepts-single-to-flexible) to simplify the migration process.
 - **Consistency with on-premises configurations:** Azure Database for PostgreSQL supports community versions of PostgreSQL 11, 12, 13 and 14, with plans to add new versions as they are released.
-- **Resiliency:** Flexible Server automatically creates [server backups](https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-backup-restore) and stores them on zone redundant storage (ZRS) within the region. Backups can be used to restore your server to any point-in-time within the backup retention period. All backups are encrypted using AES 256-bit encryption.
+- **Resiliency:** Flexible Server automatically creates [server backups](https://learn.microsoft.com/azure/postgresql/flexible-server/concepts-backup-restore) and stores them on zone redundant storage (ZRS) within the region. Backups can be used to restore your server to any point-in-time within the backup retention period. All backups are encrypted using AES 256-bit encryption.
 
 ### Application performance monitoring
 
@@ -87,17 +93,17 @@ Application Insights is a feature of Azure Monitor that provides extensible appl
 
 Azure Monitor is a comprehensive suite of monitoring tools to collect data from a variety of Azure services. Review the following concepts to quickly come up to speed on its capabilities:
 
-- [Smart detection in application insights](https://learn.microsoft.com/en-us/azure/azure-monitor/alerts/proactive-diagnostics)
-- [Application Map: Triaging Distributed Applications](https://learn.microsoft.com/en-us/azure/azure-monitor/app/app-map?tabs=net)
-- [Profile live App Service apps with Application Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/profiler/profiler)
-- [Usage analysis with Application Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/app/usage-overview)
-- [Getting started with Azure Metrics Explorer](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-getting-started)
-- [Application Insights Overview dashboard](https://learn.microsoft.com/en-us/azure/azure-monitor/app/overview-dashboard)
-- [Log queries in Azure Monitor](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/log-query-overview)
+- [Smart detection in application insights](https://learn.microsoft.com/azure/azure-monitor/alerts/proactive-diagnostics)
+- [Application Map: Triaging Distributed Applications](https://learn.microsoft.com/azure/azure-monitor/app/app-map?tabs=net)
+- [Profile live App Service apps with Application Insights](https://learn.microsoft.comazure/azure-monitor/profiler/profiler)
+- [Usage analysis with Application Insights](https://learn.microsoft.com/azure/azure-monitor/app/usage-overview)
+- [Getting started with Azure Metrics Explorer](https://learn.microsoft.com/azure/azure-monitor/essentials/metrics-getting-started)
+- [Application Insights Overview dashboard](https://learn.microsoft.com/azure/azure-monitor/app/overview-dashboard)
+- [Log queries in Azure Monitor](https://learn.microsoft.com/azure/azure-monitor/logs/log-query-overview)
 
 ### Cache
 
-[Azure Cache for Redis](https://learn.microsoft.com/azure/en-us/azure-cache-for-redis/cache-overview) is a managed in-memory data store based on the Redis software. The web app needed a cache that provided the following benefits:
+[Azure Cache for Redis](https://learn.microsoft.com/azure/azure-cache-for-redis/cache-overview) is a managed in-memory data store based on the Redis software. The web app needed a cache that provided the following benefits:
 
 - **Reduce management overhead:** It's a fully managed service.
 - **Speed and volume:** It has high-data throughput and low latency reads for commonly accessed, slow changing data.
@@ -107,7 +113,7 @@ Azure Monitor is a comprehensive suite of monitoring tools to collect data from 
 
 ### Content delivery network
 
-[Azure Front Door](https://learn.microsoft.com/en-us/azure/frontdoor/front-door-overview) sets up additional features such as Web Application Firewall and positions us to use a content delivery network to provide site acceleration as traffic to the web app increases. We chose Azure Front Door because it provides the following capabilities.
+[Azure Front Door](https://learn.microsoft.com/azure/frontdoor/front-door-overview) sets up additional features such as Web Application Firewall and positions us to use a content delivery network to provide site acceleration as traffic to the web app increases. We chose Azure Front Door because it provides the following capabilities.
 
 - **Traffic acceleration:** It uses anycast to reach the nearest Azure point of presence and find the fastest route to our web app.
 - **Custom domains:** It supports custom domain names with flexible domain validation.
@@ -117,7 +123,7 @@ Azure Monitor is a comprehensive suite of monitoring tools to collect data from 
 
 ### Web application firewall
 
-[Azure Web Application Firewall](https://learn.microsoft.com/en-us/azure/web-application-firewall/overview) provides centralized protection of your web applications from common exploits and vulnerabilities. It's built into Azure Front Door and prevents malicious attacks close to the attack sources before they enter your virtual network. Azure Web Application Firewall provided the following benefits.
+[Azure Web Application Firewall](https://learn.microsoft.com/azure/web-application-firewall/overview) provides centralized protection of your web applications from common exploits and vulnerabilities. It's built into Azure Front Door and prevents malicious attacks close to the attack sources before they enter your virtual network. Azure Web Application Firewall provided the following benefits.
 
 - **Global protection:** It provides global web app protection without sacrificing performance.
 - **Botnet protection:** The team can monitor and configure to address security concerns from botnets.
@@ -125,7 +131,7 @@ Azure Monitor is a comprehensive suite of monitoring tools to collect data from 
 
 ### Secrets manager
 
-[Azure Key Vault](https://learn.microsoft.com/en-us/azure/key-vault/general/overview) provides centralized storage of application secrets to control their distribution. We prefer managed identities over secrets, but we an Azure Active Directory client secret in our local development environment and need a secure secret store. Key Vault was chosen because it provides:
+[Azure Key Vault](https://learn.microsoft.com/azure/key-vault/general/overview) provides centralized storage of application secrets to control their distribution. We prefer managed identities over secrets, but we an Azure Active Directory client secret in our local development environment and need a secure secret store. Key Vault was chosen because it provides:
 
 - **Encryption:** It supports encryption at rest and in transit.
 - **Supports managed identities:** The application services can use managed identities to access the secret store.
@@ -141,7 +147,7 @@ Azure Files offers fully managed file shares in the cloud that are accessible vi
 
 ### Endpoint security
 
-[Azure Private Link](https://learn.microsoft.com/en-us/azure/private-link/private-link-overview) provides access to PaaS Services (such as, Azure Cache for Redis and PostgreSQL Database) over a private endpoint in your virtual network. Traffic between your virtual network and the service travels across the Microsoft backbone network. Azure Private DNS with Azure Private Link enables your solution to communicate securely with Azure services like Azure Database for PostgreSQL. The web app uses Azure Private Link for the following reasons:
+[Azure Private Link](https://learn.microsoft.com/azure/private-link/private-link-overview) provides access to PaaS Services (such as, Azure Cache for Redis and PostgreSQL Database) over a private endpoint in your virtual network. Traffic between your virtual network and the service travels across the Microsoft backbone network. Azure Private DNS with Azure Private Link enables your solution to communicate securely with Azure services like Azure Database for PostgreSQL. The web app uses Azure Private Link for the following reasons:
 
 - **Secure communication:** It lets the application privately access services on the Azure platform and reduces the network footprint of data stores to protect against data leakage.
 - **Minimal effort:** The private endpoints support the web application platform and database platform the web app uses. Both platforms mirror existing on-premises setup for minimal change.
