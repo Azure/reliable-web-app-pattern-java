@@ -124,18 +124,9 @@ resource "azuread_application" "app_registration" {
 
 [See code in context](https://github.com/Azure/reliable-web-app-pattern-java/blob/eb73a37be3d011112286df4e5853228f55cb377f/terraform/modules/app-service/main.tf#L80). For more information, see [Register an application with the Microsoft identity platform](https://learn.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app).
 
-The reference implementation creates three app roles (*Admin*, *User*, and *Creator*). Roles translate into permissions during authorization. The *Admin* role has permissions to configure Airsonic application settings. The *Creator* role can upload videos and create playlists.  The *User* Role can view the videos. The following code from the reference implementation demonstrates how to configure App Roles.
+The reference implementation creates three app roles ( *User* *Creator*). Roles translate into permissions during authorization. The *Creator* role has permissions to configure Airsonic application settings, upload videos, and create playlists.  The *User* Role can view the videos. The following code from the reference implementation demonstrates how to configure App Roles.
 
 ```terraform
-app_role {
-    allowed_member_types = ["User"]
-    description          = "Admins can manage perform all task actions"
-    display_name         = "Admin"
-    enabled              = true
-    id                   = random_uuid.admin_role_id.result
-    value                = "Admin"
-  }
-
   app_role {
     allowed_member_types = ["User"]
     description          = "ReadOnly roles have limited query access"
@@ -410,12 +401,8 @@ Performance efficiency is the ability of a workload to scale and meet the demand
 ### Use the cache-aside pattern
 
 The cache-aside pattern is a technique that's used to manage in-memory data caching. The cache-aside pattern makes the application responsible for managing data requests and data consistency between the cache and a persistent data store, like a database. When a data request reaches the application, the application first checks the cache to see if the cache has the data in memory. If it doesn't, the application queries the database, replies to the requester, and stores that data in the cache. For more information, see [Cache-aside pattern overview](https://learn.microsoft.com/azure/architecture/patterns/cache-aside).
-
-<<<<<<< HEAD
+ 
 **Simulate the Cache-Aside pattern:** You can simulate the Cache-Aside pattern in the reference implementation. For instructions, see [Simulate the Cache-Aside pattern](./simulate-patterns.md#cache-aside-pattern).
-=======
-*Simulate the Cache-Aside pattern:* You can simulate the Cache-Aside pattern in the reference implementation. For instructions, see [Simulate the Cache-Aside pattern](https://github.com/Azure/reliable-web-app-pattern-java/blob/main/simulate-patterns.md#cache-aside-pattern).
->>>>>>> main
 
 The cache-aside pattern introduces a few benefits to the web application. It reduces the request response time and can lead to increased response throughput. This efficiency reduces the number of horizontal scaling events, making the app more capable of handling traffic bursts. It also improves service availability by reducing the load on the primary data store and decreasing the likelihood of service outages.
 
