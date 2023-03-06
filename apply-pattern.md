@@ -299,10 +299,10 @@ terraform -chdir=./terraform plan -var application_name=${APP_NAME} -var environ
 
 You should use autoscale to automate horizontal scaling for production environments. Autoscaling adapts to user demand to save you money. Horizontal scaling automatically increases compute capacity to meet user demand and decreases compute capacity when demand drops. Don't increase the size of your application platform (vertical scaling) to meet frequent changes in demand. It's less cost efficient. For more information, see:
 
-- [Scaling in Azure App Service](https://learn.microsoft.com/azure/app-service/manage-scale-up)
-- [Autoscale in Microsoft Azure](https://learn.microsoft.com/azure/azure-monitor/autoscale/autoscale-overview)
+- [Scale up an app in Azure App Service](https://learn.microsoft.com/azure/app-service/manage-scale-up)
+- [Overview of autoscale in Microsoft Azure](https://learn.microsoft.com/azure/azure-monitor/autoscale/autoscale-overview)
 
-**Reference implementation:** The reference implementation uses the following configuration in Terraform. It creates an autoscale rule for the Azure App Service. The rule scales up to 10 instances and defaults to one instance.
+**Reference implementation:** The reference implementation uses the following configuration in Terraform. It creates an autoscale rule for the Azure App Service. The rule scales up to 10 instances and defaults to one instance. The code sets up two rules for scaling the resource up or down based on the average CPU usage over a period of time. The rules define a metric trigger that checks the CPU usage against a threshold value, and a scale action that increases or decreases the number of instances in response to the trigger.
 
 ```terraform
 resource "azurerm_monitor_autoscale_setting" "airsonicscaling" {
