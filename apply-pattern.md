@@ -1,30 +1,40 @@
-# How to apply the reliable web app pattern (Java)
+# Apply the reliable web app pattern (Java)
 
-The reliable web app pattern is a set of best practices built on the the [Azure Well-Architected Framework](https://learn.microsoft.com/en-us/azure/architecture/framework/) that helps developers successfully migrate web applications to the cloud. The goal is to improve the cost, performance, security, operations, and reliability of your web application with minimal changes. The reliable web app pattern is an essential first step for web applications converging on the cloud and sets a foundation for future modernizations in Azure.
+The reliable web app pattern is a set of principles that help developers successfully optimize web apps converging on the cloud. This pattern is an essential first step for on-premises web apps transitioning to the cloud. It sets the foundation for future modernizations in Azure. The reliable web app pattern adheres to the pillars of the [Azure Well-Architected Framework](https://learn.microsoft.com/azure/architecture/framework/) (WAF). It focuses on low-cost, high-value wins and the minimal changes you should make to improve the cost, performance, security, and reliability of web apps.
 
-This article shows you how to apply the reliable web app pattern. There's a companion article that provides an [overview of the pattern](pattern-overview.yml) and a [reference implementation](README.md#steps-to-deploy-the-reference-implementation) that you can deploy. The guidance refers to the code and architecture of the reference implementation throughout, and the following diagram illustrates its architecture.
+This article shows you how to apply the reliable web app pattern. There's a companion article that shows you how to [adopt the pattern](apply-pattern.md) and a [reference implementation](README.md#steps-to-deploy-the-reference-implementation) that you can deploy.
 
 ## Architecture and code
 
-Architecture and code are symbiotic. A well-architected web application needs quality code, and quality code needs a well-architected solution. Flaws in one limit the benefits of the other. The guidance here situates code changes within the pillars of the [Azure Well-Architected Framework](https:/learn.microsoft.com/en-us/azure/architecture/framework/) to reinforce the interdependence of code and architecture. The following diagram shows the architecture of the reference implementation that applies the reliable web app pattern.
+Architecture and code are symbiotic. A well-architected web application needs quality code, and quality code needs a well-architected solution. The reliable web app pattern situates code changes within the pillars of the WAF pillars to reinforce the interdependence of code and architecture. The following diagram illustrates the architecture of the reference implementation.
 
 [![Diagram showing the architecture of the reference implementation](docs/assets/java-architecture.png)]((docs/assets/java-architecture.png))
+*Download a [Visio file](https://arch-center.azureedge.net/reliable-web-app-java.vsdx) of this architecture. For the estimated cost, see:*
+
+- [Production environment estimated cost](https://azure.com/e/c530c133f36c423e9774de286f7dd28a)
+- [Non-production environment estimated cost](https://azure.com/e/48201e05118243e089ded6855839594a)
+
+The following table lists the principles of the reliable web app pattern and how the reference implementation applied these principles.
+
+| Reliable web app principles | Implementation for Java |
+| --- | --- |
+|▪ Low-cost high-value wins<br>▪ Minimal code changes to:<ol>▫ Meet security best practices<br>▫ Apply reliability design patterns<br>▫ Improve operational excellence</ol>▪ Cost-optimized environment(s)<br>▪ Follow Azure Well-Architected Framework principles<br>▪ Business-driven service level objective |▪ Retry pattern <br> ▪ Circuit-breaker pattern <br>▪ Cache-aside pattern <br>▪ Right-size resource <br>▪ Managed identities <br>▪ Private endpoints <br>▪ Secrets management <br>▪ Repeatable infrastructure <br>▪ Telemetry, logging, monitoring |
 
 ## Reliability
 
 A reliable web application is one that is both resilient and available. Resiliency is the ability of the system to recover from failures and continue to function. The goal of resiliency is to return the application to a fully functioning state after a failure occurs. Availability is whether your users can access your web application when they need to. We recommend using the retry and circuit-breaker patterns as a critical first step toward improving application reliability. These design patterns introduce self-healing qualities and help your application maximize the reliability features of the cloud. Here are our reliability recommendations.
 
-### Use the retry pattern
+### Use the Retry pattern
 
-The retry pattern is a technique for handling temporary service interruptions. These temporary service interruptions are known as transient faults. They're transient because they typically resolve themselves in a few seconds. In the cloud, the leading causes of transient faults are service throttling, dynamic load distribution, and network connectivity. The retry pattern handles transient faults by resending failed requests to the service. You can configure the amount of time between retries and how many retries to attempt before throwing an exception. For more information, see [transient fault handling](https://review.learn.microsoft.com/en-us/azure/architecture/best-practices/transient-faults).
+The Retry pattern is a technique for handling temporary service interruptions. These temporary service interruptions are known as transient faults. They're transient because they typically resolve themselves in a few seconds. In the cloud, the leading causes of transient faults are service throttling, dynamic load distribution, and network connectivity. The Retry pattern handles transient faults by resending failed requests to the service. You can configure the amount of time between retries and how many retries to attempt before throwing an exception. For more information, see [transient fault handling](https://review.learn.microsoft.com/azure/architecture/best-practices/transient-faults).
 
-*Simulate the retry pattern:* You can simulate the Retry pattern in the reference implementation. For instructions, see [Simulate the Retry pattern](https://github.com/Azure/reliable-web-app-pattern-java/blob/main/simulate-patterns.md#retry-and-circuit-break-pattern).
+*Simulate the Retry pattern:* You can simulate the Retry pattern in the reference implementation. For instructions, see [Simulate the Retry pattern](https://github.com/Azure/reliable-web-app-pattern-java/blob/main/simulate-patterns.md#retry-and-circuit-break-pattern).
 
-If your code already uses the retry pattern, you should update your code to use the retry mechanisms available in Azure services and client SDKs. If your application doesn't have a retry pattern, then you should use [Resilience4j](https://github.com/resilience4j/resilience4j).
+If your code already uses the Retry pattern, you should update your code to use the retry mechanisms available in Azure services and client SDKs. If your application doesn't have a Retry pattern, then you should use [Resilience4j](https://github.com/resilience4j/resilience4j).
 
 Resilience4j is a lightweight fault tolerance library inspired by Netflix Hystrix and designed for functional programming. It provides higher-order functions (decorators) to enhance any functional interface, lambda expression or method reference with a Circuit Breaker, Rate Limiter, Retry or Bulkhead.
 
-*Reference implementation.* The reference implementation decorates a lambda expression with a Circuit Breaker and Retry in order to retry the call to get the media file from disk. The following code demonstrates how to use Resilience4j to retry a filesystem call to Azure Files to get the last modified time.
+*Reference implementation.* The reference implementation adds the Retry pattern by decorating a lambda expression with the Retry annotations. The code retries the call to get the media file from disk. The following code demonstrates how to use Resilience4j to retry a filesystem call to Azure Files to get the last modified time.
 
 ```java
 @Retry(name = "retryApi", fallbackMethod = "isNewVersionAvailableFallback")
@@ -34,7 +44,6 @@ public boolean isNewFinalVersionAvailable() {
     return externalAPICaller.isNewFinalVersionAvailable();
 }
 
-
 @Retry(name = "retryApi", fallbackMethod = "isNewVersionAvailableFallback")
 @CircuitBreaker(name = "CircuitBreakerService")
 @GetMapping("/isNewBetaVersionAvailable")
@@ -43,7 +52,7 @@ public boolean isNewBetaVersionAvailable() {
 }
 ```
 
-You can configure your Cirtcuit Breaker and Retry properties in the `application.properties` file.
+You can configure the properties of the Retry pattern in the `application.properties` file.
 
 ```java
 resilience4j.circuitbreaker.instances.CircuitBreakerService.failure-rate-threshold=50
@@ -66,16 +75,51 @@ resilience4j.retry.metrics.legacy.enabled=true
 resilience4j.retry.metrics.enabled=true
 ```
 
-For more ways to configure Resiliency4J, see 
-
-* [Resilliency4J documentation](https://resilience4j.readme.io/v1.7.0/docs/getting-started-3)
-* [Spring Cloud Circuit Breaker](https://docs.spring.io/spring-cloud-circuitbreaker/docs/current/reference/html/#usage-documentation)
+For more ways to configure Resiliency4J, see [Spring Retry](https://docs.spring.io/spring-batch/docs/current/reference/html/retry.html) and [Resilliency4J documentation](https://resilience4j.readme.io/v1.7.0/docs/getting-started-3)
   
-### Use the circuit-breaker pattern
+### Use the Circuit Breaker pattern
 
-You should pair the retry pattern with the circuit breaker pattern. The circuit breaker pattern handles faults that aren't transient. The goal is to prevent an application from repeatedly invoking a service that is clearly faulted. It releases the application and avoids wasting CPU cycles so the application retains its performance integrity for end users. For more information, see the [circuit breaker pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/circuit-breaker).
+You should pair the Retry pattern with the Circuit Breaker pattern. The Circuit Breaker pattern handles faults that aren't transient. The goal is to prevent an application from repeatedly invoking a service that is clearly faulted. It releases the application and avoids wasting CPU cycles so the application retains its performance integrity for end users. For more information, see the [Circuit Breaker pattern](https://learn.microsoft.com/azure/architecture/patterns/circuit-breaker).
 
 *Simulate the Circuit Breaker pattern:* You can simulate the Circuit Breaker pattern in the reference implementation. For instructions, see [Simulate the Circuit Breaker pattern](https://github.com/Azure/reliable-web-app-pattern-java/blob/main/simulate-patterns.md#retry-and-circuit-break-pattern).
+
+*Reference implementation:* The reference implementation adds the Circuit Breaker pattern by decorating a lambda expression with the Circuit Breaker annotation.
+
+```java
+@Retry(name = "retryApi", fallbackMethod = "isNewVersionAvailableFallback")
+@CircuitBreaker(name = "CircuitBreakerService")
+@GetMapping("/isNewFinalVersionAvailable")
+public boolean isNewFinalVersionAvailable() {
+    return externalAPICaller.isNewFinalVersionAvailable();
+}
+
+@Retry(name = "retryApi", fallbackMethod = "isNewVersionAvailableFallback")
+@CircuitBreaker(name = "CircuitBreakerService")
+@GetMapping("/isNewBetaVersionAvailable")
+public boolean isNewBetaVersionAvailable() {
+    return externalAPICaller.isNewBetaVersionAvailable();
+}
+```
+
+You can configure the properties of the Circuit Breaker pattern in the `application.properties` file.
+
+```java
+resilience4j.circuitbreaker.instances.CircuitBreakerService.failure-rate-threshold=50
+resilience4j.circuitbreaker.instances.CircuitBreakerService.minimum-number-of-calls=6
+resilience4j.circuitbreaker.instances.CircuitBreakerService.automatic-transition-from-open-to-half-open-enabled=true
+resilience4j.circuitbreaker.instances.CircuitBreakerService.wait-duration-in-open-state=15s
+resilience4j.circuitbreaker.instances.CircuitBreakerService.permitted-number-of-calls-in-half-open-state=3
+resilience4j.circuitbreaker.instances.CircuitBreakerService.sliding-window-size=10
+resilience4j.circuitbreaker.instances.CircuitBreakerService.sliding-window-type=count_based
+
+resilience4j.circuitbreaker.metrics.enabled=true
+resilience4j.circuitbreaker.metrics.legacy.enabled=true
+resilience4j.circuitbreaker.instances.CircuitBreakerService.register-health-indicator=true
+resilience4j.circuitbreaker.instances.CircuitBreakerService.event-consumer-buffer-size=10
+resilience4j.circuitbreaker.configs.CircuitBreakerService.registerHealthIndicator=true
+```
+
+For more ways to configure Resiliency4J, see [Spring Circuit Breaker](https://docs.spring.io/spring-cloud-circuitbreaker/docs/current/reference/html/#usage-documentation) and [Resilliency4J documentation](https://resilience4j.readme.io/v1.7.0/docs/getting-started-3).
 
 ## Security
 
@@ -95,10 +139,10 @@ Managed identities are similar to connection strings in on-premises applications
 
 Managed identities provide a secure and traceable way to control access to Azure resources. For more information, see:
 
-- [Developer introduction and guidelines for credentials](https://learn.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview-for-developers)
-- [Managed identities for Azure resources](https://learn.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview)
-- [Azure services supporting managed identities](https://learn.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/managed-identities-status)
-- [Web app managed identity](https://learn.microsoft.com/en-us/azure/active-directory/develop/multi-service-web-app-access-storage)
+- [Developer introduction and guidelines for credentials](https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview-for-developers)
+- [Managed identities for Azure resources](https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview)
+- [Azure services supporting managed identities](https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/managed-identities-status)
+- [Web app managed identity](https://learn.microsoft.com/azure/active-directory/develop/multi-service-web-app-access-storage)
 
 ### Use a central secrets store
 
@@ -110,9 +154,9 @@ Many on-premises environments don't have a central secrets store. The absence ma
 
 ### Use role-based authorization
 
-A role is a set of permissions, and Role-based access control (RBAC) allows you to grant fine-grained permissions to different roles. You should grant roles the least privilege to start and add more based on need. Align roles to application needs and provide clear guidance to your technical teams that implement permissions.
+A role is a set of permissions, and Role-based access control (RBAC) allows you to grant fine-grained permissions to different roles. You should grant roles the least privilege to start and add more based on need. Align roles to application needs and provide clear guidance to your technical teams that implement permissions. You should use Azure Active Directory (Azure AD) as the identity provider.
 
-*Reference implementation:* App Service provides built-in authentication and authorization support, so you can sign in users and access data by writing minimal or no code in your web app. The steps below shows how to secure Airsonic with the App Service using Azure Active Directory (Azure AD) as the identity provider. The following code demonstrates how the reference implementation configures the app registration.
+*Reference implementation:* App Service provides built-in authentication and authorization support, so you can sign in users and access data by writing minimal or no code in your web app. The following code demonstrates how the reference implementation configures the app registration.
 
 ```terraform
 resource "azuread_application" "app_registration" {
@@ -122,9 +166,9 @@ resource "azuread_application" "app_registration" {
 }
 ```
 
-[See code in context](https://github.com/Azure/reliable-web-app-pattern-java/blob/eb73a37be3d011112286df4e5853228f55cb377f/terraform/modules/app-service/main.tf#L80). For more information, see [Register an application with the Microsoft identity platform](https://learn.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app).
+[See code in context](https://github.com/Azure/reliable-web-app-pattern-java/blob/eb73a37be3d011112286df4e5853228f55cb377f/terraform/modules/app-service/main.tf#L80). For more information, see [Register an application with the Microsoft identity platform](https://learn.microsoft.com/azure/active-directory/develop/quickstart-register-app).
 
-The reference implementation creates three app roles ( *User* *Creator*). Roles translate into permissions during authorization. The *Creator* role has permissions to configure Airsonic application settings, upload videos, and create playlists.  The *User* Role can view the videos. The following code from the reference implementation demonstrates how to configure App Roles.
+The reference implementation creates two app roles (*User* and *Creator*). Roles translate into permissions during authorization. The *Creator* role has permissions to configure the Airsonic application settings, upload videos, and create playlists.  The *User* Role can view the videos. The following code from the reference implementation demonstrates how to configure App Roles.
 
 ```terraform
   app_role {
@@ -146,7 +190,7 @@ The reference implementation creates three app roles ( *User* *Creator*). Roles 
   }
 ```
 
-[See code in context](https://github.com/Azure/reliable-web-app-pattern-java/blob/eb73a37be3d011112286df4e5853228f55cb377f/terraform/modules/app-service/main.tf#L98) For more information, see [Add app roles to your application and receive them in the token](https://learn.microsoft.com/en-us/azure/active-directory/develop/howto-add-app-roles-in-azure-ad-apps).
+[See code in context](https://github.com/Azure/reliable-web-app-pattern-java/blob/eb73a37be3d011112286df4e5853228f55cb377f/terraform/modules/app-service/main.tf#L98) For more information, see [Add app roles to your application and receive them in the token](https://learn.microsoft.com/azure/active-directory/develop/howto-add-app-roles-in-azure-ad-apps).
 
 The reference implementation uses the OAuth 2.0 authorization code grant flow to log in a user with an Azure AD account. The following XML snippet defines the two required dependencies to enable this flow:
 
@@ -165,7 +209,7 @@ The reference implementation uses the OAuth 2.0 authorization code grant flow to
 
 `org.springframework.boot : spring-boot-starter-oauth2-client` supports OAuth 2.0 authentication and authorization in a Spring Boot application.
 
-By adding these dependencies to the project, the developer can integrate Azure Active Directory and OAuth 2.0 authentication and authorization into their Spring Boot application without manually configuring the required libraries and settings. For more information, see [Spring Security with Azure Active Directory](https://learn.microsoft.com/en-us/azure/developer/java/spring-framework/spring-security-support).
+By adding these dependencies to the project, the developer can integrate Azure Active Directory and OAuth 2.0 authentication and authorization into their Spring Boot application without manually configuring the required libraries and settings. For more information, see [Spring Security with Azure Active Directory](https://learn.microsoft.com/azure/developer/java/spring-framework/spring-security-support).
 
 The `appRoles` attribute in Azure AD defines the roles that an app can declare in the application manifest. The attribute allows applications to define their own roles. When a user signs in to the application, Azure AD generates an ID token that contains various claims. This token includes a `roles` claim that lists the roles assigned to the user. In the following code, the `WebSecurityConfiguration` class extends the `AadWebSecurityConfigurerAdapter` class to add authentication. It only grants access to the three roles configured in Azure AD, and it adds the `APPROLE_` as a prefix each role.
 
@@ -200,7 +244,7 @@ public class WebSecurityConfiguration extends AadWebSecurityConfigurerAdapter {
         }
 ```
 
-For more information, see [Application roles](https://learn.microsoft.com/en-us/azure/architecture/multitenant-identity/app-roles) and [appRoles attribute](https://learn.microsoft.com/en-us/azure/active-directory/develop/reference-app-manifest#approles-attribute).
+For more information, see [Application roles](https://learn.microsoft.com/azure/architecture/multitenant-identity/app-roles) and [appRoles attribute](https://learn.microsoft.com/azure/active-directory/develop/reference-app-manifest#approles-attribute).
 
 The reference implementation uses a Spring Filter to add the authenticated users to the Airsonic database. The `doFilterInternal()` method checks whether the incoming request is from a valid Airsonic user. If the user is valid, the filter adds the user to the database by calling the addUserToDatabase() method. Finally, the filter calls doFilter() method on the FilterChain object to continue processing the request. The `LOG.debug()` method provides information about the execution status of the filter.
 
@@ -225,10 +269,10 @@ public class AADAddAuthorizedUsersFilter extends OncePerRequestFilter {
 
 For more information, see:
 
-- [Spring Boot Starter for Azure Active Directory developer's guide](https://learn.microsoft.com/en-us/azure/developer/java/spring-framework/spring-boot-starter-for-azure-active-directory-developer-guide)
-- [Add sign-in with Azure Active Directory account to a Spring web app](https://learn.microsoft.com/en-us/azure/developer/java/spring-framework/configure-spring-boot-starter-java-app-with-azure-active-directory)
-- [Add app roles to your application and receive them in the token](https://learn.microsoft.com/en-us/azure/active-directory/develop/howto-add-app-roles-in-azure-ad-apps)
-- [Configurable token lifetimes in the Microsoft identity platform](https://learn.microsoft.com/en-us/azure/active-directory/develop/active-directory-configurable-token-lifetimes)
+- [Spring Boot Starter for Azure Active Directory developer's guide](https://learn.microsoft.com/azure/developer/java/spring-framework/spring-boot-starter-for-azure-active-directory-developer-guide)
+- [Add sign-in with Azure Active Directory account to a Spring web app](https://learn.microsoft.com/azure/developer/java/spring-framework/configure-spring-boot-starter-java-app-with-azure-active-directory)
+- [Add app roles to your application and receive them in the token](https://learn.microsoft.com/azure/active-directory/develop/howto-add-app-roles-in-azure-ad-apps)
+- [Configurable token lifetimes in the Microsoft identity platform](https://learn.microsoft.com/azure/active-directory/develop/active-directory-configurable-token-lifetimes)
 
 ### Secure communication with private endpoints
 
@@ -236,14 +280,14 @@ You should use private endpoints to provide more secure communication between yo
 
 This network security is transparent from the code perspective. It doesn't involve any app configuration, connection string, or code changes.
 
-- [How to create a private endpoint](https://learn.microsoft.com/en-us/azure/architecture/example-scenario/private-web-app/private-web-app#deploy-this-scenario)
-- [Best practices for endpoint security](https://learn.microsoft.com/en-us/azure/architecture/framework/security/design-network-endpoints)
+- [How to create a private endpoint](https://learn.microsoft.com/azure/architecture/example-scenario/private-web-app/private-web-app#deploy-this-scenario)
+- [Best practices for endpoint security](https://learn.microsoft.com/azure/architecture/framework/security/design-network-endpoints)
 
 ### Use a web application firewall
 
 You should protect web applications with a web application firewall. The web application firewall provides a level protection against common security attacks and botnets. To take advantage of the value of the web application firewall, you have to prevent traffic from bypassing the web application firewall. In Azure, you should restrict access on the application platform (App Service) to only accept inbound communication from Azure Front Door.
 
-*Reference implementation:* The reference implementation uses Front Door as the host name URL. In production, you should use your own host name and follow the guidance in [Preserve the original HTTP host name](https://learn.microsoft.com/en-us/azure/architecture/best-practices/host-name-preservation).
+*Reference implementation:* The reference implementation uses Front Door as the host name URL. In production, you should use your own host name and follow the guidance in [Preserve the original HTTP host name](https://learn.microsoft.com/azure/architecture/best-practices/host-name-preservation).
 
 ## Cost optimization
 
@@ -266,9 +310,9 @@ Production environments need SKUs that meet the service level agreements (SLA), 
 
 | Service | Dev SKU | Prod SKU | SKU options |
 | --- | --- | --- | --- |
-| Cache for Redis | Basic | Standard | [Redis Cache SKU options](https://azure.microsoft.com/en-in/pricing/details/cache/)
-| App Service | P1v2 | P2v2 | [App Service SKU options](https://azure.microsoft.com/en-us/pricing/details/app-service/linux/)
-| PostgreSQL Flexible Server | Burstable B1ms (B_Standard_B1ms) | General Purpose D4s_v3 (GP_Standard_D4s_v3) | [PostgreSQL SKU options](https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-compute-storage)
+| Cache for Redis | Basic | Standard | [Redis Cache SKU options](https://azure.microsoft.com/pricing/details/cache/)
+| App Service | P1v2 | P2v2 | [App Service SKU options](https://azure.microsoft.com/pricing/details/app-service/linux/)
+| PostgreSQL Flexible Server | Burstable B1ms (B_Standard_B1ms) | General Purpose D4s_v3 (GP_Standard_D4s_v3) | [PostgreSQL SKU options](https://learn.microsoft.com/azure/postgresql/flexible-server/concepts-compute-storage)
 
 The following parameter tells the Terraform template the SKUs to select development SKUs. In `scripts/setup-initial-env.sh`, you can set `APP_ENVIRONMENT` to either be prod or dev.
 
@@ -289,12 +333,12 @@ terraform -chdir=./terraform plan -var application_name=${APP_NAME} -var environ
 
 You should use autoscale to automate horizontal scaling for production environments. Autoscaling adapts to user demand to save you money. Horizontal scaling automatically increases compute capacity to meet user demand and decreases compute capacity when demand drops. Don't increase the size of your application platform (vertical scaling) to meet frequent changes in demand. It's less cost efficient. For more information, see:
 
-- [Scaling in Azure App Service](https://learn.microsoft.com/azure/app-service/manage-scale-up)
-- [Autoscale in Microsoft Azure](https://learn.microsoft.com/azure/azure-monitor/autoscale/autoscale-overview)
+- [Scale up an app in Azure App Service](https://learn.microsoft.com/azure/app-service/manage-scale-up)
+- [Overview of autoscale in Microsoft Azure](https://learn.microsoft.com/azure/azure-monitor/autoscale/autoscale-overview)
 
-**Reference implementation:** The reference implementation uses the following configuration in Terraform. It creates an autoscale rule for the Azure App Service. The rule scales up to 10 instances and defaults to one instance.
+**Reference implementation:** The reference implementation uses the following configuration in Terraform. It creates an autoscale rule for the Azure App Service. The rule scales up to 10 instances and defaults to one instance. The code sets up two rules for scaling the resource up or down based on the average CPU usage over a period of time. The rules define a metric trigger that checks the CPU usage against a threshold value, and a scale action that increases or decreases the number of instances in response to the trigger.
 
-```
+```terraform
 resource "azurerm_monitor_autoscale_setting" "airsonicscaling" {
   name                = "airsonicscaling"
   resource_group_name = var.resource_group
@@ -346,8 +390,8 @@ resource "azurerm_monitor_autoscale_setting" "airsonicscaling" {
   }
 }
 ```
-<sup>Sample code demonstrates how to configure  AutoScale Setting, [link to main.tf](https://github.com/Azure/reliable-web-app-pattern-java/blob/08b00043f26a580fc6a37d665b173aca4f346c03/terraform/modules/app-service/main.tf#L278).</sup>
 
+[See this code in context](https://github.com/Azure/reliable-web-app-pattern-java/blob/08b00043f26a580fc6a37d665b173aca4f346c03/terraform/modules/app-service/main.tf#L278)
 
 ### Delete non-production environments
 
@@ -401,7 +445,7 @@ Performance efficiency is the ability of a workload to scale and meet the demand
 ### Use the cache-aside pattern
 
 The cache-aside pattern is a technique that's used to manage in-memory data caching. The cache-aside pattern makes the application responsible for managing data requests and data consistency between the cache and a persistent data store, like a database. When a data request reaches the application, the application first checks the cache to see if the cache has the data in memory. If it doesn't, the application queries the database, replies to the requester, and stores that data in the cache. For more information, see [Cache-aside pattern overview](https://learn.microsoft.com/azure/architecture/patterns/cache-aside).
- 
+
 **Simulate the Cache-Aside pattern:** You can simulate the Cache-Aside pattern in the reference implementation. For instructions, see [Simulate the Cache-Aside pattern](./simulate-patterns.md#cache-aside-pattern).
 
 The cache-aside pattern introduces a few benefits to the web application. It reduces the request response time and can lead to increased response throughput. This efficiency reduces the number of horizontal scaling events, making the app more capable of handling traffic bursts. It also improves service availability by reducing the load on the primary data store and decreasing the likelihood of service outages.
@@ -415,7 +459,8 @@ public UserSettings getUserSettings(String username) {
     return settings == null ? createDefaultUserSettings(username) : settings;
 }
 ```
-[See code in context](https://github.com/Azure/reliable-web-app-pattern-java/blob/eb73a37be3d011112286df4e5853228f55cb377f/src/airsonic-advanced/airsonic-main/src/main/java/org/airsonic/player/service/SettingsService.java#L1290). 
+
+[See code in context](https://github.com/Azure/reliable-web-app-pattern-java/blob/eb73a37be3d011112286df4e5853228f55cb377f/src/airsonic-advanced/airsonic-main/src/main/java/org/airsonic/player/service/SettingsService.java#L1290).
 
 In the above mapping, getUserSettings method will put a *UserSettings* into a cache named as userSettingsCache.
 
@@ -423,9 +468,9 @@ In the above mapping, getUserSettings method will put a *UserSettings* into a ca
 
 For more information on how to use Use Azure Redis Cache in Spring, see:
 
-* [Use Azure Redis Cache in Spring](https://learn.microsoft.com/en-us/azure/developer/java/spring-framework/configure-spring-boot-initializer-java-app-with-redis-cache)
+- [Use Azure Redis Cache in Spring](https://learn.microsoft.com/azure/developer/java/spring-framework/configure-spring-boot-initializer-java-app-with-redis-cache)
 
-**Cache high-need data.** Most applications have pages that get more viewers than other pages. You should cache data that supports the most-viewed pages of your application to improve responsiveness for the end user and reduce demand on the database. You should use [Azure Monitor](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/data-platform-metrics) to track the CPU, memory, and storage of the database. You can use these metrics to determine whether you can use a smaller database SKU.  See [Monitor metrics on Azure Database for PostgreSQL - Flexible Server](https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-monitoring) for mor information.
+**Cache high-need data.** Most applications have pages that get more viewers than other pages. You should cache data that supports the most-viewed pages of your application to improve responsiveness for the end user and reduce demand on the database. You should use [Azure Monitor](https://learn.microsoft.com/azure/azure-monitor/essentials/data-platform-metrics) to track the CPU, memory, and storage of the database. You can use these metrics to determine whether you can use a smaller database SKU.  See [Monitor metrics on Azure Database for PostgreSQL - Flexible Server](https://learn.microsoft.com/azure/postgresql/flexible-server/concepts-monitoring) for mor information.
 
 **Keep cache data fresh.** You should periodically refresh the data in the cache to keep it relevant. The process involves getting the latest version of the data from the database to ensure that the cache has the most requested data and the most current information. The goal is to ensure that users get current data fast. The frequency of the refreshes depends on the application.
 
