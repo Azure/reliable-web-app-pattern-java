@@ -32,6 +32,7 @@ import org.airsonic.player.service.playlist.PlaylistExportHandler;
 import org.airsonic.player.service.playlist.PlaylistImportHandler;
 import org.airsonic.player.util.StringUtil;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,9 +43,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
+import javax.validation.constraints.NotNull;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -56,7 +60,10 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static java.util.concurrent.CompletableFuture.runAsync;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Provides services for loading and saving playlists to and from persistent storage.
@@ -84,6 +91,8 @@ public class PlaylistService {
     private SimpMessagingTemplate brokerTemplate;
     @Autowired
     private PathWatcherService pathWatcherService;
+    @Autowired
+    private MediaFileService mediaFileService;
 
     public PlaylistService(
             MediaFileDao mediaFileDao,
@@ -323,6 +332,67 @@ public class PlaylistService {
         }
     }
 
+    private List<MediaFile> getMediaFiles(String pathInPlaylist) {
+        if (StringUtils.isNotBlank(pathInPlaylist)) {
+            Path path = Paths.get(pathInPlaylist);
+            if (path.isAbsolute()) {
+                // there's only one path to look up
+                MediaFile m = mediaFileService.getMediaFile(path);
+                if (m != null) {
+                    return singletonList(m);
+                }
+            } else {
+                // need to resolve the root
+                List<MediaFile> possibles = new ArrayList<>();
+
+                // look relative to playlist folder first
+                Path playlistFolder = Optional.ofNullable(settingsService.getPlaylistFolder()).map(Paths::get).orElse(null);
+                if (playlistFolder != null) {
+                    Path resolvedFile = playlistFolder.resolve(path).normalize();
+                    MediaFile mediaFile = mediaFileService.getMediaFile(resolvedFile);
+                    if (mediaFile != null) {
+                        possibles.add(mediaFile);
+                    }
+                }
+
+                // look relative to all music folders
+                possibles.addAll(mediaFileService.getMediaFilesByRelativePath(path).stream()
+                        .filter(m -> !EnumSet.of(MediaFile.MediaType.DIRECTORY, MediaFile.MediaType.ALBUM).contains(m.getMediaType()))
+                        .collect(toList()));
+
+                // look relative to home
+                Path resolvedFile = Paths.get(".").toAbsolutePath().resolve(path).normalize();
+                MediaFile mediaFile = mediaFileService.getMediaFile(resolvedFile);
+                if (mediaFile != null) {
+                    possibles.add(mediaFile);
+                }
+
+                return possibles;
+            }
+        }
+
+        return emptyList();
+    }
+
+    private Pair<List<MediaFile>, List<String>> readFrom(@NotNull InputStream in, String contentEncoding) throws IOException {
+        List<MediaFile> mediaFiles = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+            while (reader.ready()) {
+                String uri = reader.readLine();
+
+                List<MediaFile> possibles = getMediaFiles(uri);
+                if (possibles.isEmpty()) {
+                    errors.add("Cannot find media file " + uri);
+                } else {
+                    mediaFiles.addAll(possibles);
+                }
+            }
+        }
+
+        return Pair.of(mediaFiles, errors);
+    }
+
     private void importPlaylist(Path f, List<Playlist> allPlaylists) {
         if (Files.isRegularFile(f) && Files.isReadable(f)) {
             try {
@@ -336,14 +406,7 @@ public class PlaylistService {
     public Playlist importPlaylist(String username, String playlistName, String fileName, Path file, InputStream inputStream, Playlist existingPlaylist) throws Exception {
 
         // TODO: handle other encodings
-        final SpecificPlaylist inputSpecificPlaylist = SpecificPlaylistFactory.getInstance().readFrom(inputStream, "UTF-8");
-        if (inputSpecificPlaylist == null) {
-            throw new Exception("Unsupported playlist " + fileName);
-        }
-        PlaylistImportHandler importHandler = getImportHandler(inputSpecificPlaylist);
-        LOG.debug("Using {} playlist import handler", importHandler.getClass().getSimpleName());
-
-        Pair<List<MediaFile>, List<String>> result = importHandler.handle(inputSpecificPlaylist, file);
+        Pair<List<MediaFile>, List<String>> result = readFrom(inputStream, "UTF-8");
 
         if (result.getLeft().isEmpty() && !result.getRight().isEmpty()) {
             throw new Exception("No songs in the playlist were found.");

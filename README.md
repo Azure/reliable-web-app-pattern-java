@@ -28,6 +28,15 @@ The internally accessible video covers the details of reliable web app pattern f
 
 A detailed workflow of the reference implementation is forthcoming.
 
+## Data collection
+
+The software in the reference implementation may collect information about you and your use of the software and send it to Microsoft. Microsoft may use this information to provide services and improve our products and services. You can turn off the telemetry, and the following code shows you how to opt out. There are also some features in the software that enable you and Microsoft to collect data from users of your applications. If you use these features, you must comply with applicable law, including providing appropriate notices to users of your applications together with a copy of [Microsoft Privacy Statement](https://go.microsoft.com/fwlink/?LinkId=521839). You can learn more about data collection and use in the help documentation and our privacy statement. When you use the software, you consent to these practices.
+
+Telemetry collection is on by default. To opt out, set the environment variable `ENABLE_TELEMETRY` to `false` in *./scripts/setup-initial-env.sh*, as seen in the following code:
+
+```shell
+export ENABLE_TELEMETRY=false
+
 ## Steps to deploy the reference implementation
 
 Deploy this sample using [Visual Studio Code](https://code.visualstudio.com/) with [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension.
@@ -112,7 +121,7 @@ Create the Azure resources by running the following commands:
 
 ```shell
 terraform -chdir=./terraform init
-terraform -chdir=./terraform plan -var application_name=${APP_NAME} -var environment=${APP_ENVIRONMENT} -out airsonic.tfplan
+terraform -chdir=./terraform plan -var application_name=${APP_NAME} -var environment=${APP_ENVIRONMENT} -var enable_telemetry=${ENABLE_TELEMETRY} -out airsonic.tfplan
 terraform -chdir=./terraform apply airsonic.tfplan
 ```
 

@@ -38,7 +38,7 @@ pe "az config set extension.use_dynamic_install=yes_without_prompt"
 
 p ">>> Deploying Azure infrastructure <<"
 pe "terraform -chdir=./terraform init"
-pe "terraform -chdir=./terraform plan -var application_name=${APP_NAME} -var environment=${APP_ENVIRONMENT} -out airsonic.tfplan"
+pe "terraform -chdir=./terraform plan -var application_name=${APP_NAME} -var environment=${APP_ENVIRONMENT} -var enable_telemetry=${ENABLE_TELEMETRY} -out airsonic.tfplan"
 pe "terraform -chdir=./terraform apply airsonic.tfplan"
 
 p ">>> Set Up Your Local Build Environment <<<"

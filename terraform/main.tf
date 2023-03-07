@@ -9,6 +9,7 @@ provider "azurerm" {
 locals {
   // If an environment is set up (dev, test, prod...), it is used in the application name
   environment = var.environment == "" ? "dev" : var.environment
+  telemetryId = "92141f6a-c03e-4141-bc1c-2113e4772c8d-${var.location}"
 }
 
 data "azurerm_client_config" "current" {}
@@ -243,6 +244,22 @@ module "frontdoor" {
   environment      = local.environment
   location         = var.location
   host_name        = module.application.application_fqdn
+}
+resource "azurerm_resource_group_template_deployment" "deploymenttelemetry" {
+  count               = var.enable_telemetry ? 1 : 0
+  name                = local.telemetryId
+  resource_group_name = azurerm_resource_group.main.name
+  deployment_mode     = "Incremental"
+  
+  template_content = <<TEMPLATE
+  {
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "variables": {},
+    "resources": []
+  }
+  TEMPLATE
 }
 
 data "http" "myip" {
