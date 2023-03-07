@@ -19,3 +19,9 @@ variable "location" {
   description = "The Azure region where all resources in this example should be created"
   default     = "eastus"
 }
+
+variable "enable_telemetry" {
+  type        = bool
+  description = "Telemetry collection is on by default"
+  default     = true
+}
