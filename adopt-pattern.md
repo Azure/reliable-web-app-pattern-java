@@ -145,6 +145,8 @@ Azure Files offers fully managed file shares in the cloud that are accessible vi
 - **Fully managed:** Azure file shares allow us to maintain compatibility without needing to manage hardware or operating system for a file server.
 - **Resiliency:** Azure Files has been built from the ground up to be always available.
 
+For this solution, the Azure storage account is replicated across three Azure availability zones in the primary region.  This type of redundancy is called [Zone-redundant storage (ZRS)](https://learn.microsoft.com/en-us/azure/storage/common/storage-redundancy#redundancy-in-the-primary-region). Each availability zone is a separate physical location with independent power, cooling, and networking. [ZRS](https://learn.microsoft.com/en-us/azure/storage/common/storage-redundancy#zone-redundant-storage) offers durability for storage resources of at least 99.9999999999% (12 9's) over a given year.
+
 ### Endpoint security
 
 [Azure Private Link](https://learn.microsoft.com/azure/private-link/private-link-overview) provides access to PaaS Services (such as, Azure Cache for Redis and PostgreSQL Database) over a private endpoint in your virtual network. Traffic between your virtual network and the service travels across the Microsoft backbone network. Azure Private DNS with Azure Private Link enables your solution to communicate securely with Azure services like Azure Database for PostgreSQL. The web app uses Azure Private Link for the following reasons:
