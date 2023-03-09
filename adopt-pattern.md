@@ -144,6 +144,7 @@ Azure Files offers fully managed file shares in the cloud that are accessible vi
 - **Replace existing file server:** Azure Files allows us to replace our existing file server without having to modify our code to use an alternative blob storage mechanism.
 - **Fully managed:** Azure file shares allow us to maintain compatibility without needing to manage hardware or operating system for a file server.
 - **Resiliency:** Azure Files has been built from the ground up to be always available.
+- **Durability.** Azure files has zone-redundant storage to improve data redundancy and application resiliency. Zone-redundant storage replicates data in your Azure storage account across three Azure availability zones in the primary region and offers twelve-9s of durability (99.9999999999%). For more information, see [Data redundancy](https://learn.microsoft.com/en-us/azure/storage/common/storage-redundancy#redundancy-in-the-primary-region) and [Zone-redundant storage](https://learn.microsoft.com/en-us/azure/storage/common/storage-redundancy#zone-redundant-storage).
 
 ### Endpoint security
 
