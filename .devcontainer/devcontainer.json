@@ -6,14 +6,13 @@
             "VARIANT": "jammy"
         }
     },
-
 	"remoteUser": "vscode",
 	"containerEnv": {
 		"M2": "/home/vscode" // required because the java feature is not setting this correctly
 	},
 	
     "features": {
-		"azure-cli": "latest",
+		"azure-cli": "2.44.1",
 		"docker-from-docker": "latest",
 		"ghcr.io/devcontainers/features/java:1": {
 			"version": "11",
