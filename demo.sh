@@ -59,5 +59,3 @@ pe "mvn com.microsoft.azure:azure-webapp-maven-plugin:2.6.1:deploy -pl airsonic-
 
 p ">>> Get the Frontdoor URL <<<"
 pe "echo $(terraform -chdir=$PROJECT_ROOT/terraform output -raw frontdoor_url)"
-
-p ">>> Before navigating to the Frontdoor URL, assign a user with Creator role in Azure Active Directory <<<"
