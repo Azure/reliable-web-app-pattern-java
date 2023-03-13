@@ -152,6 +152,14 @@ resource "azuread_application_password" "application_password" {
   application_object_id = azuread_application.app_registration.object_id
 }
 
+# This is not guidance and is done for demo purposes. The resource below will add the 
+# "Creator" app role assignment for the application of the current user deploying this sample.
+resource "azuread_app_role_assignment" "application_role_current_user" {
+  app_role_id         = azuread_service_principal.application_service_principal.app_role_ids["Creator"]
+  principal_object_id = data.azuread_client_config.current.object_id
+  resource_object_id  = azuread_service_principal.application_service_principal.object_id
+}
+
 # Retrieve domain information
 data "azuread_domains" "domain" {
   only_initial = true
