@@ -36,6 +36,7 @@ Telemetry collection is on by default. To opt out, set the environment variable 
 
 ```shell
 export ENABLE_TELEMETRY=false
+```
 
 ## Steps to deploy the reference implementation
 
