@@ -217,21 +217,21 @@ resource "azurerm_linux_web_app" "application" {
 
   # https://airsonic.github.io/docs/database/#postgresql
   app_settings = {
-    DatabaseConfigType          = "embed"
-    DatabaseConfigEmbedDriver   = "org.postgresql.Driver"
-    DatabaseConfigEmbedUrl      = "jdbc:postgresql://${var.database_fqdn}:5432/${var.database_name}?stringtype=unspecified"
-    DatabaseConfigEmbedUsername = var.database_username
-    DatabaseConfigEmbedPassword = var.database_password
+    SPRING_DATASOURCE_URL = "jdbc:postgresql://${var.database_fqdn}:5432/${var.database_name}?stringtype=unspecified"
+    
+    SPRING_REDIS_HOST = var.redis_host
+    SPRING_REDIS_PORT = var.redis_port
 
-    SPRING_REDIS_SSL = (var.environment == "prod" ? true : false)
+    SPRING_CLOUD_AZURE_ACTIVE_DIRECTORY_CREDENTIAL_CLIENT_ID = azuread_application.app_registration.application_id
+    SPRING_CLOUD_AZURE_ACTIVE_DIRECTORY_PROFILE_TENANT_ID    = data.azuread_client_config.current.tenant_id
+
+    SPRING_CLOUD_AZURE_KEYVAULT_SECRET_PROPERTY_SOURCES_0_ENDPOINT=var.key_vault_uri
 
     AIRSONIC_RETRY_DEMO = ""
 
     APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.app_insights.connection_string
     APPLICATIONINSIGHTS_SAMPLING_REQUESTS_PER_SECOND = 10
     ApplicationInsightsAgent_EXTENSION_VERSION = "~3"
-    
-    SPRING_CLOUD_AZURE_KEYVAULT_SECRET_PROPERTY_SOURCES_0_ENDPOINT=var.key_vault_uri
   }
 
   logs {

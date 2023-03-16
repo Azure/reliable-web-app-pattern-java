@@ -34,14 +34,14 @@ variable "database_fqdn" {
   description = "The FQDN of the database"
 }
 
-variable "database_username" {
+variable "redis_host" {
   type        = string
-  description = "The database username"
+  description = "The redis host"
 }
 
-variable "database_password" {
-  type        = string
-  description = "The database password"
+variable "redis_port" {
+  type        = number
+  description = "The redis port"
 }
 
 variable "storage_account_name" {

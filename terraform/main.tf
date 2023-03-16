@@ -91,30 +91,7 @@ resource "azurerm_key_vault_access_policy" "user_access_policy" {
   tenant_id    = data.azurerm_client_config.current.tenant_id
   object_id    = data.azurerm_client_config.current.object_id
 
-  secret_permissions = [
-      "Set",
-      "Get",
-      "List",
-      "Delete",
-      "Purge"
-    ]
-
-    key_permissions = [
-      "Create",
-      "Get",
-      "List",
-      "Delete",
-      "Update",
-      "Purge"
-    ]
-
-    storage_permissions = [
-      "Set",
-      "Get",
-      "List",
-      "Delete",
-      "Purge"
-    ]
+  secret_permissions = ["Set", "Get", "List"]
 }
 
 resource "azurerm_key_vault_secret" "airsonic_database_admin" {
@@ -137,16 +114,6 @@ resource "azurerm_key_vault_secret" "airsonic_database_admin_password" {
   ]
 }
 
-resource "azurerm_key_vault_secret" "airsonic_application_client_id" {
-  name         = "airsonic-application-client-id"
-  value        = module.application.application_registration_id
-  key_vault_id = module.key-vault.vault_id
-
-  depends_on = [
-    azurerm_key_vault_access_policy.user_access_policy
-  ]
-}
-
 resource "azurerm_key_vault_secret" "airsonic_application_client_secret" {
   name         = "airsonic-application-client-secret"
   value        = module.application.application_client_secret
@@ -157,31 +124,9 @@ resource "azurerm_key_vault_secret" "airsonic_application_client_secret" {
   ]
 }
 
-resource "azurerm_key_vault_secret" "airsonic_application_tenant_id" {
-  name         = "airsonic-application-tenant-id"
-  value        = data.azurerm_client_config.current.tenant_id
-  key_vault_id = module.key-vault.vault_id
-
-  depends_on = [
-    azurerm_key_vault_access_policy.user_access_policy
-  ]
-}
-
 resource "azurerm_key_vault_secret" "airsonic_cache_secret" {
   name         = "airsonic-redis-password"
   value        = module.cache.cache_secret
-  key_vault_id = module.key-vault.vault_id
-}
-
-resource "azurerm_key_vault_secret" "airsonic_cache_hostname" {
-  name         = "airsonic-redis-host"
-  value        = module.cache.cache_hostname
-  key_vault_id = module.key-vault.vault_id
-}
-
-resource "azurerm_key_vault_secret" "airsonic_cache_port" {
-  name         = "airsonic-redis-port"
-  value        = (local.environment == "prod" ? module.cache.cache_ssl_port : module.cache.cache_port)
   key_vault_id = module.key-vault.vault_id
 }
 
@@ -202,19 +147,19 @@ module "application" {
   location         = var.location
   subnet_id        = module.network.app_subnet_id
 
-  database_id       = module.postresql_database.database_id
-  database_fqdn     = module.postresql_database.database_fqdn
-  database_name     = module.postresql_database.database_name
+  database_id      = module.postresql_database.database_id
+  database_fqdn    = module.postresql_database.database_fqdn
+  database_name    = module.postresql_database.database_name
 
-  key_vault_uri     = module.key-vault.vault_uri
+  redis_host       = module.cache.cache_hostname
+  redis_port       = module.cache.cache_ssl_port
 
-  database_username = "@Microsoft.KeyVault(SecretUri=${module.key-vault.vault_uri}secrets/${azurerm_key_vault_secret.airsonic_database_admin.name})"
-  database_password = "@Microsoft.KeyVault(SecretUri=${module.key-vault.vault_uri}secrets/${azurerm_key_vault_secret.airsonic_database_admin_password.name})"
+  key_vault_uri    = module.key-vault.vault_uri
 
-  storage_account_name = module.storage.storage_account_name
+  storage_account_name               = module.storage.storage_account_name
   storage_account_primary_access_key = module.storage.storage_primary_access_key
 
-  frontdoor_host_name     = module.frontdoor.host_name
+  frontdoor_host_name = module.frontdoor.host_name
 }
 
 resource "azurerm_key_vault_access_policy" "application_access_policy" {
@@ -222,10 +167,7 @@ resource "azurerm_key_vault_access_policy" "application_access_policy" {
   tenant_id    = data.azurerm_client_config.current.tenant_id
   object_id    = module.application.application_principal_id
 
-  secret_permissions = [
-    "Get",
-    "List"
-  ]
+  secret_permissions = ["Get", "List"]
 }
 
 resource "azurerm_postgresql_flexible_server_active_directory_administrator" "airsonic-ad-admin" {
