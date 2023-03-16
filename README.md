@@ -198,7 +198,7 @@ Use of Microsoft trademarks or logos in modified versions of this project must n
 
 ## Additional links
 
-- [Patterns overview](pattern-overview.md)
+- [Patterns overview](adopt-pattern.md)
 - [Applying the patterns](apply-pattern.md)
 - [Simulating developer patterns](simulate-patterns.md)
 - [Known issues](known-issues.md)
