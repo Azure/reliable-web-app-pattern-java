@@ -136,10 +136,12 @@ public class MediaFile {
         this.folderId = folderId;
     }
 
+    @JsonIgnore
     public Path getRelativePath() {
         return Paths.get(path);
     }
 
+    @JsonIgnore
     public Path getFullPath(Path relativeMediaFolderPath) {
         return relativeMediaFolderPath.resolve(path);
     }
@@ -152,10 +154,12 @@ public class MediaFile {
         this.mediaType = mediaType;
     }
 
+    @JsonIgnore
     public boolean isVideo() {
         return mediaType == MediaType.VIDEO;
     }
 
+    @JsonIgnore
     public boolean isAudio() {
         return mediaType == MediaType.MUSIC || mediaType == MediaType.AUDIOBOOK || mediaType == MediaType.PODCAST;
     }
@@ -168,10 +172,12 @@ public class MediaFile {
         this.format = format;
     }
 
+    @JsonIgnore
     public boolean isDirectory() {
         return !isFile();
     }
 
+    @JsonIgnore
     public boolean isFile() {
         return mediaType != MediaType.DIRECTORY && mediaType != MediaType.ALBUM;
     }
@@ -213,6 +219,7 @@ public class MediaFile {
         this.albumArtist = albumArtist;
     }
 
+    @JsonIgnore
     public String getName() {
         return title != null ? title : isDirectory() ? FilenameUtils.getName(path) : FilenameUtils.getBaseName(path);
     }

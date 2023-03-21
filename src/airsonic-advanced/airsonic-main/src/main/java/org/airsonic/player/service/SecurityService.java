@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -254,7 +255,7 @@ public class SecurityService {
      * @param caseSensitive If false, will do a case insensitive search
      * @return The corresponding User
      */
-    //@Cacheable(key = "#username", condition = "#caseSensitive", unless = "#result == null")
+    @Cacheable(key = "#username", condition = "#caseSensitive", unless = "#result == null")
     public User getUserByName(String username, boolean caseSensitive) {
         return userDao.getUserByName(username, caseSensitive);
     }
