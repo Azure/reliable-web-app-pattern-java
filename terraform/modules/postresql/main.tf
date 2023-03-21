@@ -79,18 +79,3 @@ resource "azurerm_postgresql_flexible_server_database" "postresql_database" {
   name                = "${var.application_name}db"
   server_id           = azurerm_postgresql_flexible_server.postresql_database.id
 }
-
-#resource "azurecaf_name" "mysql_firewall_rule" {
-#  name          = var.application_name
-#  resource_type = "azurerm_mysql_firewall_rule"
-#  suffixes      = [var.environment]
-#}
-
-# This rule is to enable the 'Allow access to Azure services' checkbox
-#resource "azurerm_mysql_flexible_server_firewall_rule" "database" {
-#  name                = azurecaf_name.mysql_firewall_rule.result
-#  resource_group_name = var.resource_group
-#  server_name         = azurerm_mysql_flexible_server.database.name
-#  start_ip_address    = "0.0.0.0"
-#  end_ip_address      = "0.0.0.0"
-#}

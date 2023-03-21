@@ -19,7 +19,7 @@ cd $UPLOAD_DEMO_DIR
 UPLOAD_DEMO_VIDEOS=("01-Data-Protection.mp4" "02-Privacy-Policies.mp4" "03-Privacy-Rights.mp4")
 # Pass one argument at a time (-n 1) to wget, and execute at most 8 parallel wget processes at a time (-P 8). 
 # xarg returns after the last spawned process has finished, which is just what we wanted to know.
-printf "https://prosewaretrainingvideos.blob.core.windows.net/videos/%s\n" "${UPLOAD_DEMO_VIDEOS[@]}" | xargs -n 1 -P 8 wget -
+printf "https://prosewaretrainingvideos.blob.core.windows.net/videos/%s\n" "${UPLOAD_DEMO_VIDEOS[@]}" | xargs -n 1 -P 8 wget 
 
 echo "done"
 cd $PROJECT_ROOT
