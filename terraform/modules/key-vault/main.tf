@@ -21,6 +21,8 @@ resource "azurerm_key_vault" "application" {
   tenant_id                  = var.azure_ad_tenant_id
   soft_delete_retention_days = 7
 
+  enable_rbac_authorization = true
+
   sku_name = "standard"
 
   dynamic "network_acls" {
