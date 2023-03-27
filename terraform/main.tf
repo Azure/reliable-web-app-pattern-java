@@ -86,12 +86,16 @@ module "key-vault" {
   azure_ad_tenant_id = data.azurerm_client_config.current.tenant_id
 }
 
-resource "azurerm_key_vault_access_policy" "user_access_policy" {
-  key_vault_id = module.key-vault.vault_id
-  tenant_id    = data.azurerm_client_config.current.tenant_id
-  object_id    = data.azurerm_client_config.current.object_id
-
-  secret_permissions = ["Set", "Get", "List"]
+# For demo purposes, allow current user access to the key vault
+resource azurerm_role_assignment kv_contributor_user_role_assignement {
+  scope                 = module.key-vault.vault_id
+  role_definition_name  = "Key Vault Contributor"
+  principal_id          = data.azurerm_client_config.current.object_id
+}
+resource azurerm_role_assignment kv_administrator_user_role_assignement {
+  scope                 = module.key-vault.vault_id
+  role_definition_name  = "Key Vault Administrator"
+  principal_id          = data.azurerm_client_config.current.object_id
 }
 
 resource "azurerm_key_vault_secret" "airsonic_database_admin" {
@@ -100,7 +104,8 @@ resource "azurerm_key_vault_secret" "airsonic_database_admin" {
   key_vault_id = module.key-vault.vault_id
 
   depends_on = [
-    azurerm_key_vault_access_policy.user_access_policy
+    azurerm_role_assignment.kv_contributor_user_role_assignement,
+    azurerm_role_assignment.kv_administrator_user_role_assignement
   ]
 }
 
@@ -110,7 +115,8 @@ resource "azurerm_key_vault_secret" "airsonic_database_admin_password" {
   key_vault_id = module.key-vault.vault_id
 
   depends_on = [
-    azurerm_key_vault_access_policy.user_access_policy
+    azurerm_role_assignment.kv_contributor_user_role_assignement,
+    azurerm_role_assignment.kv_administrator_user_role_assignement
   ]
 }
 
@@ -120,7 +126,8 @@ resource "azurerm_key_vault_secret" "airsonic_application_client_secret" {
   key_vault_id = module.key-vault.vault_id
 
   depends_on = [
-    azurerm_key_vault_access_policy.user_access_policy
+    azurerm_role_assignment.kv_contributor_user_role_assignement,
+    azurerm_role_assignment.kv_administrator_user_role_assignement
   ]
 }
 
@@ -128,7 +135,70 @@ resource "azurerm_key_vault_secret" "airsonic_cache_secret" {
   name         = "airsonic-redis-password"
   value        = module.cache.cache_secret
   key_vault_id = module.key-vault.vault_id
+
+  depends_on = [
+    azurerm_role_assignment.kv_contributor_user_role_assignement,
+    azurerm_role_assignment.kv_administrator_user_role_assignement
+  ]
 }
+
+# Give the app access to the key vault secrets - https://learn.microsoft.com/en-us/azure/key-vault/general/rbac-guide?tabs=azure-cli#secret-scope-role-assignment
+resource azurerm_role_assignment app_database_admin_rbac_assignment {
+  scope                 = "${module.key-vault.vault_id}/secrets/${azurerm_key_vault_secret.airsonic_database_admin.name}"
+  role_definition_name  = "Key Vault Secrets User"
+  principal_id          = module.application.application_principal_id
+
+   depends_on = [
+    azurerm_role_assignment.kv_contributor_user_role_assignement,
+    azurerm_role_assignment.kv_administrator_user_role_assignement
+  ]
+}
+
+resource azurerm_role_assignment app_database_admin_password_rbac_assignment {
+  scope                 = "${module.key-vault.vault_id}/secrets/${azurerm_key_vault_secret.airsonic_database_admin_password.name}"
+  role_definition_name  = "Key Vault Secrets User"
+  principal_id          = module.application.application_principal_id
+
+   depends_on = [
+    azurerm_role_assignment.kv_contributor_user_role_assignement,
+    azurerm_role_assignment.kv_administrator_user_role_assignement
+  ]
+}
+
+resource azurerm_role_assignment app_client_secret_rbac_assignment {
+  scope                 = "${module.key-vault.vault_id}/secrets/${azurerm_key_vault_secret.airsonic_application_client_secret.name}"
+  role_definition_name  = "Key Vault Secrets User"
+  principal_id          = module.application.application_principal_id
+
+   depends_on = [
+    azurerm_role_assignment.kv_contributor_user_role_assignement,
+    azurerm_role_assignment.kv_administrator_user_role_assignement
+  ]
+}
+
+resource azurerm_role_assignment app_redis_password_rbac_assignment {
+  scope                 = "${module.key-vault.vault_id}/secrets/${azurerm_key_vault_secret.airsonic_cache_secret.name}"
+  role_definition_name  = "Key Vault Secrets User"
+  principal_id          = module.application.application_principal_id
+
+   depends_on = [
+    azurerm_role_assignment.kv_contributor_user_role_assignement,
+    azurerm_role_assignment.kv_administrator_user_role_assignement
+  ]
+}
+
+# The application needs Key Vault Reader role in order to read the key vault meta data
+resource azurerm_role_assignment app_key_vault_reader_rbac_assignment {
+  scope                 = module.key-vault.vault_id
+  role_definition_name  = "Key Vault Reader"
+  principal_id          = module.application.application_principal_id
+
+  depends_on = [
+    azurerm_role_assignment.kv_contributor_user_role_assignement,
+    azurerm_role_assignment.kv_administrator_user_role_assignement
+  ]
+}
+
 
 module "cache" {
   source                      = "./modules/cache"
@@ -160,14 +230,6 @@ module "application" {
   storage_account_primary_access_key = module.storage.storage_primary_access_key
 
   frontdoor_host_name = module.frontdoor.host_name
-}
-
-resource "azurerm_key_vault_access_policy" "application_access_policy" {
-  key_vault_id = module.key-vault.vault_id
-  tenant_id    = data.azurerm_client_config.current.tenant_id
-  object_id    = module.application.application_principal_id
-
-  secret_permissions = ["Get", "List"]
 }
 
 resource "azurerm_postgresql_flexible_server_active_directory_administrator" "airsonic-ad-admin" {
@@ -236,15 +298,15 @@ resource "null_resource" "setup-application-uri" {
 }
 
 #Due to the following [issue](https://github.com/hashicorp/terraform-provider-azurerm/issues/12928), We have to manually upgrade the auth settings to version 2.
-resource "null_resource" "upgrade_auth_v2" {
-  depends_on = [
-    module.application
-  ]
+#resource "null_resource" "upgrade_auth_v2" {
+#  depends_on = [
+#    module.application
+#  ]
 
-  provisioner "local-exec" {
-    command = "az webapp auth config-version upgrade --name ${module.application.application_name} --resource-group ${azurerm_resource_group.main.name}"
-  }
-}
+#  provisioner "local-exec" {
+#    command = "az webapp auth config-version upgrade --name ${module.application.application_name} --resource-group ${azurerm_resource_group.main.name}"
+#  }
+#}
 
 resource "null_resource" "app_service_startup_script" {
   depends_on = [
