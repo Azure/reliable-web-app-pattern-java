@@ -56,6 +56,15 @@ resource "azurerm_postgresql_flexible_server" "postresql_database" {
 
   geo_redundant_backup_enabled = false
 
+  dynamic high_availability {
+    for_each = var.environment == "prod" ? ["this"] : []
+
+    content {
+      mode = "ZoneRedundant"
+      standby_availability_zone = 2
+    }
+  }
+
   zone = 1
 
   storage_mb = 32768
