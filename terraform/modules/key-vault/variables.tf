@@ -44,3 +44,8 @@ variable "private_endpoint_subnet_id" {
   type        = string
   description = "The id of the subnet to use for private endpoint"
 }
+
+variable "log_analytics_workspace_id" {
+  type        = string
+  description = "The id of the log analytics workspace"
+}

@@ -23,3 +23,8 @@ variable "private_endpoint_subnet_id" {
   type        = string
   description = "The resourceId for a subnet in an Azure vnet that will be used for private endpoints"
 }
+
+variable "log_analytics_workspace_id" {
+  type        = string
+  description = "The id of the log analytics workspace"
+}

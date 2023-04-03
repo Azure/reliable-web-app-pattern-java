@@ -74,3 +74,29 @@ resource "azurerm_private_endpoint" "keyvault_private_endpoint" {
     subresource_names              = ["vault"]
   }
 }
+
+# Configure Diagnostic Settings for key vault
+resource "azurerm_monitor_diagnostic_setting" "key_vault_diagnostic" {
+  name                           = "key-vault-diagnostic-settings"
+  target_resource_id             = azurerm_key_vault.application.id
+  log_analytics_workspace_id     = var.log_analytics_workspace_id
+  #log_analytics_destination_type = "AzureDiagnostics"
+
+  enabled_log {
+    category_group = "audit"
+
+    retention_policy {
+      days    = 0
+      enabled = false
+    }
+  }
+
+  metric {
+    category = "AllMetrics"
+    enabled  = true
+    retention_policy {
+      enabled = false
+      days    = 0
+    }
+  }
+}
