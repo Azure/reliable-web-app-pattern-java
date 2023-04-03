@@ -13,36 +13,6 @@ terraform {
 
 data "azuread_client_config" "current" {}
 
-resource "azurecaf_name" "app_workspace" {
-  name          = var.application_name
-  resource_type = "azurerm_log_analytics_workspace"
-  suffixes      = [var.environment]
-}
-
-# Log Analiytics Workspace
-resource "azurerm_log_analytics_workspace" "app_workspace" {
-  name                = azurecaf_name.app_workspace.result
-  location            = var.location
-  resource_group_name = var.resource_group
-  sku                 = "PerGB2018"
-  retention_in_days   = 30
-}
-
-resource "azurecaf_name" "app_insights" {
-  name          = var.application_name
-  resource_type = "azurerm_application_insights"
-  suffixes      = [var.environment]
-}
-
-# Application Insight
-resource "azurerm_application_insights" "app_insights" {
-  name                = azurecaf_name.app_insights.result
-  location            = var.location
-  resource_group_name = var.resource_group
-  application_type    = "java"
-  workspace_id        = azurerm_log_analytics_workspace.app_workspace.id
-}
-
 resource "azurerm_storage_share" "sashare_trainings" {
   name                 = "trainings"
   storage_account_name = var.storage_account_name
@@ -215,7 +185,12 @@ resource "azurerm_linux_web_app" "application" {
     mount_path = "/var/playlists"
   }
 
-  # https://airsonic.github.io/docs/database/#postgresql
+  sticky_settings {
+    app_setting_names = [
+      "APPLICATIONINSIGHTS_CONNECTION_STRING",
+    ]
+  }
+
   app_settings = {
     SPRING_DATASOURCE_URL = "jdbc:postgresql://${var.database_fqdn}:5432/${var.database_name}?stringtype=unspecified"
     
@@ -229,7 +204,7 @@ resource "azurerm_linux_web_app" "application" {
 
     AIRSONIC_RETRY_DEMO = ""
 
-    APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.app_insights.connection_string
+    APPLICATIONINSIGHTS_CONNECTION_STRING = var.app_insights_connection_string
     APPLICATIONINSIGHTS_SAMPLING_REQUESTS_PER_SECOND = 10
     ApplicationInsightsAgent_EXTENSION_VERSION = "~3"
   }
@@ -254,17 +229,30 @@ resource "azurerm_linux_web_app" "application" {
   }
 }
 
-resource "azurecaf_name" "app_service_diagnostic" {
-  name          = var.application_name
-  resource_type = "azurerm_monitor_diagnostic_setting"
-  suffixes      = [var.environment]
-}
-
 # Configure Diagnostic Settings for App Service
 resource "azurerm_monitor_diagnostic_setting" "app_service_diagnostic" {
-  name                       = azurecaf_name.app_service_diagnostic.result
-  target_resource_id         = azurerm_linux_web_app.application.id
-  log_analytics_workspace_id = azurerm_log_analytics_workspace.app_workspace.id
+  name                           = "app-service-diagnostic-settings"
+  target_resource_id             = azurerm_linux_web_app.application.id
+  log_analytics_workspace_id     = var.log_analytics_workspace_id
+  #log_analytics_destination_type = "AzureDiagnostics"
+
+  enabled_log {
+    category_group = "allLogs"
+
+    retention_policy {
+      days    = 0
+      enabled = false
+    }
+  }
+
+  enabled_log {
+    category_group = "audit"
+
+    retention_policy {
+      days    = 0
+      enabled = false
+    }
+  }
 
   metric {
     category = "AllMetrics"

@@ -88,3 +88,29 @@ resource "azurerm_postgresql_flexible_server_database" "postresql_database" {
   name                = "${var.application_name}db"
   server_id           = azurerm_postgresql_flexible_server.postresql_database.id
 }
+
+# Configure Diagnostic Settings for PostgreSQL
+resource "azurerm_monitor_diagnostic_setting" "postgresql_diagnostic" {
+  name                           = "postgresql-diagnostic-settings"
+  target_resource_id             = azurerm_postgresql_flexible_server.postresql_database.id
+  log_analytics_workspace_id     = var.log_analytics_workspace_id
+  #log_analytics_destination_type = "AzureDiagnostics"
+
+  enabled_log {
+    category_group = "audit"
+
+    retention_policy {
+      days    = 0
+      enabled = false
+    }
+  }
+
+  metric {
+    category = "AllMetrics"
+    enabled  = true
+    retention_policy {
+      enabled = false
+      days    = 0
+    }
+  }
+}

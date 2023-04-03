@@ -66,5 +66,16 @@ variable "key_vault_uri" {
 
 variable "frontdoor_host_name" {
   type        = string
-  description = "The front door host name."
+  description = "The front door host name"
 }
+
+variable "app_insights_connection_string" {
+  type        = string
+  description = "The app insights connection string"
+}
+
+variable "log_analytics_workspace_id" {
+  type        = string
+  description = "The id of the log analytics workspace"
+}
+

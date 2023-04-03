@@ -61,3 +61,29 @@ resource "azurerm_private_endpoint" "redis_pe_redis" {
     subresource_names              = ["redisCache"]
   }
 }
+
+# Configure Diagnostic Settings for redis
+resource "azurerm_monitor_diagnostic_setting" "redis_diagnostic" {
+  name                           = "redis-diagnostic-settings"
+  target_resource_id             = azurerm_redis_cache.cache.id
+  log_analytics_workspace_id     = var.log_analytics_workspace_id
+  #log_analytics_destination_type = "AzureDiagnostics"
+
+  enabled_log {
+    category_group = "audit"
+
+    retention_policy {
+      days    = 0
+      enabled = false
+    }
+  }
+
+  metric {
+    category = "AllMetrics"
+    enabled  = true
+    retention_policy {
+      enabled = false
+      days    = 0
+    }
+  }
+}

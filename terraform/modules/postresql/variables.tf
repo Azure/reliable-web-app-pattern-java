@@ -39,3 +39,8 @@ variable "administrator_login" {
   description = "The MySQL administrator login"
   default     = "myadmin"
 }
+
+variable "log_analytics_workspace_id" {
+  type        = string
+  description = "The id of the log analytics workspace"
+}

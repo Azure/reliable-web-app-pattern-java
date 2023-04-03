@@ -45,6 +45,14 @@ module "network" {
   location           = var.location
 }
 
+module "app_insights" {
+  source = "./modules/app-insights"
+  resource_group     = azurerm_resource_group.main.name
+  application_name   = var.application_name
+  environment        = local.environment
+  location           = var.location
+}
+
 module "storage" {
   source             = "./modules/storage"
   resource_group     = azurerm_resource_group.main.name
@@ -56,14 +64,15 @@ module "storage" {
 }
 
 module "postresql_database" {
-  source             = "./modules/postresql"
-  azure_ad_tenant_id = data.azurerm_client_config.current.tenant_id
-  resource_group     = azurerm_resource_group.main.name
-  application_name   = var.application_name
-  environment        = local.environment
-  location           = var.location
-  virtual_network_id = module.network.vnet_id
-  subnet_network_id  = module.network.postgresql_subnet_id
+  source                      = "./modules/postresql"
+  azure_ad_tenant_id          = data.azurerm_client_config.current.tenant_id
+  resource_group              = azurerm_resource_group.main.name
+  application_name            = var.application_name
+  environment                 = local.environment
+  location                    = var.location
+  virtual_network_id          = module.network.vnet_id
+  subnet_network_id           = module.network.postgresql_subnet_id
+  log_analytics_workspace_id  = module.app_insights.log_analytics_workspace_id
 }
 
 module "key-vault" {
@@ -72,6 +81,8 @@ module "key-vault" {
   application_name = var.application_name
   environment      = local.environment
   location         = var.location
+
+  log_analytics_workspace_id     = module.app_insights.log_analytics_workspace_id
 
   virtual_network_id         = module.network.vnet_id
   private_endpoint_subnet_id = module.network.private_endpoint_subnet_id
@@ -199,7 +210,6 @@ resource azurerm_role_assignment app_key_vault_reader_rbac_assignment {
   ]
 }
 
-
 module "cache" {
   source                      = "./modules/cache"
   resource_group              = azurerm_resource_group.main.name
@@ -207,6 +217,7 @@ module "cache" {
   location                    = var.location
   private_endpoint_vnet_id    = module.network.vnet_id
   private_endpoint_subnet_id  = module.network.private_endpoint_subnet_id
+  log_analytics_workspace_id  = module.app_insights.log_analytics_workspace_id
 }
 
 module "application" {
@@ -216,6 +227,9 @@ module "application" {
   environment      = local.environment
   location         = var.location
   subnet_id        = module.network.app_subnet_id
+
+  app_insights_connection_string = module.app_insights.connection_string
+  log_analytics_workspace_id     = module.app_insights.log_analytics_workspace_id
 
   database_id      = module.postresql_database.database_id
   database_fqdn    = module.postresql_database.database_fqdn
