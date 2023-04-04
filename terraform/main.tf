@@ -331,13 +331,3 @@ resource "null_resource" "app_service_startup_script" {
     command = "az webapp deploy --name ${module.application.application_name} --resource-group ${azurerm_resource_group.main.name} --src-path scripts/startup.sh --type=startup"
   }
 }
-
-resource "null_resource" "app_service_startup_command" {
-  depends_on = [
-    module.application
-  ]
-
-  provisioner "local-exec" {
-    command = "az webapp config set --name ${module.application.application_name} --resource-group ${azurerm_resource_group.main.name} --startup-file /home/site/scripts/startup.sh"
-  }
-}
