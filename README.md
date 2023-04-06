@@ -18,7 +18,7 @@ The internally accessible video covers the details of reliable web app pattern f
 
 ## Architecture
 
-![Diagram showing the architecture of the reference implementation](docs/assets/java-architecture.png)](docs/assets/java-architecture.png)
+![Diagram showing the architecture of the reference implementation](docs/assets/java-architecture.png)
 
 - [Production environment estimated cost](https://azure.com/e/c530c133f36c423e9774de286f7dd28a)
 
@@ -27,6 +27,13 @@ The internally accessible video covers the details of reliable web app pattern f
 ## Workflow
 
 A detailed workflow of the reference implementation is forthcoming.
+
+## Prerequisites
+
+* [Azure Subscription](https://azure.microsoft.com/pricing/member-offers/msdn-benefits-details/)
+* [Visual Studio Code](https://code.visualstudio.com/)
+* [Docker](https://www.docker.com/get-started/)
+* [Permissions to register an application](https://learn.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app)
 
 ## Steps to deploy the reference implementation
 
