@@ -18,7 +18,7 @@ The internally accessible video covers the details of reliable web app pattern f
 
 ## Architecture
 
-[![Diagram showing the architecture of the reference implementation](docs/assets/java-architecture.png)](docs/assets/java-architecture.png)
+![Diagram showing the architecture of the reference implementation](docs/assets/java-architecture.png)](docs/assets/java-architecture.png)
 
 - [Production environment estimated cost](https://azure.com/e/c530c133f36c423e9774de286f7dd28a)
 
@@ -38,7 +38,7 @@ Note - The following deployment has been tested using devcontainers on **macOS**
 
 If using WSL, start a WSL Ubuntu terminal and clone the repo to a WSL directory.
 
-[![WSL Ubuntu](docs/assets/wsl-ubuntu.png)
+![WSL Ubuntu](docs/assets/wsl-ubuntu.png)
 
 ```shell
 git clone https://github.com/Azure/reliable-web-app-pattern-java.git
@@ -48,11 +48,11 @@ code .
 
 Once Visual Studio Code is launched, you should see a popup allowing you to click on the button **Reopen in Container**.
 
-[![WSL Ubuntu](docs/assets/vscode-reopen-in-container.png)
+![WSL Ubuntu](docs/assets/vscode-reopen-in-container.png)
 
 If you don't see the popup, open up the Visual Studio Code Command Palette with the keyboard shortcut ⇧⌘P (Windows, Linux Ctrl+Shift+P) or navigating to View -> Command Palette... in the VS Code UI.
 
-[![WSL Ubuntu](docs/assets/vscode-reopen-in-container-command.png)
+![WSL Ubuntu](docs/assets/vscode-reopen-in-container-command.png)
 
 ### Prepare for deployment
 
@@ -73,88 +73,11 @@ You may change the `APP_ENVIRONMENT` variable to either *prod* or *dev*. The fol
 | App Service | P1v2 | P2v2 | [App Service SKU options](https://azure.microsoft.com/pricing/details/app-service/linux/)
 | PostgreSQL Flexible Server | Burstable B1ms (B_Standard_B1ms) | General Purpose D4s_v3 (GP_Standard_D4s_v3) | [PostgreSQL SKU options](https://learn.microsoft.com/azure/postgresql/flexible-server/concepts-compute-storage)
 
-*Note - There is a guided [demo.sh](./demo.sh) script that you can run that will execute the deployment steps.*
+## Deploy From a Visual Studio Code Terminal
 
-```shell
-./demo.sh
-```
+The guided [deployment script](./deploy.sh) is used to deploy the solution for this sample.  To deploy, run *[deploy.sh](./deploy.sh)* from the Visual Studio Code Terminal running inside of the devcontainer.  `Hit the Enter key to step through the guided deployment`.
 
-Once the demo script completes, skip to the [Add Users to Azure Active Directory enterprise applications](#add-users-to-azure-active-directory-enterprise-applications) section.
-
-*You may choose to do this manually by following the steps below starting with [Start the deployment](#start-the-deployment)*
-
-### Start the Deployment
-
-Run the following to set up the environment:
-
-```shell
-source ./scripts/setup-initial-env.sh
-```
-
-### Login using Azure CLI
-
-Login to Azure using the Azure CLI and choose your active subscription.
-
-```shell
-az login --scope https://graph.microsoft.com//.default
-az account set --subscription ${SUBSCRIPTION}
-```
-
-### Allow AZ CLI extensions to install without prompt
-
-```shell
-az config set extension.use_dynamic_install=yes_without_prompt
-```
-
-### Deploy Azure Infrastructure
-
-Create the Azure resources by running the following commands:
-
-```shell
-terraform -chdir=./terraform init
-terraform -chdir=./terraform plan -var application_name=${APP_NAME} -var environment=${APP_ENVIRONMENT} -var enable_telemetry=${ENABLE_TELEMETRY} -out airsonic.tfplan
-terraform -chdir=./terraform apply airsonic.tfplan
-```
-
-### Download training videos
-
-If you plan on seeding the Proseware with videos and playlists, you may want to run the following scripts while the Azure resources defined in Terraform are being provisioned.  In a separate terminal, run the following.
-
-```shell
-source ./scripts/setup-initial-env.sh
-./scripts/download-trainings.sh
-```
-
-After the completion of this step, you should see a videos directory that contains training videos.
-
-### Upload training videos and playlists
-
-The following command uploads the training videos and playlists to the `Azure Storage` account.  Run the following after Terraform has successfully completed deploying the Azure resources.
-
-```shell
-./scripts/upload-trainings.sh
-```
-
-## Set up local build environment
-
-```shell
-source ./scripts/setup-local-build-env.sh
-```
-
-## Package and deploy Airsonic
-
-It's now time to compile and package Airsonic, skipping the unit tests.
-
-```shell
-cd src/airsonic-advanced
-mvn -DskipTests clean package
-```
-
-Now that we have a war file, we can deploy it to our Azure App Service.
-
-```shell
-mvn com.microsoft.azure:azure-webapp-maven-plugin:2.6.1:deploy -pl airsonic-main
-```
+![Deploy](docs/assets/proseware-deploy.gif)
 
 ### Add Users to Azure Active Directory enterprise applications
 
