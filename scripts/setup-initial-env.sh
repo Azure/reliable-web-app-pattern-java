@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# The ID of your Azure Subscription, https://learn.microsoft.com/en-us/azure/azure-portal/get-subscription-tenant-id
+# The ID of your Azure Subscription, https://learn.microsoft.com/azure/azure-portal/get-subscription-tenant-id
 export SUBSCRIPTION_ID=
 
 # The APP_NAME is used as the base for naming Azure resources. There is a limit to keep APP_NAME to less than 18 characters.

@@ -30,7 +30,7 @@ resource "azurerm_redis_cache" "cache" {
 
 # Azure Private DNS provides a reliable, secure DNS service to manage and
 # resolve domain names in a virtual network without the need to add a custom DNS solution
-# https://docs.microsoft.com/en-us/azure/dns/private-dns-privatednszone
+# https://docs.microsoft.com/azure/dns/private-dns-privatednszone
 resource "azurerm_private_dns_zone" "dns_for_cache" {
   name                = "privatelink.redis.cache.windows.net"
   resource_group_name = var.resource_group

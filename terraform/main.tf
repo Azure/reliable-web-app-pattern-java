@@ -153,7 +153,7 @@ resource "azurerm_key_vault_secret" "airsonic_cache_secret" {
   ]
 }
 
-# Give the app access to the key vault secrets - https://learn.microsoft.com/en-us/azure/key-vault/general/rbac-guide?tabs=azure-cli#secret-scope-role-assignment
+# Give the app access to the key vault secrets - https://learn.microsoft.com/azure/key-vault/general/rbac-guide?tabs=azure-cli#secret-scope-role-assignment
 resource azurerm_role_assignment app_database_admin_rbac_assignment {
   scope                 = "${module.key-vault.vault_id}/secrets/${azurerm_key_vault_secret.airsonic_database_admin.name}"
   role_definition_name  = "Key Vault Secrets User"

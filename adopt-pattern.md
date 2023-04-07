@@ -72,7 +72,7 @@ Choosing the right Azure services is an important part of the planning phase bef
 
 ### Database
 
-[Azure Database for PostgreSQL](https://learn.microsoft.com/azure/en-us/postgresql/single-server/overview) is a fully managed database service that provides built-in high availability, automated maintenance for underlying hardware, operating system and database engine, data protection using automatic backups and point-in-time restore, enterprise grade security and industry-leading compliance to protect sensitive data at-rest and in-motion.
+[Azure Database for PostgreSQL](https://learn.microsoft.com/azure/postgresql/single-server/overview) is a fully managed database service that provides built-in high availability, automated maintenance for underlying hardware, operating system and database engine, data protection using automatic backups and point-in-time restore, enterprise grade security and industry-leading compliance to protect sensitive data at-rest and in-motion.
 
 Azure Database for PostgreSQL includes single-server and Flexible Server options. We chose Flexible Server because it meets the following requirements:
 
@@ -144,7 +144,7 @@ Azure Files offers fully managed file shares in the cloud that are accessible vi
 - **Replace existing file server:** Azure Files allows us to replace our existing file server without having to modify our code to use an alternative blob storage mechanism.
 - **Fully managed:** Azure file shares allow us to maintain compatibility without needing to manage hardware or operating system for a file server.
 - **Resiliency:** Azure Files has been built from the ground up to be always available.
-- **Durability.** Azure files has zone-redundant storage to improve data redundancy and application resiliency. Zone-redundant storage replicates data in your Azure storage account across three Azure availability zones in the primary region and offers twelve-9s of durability (99.9999999999%). For more information, see [Data redundancy](https://learn.microsoft.com/en-us/azure/storage/common/storage-redundancy#redundancy-in-the-primary-region) and [Zone-redundant storage](https://learn.microsoft.com/en-us/azure/storage/common/storage-redundancy#zone-redundant-storage).
+- **Durability.** Azure files has zone-redundant storage to improve data redundancy and application resiliency. Zone-redundant storage replicates data in your Azure storage account across three Azure availability zones in the primary region and offers twelve-9s of durability (99.9999999999%). For more information, see [Data redundancy](https://learn.microsoft.com/azure/storage/common/storage-redundancy#redundancy-in-the-primary-region) and [Zone-redundant storage](https://learn.microsoft.com/azure/storage/common/storage-redundancy#zone-redundant-storage).
 
 ### Endpoint security
 

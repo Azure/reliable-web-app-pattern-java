@@ -33,7 +33,7 @@ A detailed workflow of the reference implementation is forthcoming.
 * [Azure Subscription](https://azure.microsoft.com/pricing/member-offers/msdn-benefits-details/)
 * [Visual Studio Code](https://code.visualstudio.com/)
 * [Docker](https://www.docker.com/get-started/)
-* [Permissions to register an application](https://learn.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app)
+* [Permissions to register an application](https://learn.microsoft.com/azure/active-directory/develop/quickstart-register-app)
 
 ## Steps to deploy the reference implementation
 
