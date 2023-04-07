@@ -66,11 +66,11 @@ Note - The following deployment has been tested using devcontainers on **macOS**
     Open *./scripts/setup-initial-env.sh* and update the following variables:
 
     ```shell
-    export SUBSCRIPTION=
+    export SUBSCRIPTION_ID=
     export APP_NAME=
     ```
 
-    *The variable APP_NAME needs to be globally unique across all of Azure and less than 16 characters.  This sample uses the APP_NAME as the base for names the Azure Resources. Some Azure Resources have a limit to the length of the name.*
+    *The variable APP_NAME needs to be globally unique across all of Azure and less than 18 characters.  This sample uses the APP_NAME as the base for names the Azure Resources. Some Azure Resources have a limit to the length of the name.*
 
     You may change the `APP_ENVIRONMENT` variable to either *prod* or *dev*. The following table describes the differences in the resources deployed in the 2 environments.
 

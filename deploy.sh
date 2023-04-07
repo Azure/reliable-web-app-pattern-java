@@ -31,7 +31,7 @@ p ">>> Login to Azure using the Azure CLI <<<"
 pe "az login --scope https://graph.microsoft.com//.default"
 
 p ">>> Set the active subscription <<<"
-pe "az account set --subscription ${SUBSCRIPTION}"
+pe "az account set -- ${SUBSCRIPTION_ID}"
 
 p ">>> Allow installing AZ CLI extensions without prompt <<<"
 pe "az config set extension.use_dynamic_install=yes_without_prompt"
