@@ -20,6 +20,11 @@ variable "location" {
   default     = "eastus"
 }
 
+variable "database_administrator_password" {
+  type        = string
+  description = "The password for the PostgreSQL administrator login"
+}
+
 variable "enable_telemetry" {
   type        = bool
   description = "Telemetry collection is on by default"

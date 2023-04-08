@@ -68,6 +68,7 @@ Note - The following deployment has been tested using devcontainers on **macOS**
     ```shell
     export SUBSCRIPTION_ID=
     export APP_NAME=
+    export DATABASE_PASSWORD=
     ```
 
     *The variable APP_NAME needs to be globally unique across all of Azure and less than 18 characters.  This sample uses the APP_NAME as the base for names the Azure Resources. Some Azure Resources have a limit to the length of the name.*
@@ -105,13 +106,8 @@ echo $(terraform -chdir=$PROJECT_ROOT/terraform output -raw frontdoor_url)
 ## Teardown
 
 ```shell
-RESOURCE_GROUP=$(terraform -chdir=$PROJECT_ROOT/terraform output -raw resource_group)
-echo $RESOURCE_GROUP
-az group delete --name $RESOURCE_GROUP --no-wait
-
-APP_REGISTRATION_ID=$(terraform -chdir=$PROJECT_ROOT/terraform show -json | jq .values.outputs.app_service_module_outputs.value.application_registration_id | tr -d \")
-echo $APP_REGISTRATION_ID
-az ad app delete --id $APP_REGISTRATION_ID
+source ./scripts/setup-initial-env.sh
+./scripts/teardown.sh
 ```
 
 ## Data collection

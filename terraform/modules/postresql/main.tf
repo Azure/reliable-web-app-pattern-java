@@ -15,23 +15,17 @@ terraform {
 # resolve domain names in a virtual network without the need to add a custom DNS solution
 # https://docs.microsoft.com/azure/dns/private-dns-privatednszone
 resource "azurerm_private_dns_zone" "postresql_database" {
-  name                = "${var.application_name}.postgres.database.azure.com"
+  name                = "privatelink.postgres.database.azure.com"
   resource_group_name = var.resource_group
 }
 
 # After you create a private DNS zone in Azure, you'll need to link a virtual network to it.
 # https://docs.microsoft.com/azure/dns/private-dns-virtual-network-links
 resource "azurerm_private_dns_zone_virtual_network_link" "postresql_database" {
-  name                  = "${var.application_name}PSQLVnetZone.com"
+  name                  = "privatelink.postgres.database.azure.com"
   private_dns_zone_name = azurerm_private_dns_zone.postresql_database.name
   virtual_network_id    = var.virtual_network_id
   resource_group_name   = var.resource_group
-}
-
-resource "random_password" "password" {
-  length           = 32
-  special          = true
-  override_special = "_%@"
 }
 
 resource "azurecaf_name" "postgresql_server" {
@@ -46,7 +40,7 @@ resource "azurerm_postgresql_flexible_server" "postresql_database" {
   location            = var.location
 
   administrator_login    = var.administrator_login
-  administrator_password = random_password.password.result
+  administrator_password = var.administrator_password
 
   sku_name                     = var.environment == "prod" ? "GP_Standard_D4s_v3" : "B_Standard_B1ms"
   version                      = "12"
@@ -98,6 +92,15 @@ resource "azurerm_monitor_diagnostic_setting" "postgresql_diagnostic" {
 
   enabled_log {
     category_group = "audit"
+
+    retention_policy {
+      days    = 0
+      enabled = false
+    }
+  }
+
+  enabled_log {
+    category_group = "allLogs"
 
     retention_policy {
       days    = 0

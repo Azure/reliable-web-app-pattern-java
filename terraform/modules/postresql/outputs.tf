@@ -27,9 +27,3 @@ output "database_username" {
   value       = var.administrator_login
   description = "The DB server user name."
 }
-
-output "database_password" {
-  value       = random_password.password.result
-  sensitive   = true
-  description = "The DB server password."
-}

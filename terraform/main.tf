@@ -72,6 +72,7 @@ module "postresql_database" {
   location                    = var.location
   virtual_network_id          = module.network.vnet_id
   subnet_network_id           = module.network.postgresql_subnet_id
+  administrator_password      = var.database_administrator_password
   log_analytics_workspace_id  = module.app_insights.log_analytics_workspace_id
 }
 
@@ -122,7 +123,7 @@ resource "azurerm_key_vault_secret" "airsonic_database_admin" {
 
 resource "azurerm_key_vault_secret" "airsonic_database_admin_password" {
   name         = "airsonic-database-admin-password"
-  value        = module.postresql_database.database_password
+  value        = var.database_administrator_password
   key_vault_id = module.key-vault.vault_id
 
   depends_on = [
@@ -310,17 +311,6 @@ resource "null_resource" "setup-application-uri" {
     command = "az ad app update --id ${module.application.application_registration_id} --identifier-uris api://${module.application.application_registration_id}"
   }
 }
-
-#Due to the following [issue](https://github.com/hashicorp/terraform-provider-azurerm/issues/12928), We have to manually upgrade the auth settings to version 2.
-#resource "null_resource" "upgrade_auth_v2" {
-#  depends_on = [
-#    module.application
-#  ]
-
-#  provisioner "local-exec" {
-#    command = "az webapp auth config-version upgrade --name ${module.application.application_name} --resource-group ${azurerm_resource_group.main.name}"
-#  }
-#}
 
 resource "null_resource" "app_service_startup_script" {
   depends_on = [

@@ -31,15 +31,15 @@ p ">>> Login to Azure using the Azure CLI <<<"
 pe "az login --scope https://graph.microsoft.com//.default"
 
 p ">>> Set the active subscription <<<"
-pe "az account set -- ${SUBSCRIPTION_ID}"
+pe "az account set --subscription ${SUBSCRIPTION_ID}"
 
 p ">>> Allow installing AZ CLI extensions without prompt <<<"
 pe "az config set extension.use_dynamic_install=yes_without_prompt"
 
 p ">>> Deploying Azure infrastructure <<"
 pe "terraform -chdir=./terraform init"
-pe "terraform -chdir=./terraform plan -var application_name=${APP_NAME} -var environment=${APP_ENVIRONMENT} -var enable_telemetry=${ENABLE_TELEMETRY} -out airsonic.tfplan"
-pe "terraform -chdir=./terraform apply airsonic.tfplan"
+pe "terraform -chdir=./terraform plan -var application_name=${APP_NAME} -var environment=${APP_ENVIRONMENT} -var enable_telemetry=${ENABLE_TELEMETRY} -var database_administrator_password=${DATABASE_PASSWORD} -out proseware.tfplan"
+pe "terraform -chdir=./terraform apply proseware.tfplan"
 
 p ">>> Set Up Your Local Build Environment <<<"
 pe "source ./scripts/setup-local-build-env.sh"
