@@ -42,7 +42,7 @@ pe "terraform -chdir=./terraform plan -var application_name=${APP_NAME} -var env
 pe "terraform -chdir=./terraform apply proseware.tfplan"
 
 p ">>> Set Up Your Local Build Environment <<<"
-pe "source ./scripts/setup-local-build-env.sh"
+pe "source ./scripts/setup-azure-webapp-maven-plugin.sh"
 
 p ">>> Download Training Videos <<<"
 pe "./scripts/download-trainings.sh"
