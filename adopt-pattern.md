@@ -8,7 +8,7 @@ This article shows you how to adopt the reliable web app pattern. There's a comp
 
 The business context, existing web app, service level objective (SLO), and coding language determine (1) how you implement the reliable web app pattern and (2) the resulting architecture of the web app. The following diagram shows the architecture of the reference implementation.
 
-[![Diagram showing the architecture of the reference implementation](docs/assets/java-architecture.png)](docs/assets/java-architecture.png)
+[![Diagram showing the architecture of the reference implementation](docs/assets/java-architecture-reference-implementation.png)](docs/assets/java-architecture-reference-implementation.png)
 *Download a [Visio file](https://arch-center.azureedge.net/reliable-web-app-java.vsdx) of this architecture. For the estimated cost, see:*
 
 - [Production environment estimated cost](https://azure.com/e/c530c133f36c423e9774de286f7dd28a)
