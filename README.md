@@ -34,6 +34,7 @@ A detailed workflow of the reference implementation is forthcoming.
 * [Visual Studio Code](https://code.visualstudio.com/)
 * [Docker](https://www.docker.com/get-started/)
 * [Permissions to register an application](https://learn.microsoft.com/azure/active-directory/develop/quickstart-register-app)
+* [Dev Containers extension installed in VS Code](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension
 
 ## Steps to deploy the reference implementation
 
