@@ -41,7 +41,15 @@ A detailed workflow of the reference implementation is forthcoming.
 
 Note - The following deployment has been tested using devcontainers on **macOS** and **Windows with [Ubuntu on WSL](https://ubuntu.com/wsl)**.
 
-1.  Clone the repo
+#### Clone the repo
+
+Navigate to your desired directory and run the three following commands:
+
+    ```shell
+    git clone https://github.com/Azure/reliable-web-app-pattern-java.git
+    cd reliable-web-app-pattern-java
+    code .
+    ```
 
     If using WSL, start a WSL Ubuntu terminal and clone the repo to a WSL directory.
 
