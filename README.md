@@ -18,7 +18,7 @@ The internally accessible video covers the details of reliable web app pattern f
 
 ## Architecture
 
-[![Diagram showing the architecture of the reference implementation](docs/assets/java-architecture.png)](docs/assets/java-architecture.png)
+[![Diagram showing the architecture of the reference implementation](docs/assets/java-architecture-reference-implementation.png)](docs/assets/java-architecture-reference-implementation.png)
 
 - [Production environment estimated cost](https://azure.com/e/c530c133f36c423e9774de286f7dd28a)
 
@@ -34,7 +34,7 @@ Deploy this sample using [Visual Studio Code](https://code.visualstudio.com/) wi
 
 Note - The following deployment has been tested using devcontainers on **macOS** and **Windows with [Ubuntu on WSL](https://ubuntu.com/wsl)**.
 
-### Clone the repo
+**1. Clone the repo**
 
 If using WSL, start a WSL Ubuntu terminal and clone the repo to a WSL directory.
 
@@ -54,7 +54,7 @@ If you don't see the popup, open up the Visual Studio Code Command Palette with 
 
 [![WSL Ubuntu](docs/assets/vscode-reopen-in-container-command.png)
 
-### Prepare for deployment
+**2. Prepare for deployment**
 
 Open *./scripts/setup-initial-env.sh* and update the following variables:
 
@@ -83,7 +83,7 @@ Once the demo script completes, skip to the [Add Users to Azure Active Directory
 
 *You may choose to do this manually by following the steps below starting with [Start the deployment](#start-the-deployment)*
 
-### Start the Deployment
+**3. Start the Deployment**
 
 Run the following to set up the environment:
 
@@ -91,7 +91,7 @@ Run the following to set up the environment:
 source ./scripts/setup-initial-env.sh
 ```
 
-### Login using Azure CLI
+**4. Login using Azure CLI**
 
 Login to Azure using the Azure CLI and choose your active subscription.
 
@@ -100,13 +100,13 @@ az login --scope https://graph.microsoft.com//.default
 az account set --subscription ${SUBSCRIPTION}
 ```
 
-### Allow AZ CLI extensions to install without prompt
+**5. Allow AZ CLI extensions to install without prompt**
 
 ```shell
 az config set extension.use_dynamic_install=yes_without_prompt
 ```
 
-### Deploy Azure Infrastructure
+**6. Deploy Azure Infrastructure**
 
 Create the Azure resources by running the following commands:
 
@@ -116,7 +116,7 @@ terraform -chdir=./terraform plan -var application_name=${APP_NAME} -var environ
 terraform -chdir=./terraform apply airsonic.tfplan
 ```
 
-### Download training videos
+**7. Download training videos**
 
 If you plan on seeding the Proseware with videos and playlists, you may want to run the following scripts while the Azure resources defined in Terraform are being provisioned.  In a separate terminal, run the following.
 
@@ -127,7 +127,7 @@ source ./scripts/setup-initial-env.sh
 
 After the completion of this step, you should see a videos directory that contains training videos.
 
-### Upload training videos and playlists
+**8. Upload training videos and playlists**
 
 The following command uploads the training videos and playlists to the `Azure Storage` account.  Run the following after Terraform has successfully completed deploying the Azure resources.
 
@@ -135,13 +135,13 @@ The following command uploads the training videos and playlists to the `Azure St
 ./scripts/upload-trainings.sh
 ```
 
-## Set up local build environment
+**9. Set up local build environment**
 
 ```shell
 source ./scripts/setup-local-build-env.sh
 ```
 
-## Package and deploy Airsonic
+**10. Package and deploy Airsonic**
 
 It's now time to compile and package Airsonic, skipping the unit tests.
 
@@ -156,7 +156,7 @@ Now that we have a war file, we can deploy it to our Azure App Service.
 mvn com.microsoft.azure:azure-webapp-maven-plugin:2.6.1:deploy -pl airsonic-main
 ```
 
-### Add Users to Azure Active Directory enterprise applications
+**11. Add Users to Azure Active Directory enterprise applications**
 
 The next step is to add a user to the application and assign them a role. To do this, go to Azure Portal --> Azure Active Directory --> Enterprise Applications and search for the Airsonic application. Add a user to the application.
 
@@ -170,7 +170,7 @@ echo $(terraform -chdir=$PROJECT_ROOT/terraform output -raw frontdoor_url)
 
 ![Aisonic AAD](docs/assets/proseware.png)
 
-### Teardown
+**12. Teardown**
 
 ```shell
 RESOURCE_GROUP=$(terraform -chdir=$PROJECT_ROOT/terraform output -raw resource_group)
