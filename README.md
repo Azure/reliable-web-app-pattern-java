@@ -18,7 +18,7 @@ The internally accessible video covers the details of reliable web app pattern f
 
 ## Architecture
 
-![Diagram showing the architecture of the reference implementation](docs/assets/java-architecture.png)
+[![Diagram showing the architecture of the reference implementation](docs/assets/java-architecture-reference-implementation.png)](docs/assets/java-architecture-reference-implementation.png)
 
 - [Production environment estimated cost](https://azure.com/e/c530c133f36c423e9774de286f7dd28a)
 
@@ -41,7 +41,7 @@ A detailed workflow of the reference implementation is forthcoming.
 
 Note - The following deployment has been tested using devcontainers on **macOS** and **Windows with [Ubuntu on WSL](https://ubuntu.com/wsl)**.
 
-#### Clone the repo
+**1. Clone the repo**
 
 Navigate to your desired directory and run the three following commands:
 
@@ -69,7 +69,7 @@ Then, search for `Dev Containers: Rebuilt and Reopen in Container` in the Comman
 
 ![WSL Ubuntu](docs/assets/vscode-reopen-in-container-command.png)
 
-### Prepare for deployment
+**2. Prepare for deployment**
 
 Open *./scripts/setup-initial-env.sh* and update the following variables:
 
@@ -91,7 +91,7 @@ You should change the `APP_ENVIRONMENT` variable to either *prod* or *dev*. The 
 | App Service | P1v2 | P2v2 | [App Service SKU options](https://azure.microsoft.com/pricing/details/app-service/linux/)
 | PostgreSQL Flexible Server | Burstable B1ms (B_Standard_B1ms) | General Purpose D4s_v3 (GP_Standard_D4s_v3) | [PostgreSQL SKU options](https://learn.microsoft.com/azure/postgresql/flexible-server/concepts-compute-storage)
 
-### Deploy from a Visual Studio Code Terminal
+**3. Start the Deployment**
 
 The guided [deployment script](./deploy.sh) is used to deploy the solution for this sample.  To deploy, run *[deploy.sh](./deploy.sh)* from the Visual Studio Code Terminal running inside of the devcontainer.  `Hit the Enter key to step through the guided deployment`.
 
