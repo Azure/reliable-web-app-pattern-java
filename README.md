@@ -65,7 +65,13 @@ Navigate to your desired directory and run the three following commands:
 
     ![WSL Ubuntu](docs/assets/vscode-reopen-in-container.png)
 
-    If you don't see the popup, open up the Visual Studio Code Command Palette with the keyboard shortcut ⇧⌘P (Windows, Linux Ctrl+Shift+P) or navigating to View -> Command Palette... in the VS Code UI.
+If you don't see the popup, open up the Visual Studio Code Command Palette. There are three ways to open the Code Command Palette:
+
+- For Mac users, use the keyboard shortcut ⇧⌘P
+- For Windows and Linux users, use Ctrl+Shift+P
+- In the VS Code, navigate to View -> Command Palette.
+
+Then, search for `Dev Containers: Rebuilt and Reopen in Container` in the Command Palette.
 
     ![WSL Ubuntu](docs/assets/vscode-reopen-in-container-command.png)
 
