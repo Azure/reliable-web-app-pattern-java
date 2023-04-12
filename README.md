@@ -55,12 +55,6 @@ If using WSL, start a WSL Ubuntu terminal and clone the repo to a WSL directory 
 
 ![WSL Ubuntu](docs/assets/wsl-ubuntu.png)
 
-```shell
-git clone https://github.com/Azure/reliable-web-app-pattern-java.git
-cd reliable-web-app-pattern-java
-code .
-```
-
 Once Visual Studio Code is launched, you should see a popup allowing you to click on the button **Reopen in Container**.
 
 ![WSL Ubuntu](docs/assets/vscode-reopen-in-container.png)
