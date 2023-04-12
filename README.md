@@ -38,7 +38,6 @@ A detailed workflow of the reference implementation is forthcoming.
 
 ## Steps to deploy the reference implementation
 
-Deploy this sample using [Visual Studio Code](https://code.visualstudio.com/) with [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension.
 
 Note - The following deployment has been tested using devcontainers on **macOS** and **Windows with [Ubuntu on WSL](https://ubuntu.com/wsl)**.
 
