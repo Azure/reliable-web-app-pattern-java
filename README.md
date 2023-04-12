@@ -75,7 +75,7 @@ Then, search for `Dev Containers: Rebuilt and Reopen in Container` in the Comman
 
     ![WSL Ubuntu](docs/assets/vscode-reopen-in-container-command.png)
 
-1. Prepare for deployment
+### Prepare for deployment
 
     Open *./scripts/setup-initial-env.sh* and update the following variables:
 
