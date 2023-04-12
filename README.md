@@ -109,7 +109,7 @@ You should change the `APP_ENVIRONMENT` variable to either *prod* or *dev*. The 
 
     ![Proseware Azure Active Directory Enterprise Applications](docs/assets/AAD-Enterprise-Application.png)
 
-## Navigate to Proseware
+### Navigate to Proseware
 
 After adding the user, open the browser and navigate to *Proseware*. Use the following command to get the site name.
 
