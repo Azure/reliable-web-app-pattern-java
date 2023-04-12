@@ -121,6 +121,8 @@ echo $(terraform -chdir=$PROJECT_ROOT/terraform output -raw frontdoor_url)
 
 ## Teardown
 
+To tear down the deployment, run the two following commands.
+
 ```shell
 source ./scripts/setup-initial-env.sh
 ./scripts/teardown.sh
