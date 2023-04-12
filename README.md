@@ -85,7 +85,7 @@ Then, search for `Dev Containers: Rebuilt and Reopen in Container` in the Comman
     export DATABASE_PASSWORD=
     ```
 
-    *The variable APP_NAME needs to be globally unique across all of Azure and less than 18 characters.  This sample uses the APP_NAME as the base for names the Azure Resources. Some Azure Resources have a limit to the length of the name.*
+Add your subscription ID, app name, and database password. The variable **APP_NAME** needs to be globally unique across all of Azure and less than 18 characters.  This sample uses the APP_NAME as the base for the names of other Azure Resources. Some Azure Resources have a limit to the length of the name.*
 
     You may change the `APP_ENVIRONMENT` variable to either *prod* or *dev*. The following table describes the differences in the resources deployed in the 2 environments.
 
