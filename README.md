@@ -103,7 +103,7 @@ You should change the `APP_ENVIRONMENT` variable to either *prod* or *dev*. The 
 
     ![Deploy](docs/assets/proseware-deploy.gif)
 
-1. (Optional) Add Users to Azure Active Directory enterprise applications
+### (Optional) Add Users to Azure Active Directory enterprise applications
 
     The next step is to add a user to the application and assign them a role. To do this, go to Azure Portal --> Azure Active Directory --> Enterprise Applications and search for the Proseware application. Add a user to the application.
 
