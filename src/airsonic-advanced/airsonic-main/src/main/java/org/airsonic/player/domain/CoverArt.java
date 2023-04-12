@@ -1,5 +1,7 @@
 package org.airsonic.player.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
@@ -35,6 +37,9 @@ public class CoverArt {
         this.updated = updated;
     }
 
+    public CoverArt() {
+    }
+
     public int getEntityId() {
         return entityId;
     }
@@ -59,10 +64,12 @@ public class CoverArt {
         this.path = path;
     }
 
+    @JsonIgnore
     public Path getRelativePath() {
         return Paths.get(path);
     }
 
+    @JsonIgnore
     public Path getFullPath(Path relativeMediaFolderPath) {
         return relativeMediaFolderPath.resolve(path);
     }

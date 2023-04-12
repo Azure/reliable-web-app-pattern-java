@@ -27,14 +27,12 @@ resource "azurecaf_name" "app_subnet_name" {
   suffixes      = ["app", var.environment]
 }
 
-# https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration
+# https://learn.microsoft.com/azure/app-service/overview-vnet-integration
 resource "azurerm_subnet" "app_subnet" {
   name                 = azurecaf_name.app_subnet_name.result
   resource_group_name  = var.resource_group
   virtual_network_name = azurerm_virtual_network.network.name
   address_prefixes     = ["10.0.1.0/24"]
-
-  private_endpoint_network_policies_enabled = true
 
   service_endpoints = [ "Microsoft.Storage", "Microsoft.KeyVault"]
 
@@ -54,7 +52,7 @@ resource "azurecaf_name" "private_endpoint_subnet_name" {
   suffixes      = ["pvtendpoint", var.environment]
 }
 
-# https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint
+# https://learn.microsoft.com/azure/app-service/networking/private-endpoint
 resource "azurerm_subnet" "private_endpoint_subnet" {
   name                 = azurecaf_name.private_endpoint_subnet_name.result
   resource_group_name  = var.resource_group

@@ -43,14 +43,14 @@ resource "azurerm_key_vault" "application" {
 
 # Azure Private DNS provides a reliable, secure DNS service to manage and
 # resolve domain names in a virtual network without the need to add a custom DNS solution
-# https://docs.microsoft.com/en-us/azure/dns/private-dns-privatednszone
+# https://docs.microsoft.com/azure/dns/private-dns-privatednszone
 resource "azurerm_private_dns_zone" "key_vault_dns_zone" {
   name                = "privatelink.vaultcore.azure.net"
   resource_group_name = var.resource_group
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "virtual_network_link_redis" {
-  name                  = "${var.application_name}KeyVaultVnetZone.com"
+  name                  = "privatelink.vaultcore.azure.net"
   private_dns_zone_name = azurerm_private_dns_zone.key_vault_dns_zone.name
   virtual_network_id    = var.virtual_network_id
   resource_group_name   = var.resource_group
@@ -84,6 +84,15 @@ resource "azurerm_monitor_diagnostic_setting" "key_vault_diagnostic" {
 
   enabled_log {
     category_group = "audit"
+
+    retention_policy {
+      days    = 0
+      enabled = false
+    }
+  }
+
+  enabled_log {
+    category_group = "allLogs"
 
     retention_policy {
       days    = 0

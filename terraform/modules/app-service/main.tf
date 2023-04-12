@@ -62,19 +62,6 @@ resource "azuread_application" "app_registration" {
   owners           = [data.azuread_client_config.current.object_id]
   sign_in_audience = "AzureADMyOrg"  # single tenant
 
-  api {
-    oauth2_permission_scope {
-        admin_consent_description  = "Allow the application to access ${azurecaf_name.app_service.result} on behalf of the signed-in user."
-        admin_consent_display_name = "Access ${azurecaf_name.app_service.result}"
-        id                         = random_uuid.airsonic_scope_id.result
-        enabled                    = true
-        type                       = "User"
-        user_consent_description   = "Allow the application to access ${azurecaf_name.app_service.result} on your behalf."
-        user_consent_display_name  = "Access ${azurecaf_name.app_service.result}"
-        value                      = "user_impersonation"
-    }
-  }
-
   app_role {
     allowed_member_types = ["User"]
     description          = "ReadOnly roles have limited query access"
@@ -218,13 +205,18 @@ resource "azurerm_linux_web_app" "application" {
     }
   }
 
-  auth_settings {
-    enabled = true
-    runtime_version = "~2"
-    allowed_external_redirect_urls = ["https://${var.frontdoor_host_name}"]
+  auth_settings_v2 {
+    auth_enabled                  = true
+    require_authentication        = true
+    
+    active_directory_v2 {
+      client_id                   = azuread_application.app_registration.application_id
+      tenant_auth_endpoint        = "https://login.microsoftonline.com/${data.azuread_client_config.current.tenant_id}/v2.0/"
+      client_secret_setting_name  = "MICROSOFT_PROVIDER_AUTHENTICATION_SECRET"
+    }
 
-    active_directory {
-      client_id = azuread_application.app_registration.application_id
+    login {
+      token_store_enabled = true
     }
   }
 }

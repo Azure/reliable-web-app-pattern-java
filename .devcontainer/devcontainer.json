@@ -24,10 +24,15 @@
 		"ghcr.io/eitsupi/devcontainer-features/jq-likes:1": {}
 	},
 	
-	"extensions": [
-		"ms-azuretools.azure-dev",
-		"vscjava.vscode-java-pack",
-		"Pivotal.vscode-spring-boot",
-		"redhat.vscode-yaml"
-	]
+	"customizations": {
+        "vscode": {
+            "extensions": [
+				"ms-azuretools.azure-dev",
+				"vscjava.vscode-java-pack",
+				"Pivotal.vscode-spring-boot",
+				"redhat.vscode-yaml",
+				"ms-azuretools.vscode-docker"
+            ]
+        }
+    }
 }

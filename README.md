@@ -28,17 +28,22 @@ The internally accessible video covers the details of reliable web app pattern f
 
 A detailed workflow of the reference implementation is forthcoming.
 
+## Prerequisites
+
+* [Azure Subscription](https://azure.microsoft.com/pricing/member-offers/msdn-benefits-details/)
+* [Visual Studio Code](https://code.visualstudio.com/)
+* [Docker](https://www.docker.com/get-started/)
+* [Permissions to register an application](https://learn.microsoft.com/azure/active-directory/develop/quickstart-register-app)
+* [Dev Containers extension installed in VS Code](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension
+
 ## Steps to deploy the reference implementation
 
-Deploy this sample using [Visual Studio Code](https://code.visualstudio.com/) with [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension.
 
 Note - The following deployment has been tested using devcontainers on **macOS** and **Windows with [Ubuntu on WSL](https://ubuntu.com/wsl)**.
 
 **1. Clone the repo**
 
-If using WSL, start a WSL Ubuntu terminal and clone the repo to a WSL directory.
-
-[![WSL Ubuntu](docs/assets/wsl-ubuntu.png)
+Navigate to your desired directory and run the three following commands:
 
 ```shell
 git clone https://github.com/Azure/reliable-web-app-pattern-java.git
@@ -46,26 +51,39 @@ cd reliable-web-app-pattern-java
 code .
 ```
 
+If using WSL, start a WSL Ubuntu terminal and clone the repo to a WSL directory (see example in the following image).
+
+![WSL Ubuntu](docs/assets/wsl-ubuntu.png)
+
 Once Visual Studio Code is launched, you should see a popup allowing you to click on the button **Reopen in Container**.
 
-[![WSL Ubuntu](docs/assets/vscode-reopen-in-container.png)
+![WSL Ubuntu](docs/assets/vscode-reopen-in-container.png)
 
-If you don't see the popup, open up the Visual Studio Code Command Palette with the keyboard shortcut ⇧⌘P (Windows, Linux Ctrl+Shift+P) or navigating to View -> Command Palette... in the VS Code UI.
+If you don't see the popup, open up the Visual Studio Code Command Palette. There are three ways to open the Code Command Palette:
 
-[![WSL Ubuntu](docs/assets/vscode-reopen-in-container-command.png)
+- For Mac users, use the keyboard shortcut ⇧⌘P
+- For Windows and Linux users, use Ctrl+Shift+P
+- In the VS Code, navigate to View -> Command Palette.
+
+Then, search for `Dev Containers: Rebuilt and Reopen in Container` in the Command Palette.
+
+![WSL Ubuntu](docs/assets/vscode-reopen-in-container-command.png)
 
 **2. Prepare for deployment**
 
 Open *./scripts/setup-initial-env.sh* and update the following variables:
 
 ```shell
-export SUBSCRIPTION=
+export SUBSCRIPTION_ID=
 export APP_NAME=
+export DATABASE_PASSWORD=
 ```
 
-*The variable APP_NAME needs to be globally unique across all of Azure and less than 16 characters.  This sample uses the APP_NAME as the base for names the Azure Resources. Some Azure Resources have a limit to the length of the name.*
+Add your subscription ID, app name, and database password. The variable **APP_NAME** needs to be globally unique across all of Azure and less than 18 characters.  This sample uses the APP_NAME as the base for the names of other Azure Resources. Some Azure Resources have a limit to the length of the name.*
 
-You may change the `APP_ENVIRONMENT` variable to either *prod* or *dev*. The following table describes the differences in the resources deployed in the 2 environments.
+### Select production or development environment.
+
+You should change the `APP_ENVIRONMENT` variable to either *prod* or *dev*. The following table describes the differences in the resources deployed in the 2 environments.
 
 | Service | Dev SKU | Prod SKU | SKU options |
 | --- | --- | --- | --- |
@@ -73,113 +91,39 @@ You may change the `APP_ENVIRONMENT` variable to either *prod* or *dev*. The fol
 | App Service | P1v2 | P2v2 | [App Service SKU options](https://azure.microsoft.com/pricing/details/app-service/linux/)
 | PostgreSQL Flexible Server | Burstable B1ms (B_Standard_B1ms) | General Purpose D4s_v3 (GP_Standard_D4s_v3) | [PostgreSQL SKU options](https://learn.microsoft.com/azure/postgresql/flexible-server/concepts-compute-storage)
 
-*Note - There is a guided [demo.sh](./demo.sh) script that you can run that will execute the deployment steps.*
-
-```shell
-./demo.sh
-```
-
-Once the demo script completes, skip to the [Add Users to Azure Active Directory enterprise applications](#add-users-to-azure-active-directory-enterprise-applications) section.
-
-*You may choose to do this manually by following the steps below starting with [Start the deployment](#start-the-deployment)*
-
 **3. Start the Deployment**
 
-Run the following to set up the environment:
+The guided [deployment script](./deploy.sh) is used to deploy the solution for this sample.  To deploy, run *[deploy.sh](./deploy.sh)* from the Visual Studio Code Terminal running inside of the devcontainer.  `Hit the Enter key to step through the guided deployment`.
 
 ```shell
-source ./scripts/setup-initial-env.sh
+./deploy.sh
 ```
 
-**4. Login using Azure CLI**
+![Deploy](docs/assets/proseware-deploy.gif)
 
-Login to Azure using the Azure CLI and choose your active subscription.
+### (Optional) Add Users to Azure Active Directory enterprise applications
 
-```shell
-az login --scope https://graph.microsoft.com//.default
-az account set --subscription ${SUBSCRIPTION}
-```
+The next step is to add a user to the application and assign them a role. To do this, go to Azure Portal --> Azure Active Directory --> Enterprise Applications and search for the Proseware application. Add a user to the application.
 
-**5. Allow AZ CLI extensions to install without prompt**
+![Proseware Azure Active Directory Enterprise Applications](docs/assets/AAD-Enterprise-Application.png)
 
-```shell
-az config set extension.use_dynamic_install=yes_without_prompt
-```
+### Navigate to Proseware
 
-**6. Deploy Azure Infrastructure**
-
-Create the Azure resources by running the following commands:
-
-```shell
-terraform -chdir=./terraform init
-terraform -chdir=./terraform plan -var application_name=${APP_NAME} -var environment=${APP_ENVIRONMENT} -var enable_telemetry=${ENABLE_TELEMETRY} -out airsonic.tfplan
-terraform -chdir=./terraform apply airsonic.tfplan
-```
-
-**7. Download training videos**
-
-If you plan on seeding the Proseware with videos and playlists, you may want to run the following scripts while the Azure resources defined in Terraform are being provisioned.  In a separate terminal, run the following.
-
-```shell
-source ./scripts/setup-initial-env.sh
-./scripts/download-trainings.sh
-```
-
-After the completion of this step, you should see a videos directory that contains training videos.
-
-**8. Upload training videos and playlists**
-
-The following command uploads the training videos and playlists to the `Azure Storage` account.  Run the following after Terraform has successfully completed deploying the Azure resources.
-
-```shell
-./scripts/upload-trainings.sh
-```
-
-**9. Set up local build environment**
-
-```shell
-source ./scripts/setup-local-build-env.sh
-```
-
-**10. Package and deploy Airsonic**
-
-It's now time to compile and package Airsonic, skipping the unit tests.
-
-```shell
-cd src/airsonic-advanced
-mvn -DskipTests clean package
-```
-
-Now that we have a war file, we can deploy it to our Azure App Service.
-
-```shell
-mvn com.microsoft.azure:azure-webapp-maven-plugin:2.6.1:deploy -pl airsonic-main
-```
-
-**11. Add Users to Azure Active Directory enterprise applications**
-
-The next step is to add a user to the application and assign them a role. To do this, go to Azure Portal --> Azure Active Directory --> Enterprise Applications and search for the Airsonic application. Add a user to the application.
-
-![Aisonic Azure Active Directory Enterprise Applications](docs/assets/AAD-Enterprise-Application.png)
-
-After adding the user, open the browser and navigate to [Airsonic site](https://{AIRSONIC_SITE}). Use the following command to get the site name.
+After adding the user, open the browser and navigate to *Proseware*. Use the following command to get the site name.
 
 ```shell
 echo $(terraform -chdir=$PROJECT_ROOT/terraform output -raw frontdoor_url)
 ```
 
-![Aisonic AAD](docs/assets/proseware.png)
+![Proseware AAD](docs/assets/proseware.png)
 
-**12. Teardown**
+## Teardown
+
+To tear down the deployment, run the two following commands.
 
 ```shell
-RESOURCE_GROUP=$(terraform -chdir=$PROJECT_ROOT/terraform output -raw resource_group)
-echo $RESOURCE_GROUP
-az group delete --name $RESOURCE_GROUP --no-wait
-
-APP_REGISTRATION_ID=$(terraform -chdir=$PROJECT_ROOT/terraform show -json | jq .values.outputs.app_service_module_outputs.value.application_registration_id | tr -d \")
-echo $APP_REGISTRATION_ID
-az ad app delete --id $APP_REGISTRATION_ID
+source ./scripts/setup-initial-env.sh
+./scripts/teardown.sh
 ```
 
 ## Data collection
