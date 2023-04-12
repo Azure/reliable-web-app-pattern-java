@@ -51,7 +51,7 @@ Navigate to your desired directory and run the three following commands:
     code .
     ```
 
-    If using WSL, start a WSL Ubuntu terminal and clone the repo to a WSL directory.
+    If using WSL, start a WSL Ubuntu terminal and clone the repo to a WSL directory (see example in the following image).
 
     ![WSL Ubuntu](docs/assets/wsl-ubuntu.png)
 
