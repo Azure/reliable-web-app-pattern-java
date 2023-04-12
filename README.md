@@ -45,25 +45,25 @@ Note - The following deployment has been tested using devcontainers on **macOS**
 
 Navigate to your desired directory and run the three following commands:
 
-    ```shell
-    git clone https://github.com/Azure/reliable-web-app-pattern-java.git
-    cd reliable-web-app-pattern-java
-    code .
-    ```
+```shell
+git clone https://github.com/Azure/reliable-web-app-pattern-java.git
+cd reliable-web-app-pattern-java
+code .
+```
 
-    If using WSL, start a WSL Ubuntu terminal and clone the repo to a WSL directory (see example in the following image).
+If using WSL, start a WSL Ubuntu terminal and clone the repo to a WSL directory (see example in the following image).
 
-    ![WSL Ubuntu](docs/assets/wsl-ubuntu.png)
+![WSL Ubuntu](docs/assets/wsl-ubuntu.png)
 
-    ```shell
-    git clone https://github.com/Azure/reliable-web-app-pattern-java.git
-    cd reliable-web-app-pattern-java
-    code .
-    ```
+```shell
+git clone https://github.com/Azure/reliable-web-app-pattern-java.git
+cd reliable-web-app-pattern-java
+code .
+```
 
-    Once Visual Studio Code is launched, you should see a popup allowing you to click on the button **Reopen in Container**.
+Once Visual Studio Code is launched, you should see a popup allowing you to click on the button **Reopen in Container**.
 
-    ![WSL Ubuntu](docs/assets/vscode-reopen-in-container.png)
+![WSL Ubuntu](docs/assets/vscode-reopen-in-container.png)
 
 If you don't see the popup, open up the Visual Studio Code Command Palette. There are three ways to open the Code Command Palette:
 
@@ -73,17 +73,17 @@ If you don't see the popup, open up the Visual Studio Code Command Palette. Ther
 
 Then, search for `Dev Containers: Rebuilt and Reopen in Container` in the Command Palette.
 
-    ![WSL Ubuntu](docs/assets/vscode-reopen-in-container-command.png)
+![WSL Ubuntu](docs/assets/vscode-reopen-in-container-command.png)
 
 ### Prepare for deployment
 
-    Open *./scripts/setup-initial-env.sh* and update the following variables:
+Open *./scripts/setup-initial-env.sh* and update the following variables:
 
-    ```shell
-    export SUBSCRIPTION_ID=
-    export APP_NAME=
-    export DATABASE_PASSWORD=
-    ```
+```shell
+export SUBSCRIPTION_ID=
+export APP_NAME=
+export DATABASE_PASSWORD=
+```
 
 Add your subscription ID, app name, and database password. The variable **APP_NAME** needs to be globally unique across all of Azure and less than 18 characters.  This sample uses the APP_NAME as the base for the names of other Azure Resources. Some Azure Resources have a limit to the length of the name.*
 
@@ -91,23 +91,27 @@ Add your subscription ID, app name, and database password. The variable **APP_NA
 
 You should change the `APP_ENVIRONMENT` variable to either *prod* or *dev*. The following table describes the differences in the resources deployed in the 2 environments.
 
-    | Service | Dev SKU | Prod SKU | SKU options |
-    | --- | --- | --- | --- |
-    | Cache for Redis | Basic | Standard | [Redis Cache SKU options](https://azure.microsoft.com/pricing/details/cache/)
-    | App Service | P1v2 | P2v2 | [App Service SKU options](https://azure.microsoft.com/pricing/details/app-service/linux/)
-    | PostgreSQL Flexible Server | Burstable B1ms (B_Standard_B1ms) | General Purpose D4s_v3 (GP_Standard_D4s_v3) | [PostgreSQL SKU options](https://learn.microsoft.com/azure/postgresql/flexible-server/concepts-compute-storage)
+| Service | Dev SKU | Prod SKU | SKU options |
+| --- | --- | --- | --- |
+| Cache for Redis | Basic | Standard | [Redis Cache SKU options](https://azure.microsoft.com/pricing/details/cache/)
+| App Service | P1v2 | P2v2 | [App Service SKU options](https://azure.microsoft.com/pricing/details/app-service/linux/)
+| PostgreSQL Flexible Server | Burstable B1ms (B_Standard_B1ms) | General Purpose D4s_v3 (GP_Standard_D4s_v3) | [PostgreSQL SKU options](https://learn.microsoft.com/azure/postgresql/flexible-server/concepts-compute-storage)
 
 ### Deploy from a Visual Studio Code Terminal
 
-    The guided [deployment script](./deploy.sh) is used to deploy the solution for this sample.  To deploy, run *[deploy.sh](./deploy.sh)* from the Visual Studio Code Terminal running inside of the devcontainer.  `Hit the Enter key to step through the guided deployment`.
+The guided [deployment script](./deploy.sh) is used to deploy the solution for this sample.  To deploy, run *[deploy.sh](./deploy.sh)* from the Visual Studio Code Terminal running inside of the devcontainer.  `Hit the Enter key to step through the guided deployment`.
 
-    ![Deploy](docs/assets/proseware-deploy.gif)
+```shell
+./deploy.sh
+```
+
+![Deploy](docs/assets/proseware-deploy.gif)
 
 ### (Optional) Add Users to Azure Active Directory enterprise applications
 
-    The next step is to add a user to the application and assign them a role. To do this, go to Azure Portal --> Azure Active Directory --> Enterprise Applications and search for the Proseware application. Add a user to the application.
+The next step is to add a user to the application and assign them a role. To do this, go to Azure Portal --> Azure Active Directory --> Enterprise Applications and search for the Proseware application. Add a user to the application.
 
-    ![Proseware Azure Active Directory Enterprise Applications](docs/assets/AAD-Enterprise-Application.png)
+![Proseware Azure Active Directory Enterprise Applications](docs/assets/AAD-Enterprise-Application.png)
 
 ### Navigate to Proseware
 
