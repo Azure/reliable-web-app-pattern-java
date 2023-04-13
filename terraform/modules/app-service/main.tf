@@ -52,7 +52,6 @@ resource "azurecaf_name" "app_service" {
   suffixes      = [var.environment]
 }
 
-resource "random_uuid" "airsonic_scope_id" {}
 resource "random_uuid" "admin_role_id" {}
 resource "random_uuid" "user_role_id" {}
 resource "random_uuid" "creator_role_id" {}
@@ -265,8 +264,8 @@ resource "azurerm_monitor_autoscale_setting" "airsonicscaling" {
   profile {
     name = "default"
     capacity {
-      default = 1
-      minimum = 1
+      default = 2
+      minimum = 2
       maximum = 10
     }
     rule {

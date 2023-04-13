@@ -41,14 +41,14 @@ pe "terraform -chdir=./terraform init"
 pe "terraform -chdir=./terraform plan -var application_name=${APP_NAME} -var environment=${APP_ENVIRONMENT} -var enable_telemetry=${ENABLE_TELEMETRY} -var database_administrator_password=${DATABASE_PASSWORD} -out proseware.tfplan"
 pe "terraform -chdir=./terraform apply proseware.tfplan"
 
-p ">>> Set Up Your Local Build Environment <<<"
-pe "source ./scripts/setup-azure-webapp-maven-plugin.sh"
-
 p ">>> Download Training Videos <<<"
 pe "./scripts/download-trainings.sh"
 
 p ">>> Upload Training Videos and Playlists <<<"
 pe "./scripts/upload-trainings.sh"
+
+p ">>> Update pom.xml Azure Maven Plugin <<<"
+pe "./scripts/setup-azure-webapp-maven-plugin.sh"
 
 p ">>> Build and package <<<"
 pe "cd src/airsonic-advanced"
