@@ -28,6 +28,10 @@ on:
         description: 'Application Name'
         required: true
         type: string
+      dbpassword:
+        description: 'Database pwd'
+        required: true
+        type: string
         
 permissions:
   contents: read
@@ -36,6 +40,7 @@ env:
   APP_NAME: ${{ inputs.appname }}
   PROJECT_ROOT: ${PWD}
   APP_ENVIRONMENT: ${{ inputs.environment }}
+  DATABASE_PASSWORD: ${{ inputs.dbpassword }}
   APP_SERVICE_DEPLOY_SLOT: production
   ENABLE_TELEMETRY: true
   SUBSCRIPTION: ${{ inputs.subscription }}
@@ -66,6 +71,7 @@ jobs:
         echo $APP_NAME
         echo $APP_ENVIRONMENT
         echo $APP_DEPLOY_NAME
+        echo $DATABASE_PASSWORD
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
@@ -89,7 +95,7 @@ jobs:
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
-      run: terraform -chdir=./terraform plan -var application_name=${APP_NAME} -var environment=${APP_ENVIRONMENT} -var enable_telemetry=${ENABLE_TELEMETRY} -out airsonic.tfplan
+      run: terraform -chdir=./terraform plan -var application_name=${APP_NAME} -var environment=${APP_ENVIRONMENT} -var enable_telemetry=${ENABLE_TELEMETRY} -var database_administrator_password=${DATABASE_PASSWORD} -out airsonic.tfplan
        
       
     - name: Terraform Apply
