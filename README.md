@@ -20,9 +20,9 @@ The internally accessible video covers the details of reliable web app pattern f
 
 [![Diagram showing the architecture of the reference implementation](docs/assets/java-architecture-reference-implementation.png)](docs/assets/java-architecture-reference-implementation.png)
 
-- [Production environment estimated cost](https://azure.com/e/c530c133f36c423e9774de286f7dd28a)
+- [Production environment estimated cost](https://azure.com/e/65354031bc084e539b6c8ccfc1a7b097)
 
-- [Non-production environment estimated cost](https://azure.com/e/48201e05118243e089ded6855839594a)
+- [Non-production environment estimated cost](https://azure.com/e/af7d105ce24340dab93dfe666909a3e0)
 
 ## Workflow
 
