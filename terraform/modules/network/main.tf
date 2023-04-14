@@ -32,7 +32,7 @@ resource "azurerm_subnet" "app_subnet" {
   name                 = azurecaf_name.app_subnet_name.result
   resource_group_name  = var.resource_group
   virtual_network_name = azurerm_virtual_network.network.name
-  address_prefixes     = ["10.0.1.0/24"]
+  address_prefixes     = ["10.0.1.0/27"]
 
   service_endpoints = [ "Microsoft.Storage", "Microsoft.KeyVault"]
 
@@ -57,7 +57,7 @@ resource "azurerm_subnet" "private_endpoint_subnet" {
   name                 = azurecaf_name.private_endpoint_subnet_name.result
   resource_group_name  = var.resource_group
   virtual_network_name = azurerm_virtual_network.network.name
-  address_prefixes     = ["10.0.3.0/24"]
+  address_prefixes     = ["10.0.3.0/27"]
 }
 
 # Create the data subnet
@@ -71,7 +71,7 @@ resource "azurerm_subnet" "postgresql_subnet" {
   name                 = azurecaf_name.postgresql_subnet_name.result
   resource_group_name  = var.resource_group
   virtual_network_name = azurerm_virtual_network.network.name
-  address_prefixes     = ["10.0.2.0/24"]
+  address_prefixes     = ["10.0.2.0/27"]
   
   service_endpoints    = ["Microsoft.Storage"]
 
@@ -84,4 +84,52 @@ resource "azurerm_subnet" "postgresql_subnet" {
       ]
     }
   }
+}
+
+# Create a network security group name to allow database access only from the app subnet
+resource "azurerm_network_security_group" "postgresql_nsg" {
+  name                = "nsg-postgresql-${var.application_name}"
+  location            = var.location
+  resource_group_name = var.resource_group
+
+  security_rule {
+    name                       = "allow-postgresql-inbound"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "5432"
+    source_address_prefix      = azurerm_subnet.app_subnet.address_prefixes[0]
+    destination_address_prefix = azurerm_subnet.postgresql_subnet.address_prefixes[0]
+  }
+}
+
+resource "azurerm_subnet_network_security_group_association" "postgresql_nsg_association" {
+  subnet_id                 = azurerm_subnet.postgresql_subnet.id
+  network_security_group_id = azurerm_network_security_group.postgresql_nsg.id
+}
+
+# Create a NSG to apply to the subnet for the app to restrict all but https traffic inbound
+resource "azurerm_network_security_group" "app_nsg" {
+  name                = "nsg-app-${var.application_name}"
+  location            = var.location
+  resource_group_name = var.resource_group
+
+  security_rule {
+    name                       = "allow-app-inbound"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "443"
+    source_address_prefix      = "*"
+    destination_address_prefix = azurerm_subnet.app_subnet.address_prefixes[0]
+  }
+}
+
+resource "azurerm_subnet_network_security_group_association" "app_nsg_association" {
+  subnet_id                 = azurerm_subnet.app_subnet.id
+  network_security_group_id = azurerm_network_security_group.app_nsg.id
 }

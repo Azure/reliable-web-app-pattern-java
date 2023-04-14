@@ -286,7 +286,7 @@ data "http" "myip" {
 }
 
 locals {
-  myip = chomp(data.http.myip.body)
+  myip = chomp(data.http.myip.response_body)
 }
 
 resource "azurerm_storage_account_network_rules" "airsonic-storage-network-rules" {
