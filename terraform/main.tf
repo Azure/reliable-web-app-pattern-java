@@ -14,9 +14,9 @@ locals {
 
 data "azurerm_client_config" "current" {}
 
-data "azuread_user" "current_user" {
-  object_id = data.azurerm_client_config.current.object_id
-}
+//data "azuread_user" "current_user" {
+//  object_id = data.azurerm_client_config.current.object_id
+//}
 
 resource "azurecaf_name" "resource_group" {
   name          = var.application_name
