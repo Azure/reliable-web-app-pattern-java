@@ -251,8 +251,8 @@ resource "azurerm_postgresql_flexible_server_active_directory_administrator" "ai
   server_name         = module.postresql_database.database_server_name
   resource_group_name = azurerm_resource_group.main.name
   tenant_id           = data.azurerm_client_config.current.tenant_id
-  object_id           = data.azuread_user.current_user.object_id
-  principal_name      = data.azuread_user.current_user.user_principal_name
+  object_id           = data.azurerm_client_config.current.object_id
+  principal_name      = data.azurerm_client_config.current.object_id
   principal_type      = "User"
 }
 
