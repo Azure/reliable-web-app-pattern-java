@@ -116,10 +116,11 @@ resource "azuread_app_role_assignment" "application_role_current_user" {
   resource_object_id  = azuread_service_principal.application_service_principal.object_id
 }
 
+//not used
 # Retrieve domain information
-data "azuread_domains" "domain" {
-  only_initial = true
-}
+//data "azuread_domains" "domain" {
+//  only_initial = true
+//}
 
 # This creates the linux web app
 resource "azurerm_linux_web_app" "application" {
