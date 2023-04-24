@@ -6,7 +6,7 @@ A reliable workload is one that is both resilient and available. Resiliency is t
 
 Given the distributed nature of cloud applications, they must be designed to operate under the assumption of unreliable communications. An application that communicates with elements running in the cloud must be sensitive to the transient faults that can occur in this environment. Faults include the momentary loss of network connectivity to components and services, the temporary unavailability of a service, or timeouts that occur when a service is busy.
 
-Most Azure services and client SDKs include a [retry mechanism](https://learn.microsoft.com/en-us/azure/architecture/best-practices/retry-service-specific).
+Most Azure services and client SDKs include a [retry mechanism](https://learn.microsoft.com/azure/architecture/best-practices/retry-service-specific).
 
 In other scenarios, we use the [Retry Pattern](https://docs.microsoft.com/azure/architecture/patterns/retry). This is because these faults are typically self-correcting and if a service call is retried after a short delay, then it is likely to succeed. Adding the Retry Pattern helped the team build a web app that insulates the user experience from these transient errors.
 

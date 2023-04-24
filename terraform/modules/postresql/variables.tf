@@ -36,8 +36,13 @@ variable "subnet_network_id" {
 
 variable "administrator_login" {
   type        = string
-  description = "The MySQL administrator login"
+  description = "The PostgreSQL administrator login"
   default     = "myadmin"
+}
+
+variable "administrator_password" {
+  type        = string
+  description = "The password for the PostgreSQL administrator login"
 }
 
 variable "log_analytics_workspace_id" {

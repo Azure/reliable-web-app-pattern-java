@@ -24,20 +24,21 @@ resource "azurerm_redis_cache" "cache" {
   # public network access will be allowed for non-prod so devs can do integration testing while debugging locally
   public_network_access_enabled = var.environment == "prod" ? false : true
 
+  # https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-configure#default-redis-server-configuration
   redis_configuration {
   }
 }
 
 # Azure Private DNS provides a reliable, secure DNS service to manage and
 # resolve domain names in a virtual network without the need to add a custom DNS solution
-# https://docs.microsoft.com/en-us/azure/dns/private-dns-privatednszone
+# https://docs.microsoft.com/azure/dns/private-dns-privatednszone
 resource "azurerm_private_dns_zone" "dns_for_cache" {
   name                = "privatelink.redis.cache.windows.net"
   resource_group_name = var.resource_group
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "virtual_network_link_redis" {
-  name                  = "privatednsforredis"
+  name                  = "privatelink.redis.cache.windows.net"
   private_dns_zone_name = azurerm_private_dns_zone.dns_for_cache.name
   virtual_network_id    = var.private_endpoint_vnet_id
   resource_group_name   = var.resource_group
@@ -71,6 +72,15 @@ resource "azurerm_monitor_diagnostic_setting" "redis_diagnostic" {
 
   enabled_log {
     category_group = "audit"
+
+    retention_policy {
+      days    = 0
+      enabled = false
+    }
+  }
+
+  enabled_log {
+    category_group = "allLogs"
 
     retention_policy {
       days    = 0

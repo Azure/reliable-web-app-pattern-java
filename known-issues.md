@@ -10,7 +10,7 @@ This document helps with troubleshooting and provides an introduction to the mos
         ```shell
         rm -rf terraform/.terraform*
         rm -rf terraform/terraform.tfstate*
-        rm terraform/airsonic.tfplan
+        rm terraform/proseware.tfplan
         ```
 
     1. Use source control to revert change to pom.xml as needed
