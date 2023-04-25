@@ -24,9 +24,14 @@ The internally accessible video covers the details of reliable web app pattern f
 
 - [Non-production environment estimated cost](https://azure.com/e/48201e05118243e089ded6855839594a)
 
-## Workflow
+## Reference implementation workflow
 
-A detailed workflow of the reference implementation is forthcoming.
+- Poseware employees authenticate using Azure AD. The web app the built-in authentication feature of App Service (EasyAuth) to manage the initial sign-in flow (cookies). It uses Azure AD as the identity platform.
+- All inbound traffic passes through the Azure Web Application Firewall (WAF) and routed via Azure Front Door to the Azure Web App.
+- The web app code applies the reliable web app pattern and implements the Retry, Circuit Breaker, and Cache-Aside patterns. It integrates app roles with Azure AD using the Microsoft Authentication Library (MSAL).
+- Proseware uses Application Insights as its application performance management tool to gather application telemetry.
+- The Azure Web App uses virtual network integration to connect to Azure Key Vault, Azure Cache for Redis, and Azure Database for PostgeSQL via private endpoints in the private virtual network. The App Services has an interface in the App Subnet and all the private endpoints use the Private Endpoint Subnet. DNS relies on private DNS zones to resolve the queries.
+- The web app uses an account access key to mount a directory with Azure Files to App Service. To make the deployment possible, it doesn't use a private endpoint for Azure Files. The web app loads the user interface with playlists and videos from the local client IP address. It was less efficient to use a private endpoint for Azure. Since you don't need to populate data in production, so you should always use a private endpoint. To add a layer of security, Azure Files only accepts traffic from the virtual network and the local client IP of the user executing the deployment.
 
 ## Steps to deploy the reference implementation
 
