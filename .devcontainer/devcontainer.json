@@ -3,7 +3,7 @@
     "build": {
         "dockerfile": "Dockerfile",
         "args": {
-            "VARIANT": "jammy"
+            "IMAGE": "java:17"
         }
     },
 	"remoteUser": "vscode",
@@ -15,7 +15,7 @@
 		"azure-cli": "2.44.1",
 		"docker-from-docker": "latest",
 		"ghcr.io/devcontainers/features/java:1": {
-			"version": "11",
+			"version": "17",
 			"installMaven": true,
 			"mavenVersion": "3.8.6"
 		},
@@ -34,5 +34,8 @@
 				"ms-azuretools.vscode-docker"
             ]
         }
+    },
+	"hostRequirements": {
+        "memory": "8gb"
     }
 }

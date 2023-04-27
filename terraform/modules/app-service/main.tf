@@ -37,7 +37,7 @@ resource "azurerm_service_plan" "application" {
   resource_group_name = var.resource_group
   location            = var.location
 
-  sku_name = var.environment == "prod" ? "P2v2" : "P1v2"
+  sku_name = var.environment == "prod" ? "P2v3" : "P1v3"
   os_type  = "Linux"
 
   tags = {
@@ -139,6 +139,7 @@ resource "azurerm_linux_web_app" "application" {
   tags = {
     "environment"      = var.environment
     "application-name" = var.application_name
+    "azd-service-name" = "application"
   }
 
   site_config {

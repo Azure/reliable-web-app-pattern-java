@@ -3,6 +3,7 @@
 # This script will download to the local file system previously recorded videos for Proseware from https://prosewaretrainingvideos.blob.core.windows.net.
 # This is intended for demo purposes.
 
+TRAININGS_DIR="videos"
 mkdir -p $TRAININGS_DIR
 cd $TRAININGS_DIR
 

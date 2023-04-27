@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+
+name: reliable-java-web-app
+infra:
+    provider: "terraform"
+    path: "terraform"
+hooks:
+  postprovision:
+    shell: sh
+    run: "./scripts/download-trainings.sh && ./scripts/upload-trainings.sh"
+services:
+  application:
+    project: ./src/airsonic-advanced
+    dist: airsonic-main/target
+    language: java
+    host: appservice
