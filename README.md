@@ -69,14 +69,12 @@ Then, search for `Dev Containers: Rebuilt and Reopen in Container` in the Comman
 
 ![WSL Ubuntu](docs/assets/vscode-reopen-in-container-command.png)
 
-**2a. AZD**
+**2. Deploy with AZD**
 
 ```sh
 azd auth login
 azd config set alpha.terraform on
 azd env set DATABASE_PASSWORD <SOME_VALUE>
-azd up
-azd env get-values --output json | jq -r .frontdoor_url
 ```
 
 ### Select production or development environment.
@@ -97,13 +95,9 @@ The following table describes the differences in the resources deployed in the 2
 
 **3. Start the Deployment**
 
-The guided [deployment script](./deploy.sh) is used to deploy the solution for this sample.  To deploy, run *[deploy.sh](./deploy.sh)* from the Visual Studio Code Terminal running inside of the devcontainer.  `Hit the Enter key to step through the guided deployment`.
-
-```shell
-./deploy.sh
+```sh
+azd up
 ```
-
-![Deploy](docs/assets/proseware-deploy.gif)
 
 ### (Optional) Add Users to Azure Active Directory enterprise applications
 
@@ -116,7 +110,7 @@ The next step is to add a user to the application and assign them a role. To do 
 After adding the user, open the browser and navigate to *Proseware*. Use the following command to get the site name.
 
 ```shell
-echo $(terraform -chdir=$PROJECT_ROOT/terraform output -raw frontdoor_url)
+azd env get-values --output json | jq -r .frontdoor_url
 ```
 
 ![Proseware AAD](docs/assets/proseware.png)
