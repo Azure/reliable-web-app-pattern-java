@@ -3,11 +3,13 @@
 # This script will upload training vidoes stored on the local file system to Proseware.  This assumes that the download-tranings.sh script was previously executed.
 # This is intended for demo purposes.
 
-STORAGE_PRIMARY_KEY=$(terraform -chdir=$PROJECT_ROOT/terraform output -raw storage_module_storage_primary_access_key)
-STORAGE_ACCOUNT_NAME=$(terraform -chdir=$PROJECT_ROOT/terraform output -raw storage_module_storage_account_name)
+TRAININGS_DIR="videos"
 
-VIDEO_STORAGE_SHARE_NAME=$(terraform -chdir=$PROJECT_ROOT/terraform output -raw application_video_share_name)
-PLAYLIST_STORAGE_SHARE_NAME=$(terraform -chdir=$PROJECT_ROOT/terraform output -raw application_playlist_share_name)
+STORAGE_PRIMARY_KEY=$(azd env get-values --output json | jq -r .storage_module_storage_primary_access_key)
+STORAGE_ACCOUNT_NAME=$(azd env get-values --output json | jq -r .storage_module_storage_account_name)
+
+VIDEO_STORAGE_SHARE_NAME=$(azd env get-values --output json | jq -r .application_video_share_nameaform output -raw application_video_share_name)
+PLAYLIST_STORAGE_SHARE_NAME=$(azd env get-values --output json | jq -r .application_playlist_share_name)
 
 echo "account $STORAGE_ACCOUNT_NAME video share $VIDEO_STORAGE_SHARE_NAME playlist share $PLAYLIST_STORAGE_SHARE_NAME"
 

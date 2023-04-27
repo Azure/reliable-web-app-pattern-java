@@ -4,4 +4,13 @@ name: reliable-java-web-app
 infra:
     provider: "terraform"
     path: "terraform"
-
+hooks:
+  postprovision:
+    shell: sh
+    run: "./scripts/download-trainings.sh && ./scripts/upload-trainings.sh"
+services:
+  application:
+    project: ./src/airsonic-advanced
+    dist: airsonic-main/target
+    language: java
+    host: appservice
