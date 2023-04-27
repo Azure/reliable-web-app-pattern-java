@@ -69,21 +69,25 @@ Then, search for `Dev Containers: Rebuilt and Reopen in Container` in the Comman
 
 ![WSL Ubuntu](docs/assets/vscode-reopen-in-container-command.png)
 
-**2. Prepare for deployment**
+**2a. AZD**
 
-Open *./scripts/setup-initial-env.sh* and update the following variables:
-
-```shell
-export SUBSCRIPTION_ID=
-export APP_NAME=
-export DATABASE_PASSWORD=
+```sh
+azd auth login
+azd config set alpha.terraform on
+azd env set DATABASE_PASSWORD <SOME_VALUE>
+azd up
+azd env get-values --output json | jq -r .frontdoor_url
 ```
-
-Add your subscription ID, app name, and database password. The variable **APP_NAME** needs to be globally unique across all of Azure and less than 18 characters.  This sample uses the APP_NAME as the base for the names of other Azure Resources. Some Azure Resources have a limit to the length of the name.*
 
 ### Select production or development environment.
 
-You should change the `APP_ENVIRONMENT` variable to either *prod* or *dev*. The following table describes the differences in the resources deployed in the 2 environments.
+You should change the `APP_ENV_NAME` variable to either *prod* or *dev*. 
+
+```sh
+azd env set APP_ENV_NAME prod
+```
+
+The following table describes the differences in the resources deployed in the 2 environments.
 
 | Service | Dev SKU | Prod SKU | SKU options |
 | --- | --- | --- | --- |
