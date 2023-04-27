@@ -69,9 +69,9 @@ Then, search for `Dev Containers: Rebuilt and Reopen in Container` in the Comman
 
 ![WSL Ubuntu](docs/assets/vscode-reopen-in-container-command.png)
 
-**2. Deploy with AZD**
+**2. Prepare for deployment**
 
-```sh
+```shell
 azd auth login
 azd config set alpha.terraform on
 azd env set DATABASE_PASSWORD <SOME_VALUE>
@@ -81,7 +81,7 @@ azd env set DATABASE_PASSWORD <SOME_VALUE>
 
 You should change the `APP_ENV_NAME` variable to either *prod* or *dev*. 
 
-```sh
+```shell
 azd env set APP_ENV_NAME prod
 ```
 
@@ -95,7 +95,7 @@ The following table describes the differences in the resources deployed in the 2
 
 **3. Start the Deployment**
 
-```sh
+```shell
 azd up
 ```
 
