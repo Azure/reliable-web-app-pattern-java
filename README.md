@@ -120,8 +120,7 @@ azd env get-values --output json | jq -r .frontdoor_url
 To tear down the deployment, run the two following commands.
 
 ```shell
-source ./scripts/setup-initial-env.sh
-./scripts/teardown.sh
+azd down
 ```
 
 ## Data collection
