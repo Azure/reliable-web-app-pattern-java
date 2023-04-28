@@ -96,6 +96,7 @@ The following table describes the differences in the resources deployed in the 2
 **3. Start the Deployment**
 
 ```shell
+az login
 azd up
 ```
 
