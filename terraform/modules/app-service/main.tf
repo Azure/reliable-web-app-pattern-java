@@ -208,16 +208,21 @@ resource "azurerm_linux_web_app" "application" {
 
   auth_settings_v2 {
     auth_enabled                  = true
-    require_authentication        = true
+    require_authentication        = true    
+    forward_proxy_convention = "Standard"
+    default_provider = "AzureActiveDirectory"
     
+
     active_directory_v2 {
       client_id                   = azuread_application.app_registration.application_id
       tenant_auth_endpoint        = "https://login.microsoftonline.com/${data.azuread_client_config.current.tenant_id}/v2.0/"
       client_secret_setting_name  = "MICROSOFT_PROVIDER_AUTHENTICATION_SECRET"
+      allowed_applications = [var.frontdoor_host_name]
     }
 
     login {
       token_store_enabled = true
+      allowed_external_redirect_urls = [var.frontdoor_host_name]
     }
   }
 }
