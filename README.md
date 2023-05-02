@@ -65,7 +65,7 @@ If you don't see the popup, open up the Visual Studio Code Command Palette. Ther
 - For Windows and Linux users, use Ctrl+Shift+P
 - In the VS Code, navigate to View -> Command Palette.
 
-Then, search for `Dev Containers: Rebuilt and Reopen in Container` in the Command Palette.
+Then, search for `Dev Containers: Rebuild and Reopen in Container` in the Command Palette.
 
 ![WSL Ubuntu](docs/assets/vscode-reopen-in-container-command.png)
 
