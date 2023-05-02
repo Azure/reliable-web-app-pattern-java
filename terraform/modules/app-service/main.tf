@@ -153,6 +153,21 @@ resource "azurerm_linux_web_app" "application" {
       java_server_version = "9.0"
       java_version = "11"
     }
+
+    ip_restriction {
+      service_tag               = "AzureFrontDoor.Backend"
+      ip_address                = null
+      virtual_network_subnet_id = null
+      action                    = "Allow"
+      priority                  = 100
+      headers {
+        x_azure_fdid      = [var.frontdoor_profile_uuid]
+        x_fd_health_probe = []
+        x_forwarded_for   = []
+        x_forwarded_host  = []
+      }
+      name = "Allow traffic from Front Door"
+    }
   }
 
   storage_account {

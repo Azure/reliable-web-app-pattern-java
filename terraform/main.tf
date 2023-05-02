@@ -245,7 +245,8 @@ module "application" {
   storage_account_name               = module.storage.storage_account_name
   storage_account_primary_access_key = module.storage.storage_primary_access_key
 
-  frontdoor_host_name = module.frontdoor.host_name
+  frontdoor_host_name     = module.frontdoor.host_name
+  frontdoor_profile_uuid  = module.frontdoor.resource_guid
 }
 
 resource "azurerm_postgresql_flexible_server_active_directory_administrator" "airsonic-ad-admin" {
