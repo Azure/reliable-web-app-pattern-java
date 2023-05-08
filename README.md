@@ -74,7 +74,10 @@ Then, search for `Dev Containers: Rebuild and Reopen in Container` in the Comman
 ```shell
 azd auth login
 azd config set alpha.terraform on
+azd env new
 azd env set DATABASE_PASSWORD <SOME_VALUE>
+azd env set AZURE_LOCATION <region>
+azd env set AZURE_SUBSCRIPTION_ID <SUBSCRIPTION_ID>
 ```
 
 ### Select production or development environment.
@@ -96,7 +99,8 @@ The following table describes the differences in the resources deployed in the 2
 **3. Start the Deployment**
 
 ```shell
-az login
+az login --scope https://graph.microsoft.com//.default
+az account set --subscription <SUBSCRIPTION_ID>
 azd up
 ```
 
@@ -130,7 +134,11 @@ The software in the reference implementation may collect information about you a
 
 Telemetry collection is on by default.
 
-To opt out, set the environment variable `ENABLE_TELEMETRY` to `false` in *./scripts/setup-initial-env.sh*.
+To opt out, set the environment variable `ENABLE_TELEMETRY` to `false`.
+
+```shell
+azd env set ENABLE_TELEMETRY false
+```
 
 ## Trademarks
 
