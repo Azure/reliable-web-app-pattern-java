@@ -12,7 +12,7 @@
 	},
 	
     "features": {
-		"azure-cli": "2.44.1",
+		"azure-cli": "latest",
 		"docker-from-docker": "latest",
 		"ghcr.io/devcontainers/features/java:1": {
 			"version": "17",
