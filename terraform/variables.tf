@@ -31,9 +31,9 @@ variable "enable_telemetry" {
   default     = true
 }
 
-# -------------------------------------------------------------------------------------------
-#  Everything below this comment for provisioning the 2nd region (if AZURE_LOCATION2 was set)
-# -------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------
+#  Everything below this comment is for provisioning the 2nd region (if AZURE_LOCATION2 was set)
+# ----------------------------------------------------------------------------------------------
 
 variable "location2" {
   type        = string

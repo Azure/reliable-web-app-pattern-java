@@ -265,7 +265,9 @@ module "frontdoor" {
   environment      = local.environment
   location         = var.location
   host_name        = module.application.application_fqdn
+  host_name2       = module.application2.application_fqdn
 }
+
 resource "azurerm_resource_group_template_deployment" "deploymenttelemetry" {
   count               = var.enable_telemetry ? 1 : 0
   name                = local.telemetryId
@@ -324,9 +326,9 @@ resource "null_resource" "app_service_startup_script" {
   }
 }
 
-# -------------------------------------------------------------------------------------------
-#  Everything below this comment for provisioning the 2nd region (if AZURE_LOCATION2 was set)
-# -------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------
+#  Everything below this comment is for provisioning the 2nd region (if AZURE_LOCATION2 was set)
+# ----------------------------------------------------------------------------------------------
 
 #
 # Create 2nd region resource group name by appending "s".
