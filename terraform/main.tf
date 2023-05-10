@@ -265,7 +265,7 @@ module "frontdoor" {
   environment      = local.environment
   location         = var.location
   host_name        = module.application.application_fqdn
-  host_name2       = module.application2.application_fqdn
+  host_name2       = length(var.location2) > 0 ? module.application2[0].application_fqdn : ""
 }
 
 resource "azurerm_resource_group_template_deployment" "deploymenttelemetry" {
@@ -343,6 +343,7 @@ resource "azurecaf_name" "resource_group2" {
 # Create 2nd resource group.
 #
 resource "azurerm_resource_group" "main2" {
+  count    = length(var.location2) > 0 ? 1 : 0
   name     = azurecaf_name.resource_group2.result
   location = var.location2
 
@@ -357,91 +358,97 @@ resource "azurerm_resource_group" "main2" {
 }
 
 module "network2" {
+  count              = length(var.location2) > 0 ? 1 : 0
   source             = "./modules/network"
-  resource_group     = azurerm_resource_group.main2.name
+  resource_group     = azurerm_resource_group.main2[0].name
   application_name   = var.application_name
   environment        = local.environment
   location           = var.location2
 }
 
 module "storage2" {
+  count              = length(var.location2) > 0 ? 1 : 0
   source             = "./modules/storage"
-  resource_group     = azurerm_resource_group.main2.name
+  resource_group     = azurerm_resource_group.main2[0].name
   application_name   = "${var.application_name}s"
   environment        = local.environment
   location           = var.location2
-  virtual_network_id = module.network2.vnet_id
-  subnet_network_id  = module.network2.app_subnet_id
+  virtual_network_id = module.network2[0].vnet_id
+  subnet_network_id  = module.network2[0].app_subnet_id
 }
 
 module "postresql_database2" {
+  count                       = length(var.location2) > 0 ? 1 : 0
   source                      = "./modules/postresql"
   azure_ad_tenant_id          = data.azurerm_client_config.current.tenant_id
-  resource_group              = azurerm_resource_group.main2.name
+  resource_group              = azurerm_resource_group.main2[0].name
   application_name            = "${var.application_name}s"
   environment                 = local.environment
   location                    = var.location2
-  virtual_network_id          = module.network2.vnet_id
-  subnet_network_id           = module.network2.postgresql_subnet_id
+  virtual_network_id          = module.network2[0].vnet_id
+  subnet_network_id           = module.network2[0].postgresql_subnet_id
   administrator_password      = var.database_administrator_password
   log_analytics_workspace_id  = module.app_insights.log_analytics_workspace_id
 }
 
 module "key-vault2" {
+  count            = length(var.location2) > 0 ? 1 : 0
   source           = "./modules/key-vault"
-  resource_group   = azurerm_resource_group.main2.name
+  resource_group   = azurerm_resource_group.main2[0].name
   application_name = var.application_name
   environment      = local.environment
   location         = var.location2
 
   log_analytics_workspace_id     = module.app_insights.log_analytics_workspace_id
 
-  virtual_network_id         = module.network2.vnet_id
-  private_endpoint_subnet_id = module.network2.private_endpoint_subnet_id
+  virtual_network_id         = module.network2[0].vnet_id
+  private_endpoint_subnet_id = module.network2[0].private_endpoint_subnet_id
 
   network_acls = {
     bypass                     = "None"
     default_action             = "Deny"
     ip_rules                   = [local.myip]
-    virtual_network_subnet_ids = [module.network2.app_subnet_id]
+    virtual_network_subnet_ids = [module.network2[0].app_subnet_id]
   }
 
   azure_ad_tenant_id = data.azurerm_client_config.current.tenant_id
 }
 
 module "cache2" {
+  count                       = length(var.location2) > 0 ? 1 : 0
   source                      = "./modules/cache"
-  resource_group              = azurerm_resource_group.main2.name
+  resource_group              = azurerm_resource_group.main2[0].name
   environment                 = local.environment
   location                    = var.location2
-  private_endpoint_vnet_id    = module.network2.vnet_id
-  private_endpoint_subnet_id  = module.network2.private_endpoint_subnet_id
+  private_endpoint_vnet_id    = module.network2[0].vnet_id
+  private_endpoint_subnet_id  = module.network2[0].private_endpoint_subnet_id
   log_analytics_workspace_id  = module.app_insights.log_analytics_workspace_id
 }
 
 module "application2" {
+  count               = length(var.location2) > 0 ? 1 : 0
   source              = "./modules/app-service"
-  resource_group      = azurerm_resource_group.main2.name
+  resource_group      = azurerm_resource_group.main2[0].name
   application_name    = "${var.application_name}s"
   environment         = local.environment
   location            = var.location2
-  subnet_id           = module.network2.app_subnet_id
+  subnet_id           = module.network2[0].app_subnet_id
   worker_count        = 1
 
   app_insights_connection_string = module.app_insights.connection_string
   log_analytics_workspace_id     = module.app_insights.log_analytics_workspace_id
 
-  database_id      = module.postresql_database2.database_id
-  database_fqdn    = module.postresql_database2.database_fqdn
-  database_name    = module.postresql_database2.database_name
+  database_id      = module.postresql_database2[0].database_id
+  database_fqdn    = module.postresql_database2[0].database_fqdn
+  database_name    = module.postresql_database2[0].database_name
 
-  redis_host       = module.cache2.cache_hostname
-  redis_port       = module.cache2.cache_ssl_port
+  redis_host       = module.cache2[0].cache_hostname
+  redis_port       = module.cache2[0].cache_ssl_port
 
-  key_vault_uri    = module.key-vault2.vault_uri
+  key_vault_uri    = module.key-vault2[0].vault_uri
 
-  storage_account_name               = module.storage2.storage_account_name
-  storage_account_primary_access_key = module.storage2.storage_primary_access_key
+  storage_account_name               = module.storage2[0].storage_account_name
+  storage_account_primary_access_key = module.storage2[0].storage_primary_access_key
 
   frontdoor_host_name = module.frontdoor.host_name
 }
