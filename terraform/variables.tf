@@ -30,3 +30,13 @@ variable "enable_telemetry" {
   description = "Telemetry collection is on by default"
   default     = true
 }
+
+# -------------------------------------------------------------------------------------------
+#  Everything below this comment for provisioning the 2nd region (if AZURE_LOCATION2 was set)
+# -------------------------------------------------------------------------------------------
+
+variable "location2" {
+  type        = string
+  description = "The 2nd Azure region where resources in this example should be created"
+  default     = "westus"
+}

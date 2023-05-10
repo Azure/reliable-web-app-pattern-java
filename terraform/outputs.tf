@@ -44,3 +44,12 @@ output "application_video_share_name" {
   value       = module.application.application_video_share_name
   description = "The storage share name used for training videos"
 }
+
+# -------------------------------------------------------------------------------------------
+#  Everything below this comment for provisioning the 2nd region (if AZURE_LOCATION2 was set)
+# -------------------------------------------------------------------------------------------
+
+output "resource_group2" {
+  value       = azurerm_resource_group.main2.name
+  description = "The resource group."
+}

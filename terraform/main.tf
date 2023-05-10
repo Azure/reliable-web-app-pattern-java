@@ -322,3 +322,122 @@ resource "null_resource" "app_service_startup_script" {
     command = "az webapp deploy --name ${module.application.application_name} --resource-group ${azurerm_resource_group.main.name} --src-path scripts/startup.sh --type=startup"
   }
 }
+
+# -------------------------------------------------------------------------------------------
+#  Everything below this comment for provisioning the 2nd region (if AZURE_LOCATION2 was set)
+# -------------------------------------------------------------------------------------------
+
+#
+# Create 2nd region resource group name by appending "s".
+#
+resource "azurecaf_name" "resource_group2" {
+  name          = "${var.application_name}s"
+  resource_type = "azurerm_resource_group"
+  suffixes      = [local.environment]
+}
+
+#
+# Create 2nd resource group.
+#
+resource "azurerm_resource_group" "main2" {
+  name     = azurecaf_name.resource_group2.result
+  location = var.location2
+
+  tags = {
+    "terraform"        = "true"
+    "environment"      = local.environment
+    "application-name" = var.application_name
+    "nubesgen-version" = "0.13.0"
+    "airsonic-version" = "1.0"
+    "azd-env-name"     = var.application_name
+  }
+}
+
+module "network2" {
+  source             = "./modules/network"
+  resource_group     = azurerm_resource_group.main2.name
+  application_name   = var.application_name
+  environment        = local.environment
+  location           = var.location2
+}
+
+module "storage2" {
+  source             = "./modules/storage"
+  resource_group     = azurerm_resource_group.main2.name
+  application_name   = "${var.application_name}s"
+  environment        = local.environment
+  location           = var.location2
+  virtual_network_id = module.network2.vnet_id
+  subnet_network_id  = module.network2.app_subnet_id
+}
+
+module "postresql_database2" {
+  source                      = "./modules/postresql"
+  azure_ad_tenant_id          = data.azurerm_client_config.current.tenant_id
+  resource_group              = azurerm_resource_group.main2.name
+  application_name            = "${var.application_name}s"
+  environment                 = local.environment
+  location                    = var.location2
+  virtual_network_id          = module.network2.vnet_id
+  subnet_network_id           = module.network2.postgresql_subnet_id
+  administrator_password      = var.database_administrator_password
+  log_analytics_workspace_id  = module.app_insights.log_analytics_workspace_id
+}
+
+module "key-vault2" {
+  source           = "./modules/key-vault"
+  resource_group   = azurerm_resource_group.main2.name
+  application_name = var.application_name
+  environment      = local.environment
+  location         = var.location2
+
+  log_analytics_workspace_id     = module.app_insights.log_analytics_workspace_id
+
+  virtual_network_id         = module.network2.vnet_id
+  private_endpoint_subnet_id = module.network2.private_endpoint_subnet_id
+
+  network_acls = {
+    bypass                     = "None"
+    default_action             = "Deny"
+    ip_rules                   = [local.myip]
+    virtual_network_subnet_ids = [module.network2.app_subnet_id]
+  }
+
+  azure_ad_tenant_id = data.azurerm_client_config.current.tenant_id
+}
+
+module "cache2" {
+  source                      = "./modules/cache"
+  resource_group              = azurerm_resource_group.main2.name
+  environment                 = local.environment
+  location                    = var.location2
+  private_endpoint_vnet_id    = module.network2.vnet_id
+  private_endpoint_subnet_id  = module.network2.private_endpoint_subnet_id
+  log_analytics_workspace_id  = module.app_insights.log_analytics_workspace_id
+}
+
+module "application2" {
+  source           = "./modules/app-service"
+  resource_group   = azurerm_resource_group.main2.name
+  application_name = "${var.application_name}s"
+  environment      = local.environment
+  location         = var.location2
+  subnet_id        = module.network2.app_subnet_id
+
+  app_insights_connection_string = module.app_insights.connection_string
+  log_analytics_workspace_id     = module.app_insights.log_analytics_workspace_id
+
+  database_id      = module.postresql_database2.database_id
+  database_fqdn    = module.postresql_database2.database_fqdn
+  database_name    = module.postresql_database2.database_name
+
+  redis_host       = module.cache2.cache_hostname
+  redis_port       = module.cache2.cache_ssl_port
+
+  key_vault_uri    = module.key-vault2.vault_uri
+
+  storage_account_name               = module.storage2.storage_account_name
+  storage_account_primary_access_key = module.storage2.storage_primary_access_key
+
+  frontdoor_host_name = module.frontdoor.host_name
+}
