@@ -223,12 +223,13 @@ module "cache" {
 }
 
 module "application" {
-  source           = "./modules/app-service"
-  resource_group   = azurerm_resource_group.main.name
-  application_name = var.application_name
-  environment      = local.environment
-  location         = var.location
-  subnet_id        = module.network.app_subnet_id
+  source             = "./modules/app-service"
+  resource_group     = azurerm_resource_group.main.name
+  application_name   = var.application_name
+  environment        = local.environment
+  location           = var.location
+  subnet_id          = module.network.app_subnet_id
+  worker_count       = 2
 
   app_insights_connection_string = module.app_insights.connection_string
   log_analytics_workspace_id     = module.app_insights.log_analytics_workspace_id
@@ -417,12 +418,13 @@ module "cache2" {
 }
 
 module "application2" {
-  source           = "./modules/app-service"
-  resource_group   = azurerm_resource_group.main2.name
-  application_name = "${var.application_name}s"
-  environment      = local.environment
-  location         = var.location2
-  subnet_id        = module.network2.app_subnet_id
+  source              = "./modules/app-service"
+  resource_group      = azurerm_resource_group.main2.name
+  application_name    = "${var.application_name}s"
+  environment         = local.environment
+  location            = var.location2
+  subnet_id           = module.network2.app_subnet_id
+  worker_count        = 1
 
   app_insights_connection_string = module.app_insights.connection_string
   log_analytics_workspace_id     = module.app_insights.log_analytics_workspace_id
