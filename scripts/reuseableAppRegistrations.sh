@@ -4,7 +4,6 @@
 # Decision point - decided to create resourceGroup and KeyVault if they don't exist
 # Decision point - decided not to place the client secret in App Service config settings - will use Key Vault reference instead
 
-
 # TODO - 1 - identify if this script should give the current user the 'Creator' role for the app registration
 # TODO - 2 - persist the values from above to Key Vault if the Key Vault name was provided
 # TODO - 3 - validate the redirectUri is properly formed before reaching this far
