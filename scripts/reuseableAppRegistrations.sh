@@ -5,8 +5,7 @@
 # Decision point - decided not to place the client secret in App Service config settings - will use Key Vault reference instead
 
 # TODO - 1 - identify if this script should give the current user the 'Creator' role for the app registration
-# TODO - 2 - persist the values from above to Key Vault if the Key Vault name was provided
-# TODO - 3 - validate the redirectUri is properly formed before reaching this far
+# TODO - 2 - validate the redirectUri is properly formed before reaching this far
 
 POSITIONAL_ARGS=()
 
@@ -145,7 +144,7 @@ if [[ ${#resourceGroupName} -gt 0 ]]; then
   fi
 fi
 
-# TODO - 3 - validate the redirectUri is properly formed before reaching this far
+# TODO - 2 - validate the redirectUri is properly formed before reaching this far
 # e.g. "https://${var.frontdoor_host_name}/.auth/login/aad/callback"
 prosewareClientId=''
 
@@ -196,4 +195,6 @@ if [[ $debug ]]; then
     echo "..."
 fi
 
-# TODO - 2 - persist the values from above to Key Vault if the Key Vault name was provided
+az keyvault secret set --name 'AzureAd--ClientId' --vault-name $keyVaultName --value $prosewareClientId
+az keyvault secret set --name 'AzureAd--TenantId' --vault-name $keyVaultName --value $tenantId
+az keyvault secret set --name 'AzureAd--ClientSecret' --vault-name $keyVaultName --value $prosewareClientSecret
