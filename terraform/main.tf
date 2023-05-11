@@ -452,3 +452,127 @@ module "application2" {
 
   frontdoor_host_name = module.frontdoor.host_name
 }
+
+# For demo purposes, allow current user access to the key vault
+resource azurerm_role_assignment kv_contributor_user_role_assignement2 {
+  count                 = length(var.location2) > 0 ? 1 : 0
+  scope                 = module.key-vault2[0].vault_id
+  role_definition_name  = "Key Vault Contributor"
+  principal_id          = data.azurerm_client_config.current.object_id
+}
+resource azurerm_role_assignment kv_administrator_user_role_assignement2 {
+  count                 = length(var.location2) > 0 ? 1 : 0
+  scope                 = module.key-vault2[0].vault_id
+  role_definition_name  = "Key Vault Administrator"
+  principal_id          = data.azurerm_client_config.current.object_id
+}
+
+resource "azurerm_key_vault_secret" "airsonic_database_admin2" {
+  count        = length(var.location2) > 0 ? 1 : 0
+  name         = "airsonic-database-admin"
+  value        = module.postresql_database2[0].database_username
+  key_vault_id = module.key-vault2[0].vault_id
+
+  depends_on = [
+    azurerm_role_assignment.kv_contributor_user_role_assignement2,
+    azurerm_role_assignment.kv_administrator_user_role_assignement2
+  ]
+}
+
+resource "azurerm_key_vault_secret" "airsonic_database_admin_password2" {
+  count        = length(var.location2) > 0 ? 1 : 0
+  name         = "airsonic-database-admin-password"
+  value        = var.database_administrator_password
+  key_vault_id = module.key-vault2[0].vault_id
+
+  depends_on = [
+    azurerm_role_assignment.kv_contributor_user_role_assignement2,
+    azurerm_role_assignment.kv_administrator_user_role_assignement2
+  ]
+}
+
+resource "azurerm_key_vault_secret" "airsonic_application_client_secret2" {
+  count        = length(var.location2) > 0 ? 1 : 0
+  name         = "airsonic-application-client-secret"
+  value        = module.application2[0].application_client_secret
+  key_vault_id = module.key-vault2[0].vault_id
+
+  depends_on = [
+    azurerm_role_assignment.kv_contributor_user_role_assignement2,
+    azurerm_role_assignment.kv_administrator_user_role_assignement2
+  ]
+}
+
+resource "azurerm_key_vault_secret" "airsonic_cache_secret2" {
+  count        = length(var.location2) > 0 ? 1 : 0
+  name         = "airsonic-redis-password"
+  value        = module.cache2[0].cache_secret
+  key_vault_id = module.key-vault2[0].vault_id
+
+  depends_on = [
+    azurerm_role_assignment.kv_contributor_user_role_assignement2,
+    azurerm_role_assignment.kv_administrator_user_role_assignement2
+  ]
+}
+
+# Give the app access to the key vault secrets - https://learn.microsoft.com/azure/key-vault/general/rbac-guide?tabs=azure-cli#secret-scope-role-assignment
+resource azurerm_role_assignment app_database_admin_rbac_assignment2 {
+  count                 = length(var.location2) > 0 ? 1 : 0
+  scope                 = "${module.key-vault2[0].vault_id}/secrets/${azurerm_key_vault_secret.airsonic_database_admin.name}"
+  role_definition_name  = "Key Vault Secrets User"
+  principal_id          = module.application2[0].application_principal_id
+
+   depends_on = [
+    azurerm_role_assignment.kv_contributor_user_role_assignement2,
+    azurerm_role_assignment.kv_administrator_user_role_assignement2
+  ]
+}
+
+resource azurerm_role_assignment app_database_admin_password_rbac_assignment2 {
+  count                 = length(var.location2) > 0 ? 1 : 0
+  scope                 = "${module.key-vault2[0].vault_id}/secrets/${azurerm_key_vault_secret.airsonic_database_admin_password.name}"
+  role_definition_name  = "Key Vault Secrets User"
+  principal_id          = module.application2[0].application_principal_id
+
+   depends_on = [
+    azurerm_role_assignment.kv_contributor_user_role_assignement2,
+    azurerm_role_assignment.kv_administrator_user_role_assignement2
+  ]
+}
+
+resource azurerm_role_assignment app_client_secret_rbac_assignment2 {
+  count                 = length(var.location2) > 0 ? 1 : 0
+  scope                 = "${module.key-vault2[0].vault_id}/secrets/${azurerm_key_vault_secret.airsonic_application_client_secret.name}"
+  role_definition_name  = "Key Vault Secrets User"
+  principal_id          = module.application2[0].application_principal_id
+
+   depends_on = [
+    azurerm_role_assignment.kv_contributor_user_role_assignement2,
+    azurerm_role_assignment.kv_administrator_user_role_assignement2
+  ]
+}
+
+resource azurerm_role_assignment app_redis_password_rbac_assignment2 {
+  count                 = length(var.location2) > 0 ? 1 : 0
+  scope                 = "${module.key-vault2[0].vault_id}/secrets/${azurerm_key_vault_secret.airsonic_cache_secret.name}"
+  role_definition_name  = "Key Vault Secrets User"
+  principal_id          = module.application2[0].application_principal_id
+
+   depends_on = [
+    azurerm_role_assignment.kv_contributor_user_role_assignement2,
+    azurerm_role_assignment.kv_administrator_user_role_assignement2
+  ]
+}
+
+# The application needs Key Vault Reader role in order to read the key vault meta data
+resource azurerm_role_assignment app_key_vault_reader_rbac_assignment2 {
+  count                 = length(var.location2) > 0 ? 1 : 0
+  scope                 = module.key-vault2[0].vault_id
+  role_definition_name  = "Key Vault Reader"
+  principal_id          = module.application2[0].application_principal_id
+
+  depends_on = [
+    azurerm_role_assignment.kv_contributor_user_role_assignement2,
+    azurerm_role_assignment.kv_administrator_user_role_assignement2
+  ]
+}

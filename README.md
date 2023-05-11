@@ -98,10 +98,34 @@ The following table describes the differences in the resources deployed in the 2
 
 **3. Start the Deployment**
 
+Provision the infrastructure using the commands below.
+
 ```shell
 az login --scope https://graph.microsoft.com//.default
 az account set --subscription <SUBSCRIPTION_ID>
-azd up
+azd provision
+```
+
+Deploy the web application to the primay region using the commands
+below.
+
+In the first command below substitute the FILL_IN_RESOURCE_GROUP_NAME
+with the resource group name of the primary region.
+
+```shell
+azd env set AZURE_RESOURCE_GROUP FILL_IN_RESOURCE_GROUP_NAME
+azd deploy
+```
+
+If you specified a secondary region then deploy the web application to
+it using the commands below.
+
+In the command below substitute the FILL_IN_SECONDARY_RESOURCE_GROUP_NAME
+with the resource group name of the secondary region
+
+```shell
+azd env set AZURE_RESOURCE_GROUP FILL_IN_SECONDARY_RESOURCE_GROUP_NAME
+azd deploy
 ```
 
 ### (Optional) Add Users to Azure Active Directory enterprise applications
