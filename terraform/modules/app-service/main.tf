@@ -11,7 +11,18 @@ terraform {
   }
 }
 
-data "azuread_client_config" "current" {}
+# temporary local vars need to be passed through as params
+# Todo
+# 1) create role assignment to give user access to Creator role (if not service principal)
+# 2) set key vault reference for App Svc Configuration - 
+# 3) update the guidance - or use AZD hook to automate as a "preprovision"
+locals {
+  proseware_client_id = "8bdc4585-8301-4ac3-9541-8a059444a65f"
+  proseware_object_id = "d2ff0e67-55d5-4f73-b438-47f10658eda6"
+  proseware_tenant_id = "72f988bf-86f1-41af-91ab-2d7cd011db47"
+}
+
+# data "azuread_client_config" "current" {}
 
 resource "azurerm_storage_share" "sashare_trainings" {
   name                 = "trainings"
@@ -56,71 +67,65 @@ resource "random_uuid" "admin_role_id" {}
 resource "random_uuid" "user_role_id" {}
 resource "random_uuid" "creator_role_id" {}
 
-resource "azuread_application" "app_registration" {
-  display_name     = "${azurecaf_name.app_service.result}-app"
-  owners           = [data.azuread_client_config.current.object_id]
-  sign_in_audience = "AzureADMyOrg"  # single tenant
+# resource "azuread_application" "app_registration" {
+#   display_name     = "${azurecaf_name.app_service.result}-app"
+#   owners           = [data.azuread_client_config.current.object_id]
+#   sign_in_audience = "AzureADMyOrg"  # single tenant
 
-  app_role {
-    allowed_member_types = ["User"]
-    description          = "ReadOnly roles have limited query access"
-    display_name         = "ReadOnly"
-    enabled              = true
-    id                   = random_uuid.user_role_id.result
-    value                = "User"
-  }
+#   app_role {
+#     allowed_member_types = ["User"]
+#     description          = "ReadOnly roles have limited query access"
+#     display_name         = "ReadOnly"
+#     enabled              = true
+#     id                   = random_uuid.user_role_id.result
+#     value                = "User"
+#   }
 
-  app_role {
-    allowed_member_types = ["User"]
-    description          = "Creator roles allows users to create content"
-    display_name         = "Creator"
-    enabled              = true
-    id                   = random_uuid.creator_role_id.result
-    value                = "Creator"
-  }
+#   app_role {
+#     allowed_member_types = ["User"]
+#     description          = "Creator roles allows users to create content"
+#     display_name         = "Creator"
+#     enabled              = true
+#     id                   = random_uuid.creator_role_id.result
+#     value                = "Creator"
+#   }
 
-  required_resource_access {
-    resource_app_id = "00000003-0000-0000-c000-000000000000" # Microsoft Graph
+#   required_resource_access {
+#     resource_app_id = "00000003-0000-0000-c000-000000000000" # Microsoft Graph
 
-    resource_access {
-      id   = "e1fe6dd8-ba31-4d61-89e7-88639da4683d" # User.Read https://marketplace.visualstudio.com/items?itemName=stephane-eyskens.aadv1appprovisioning
-      type = "Scope"
-    }
-  }
+#     resource_access {
+#       id   = "e1fe6dd8-ba31-4d61-89e7-88639da4683d" # User.Read https://marketplace.visualstudio.com/items?itemName=stephane-eyskens.aadv1appprovisioning
+#       type = "Scope"
+#     }
+#   }
 
-  web {
-    homepage_url  = "https://${azurecaf_name.app_service.result}.azurewebsites.net"
-    logout_url    = "https://${azurecaf_name.app_service.result}.azurewebsites.net/logout"
-    redirect_uris = ["https://${azurecaf_name.app_service.result}.azurewebsites.net/login/oauth2/code/", "https://${azurecaf_name.app_service.result}.azurewebsites.net/.auth/login/aad/callback", "https://${var.frontdoor_host_name}/.auth/login/aad/callback"]
-    implicit_grant {
-      id_token_issuance_enabled     = true
-    }
-  }
-}
+#   web {
+#     homepage_url  = "https://${azurecaf_name.app_service.result}.azurewebsites.net"
+#     logout_url    = "https://${azurecaf_name.app_service.result}.azurewebsites.net/logout"
+#     redirect_uris = ["https://${azurecaf_name.app_service.result}.azurewebsites.net/login/oauth2/code/", "https://${azurecaf_name.app_service.result}.azurewebsites.net/.auth/login/aad/callback", "https://${var.frontdoor_host_name}/.auth/login/aad/callback"]
+#     implicit_grant {
+#       id_token_issuance_enabled     = true
+#     }
+#   }
+# }
 
 resource "azuread_service_principal" "application_service_principal" {
-  application_id               = azuread_application.app_registration.application_id
+  application_id               = local.proseware_client_id
   app_role_assignment_required = false
-  owners                       = [data.azuread_client_config.current.object_id]
+  owners                       = [local.proseware_object_id]
 }
 
-resource "azuread_application_password" "application_password" {
-  application_object_id = azuread_application.app_registration.object_id
-}
+# resource "azuread_application_password" "application_password" {
+#   application_object_id = azuread_application.app_registration.object_id
+# }
 
 # This is not guidance and is done for demo purposes. The resource below will add the 
 # "Creator" app role assignment for the application of the current user deploying this sample.
 resource "azuread_app_role_assignment" "application_role_current_user" {
   app_role_id         = azuread_service_principal.application_service_principal.app_role_ids["Creator"]
-  principal_object_id = data.azuread_client_config.current.object_id
+  principal_object_id = local.proseware_object_id
   resource_object_id  = azuread_service_principal.application_service_principal.object_id
 }
-
-//not used
-# Retrieve domain information
-//data "azuread_domains" "domain" {
-//  only_initial = true
-//}
 
 # This creates the linux web app
 resource "azurerm_linux_web_app" "application" {
@@ -211,10 +216,9 @@ resource "azurerm_linux_web_app" "application" {
     require_authentication        = true    
     forward_proxy_convention = "Standard"
     default_provider = "AzureActiveDirectory"
-    
 
     active_directory_v2 {
-      client_id                   = azuread_application.app_registration.application_id
+      client_id                   = local.proseware_client_id
       tenant_auth_endpoint        = "https://login.microsoftonline.com/${data.azuread_client_config.current.tenant_id}/v2.0/"
       client_secret_setting_name  = "MICROSOFT_PROVIDER_AUTHENTICATION_SECRET"
       allowed_applications = [var.frontdoor_host_name]
