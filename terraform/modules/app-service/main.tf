@@ -125,11 +125,12 @@ resource "azuread_app_role_assignment" "application_role_current_user" {
 
 # This creates the linux web app
 resource "azurerm_linux_web_app" "application" {
-  name                = azurecaf_name.app_service.result
-  location            = var.location
-  resource_group_name = var.resource_group
-  service_plan_id     = azurerm_service_plan.application.id
-  https_only          = true
+  name                    = azurecaf_name.app_service.result
+  location                = var.location
+  resource_group_name     = var.resource_group
+  service_plan_id         = azurerm_service_plan.application.id
+  client_affinity_enabled = true
+  https_only              = true
 
   virtual_network_subnet_id = var.subnet_id
 
