@@ -135,7 +135,7 @@ resource "azurerm_key_vault_secret" "airsonic_database_admin_password" {
 
 resource "azurerm_key_vault_secret" "airsonic_application_client_secret" {
   name         = "airsonic-application-client-secret"
-  value        = module.application.application_client_secret
+  value        = "foo" # Todo - determine if this secret is used/needed
   key_vault_id = module.key-vault.vault_id
 
   depends_on = [
