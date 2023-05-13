@@ -20,30 +20,18 @@ on:
         options:
         - dev
         - prod
-      subscription:
-        description: 'Azure subscription ID'
-        required: true
-        type: string
-      appname:
-        description: 'Application Name'
-        required: true
-        type: string
-      dbpassword:
-        description: 'Database pwd'
-        required: true
-        type: string
         
 permissions:
   contents: read
   
 env:
-  APP_NAME: ${{ inputs.appname }}
+  APP_NAME: ${{ secrets.AZURE_APP_NAME }}
   PROJECT_ROOT: ${PWD}
   APP_ENVIRONMENT: ${{ inputs.environment }}
-  DATABASE_PASSWORD: ${{ inputs.dbpassword }}
+  DATABASE_PASSWORD: ${{ secrets.POSTGRES_DATABASE_PASSWORD }}
   APP_SERVICE_DEPLOY_SLOT: production
   ENABLE_TELEMETRY: true
-  SUBSCRIPTION: ${{ inputs.subscription }}
+  SUBSCRIPTION: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   APP_DEPLOY_NAME: app-${{ inputs.appname }}-${{ inputs.environment }}
   TRAININGS_DIR: $PROJECT_ROOT/videos
 
