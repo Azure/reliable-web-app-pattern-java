@@ -19,7 +19,6 @@ on:
     - cron: '0 13 * * *'
 
 permissions:
-  id-token: write
   contents: read
 
   
