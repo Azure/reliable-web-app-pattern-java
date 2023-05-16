@@ -148,11 +148,6 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/azure-dev-cli-apps:latest
-    env:
-        AZURE_ENV_NAME: ${{ secrets.AZURE_ENV_NAME }}daily2
-        AZURE_LOCATION: ${{ secrets.AZURE_LOCATION2 }}
-        AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        IS_RUN_AS_SERVICEPRINCIPAL: true
 
     steps:
 
