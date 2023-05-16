@@ -20,6 +20,13 @@ on:
         options:
         - dev
         - prod
+      run_tear_down:
+        description: 'When true, resources will be deleted after a run'
+        required: false
+        default: true
+        type: boolean
+  schedule:
+    - cron: '0 12 * * *'
         
 permissions:
   contents: read
@@ -47,6 +54,16 @@ jobs:
         shell: bash
 
     steps:
+
+    - name: Set default environment value
+      id: set-default-value
+      run: |
+        echo "::set-output name=value::${{ github.event.inputs.environment || 'dev' }}"
+
+    - name: Set default run_tear_down value
+      id: set-default-value
+      run: |
+        echo "::set-output name=value::${{ github.event.inputs.run_tear_down || 'true' }}"
     
         
     # Checkout the repository to the GitHub Actions runner
@@ -124,4 +141,28 @@ jobs:
         slot-name: APP_SERVICE_DEPLOY_SLOT
         package: 'airsonic.war'
         
-   
+
+  teardown:
+    if: ${{ inputs.run_tear_down }}
+    needs: [terraform]
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/azure-dev-cli-apps:latest
+    env:
+        AZURE_ENV_NAME: ${{ secrets.AZURE_ENV_NAME }}daily2
+        AZURE_LOCATION: ${{ secrets.AZURE_LOCATION2 }}
+        AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        IS_RUN_AS_SERVICEPRINCIPAL: true
+
+    steps:
+
+      # Install the az cli with login using service principal created on az subscription
+      - name: 'azure cli'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: 'delete-resources'
+        run: |
+          chmod +x ./scripts/devOpsScripts/delete-resources.sh
+          ./scripts/devOpsScripts/delete-resources.sh -g rg-${{ secrets.AZURE_APP_NAME }}-${{ inputs.environment }}
