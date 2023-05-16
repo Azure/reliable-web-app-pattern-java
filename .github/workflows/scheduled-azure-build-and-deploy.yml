@@ -55,12 +55,10 @@ jobs:
     steps:
 
     - name: Set default environment value
-      id: set-default-value
       run: |
         echo "::set-output name=value::${{ github.event.inputs.environment || 'dev' }}"
 
     - name: Set default run_tear_down value
-      id: set-default-value
       run: |
         echo "::set-output name=value::${{ github.event.inputs.run_tear_down || 'true' }}"
     

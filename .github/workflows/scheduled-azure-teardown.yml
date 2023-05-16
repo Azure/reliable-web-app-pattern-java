@@ -29,7 +29,6 @@ jobs:
     steps:
 
       - name: Set default environment value
-        id: set-default-value
         run: |
           echo "::set-output name=value::${{ github.event.inputs.environment || 'dev' }}"
 
