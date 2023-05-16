@@ -100,12 +100,8 @@ module "key-vault" {
 }
 
 # For demo purposes, allow current user access to the key vault
-resource azurerm_role_assignment kv_contributor_user_role_assignement {
-  scope                 = module.key-vault.vault_id
-  role_definition_name  = "Key Vault Contributor"
-  principal_id          = data.azurerm_client_config.current.object_id
-}
 resource azurerm_role_assignment kv_administrator_user_role_assignement {
+  count                 = vars.principal_type == "user" ? 1 : 0 # when running in pipeline the spn doesn't need access to this kv
   scope                 = module.key-vault.vault_id
   role_definition_name  = "Key Vault Administrator"
   principal_id          = data.azurerm_client_config.current.object_id
