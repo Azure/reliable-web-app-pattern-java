@@ -111,89 +111,31 @@ resource "azurerm_key_vault_secret" "airsonic_database_admin" {
   name         = "airsonic-database-admin"
   value        = module.postresql_database.database_username
   key_vault_id = module.key-vault.vault_id
-
-  depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement,
-    azurerm_role_assignment.kv_administrator_user_role_assignement
-  ]
 }
 
 resource "azurerm_key_vault_secret" "airsonic_database_admin_password" {
   name         = "airsonic-database-admin-password"
   value        = var.database_administrator_password
   key_vault_id = module.key-vault.vault_id
-
-  depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement,
-    azurerm_role_assignment.kv_administrator_user_role_assignement
-  ]
 }
 
 resource "azurerm_key_vault_secret" "airsonic_application_client_secret" {
   name         = "airsonic-application-client-secret"
   value        = "foo" # Todo - determine if this secret is used/needed
   key_vault_id = module.key-vault.vault_id
-
-  depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement,
-    azurerm_role_assignment.kv_administrator_user_role_assignement
-  ]
 }
 
 resource "azurerm_key_vault_secret" "airsonic_cache_secret" {
   name         = "airsonic-redis-password"
   value        = module.cache.cache_secret
   key_vault_id = module.key-vault.vault_id
-
-  depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement,
-    azurerm_role_assignment.kv_administrator_user_role_assignement
-  ]
 }
 
 # Give the app access to the key vault secrets - https://learn.microsoft.com/azure/key-vault/general/rbac-guide?tabs=azure-cli#secret-scope-role-assignment
 resource azurerm_role_assignment app_database_admin_rbac_assignment {
-  scope                 = "${module.key-vault.vault_id}/secrets/${azurerm_key_vault_secret.airsonic_database_admin.name}"
+  scope                 = module.key-vault.vault_id
   role_definition_name  = "Key Vault Secrets User"
   principal_id          = module.application.application_principal_id
-
-   depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement,
-    azurerm_role_assignment.kv_administrator_user_role_assignement
-  ]
-}
-
-resource azurerm_role_assignment app_database_admin_password_rbac_assignment {
-  scope                 = "${module.key-vault.vault_id}/secrets/${azurerm_key_vault_secret.airsonic_database_admin_password.name}"
-  role_definition_name  = "Key Vault Secrets User"
-  principal_id          = module.application.application_principal_id
-
-   depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement,
-    azurerm_role_assignment.kv_administrator_user_role_assignement
-  ]
-}
-
-resource azurerm_role_assignment app_client_secret_rbac_assignment {
-  scope                 = "${module.key-vault.vault_id}/secrets/${azurerm_key_vault_secret.airsonic_application_client_secret.name}"
-  role_definition_name  = "Key Vault Secrets User"
-  principal_id          = module.application.application_principal_id
-
-   depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement,
-    azurerm_role_assignment.kv_administrator_user_role_assignement
-  ]
-}
-
-resource azurerm_role_assignment app_redis_password_rbac_assignment {
-  scope                 = "${module.key-vault.vault_id}/secrets/${azurerm_key_vault_secret.airsonic_cache_secret.name}"
-  role_definition_name  = "Key Vault Secrets User"
-  principal_id          = module.application.application_principal_id
-
-   depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement,
-    azurerm_role_assignment.kv_administrator_user_role_assignement
-  ]
 }
 
 # The application needs Key Vault Reader role in order to read the key vault meta data
@@ -203,7 +145,6 @@ resource azurerm_role_assignment app_key_vault_reader_rbac_assignment {
   principal_id          = module.application.application_principal_id
 
   depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement,
     azurerm_role_assignment.kv_administrator_user_role_assignement
   ]
 }
