@@ -5,7 +5,6 @@
 #
 # Documentation for `hashicorp/setup-terraform` is located here: https://github.com/hashicorp/setup-terraform
 #
-#
 
 name: 'RWA: Scheduled Build & Deploy'
 
@@ -140,14 +139,11 @@ jobs:
         app-name: ${{ env.APP_DEPLOY_NAME }}
         slot-name: APP_SERVICE_DEPLOY_SLOT
         package: 'airsonic.war'
-        
 
   teardown:
     if: ${{ inputs.run_tear_down }}
     needs: [terraform]
     runs-on: ubuntu-latest
-    container:
-      image: mcr.microsoft.com/azure-dev-cli-apps:latest
 
     steps:
 
