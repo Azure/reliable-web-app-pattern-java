@@ -7,7 +7,7 @@
 #
 #
 
-name: 'build & deploy'
+name: 'RWA: Scheduled Build & Deploy'
 
 on:
   workflow_dispatch:

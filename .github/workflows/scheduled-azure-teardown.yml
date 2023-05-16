@@ -1,0 +1,35 @@
+# This file is part of our engineering process to build and maintain this file.
+# See the README markdown file for further details
+
+name: "RWA: Scheduled Teardown"
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 13 * * *'
+
+permissions:
+  id-token: write
+  contents: read
+
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/azure-dev-cli-apps:latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+            client-id: ${{ secrets.AZURE_CLIENT_ID }}
+            tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+            subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: 'delete-resources'
+        run: |
+          chmod +x ./scripts/devOpsScripts/delete-resources.sh
+          ./scripts/devOpsScripts/delete-resources.sh -g ${{ secrets.AZURE_RESOURCE_GROUP }}
