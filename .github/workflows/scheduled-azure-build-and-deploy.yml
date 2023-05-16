@@ -33,12 +33,12 @@ permissions:
 env:
   APP_NAME: ${{ secrets.AZURE_APP_NAME }}
   PROJECT_ROOT: ${PWD}
-  APP_ENVIRONMENT: ${{ inputs.environment }}
+  APP_ENVIRONMENT: ${{ inputs.environment || 'dev' }}
   DATABASE_PASSWORD: ${{ secrets.POSTGRES_DATABASE_PASSWORD }}
   APP_SERVICE_DEPLOY_SLOT: production
   ENABLE_TELEMETRY: true
   SUBSCRIPTION: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-  APP_DEPLOY_NAME: app-${{ inputs.appname }}-${{ inputs.environment }}
+  APP_DEPLOY_NAME: app-${{ secrets.AZURE_APP_NAME }}-${{ inputs.environment || 'dev'}}
   TRAININGS_DIR: $PROJECT_ROOT/videos
 
 jobs:
@@ -53,10 +53,6 @@ jobs:
         shell: bash
 
     steps:
-
-    - name: Set default environment value
-      run: |
-        echo "::set-output name=value::${{ github.event.inputs.environment || 'dev' }}"
 
     - name: Set default run_tear_down value
       run: |
