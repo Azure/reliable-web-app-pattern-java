@@ -29,11 +29,14 @@ if [[ $(az group exists --name "$resourceGroupName") == false ]]; then
   exit 1
 fi
 
+# get location of resource group
+location=$(az group show --name "$resourceGroupName" --query location -o tsv)
+
 # find key vault from resource group (assumes one vault per resource group)
 keyVaultName=$(az keyvault list --resource-group "$resourceGroupName" --query '[0].name' -o tsv)
 
 # Delete the resource group
-az group delete --name "$resourceGroupName" --yes --no-wait
+az group delete --name "$resourceGroupName" --yes
 
 # Purge the deleted key vault
-az keyvault purge --name "$keyVaultName" --location "your-key-vault-location"
+az keyvault purge --name "$keyVaultName" --location $location
