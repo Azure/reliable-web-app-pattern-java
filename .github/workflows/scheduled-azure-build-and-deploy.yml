@@ -34,7 +34,7 @@ env:
   APP_NAME: ${AZURE_APP_NAME}
   PROJECT_ROOT: ${PWD}
   APP_ENVIRONMENT: ${{ inputs.environment || 'dev' }}
-  DATABASE_PASSWORD: ${vars.POSTGRES_DATABASE_PASSWORD2}
+  DATABASE_PASSWORD: ${{ vars.POSTGRES_DATABASE_PASSWORD2 }}
   APP_SERVICE_DEPLOY_SLOT: production
   ENABLE_TELEMETRY: true
   SUBSCRIPTION: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
@@ -71,68 +71,68 @@ jobs:
         echo $APP_DEPLOY_NAME
         echo $DATABASE_PASSWORD
 
-    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
-      with:
-        terraform_version: 1.4.4
+    # # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+    # - name: Setup Terraform
+    #   uses: hashicorp/setup-terraform@v1
+    #   with:
+    #     terraform_version: 1.4.4
      
-     # Install the az cli with login using service principal created on az subscription
-    - name: 'azure cli'
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    #  # Install the az cli with login using service principal created on az subscription
+    # - name: 'azure cli'
+    #   uses: azure/login@v1
+    #   with:
+    #     creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
-    - name: Terraform Init
-      run: terraform -chdir=./terraform init
+    # # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    # - name: Terraform Init
+    #   run: terraform -chdir=./terraform init
 
-    # Checks that all Terraform configuration files adhere to a canonical format
-    #- name: Terraform Format
-    #  run: terraform -chdir=./terraform fmt -check
+    # # Checks that all Terraform configuration files adhere to a canonical format
+    # #- name: Terraform Format
+    # #  run: terraform -chdir=./terraform fmt -check
 
-    # Generates an execution plan for Terraform
-    - name: Terraform Plan
-      run: terraform -chdir=./terraform plan -var application_name=${APP_NAME} -var environment=${APP_ENVIRONMENT} -var enable_telemetry=${ENABLE_TELEMETRY} -var database_administrator_password=${DATABASE_PASSWORD} -out airsonic.tfplan
+    # # Generates an execution plan for Terraform
+    # - name: Terraform Plan
+    #   run: terraform -chdir=./terraform plan -var application_name=${APP_NAME} -var environment=${APP_ENVIRONMENT} -var enable_telemetry=${ENABLE_TELEMETRY} -var database_administrator_password=${DATABASE_PASSWORD} -out airsonic.tfplan
        
       
-    - name: Terraform Apply
-      run: terraform -chdir=./terraform apply airsonic.tfplan
+    # - name: Terraform Apply
+    #   run: terraform -chdir=./terraform apply airsonic.tfplan
       
-    - name: Download videos
-      run: ${PWD}/scripts/download-trainings.sh
+    # - name: Download videos
+    #   run: ${PWD}/scripts/download-trainings.sh
       
       
-    - name: Set up Java version
-      uses: actions/setup-java@v1
-      with:
-        java-version: '11'
+    # - name: Set up Java version
+    #   uses: actions/setup-java@v1
+    #   with:
+    #     java-version: '11'
 
-    - name: Build with Maven
-      run: |
-        echo ${{ github.workspace }}
-        echo $GITHUB_WORKSPACE
-        cd src/airsonic-advanced
-        mvn -Dmaven.test.skip=true -DskipTests package
+    # - name: Build with Maven
+    #   run: |
+    #     echo ${{ github.workspace }}
+    #     echo $GITHUB_WORKSPACE
+    #     cd src/airsonic-advanced
+    #     mvn -Dmaven.test.skip=true -DskipTests package
         
-    - name: Upload artifact for deployment job
-      uses: actions/upload-artifact@v2
-      with:
-        name: java-rwa
-        path: '${{ github.workspace }}/src/airsonic-advanced/airsonic-main/target/*.war'
+    # - name: Upload artifact for deployment job
+    #   uses: actions/upload-artifact@v2
+    #   with:
+    #     name: java-rwa
+    #     path: '${{ github.workspace }}/src/airsonic-advanced/airsonic-main/target/*.war'
         
-    - name: Download artifact from build job
-      uses: actions/download-artifact@v2
-      with:
-        name: java-rwa
+    # - name: Download artifact from build job
+    #   uses: actions/download-artifact@v2
+    #   with:
+    #     name: java-rwa
         
-    - name: Deploy to Azure Web App
-      id: deploy-to-webapp
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: ${{ env.APP_DEPLOY_NAME }}
-        slot-name: APP_SERVICE_DEPLOY_SLOT
-        package: 'airsonic.war'
+    # - name: Deploy to Azure Web App
+    #   id: deploy-to-webapp
+    #   uses: azure/webapps-deploy@v2
+    #   with:
+    #     app-name: ${{ env.APP_DEPLOY_NAME }}
+    #     slot-name: APP_SERVICE_DEPLOY_SLOT
+    #     package: 'airsonic.war'
 
   teardown:
     if: ${{ inputs.run_tear_down || github.event_name == 'schedule' }}
