@@ -206,6 +206,9 @@ public class GlobalSecurityConfig {
                     .anyRequest().authenticated()
                     .and()
                     .addFilterBefore(aadAddAuthorizedUsersFilter, UsernamePasswordAuthenticationFilter.class)
+                    .oauth2Login()
+                    .defaultSuccessUrl("/index", true)
+                    .and()
                     .logout(logout -> logout
                             .deleteCookies("JSESSIONID", "XSRF-TOKEN")
                             .clearAuthentication(true)

@@ -97,7 +97,8 @@ The following table describes the differences in the resources deployed in the 2
 **3. Start the Deployment**
 
 ```shell
-az login
+az login --scope https://graph.microsoft.com//.default
+az account set --subscription <SUBSCRIPTION_ID>
 azd up
 ```
 
