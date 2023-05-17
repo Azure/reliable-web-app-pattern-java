@@ -7,6 +7,11 @@ terraform {
   }
 }
 
+locals {
+  multi_region = var.host_name2 == "" ? 0 : 1
+}
+
+
 resource "azurecaf_name" "cdn_frontdoor_profile_name" {
   name          = var.application_name
   resource_type = "azurerm_frontdoor"
@@ -69,7 +74,6 @@ resource "azurerm_cdn_frontdoor_origin" "app_service_origin" {
   host_name                      = var.host_name
   http_port                      = 80
   https_port                     = 443
-  origin_host_header             = var.host_name
   priority                       = 1
   weight                         = 1000
   certificate_name_check_enabled = false
@@ -130,4 +134,27 @@ resource "azurerm_cdn_frontdoor_security_policy" "web_app_waf" {
       }
     }
   }
+}
+
+# ----------------------------------------------------------------------------------------------
+#  Everything below this comment is for provisioning the 2nd region (if AZURE_LOCATION2 was set)
+# ----------------------------------------------------------------------------------------------
+
+resource "azurecaf_name" "front_door_origin_name2" {
+  name          = "${var.application_name}s"
+  resource_type = "azurerm_frontdoor"
+  suffixes      = ["origin", "group", var.environment]
+}
+
+resource "azurerm_cdn_frontdoor_origin" "app_service_origin2" {
+  name                          = azurecaf_name.front_door_origin_name2.result
+  cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.origin_group.id
+
+  enabled                        = length(var.host_name2) > 0 ? true : false
+  host_name                      = length(var.host_name2) > 0 ? var.host_name2 : var.host_name
+  http_port                      = 80
+  https_port                     = 443
+  priority                       = 2
+  weight                         = 1000
+  certificate_name_check_enabled = false
 }

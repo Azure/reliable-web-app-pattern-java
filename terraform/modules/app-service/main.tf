@@ -33,9 +33,10 @@ resource "azurecaf_name" "app_service_plan" {
 
 # This creates the plan that the service use
 resource "azurerm_service_plan" "application" {
-  name                = azurecaf_name.app_service_plan.result
-  resource_group_name = var.resource_group
-  location            = var.location
+  name                         = azurecaf_name.app_service_plan.result
+  resource_group_name          = var.resource_group
+  location                     = var.location
+  worker_count                 = var.worker_count
 
   sku_name = var.environment == "prod" ? "P2v3" : "P1v3"
   os_type  = "Linux"
@@ -124,11 +125,12 @@ resource "azuread_app_role_assignment" "application_role_current_user" {
 
 # This creates the linux web app
 resource "azurerm_linux_web_app" "application" {
-  name                = azurecaf_name.app_service.result
-  location            = var.location
-  resource_group_name = var.resource_group
-  service_plan_id     = azurerm_service_plan.application.id
-  https_only          = true
+  name                    = azurecaf_name.app_service.result
+  location                = var.location
+  resource_group_name     = var.resource_group
+  service_plan_id         = azurerm_service_plan.application.id
+  client_affinity_enabled = true
+  https_only              = true
 
   virtual_network_subnet_id = var.subnet_id
 
@@ -258,53 +260,53 @@ resource "azurerm_monitor_diagnostic_setting" "app_service_diagnostic" {
 }
 
 # Configure scaling
-resource "azurerm_monitor_autoscale_setting" "airsonicscaling" {
-  name                = "airsonicscaling"
-  resource_group_name = var.resource_group
-  location            = var.location
-  target_resource_id  = azurerm_service_plan.application.id
-  profile {
-    name = "default"
-    capacity {
-      default = 2
-      minimum = 2
-      maximum = 10
-    }
-    rule {
-      metric_trigger {
-        metric_name         = "CpuPercentage"
-        metric_resource_id  = azurerm_service_plan.application.id
-        time_grain          = "PT1M"
-        statistic           = "Average"
-        time_window         = "PT5M"
-        time_aggregation    = "Average"
-        operator            = "GreaterThan"
-        threshold           = 85
-      }
-      scale_action {
-        direction = "Increase"
-        type      = "ChangeCount"
-        value     = "1"
-        cooldown  = "PT1M"
-      }
-    }
-    rule {
-      metric_trigger {
-        metric_name         = "CpuPercentage"
-        metric_resource_id  = azurerm_service_plan.application.id
-        time_grain          = "PT1M"
-        statistic           = "Average"
-        time_window         = "PT5M"
-        time_aggregation    = "Average"
-        operator            = "LessThan"
-        threshold           = 65
-      }
-      scale_action {
-        direction = "Decrease"
-        type      = "ChangeCount"
-        value     = "1"
-        cooldown  = "PT1M"
-      }
-    }
-  }
-}
+#resource "azurerm_monitor_autoscale_setting" "airsonicscaling" {
+#  name                = "airsonicscaling"
+#  resource_group_name = var.resource_group
+#  location            = var.location
+#  target_resource_id  = azurerm_service_plan.application.id
+#  profile {
+#    name = "default"
+#    capacity {
+#      default = 2
+#      minimum = 2
+#      maximum = 10
+#    }
+#    rule {
+#      metric_trigger {
+#        metric_name         = "CpuPercentage"
+#        metric_resource_id  = azurerm_service_plan.application.id
+#        time_grain          = "PT1M"
+#        statistic           = "Average"
+#        time_window         = "PT5M"
+#        time_aggregation    = "Average"
+#        operator            = "GreaterThan"
+#        threshold           = 85
+#      }
+#      scale_action {
+#        direction = "Increase"
+#        type      = "ChangeCount"
+#        value     = "1"
+#        cooldown  = "PT1M"
+#      }
+#    }
+#    rule {
+#      metric_trigger {
+#        metric_name         = "CpuPercentage"
+#        metric_resource_id  = azurerm_service_plan.application.id
+#        time_grain          = "PT1M"
+#        statistic           = "Average"
+#        time_window         = "PT5M"
+#        time_aggregation    = "Average"
+#        operator            = "LessThan"
+#        threshold           = 65
+#      }
+#      scale_action {
+#        direction = "Decrease"
+#        type      = "ChangeCount"
+#        value     = "1"
+#        cooldown  = "PT1M"
+#      }
+#    }
+#  }
+#}

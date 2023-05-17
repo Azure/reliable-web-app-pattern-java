@@ -84,3 +84,7 @@ variable "log_analytics_workspace_id" {
   description = "The id of the log analytics workspace"
 }
 
+variable "worker_count" {
+  type        = number
+  description = "The number of workers"
+}
