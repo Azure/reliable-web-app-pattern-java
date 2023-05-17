@@ -18,8 +18,13 @@ on:
   schedule:
     - cron: '0 13 * * *'
 
+# https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-portal%2Clinux#set-up-azure-login-with-openid-connect-authentication
 permissions:
+  id-token: write
   contents: read
+
+
+concurrency: integration_testing
 
 env:
   APP_NAME: ${{ secrets.AZURE_APP_NAME }}
