@@ -98,7 +98,7 @@ jobs:
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
-      run: terraform -chdir=./terraform plan -var application_name=${APP_NAME} -var environment=${APP_ENVIRONMENT} -var enable_telemetry=${ENABLE_TELEMETRY} -var database_administrator_password=${DATABASE_PASSWORD} -out airsonic.tfplan
+      run: terraform -chdir=./terraform plan -var application_name=$APP_NAME -var environment=$APP_ENVIRONMENT -var enable_telemetry=$ENABLE_TELEMETRY -var database_administrator_password=$DATABASE_PASSWORD -out airsonic.tfplan
        
       
     - name: Terraform Apply
