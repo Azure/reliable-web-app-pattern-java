@@ -31,14 +31,14 @@ permissions:
   contents: read
   
 env:
-  APP_NAME: ${AZURE_APP_NAME}
+  APP_NAME: ${{ vars.AZURE_APP_NAME }}
   PROJECT_ROOT: ${PWD}
   APP_ENVIRONMENT: ${{ inputs.environment || 'dev' }}
-  DATABASE_PASSWORD: ${{ vars.POSTGRES_DATABASE_PASSWORD2 }}
+  DATABASE_PASSWORD: ${{ vars.POSTGRES_DATABASE_PASSWORD }}
   APP_SERVICE_DEPLOY_SLOT: production
   ENABLE_TELEMETRY: true
   SUBSCRIPTION: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-  APP_DEPLOY_NAME: app-${AZURE_APP_NAME}-${{ inputs.environment || 'dev'}}
+  APP_DEPLOY_NAME: app-${{ vars.AZURE_APP_NAME }}-${{ inputs.environment || 'dev'}}
   TRAININGS_DIR: $PROJECT_ROOT/videos
 
 jobs:
