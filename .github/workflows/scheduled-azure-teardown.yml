@@ -20,7 +20,11 @@ on:
 
 permissions:
   contents: read
-  
+
+env:
+  APP_NAME: ${{ secrets.AZURE_APP_NAME }}
+  APP_ENVIRONMENT: ${{ inputs.environment || 'dev' }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -44,4 +48,4 @@ jobs:
       - name: 'delete-resources'
         run: |
           chmod +x ./scripts/devOpsScripts/delete-resources.sh
-          ./scripts/devOpsScripts/delete-resources.sh -g rg-${{ secrets.AZURE_APP_NAME }}-${{ inputs.environment }}
+          ./scripts/devOpsScripts/delete-resources.sh -g rg-${APP_NAME}-${APP_ENVIRONMENT}
