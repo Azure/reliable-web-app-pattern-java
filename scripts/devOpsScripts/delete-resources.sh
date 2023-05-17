@@ -35,6 +35,24 @@ location=$(az group show --name "$resourceGroupName" --query location -o tsv)
 # find key vault from resource group (assumes one vault per resource group)
 keyVaultName=$(az keyvault list --resource-group "$resourceGroupName" --query '[0].name' -o tsv)
 
+# find azure app service name
+appServiceName=$(az webapp list --resource-group "$resourceGroupName" --query '[0].name' -o tsv)
+
+# find postgres flexible server name
+postgresServerName=$(az postgres flexible-server list --resource-group "$resourceGroupName" --query '[0].name' -o tsv)
+
+# find azure monitor diagnostic name
+appServiceDiagnosticName=$(az monitor diagnostic-settings list --resource-group "$resourceGroupName" --resource "$appServiceName" --resource-type Microsoft.Web/Sites --query "[0].name" -o tsv)
+
+# find postgres server diagnostic name
+postgresSqlDiagnosticName=$(az monitor diagnostic-settings list --resource-group "$resourceGroupName" --resource "$postgresServerName" --resource-type Microsoft.DBforPostgreSQL/flexibleServers --query "[0].name" -o tsv)
+
+# delete the app service diagnostic so that it does not persist through resource group deletion and conflict with TF plan
+az monitor diagnostic-settings delete --resource-group "$resourceGroupName" --resource "$appServiceName" --name "$appServiceDiagnosticName"
+
+# delete the PostgresSQL server diagnostic so that it does not persist through resource group deletion and conflict with TF plan
+az monitor diagnostic-settings list --resource-group "$resourceGroupName" --resource "$postgresServerName" --name "$postgresSqlDiagnosticName"
+
 # Delete the resource group
 az group delete --name "$resourceGroupName" --yes
 
