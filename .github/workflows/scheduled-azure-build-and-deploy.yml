@@ -40,6 +40,7 @@ env:
   SUBSCRIPTION: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   APP_DEPLOY_NAME: app-${{ secrets.AZURE_APP_NAME }}-${{ inputs.environment || 'dev'}}
   TRAININGS_DIR: $PROJECT_ROOT/videos
+  RUN_TEAR_DOWN: ${{ inputs.run_tear_down || 'true' }}
 
 jobs:
   terraform:
@@ -135,7 +136,7 @@ jobs:
         package: 'airsonic.war'
 
   teardown:
-    if: ${{ inputs.run_tear_down }}
+    if: ${{ env.RUN_TEAR_DOWN == 'true' }}
     needs: [terraform]
     runs-on: ubuntu-latest
 
