@@ -37,7 +37,7 @@ concurrency: integration_testing
 
 env:
   APP_NAME: ${{ vars.AZURE_APP_NAME }}
-  PROJECT_ROOT: $(pwd)
+  PROJECT_ROOT: ${{ runner.temp }}
   APP_ENVIRONMENT: ${{ inputs.environment || 'dev' }}
   DATABASE_PASSWORD: ${{ vars.POSTGRES_DATABASE_PASSWORD }}
   APP_SERVICE_DEPLOY_SLOT: production
@@ -71,6 +71,7 @@ jobs:
         echo $APP_DEPLOY_NAME
         echo $DATABASE_PASSWORD
         echo $PROJECT_ROOT
+        ll
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
