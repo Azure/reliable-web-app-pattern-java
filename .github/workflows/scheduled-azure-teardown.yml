@@ -27,7 +27,7 @@ permissions:
 concurrency: integration_testing
 
 env:
-  APP_NAME: ${{ secrets.AZURE_APP_NAME }}
+  APP_NAME: ${{ vars.AZURE_APP_NAME }}
   APP_ENVIRONMENT: ${{ inputs.environment || 'dev' }}
 
 jobs:
