@@ -53,7 +53,7 @@ echo "Found $appServiceDiagnosticName diagnostics in $resourceGroupName in $loca
 postgresSqlDiagnosticName=$(az monitor diagnostic-settings list --resource-group "$resourceGroupName" --resource "$postgresServerName" --resource-type Microsoft.DBforPostgreSQL/flexibleServers --query "[0].name" -o tsv)
 echo "Found $postgresSqlDiagnosticName diagnostics in $resourceGroupName in $location"
 
-if [[ ${#appServiceDiagnosticName} -eq 0 ]]; then
+if [[ ${#appServiceDiagnosticName} -gt 0 ]]; then
   echo "Deleting $appServiceDiagnosticName diagnostics in $resourceGroupName in $location"
   # delete the app service diagnostic so that it does not persist through resource group deletion and conflict with TF plan
   az monitor diagnostic-settings delete --resource-group "$resourceGroupName" --resource "$appServiceName" --name "$appServiceDiagnosticName" --resource-type Microsoft.Web/Sites
@@ -61,7 +61,7 @@ else
   echo "Skipping delete for appServiceDiagnosticName diagnostics"
 fi
 
-if [[ ${#postgresSqlDiagnosticName} -eq 0 ]]; then
+if [[ ${#postgresSqlDiagnosticName} -gt 0 ]]; then
   echo "Deleting $postgresSqlDiagnosticName diagnostics in $resourceGroupName in $location"
   # delete the PostgresSQL server diagnostic so that it does not persist through resource group deletion and conflict with TF plan
   az monitor diagnostic-settings delete --resource-group "$resourceGroupName" --resource "$postgresServerName" --name "$postgresSqlDiagnosticName" --resource-type Microsoft.DBforPostgreSQL/flexibleServers
