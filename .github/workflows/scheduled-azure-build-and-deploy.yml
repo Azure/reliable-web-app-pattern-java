@@ -67,14 +67,13 @@ jobs:
       
     - name: print input env variables
       run: |
-        echo $RUNNER_TEMP
         echo $SUBSCRIPTION
         echo $APP_NAME
         echo $APP_ENVIRONMENT
         echo $APP_DEPLOY_NAME
         echo $DATABASE_PASSWORD
         echo $PROJECT_ROOT
-        ll
+        ls
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
