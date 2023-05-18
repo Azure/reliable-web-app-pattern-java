@@ -47,14 +47,18 @@ appServiceDiagnosticName=$(az monitor diagnostic-settings list --resource-group 
 # find postgres server diagnostic name
 postgresSqlDiagnosticName=$(az monitor diagnostic-settings list --resource-group "$resourceGroupName" --resource "$postgresServerName" --resource-type Microsoft.DBforPostgreSQL/flexibleServers --query "[0].name" -o tsv)
 
+echo "Deleting $appServiceDiagnosticName diagnostics in $resourceGroupName in $location"
 # delete the app service diagnostic so that it does not persist through resource group deletion and conflict with TF plan
 az monitor diagnostic-settings delete --resource-group "$resourceGroupName" --resource "$appServiceName" --name "$appServiceDiagnosticName"
 
+echo "Deleting $postgresSqlDiagnosticName diagnostics in $resourceGroupName in $location"
 # delete the PostgresSQL server diagnostic so that it does not persist through resource group deletion and conflict with TF plan
 az monitor diagnostic-settings list --resource-group "$resourceGroupName" --resource "$postgresServerName" --name "$postgresSqlDiagnosticName"
 
+echo "Deleting resources in $resourceGroupName in $location"
 # Delete the resource group
 az group delete --name "$resourceGroupName" --yes
 
+echo "Deleting $keyVaultName key vault in $resourceGroupName"
 # Purge the deleted key vault
 az keyvault purge --name "$keyVaultName" --location $location
