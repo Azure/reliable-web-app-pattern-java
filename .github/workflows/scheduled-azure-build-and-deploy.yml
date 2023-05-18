@@ -37,7 +37,7 @@ concurrency: integration_testing
 
 env:
   APP_NAME: ${{ vars.AZURE_APP_NAME }}
-  PROJECT_ROOT: ${{ RUNNER_TEMP }}
+  PROJECT_ROOT: $RUNNER_TEMP
   APP_ENVIRONMENT: ${{ inputs.environment || 'dev' }}
   DATABASE_PASSWORD: ${{ vars.POSTGRES_DATABASE_PASSWORD }}
   APP_SERVICE_DEPLOY_SLOT: production
