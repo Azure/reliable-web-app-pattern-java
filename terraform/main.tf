@@ -197,7 +197,9 @@ module "application" {
   frontdoor_host_name = module.frontdoor.host_name
 }
 
+# Demo purposes only: assign current user as admin to the created DB
 resource "azurerm_postgresql_flexible_server_active_directory_administrator" "airsonic-ad-admin" {
+  count               = var.principal_type == "User" ? 1 : 0
   server_name         = module.postresql_database.database_server_name
   resource_group_name = azurerm_resource_group.main.name
   tenant_id           = data.azurerm_client_config.current.tenant_id
@@ -268,6 +270,7 @@ resource "null_resource" "app_service_startup_script" {
   ]
 
   provisioner "local-exec" {
+    count   = var.principal_type == "User" ? 1 : 0
     command = "az webapp deploy --name ${module.application.application_name} --resource-group ${azurerm_resource_group.main.name} --src-path scripts/startup.sh --type=startup"
   }
 }

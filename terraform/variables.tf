@@ -33,10 +33,10 @@ variable "enable_telemetry" {
 
 variable "principal_type" {
   type = string
-  description = "Describes the type of user running the deployment. Valid options are 'user' or 'servicePrincipal'"
-  default = "user"
+  description = "Describes the type of user running the deployment. Valid options are 'User' or 'ServicePrincipal'"
+  default = "User"
   validation {
-    condition     = contains(["user", "servicePrincipal"], var.principal_type)
+    condition     = contains(["User", "ServicePrincipal"], var.principal_type)
     error_message = "The principal_type value must be user or service_principal."
   }
 }
