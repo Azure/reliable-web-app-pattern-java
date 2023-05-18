@@ -66,8 +66,6 @@ jobs:
       run: echo "PROJECT_ROOT=$(pwd)" >> $GITHUB_ENV
       
     - name: print input env variables
-      env:
-        PROJECT_ROOT: $RUNNER_TEMP
       run: |
         echo $RUNNER_TEMP
         echo $SUBSCRIPTION
