@@ -265,12 +265,12 @@ resource "null_resource" "setup-application-uri" {
 }
 
 resource "null_resource" "app_service_startup_script" {
+  count   = var.principal_type == "User" ? 1 : 0
   depends_on = [
     module.application
   ]
 
   provisioner "local-exec" {
-    count   = var.principal_type == "User" ? 1 : 0
     command = "az webapp deploy --name ${module.application.application_name} --resource-group ${azurerm_resource_group.main.name} --src-path scripts/startup.sh --type=startup"
   }
 }
