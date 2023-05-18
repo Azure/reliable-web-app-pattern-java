@@ -61,6 +61,9 @@ jobs:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v3
+
+    - name: Set env
+      run: echo "PROJECT_ROOT=$(pwd)" >> $PROJECT_ROOT
       
     - name: print input env variables
       env:
