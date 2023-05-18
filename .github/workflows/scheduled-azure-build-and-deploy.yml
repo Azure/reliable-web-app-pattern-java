@@ -37,7 +37,7 @@ concurrency: integration_testing
 
 env:
   APP_NAME: ${{ vars.AZURE_APP_NAME }}
-  PROJECT_ROOT: ${PWD}
+  PROJECT_ROOT: pwd
   APP_ENVIRONMENT: ${{ inputs.environment || 'dev' }}
   DATABASE_PASSWORD: ${{ vars.POSTGRES_DATABASE_PASSWORD }}
   APP_SERVICE_DEPLOY_SLOT: production
@@ -70,6 +70,7 @@ jobs:
         echo $APP_ENVIRONMENT
         echo $APP_DEPLOY_NAME
         echo $DATABASE_PASSWORD
+        echo $PROJECT_ROOT
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
@@ -100,7 +101,7 @@ jobs:
       run: terraform -chdir=./terraform apply airsonic.tfplan
       
     - name: Download videos
-      run: ${PWD}/scripts/download-trainings.sh
+      run: ./scripts/download-trainings.sh
       
       
     - name: Set up Java version
