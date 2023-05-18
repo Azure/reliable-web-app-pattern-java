@@ -39,11 +39,24 @@ echo "Found $keyVaultName key vault in $resourceGroupName"
 
 # find azure app service name
 appServiceName=$(az webapp list --resource-group "$resourceGroupName" --query '[0].name' -o tsv)
-echo "Found $appServiceName app service in $resourceGroupName"
+
+if [[ ${#appServiceName} -gt 0 ]]; then
+  echo "Found $appServiceName app service in $resourceGroupName"
+else 
+  echo "Could not find App Service web app in rg: $resourceGroupName"
+  exit 2
+fi
 
 # find postgres flexible server name
 postgresServerName=$(az postgres flexible-server list --resource-group "$resourceGroupName" --query '[0].name' -o tsv)
 echo "Found $postgresServerName postgres server in $resourceGroupName"
+
+if [[ ${#postgresServerName} -gt 0 ]]; then
+  "Found $postgresServerName postgres server in $resourceGroupName"
+else 
+  echo "Could not find Postgres service in rg: $resourceGroupName"
+  exit 3
+fi
 
 # find azure monitor diagnostic name
 appServiceDiagnosticName=$(az monitor diagnostic-settings list --resource-group "$resourceGroupName" --resource "$appServiceName" --resource-type Microsoft.Web/Sites --query "[0].name" -o tsv)
