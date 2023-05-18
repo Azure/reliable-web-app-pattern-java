@@ -58,10 +58,6 @@ jobs:
         shell: bash
 
     steps:
-
-    - name: Set default run_tear_down value
-      run: |
-        echo "::set-output name=value::${{ github.event.inputs.run_tear_down || 'true' }}"
     
         
     # Checkout the repository to the GitHub Actions runner
