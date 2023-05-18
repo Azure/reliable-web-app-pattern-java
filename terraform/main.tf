@@ -249,12 +249,14 @@ resource "azurerm_storage_account_network_rules" "airsonic-storage-network-rules
   ip_rules                   = [local.myip]
 
   depends_on = [
-    module.storage
+    module.storage,
+    module.network
   ]
 }
 
-# Set Azure AD Application ID URI.
+# Set Azure AD Application redirectURI.
 resource "null_resource" "setup-application-uri" {
+  count   = var.principal_type == "User" ? 1 : 0
   depends_on = [
     module.application
   ]
@@ -265,7 +267,6 @@ resource "null_resource" "setup-application-uri" {
 }
 
 resource "null_resource" "app_service_startup_script" {
-  count   = var.principal_type == "User" ? 1 : 0
   depends_on = [
     module.application
   ]
