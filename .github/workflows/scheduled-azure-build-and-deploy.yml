@@ -153,3 +153,17 @@ jobs:
       run: |
         chmod +x ./scripts/devOpsScripts/delete-resources.sh
         ./scripts/devOpsScripts/delete-resources.sh -g rg-$APP_NAME-${{ inputs.environment || 'dev' }}
+
+    - name: 'Check for success'
+      run: |
+        if [[ steps.tf_apply.outcome != 'success' ]]; then
+          echo "TF Apply failed"
+          exit 1
+        elif [[ steps.build.outcome != 'success' ]]; then
+          echo "mvn build failed"
+          exit 2
+        else
+          echo "Step 2 failed, skipping Step 3"
+          exit 0
+        fi
+        
