@@ -50,10 +50,10 @@ for type in "${resource_types[@]}"; do
   echo -e "\tFound resource for $type in $resourceGroupName in $location"
 
   echo -e "\tChecking for diagnostic settings for $type in $resourceGroupName in $location"
-  diagnosticSettings=$(az monitor diagnostic-settings list --resource-group "$resourceGroupName" --resource-type "$type" --resource $resource --query '[].name' -o tsv)
-  if [[ ${#diagnosticSettings} -gt 0 ]]; then
+  diagnosticSettingsName=$(az monitor diagnostic-settings list --resource-group "$resourceGroupName" --resource-type "$type" --resource $resource --query '[].name' -o tsv)
+  if [[ ${#diagnosticSettingsName} -gt 0 ]]; then
     echo -e "\tDeleting diagnostic settings for $type in $resourceGroupName in $location"
-    az monitor diagnostic-settings delete --resource-group "$resourceGroupName" --resource-type "$type" --name "$diagnosticSettings"
+    az monitor diagnostic-settings delete --resource-group "$resourceGroupName" --resource "$resource" --name "$diagnosticSettingsName" --resource-type "$type"
   else
     echo -e "\tCould not find diagnostic-settings for ${YELLOW}$type${RESET} diagnostics"
   fi
