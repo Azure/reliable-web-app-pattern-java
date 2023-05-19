@@ -39,7 +39,6 @@ env:
   APP_NAME: ${{ vars.AZURE_APP_NAME }}
   APP_ENVIRONMENT: ${{ inputs.environment || 'dev' }}
   DATABASE_PASSWORD: ${{ vars.POSTGRES_DATABASE_PASSWORD }}
-  APP_SERVICE_DEPLOY_SLOT: production
   ENABLE_TELEMETRY: true
   SUBSCRIPTION: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   APP_DEPLOY_NAME: app-${{ vars.AZURE_APP_NAME }}-${{ inputs.environment || 'dev'}}
@@ -97,21 +96,26 @@ jobs:
     # Generates an execution plan for Terraform
     - name: Terraform Plan
       run: terraform -chdir=./terraform plan -var application_name=$APP_NAME -var environment=$APP_ENVIRONMENT -var enable_telemetry=$ENABLE_TELEMETRY -var database_administrator_password="$DATABASE_PASSWORD" -out airsonic.tfplan -var principal_type=ServicePrincipal
-       
       
     - name: Terraform Apply
+      id: tf_apply
+      continue-on-error: true
       run: terraform -chdir=./terraform apply airsonic.tfplan
       
     - name: Download videos
       run: ./scripts/download-trainings.sh
       
-      
     - name: Set up Java version
+      # This step only runs if Azure resource were provisioned
+      if: steps.tf_apply.outcome == 'success'
       uses: actions/setup-java@v1
       with:
         java-version: '11'
 
     - name: Build with Maven
+      id: build
+      # This step only runs if Azure resource were provisioned
+      if: steps.tf_apply.outcome == 'success'
       run: |
         echo ${{ github.workspace }}
         echo $GITHUB_WORKSPACE
@@ -119,17 +123,26 @@ jobs:
         mvn -Dmaven.test.skip=true -DskipTests package
         
     - name: Upload artifact for deployment job
+      # This step only runs if Azure resource were provisioned
+      # AND the build job was successful
+      if: steps.tf_apply.outcome == 'success' && steps.build.outcome == 'success'
       uses: actions/upload-artifact@v2
       with:
         name: java-rwa
         path: '${{ github.workspace }}/src/airsonic-advanced/airsonic-main/target/*.war'
         
     - name: Download artifact from build job
+      # This step only runs if Azure resource were provisioned
+      # AND the build job was successful
+      if: steps.tf_apply.outcome == 'success' && steps.build.outcome == 'success'
       uses: actions/download-artifact@v2
       with:
         name: java-rwa
         
     - name: Deploy to Azure Web App
+      # This step only runs if Azure resource were provisioned
+      # AND the build job was successful
+      if: steps.tf_apply.outcome == 'success' && steps.build.outcome == 'success'
       id: deploy-to-webapp
       uses: azure/webapps-deploy@v2
       with:
