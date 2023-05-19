@@ -36,8 +36,7 @@ resource "azurerm_service_plan" "application" {
   name                         = azurecaf_name.app_service_plan.result
   resource_group_name          = var.resource_group
   location                     = var.location
-  worker_count                 = var.worker_count
-
+  
   sku_name = var.environment == "prod" ? "P2v3" : "P1v3"
   os_type  = "Linux"
 
@@ -90,9 +89,9 @@ resource "azuread_application" "app_registration" {
   }
 
   web {
-    homepage_url  = "https://${azurecaf_name.app_service.result}.azurewebsites.net"
-    logout_url    = "https://${azurecaf_name.app_service.result}.azurewebsites.net/logout"
-    redirect_uris = ["https://${azurecaf_name.app_service.result}.azurewebsites.net/login/oauth2/code/", "https://${azurecaf_name.app_service.result}.azurewebsites.net/.auth/login/aad/callback", "https://${var.frontdoor_host_name}/.auth/login/aad/callback"]
+    homepage_url  = "https://${var.frontdoor_host_name}"
+    logout_url    = "https://${var.frontdoor_host_name}/logout"
+    redirect_uris = ["https://${var.frontdoor_host_name}/login/oauth2/code/"]
     implicit_grant {
       id_token_issuance_enabled     = true
     }
@@ -155,6 +154,21 @@ resource "azurerm_linux_web_app" "application" {
       java_server_version = "9.0"
       java_version = "11"
     }
+
+    ip_restriction {
+      service_tag               = "AzureFrontDoor.Backend"
+      ip_address                = null
+      virtual_network_subnet_id = null
+      action                    = "Allow"
+      priority                  = 100
+      headers {
+        x_azure_fdid      = [var.frontdoor_profile_uuid]
+        x_fd_health_probe = []
+        x_forwarded_for   = []
+        x_forwarded_host  = []
+      }
+      name = "Allow traffic from Front Door"
+    }
   }
 
   storage_account {
@@ -205,26 +219,6 @@ resource "azurerm_linux_web_app" "application" {
         retention_in_mb   = 35
         retention_in_days = 30
       }
-    }
-  }
-
-  auth_settings_v2 {
-    auth_enabled                  = true
-    require_authentication        = true    
-    forward_proxy_convention = "Standard"
-    default_provider = "AzureActiveDirectory"
-    
-
-    active_directory_v2 {
-      client_id                   = azuread_application.app_registration.application_id
-      tenant_auth_endpoint        = "https://login.microsoftonline.com/${data.azuread_client_config.current.tenant_id}/v2.0/"
-      client_secret_setting_name  = "MICROSOFT_PROVIDER_AUTHENTICATION_SECRET"
-      allowed_applications = [var.frontdoor_host_name]
-    }
-
-    login {
-      token_store_enabled = true
-      allowed_external_redirect_urls = [var.frontdoor_host_name]
     }
   }
 }

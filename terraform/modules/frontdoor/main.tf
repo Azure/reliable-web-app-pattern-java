@@ -44,10 +44,12 @@ resource "azurecaf_name" "front_door_origin_group_name" {
 resource "azurerm_cdn_frontdoor_origin_group" "origin_group" {
   name                     = azurecaf_name.front_door_origin_group_name.result
   cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.front_door.id
+  session_affinity_enabled = false
 
   load_balancing {
-    sample_size                 = 4
-    successful_samples_required = 3
+    additional_latency_in_milliseconds = 0
+    sample_size                        = 16
+    successful_samples_required        = 3
   }
 
   health_probe {
@@ -72,6 +74,7 @@ resource "azurerm_cdn_frontdoor_origin" "app_service_origin" {
   host_name                      = var.host_name
   http_port                      = 80
   https_port                     = 443
+  origin_host_header             = var.host_name
   priority                       = 1
   weight                         = 1000
   certificate_name_check_enabled = false
@@ -152,6 +155,7 @@ resource "azurerm_cdn_frontdoor_origin" "app_service_origin2" {
   host_name                      = length(var.host_name2) > 0 ? var.host_name2 : var.host_name
   http_port                      = 80
   https_port                     = 443
+  origin_host_header             = length(var.host_name2) > 0 ? var.host_name2 : var.host_name
   priority                       = 2
   weight                         = 1000
   certificate_name_check_enabled = false
