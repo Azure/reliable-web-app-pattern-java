@@ -67,8 +67,8 @@ echo "Found $keyVaultName key vault in $resourceGroupName"
 
 echo "Deleting resources in $resourceGroupName in $location"
 # Delete the resource group
-#az group delete --name "$resourceGroupName" --yes
+az group delete --name "$resourceGroupName" --yes
 
 echo "Purging $keyVaultName key vault in $resourceGroupName"
 # Purge the deleted key vault
-#az keyvault purge --name "$keyVaultName" --location $location
+az keyvault purge --name "$keyVaultName" --location $location
