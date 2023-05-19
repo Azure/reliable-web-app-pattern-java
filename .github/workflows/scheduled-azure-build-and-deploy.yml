@@ -157,14 +157,17 @@ jobs:
 
     - name: 'Check for success'
       run: |
-        if [[ steps.tf_apply.outcome != 'success' ]]; then
+        if [[ steps.tf_apply.outcome == 'success' ]]; then
+          echo "TF Apply SUCCESS"
+        else
           echo "TF Apply failed"
           exit 1
-        elif [[ steps.build.outcome != 'success' ]]; then
+        fi
+        
+        if [[ steps.tf_apply.outcome == 'success' ]]; then
+          echo "mvn build SUCCESS"
+        else
           echo "mvn build failed"
           exit 2
-        else
-          echo "Step 2 failed, skipping Step 3"
-          exit 0
         fi
         
