@@ -36,8 +36,7 @@ resource "azurerm_service_plan" "application" {
   name                         = azurecaf_name.app_service_plan.result
   resource_group_name          = var.resource_group
   location                     = var.location
-  worker_count                 = var.worker_count
-
+  
   sku_name = var.environment == "prod" ? "P2v3" : "P1v3"
   os_type  = "Linux"
 

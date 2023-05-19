@@ -74,6 +74,7 @@ resource "azurerm_cdn_frontdoor_origin" "app_service_origin" {
   host_name                      = var.host_name
   http_port                      = 80
   https_port                     = 443
+  origin_host_header             = var.host_name
   priority                       = 1
   weight                         = 1000
   certificate_name_check_enabled = false
@@ -154,6 +155,7 @@ resource "azurerm_cdn_frontdoor_origin" "app_service_origin2" {
   host_name                      = length(var.host_name2) > 0 ? var.host_name2 : var.host_name
   http_port                      = 80
   https_port                     = 443
+  origin_host_header             = length(var.host_name2) > 0 ? var.host_name2 : var.host_name
   priority                       = 2
   weight                         = 1000
   certificate_name_check_enabled = false

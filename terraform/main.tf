@@ -229,7 +229,6 @@ module "application" {
   environment        = local.environment
   location           = var.location
   subnet_id          = module.network.app_subnet_id
-  worker_count       = 2
 
   app_insights_connection_string = module.app_insights.connection_string
   log_analytics_workspace_id     = module.app_insights.log_analytics_workspace_id
@@ -434,7 +433,6 @@ module "application2" {
   environment         = local.environment
   location            = var.location2
   subnet_id           = module.network2[0].app_subnet_id
-  worker_count        = 1
 
   app_insights_connection_string = module.app_insights.connection_string
   log_analytics_workspace_id     = module.app_insights.log_analytics_workspace_id
@@ -452,6 +450,7 @@ module "application2" {
   storage_account_primary_access_key = module.storage2[0].storage_primary_access_key
 
   frontdoor_host_name = module.frontdoor.host_name
+  frontdoor_profile_uuid  = module.frontdoor.resource_guid
 }
 
 # For demo purposes, allow current user access to the key vault

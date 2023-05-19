@@ -80,6 +80,21 @@ azd env set AZURE_LOCATION <region>
 azd env set AZURE_SUBSCRIPTION_ID <SUBSCRIPTION_ID>
 ```
 
+> You can find a list of available Azure regions by running
+> the following Azure CLI command.
+> 
+> ```shell
+> az account list-locations --query "[].name" -o tsv
+> ```
+
+### Multi-region support
+
+Prosware devs also use the following command to choose a second Azure location because the production environment is multiregional.
+
+```shell
+azd env set AZURE_LOCATION2 <region>
+```
+
 ### Select production or development environment.
 
 You should change the `APP_ENV_NAME` variable to either *prod* or *dev*. 
