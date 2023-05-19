@@ -1,11 +1,8 @@
 #!/bin/bash
 
-# Decision point - decided that the client secrets will be created anew rather than replaced
+# Decision point - client secrets will be created anew rather than replaced
 # Decision point - decided to create resourceGroup and KeyVault if they don't exist
 # Decision point - decided not to place the client secret in App Service config settings - will use Key Vault reference instead
-
-# TODO - 1 - identify if this script should give the current user the 'Creator' role for the app registration
-# TODO - 2 - validate the redirectUri is properly formed before reaching this far
 
 POSITIONAL_ARGS=()
 
@@ -15,11 +12,6 @@ while [[ $# -gt 0 ]]; do
   case $1 in
     --app-name|-n)
       appName="$2"
-      shift # past argument
-      shift # past value
-      ;;
-    --redirect-uri|-r)
-      redirectUri="$2"
       shift # past argument
       shift # past value
       ;;
@@ -51,7 +43,6 @@ while [[ $# -gt 0 ]]; do
       echo ''
       echo 'Arguments'
       echo '    --app-name       -n  [Required] : The name used in Azure AD to uniquely identify this App Registration.'
-      echo '    --redirect-uri   -r  [Required] : The name of the fully qualified domain that will be used as an approved redirect. For the RWA sample, this should be the Front Door URI.'
       echo '    --key-vault      -kv            : Name of a key vault where the settings should be saved. When not provided, settings will be written to console output to be saved by the user.'
       echo '    --resource-group -g             : Name of the resource group where a key vault is located.'
       echo '    --location       -l             : Location (deaults to eastus). Values from: `az account list-locations`. You can configure the default location using `az configure --defaults location=<location>`.'
@@ -75,6 +66,12 @@ green='\033[0;32m'
 yellow='\e[0;33m'
 red='\e[1;31m'
 clear='\033[0m'
+
+# Note that redirectUri will not be known until after Azure Front Door origin is created
+# So the only URI we set here is the one that supports local debugging
+# The final configuration of the redirectUri will be handled during TF deployment (see "setup-application-uri" ./terraform/main.tf)
+# when a user runs the `azd` commands
+redirectUri='https://localhost:8080/signin-oidc'
 
 if [[ ${#redirectUri} -eq 0 ]]; then
   printf "${red}FATAL ERROR:${clear} Missing required parameter --redirect-uri"
@@ -144,8 +141,6 @@ if [[ ${#resourceGroupName} -gt 0 ]]; then
   fi
 fi
 
-# TODO - 2 - validate the redirectUri is properly formed before reaching this far
-# e.g. "https://${var.frontdoor_host_name}/.auth/login/aad/callback"
 prosewareClientId=''
 
 echo "Checking for existing app registration..."
