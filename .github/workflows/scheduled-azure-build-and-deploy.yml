@@ -125,7 +125,7 @@ jobs:
       # This step only runs if Azure resource were provisioned
       # AND the build job was successful
       if: steps.tf_apply.outcome == 'success' && steps.build.outcome == 'success'
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: java-rwa
         path: '${{ github.workspace }}/src/airsonic-advanced/airsonic-main/target/*.war'
@@ -134,7 +134,7 @@ jobs:
       # This step only runs if Azure resource were provisioned
       # AND the build job was successful
       if: steps.tf_apply.outcome == 'success' && steps.build.outcome == 'success'
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v3
       with:
         name: java-rwa
         
