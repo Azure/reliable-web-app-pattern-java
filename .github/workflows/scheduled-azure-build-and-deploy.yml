@@ -134,7 +134,7 @@ jobs:
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.APP_DEPLOY_NAME }}
-        slot-name: APP_SERVICE_DEPLOY_SLOT
+        # slot-name: APP_SERVICE_DEPLOY_SLOT
         package: 'airsonic.war'
 
     - name: 'delete-resources'
