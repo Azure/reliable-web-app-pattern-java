@@ -154,6 +154,7 @@ jobs:
       run: |
         chmod +x ./scripts/devOpsScripts/delete-resources.sh
         ./scripts/devOpsScripts/delete-resources.sh -g rg-$APP_NAME-${{ inputs.environment || 'dev' }}
+        ./scripts/devOpsScripts/delete-resources.sh -g rg-${APP_NAME}s-${{ inputs.environment || 'dev' }}
 
     - name: 'Check for success'
       run: |
