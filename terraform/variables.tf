@@ -48,5 +48,5 @@ variable "principal_type" {
 variable "location2" {
   type        = string
   description = "The 2nd Azure region where resources in this example should be created"
-  default     = "westus"
+  default     = "westus3"
 }
