@@ -178,6 +178,7 @@ module "application" {
   environment        = local.environment
   location           = var.location
   subnet_id          = module.network.app_subnet_id
+  principal_type     = var.principal_type
 
   app_insights_connection_string = module.app_insights.connection_string
   log_analytics_workspace_id     = module.app_insights.log_analytics_workspace_id

@@ -70,6 +70,7 @@ resource "random_uuid" "creator_role_id" {}
 
 resource "azuread_application" "app_registration" {
   display_name     = "${azurecaf_name.app_service.result}-app"
+  count            = var.principal_type == "User" ? 1 : 0
   owners           = [data.azuread_client_config.current.object_id]
   sign_in_audience = "AzureADMyOrg"  # single tenant
 
@@ -112,11 +113,13 @@ resource "azuread_application" "app_registration" {
 
 resource "azuread_service_principal" "application_service_principal" {
   application_id               = azuread_application.app_registration.application_id
+  count            = var.principal_type == "User" ? 1 : 0
   app_role_assignment_required = false
   owners                       = [data.azuread_client_config.current.object_id]
 }
 
 resource "azuread_application_password" "application_password" {
+  count            = var.principal_type == "User" ? 1 : 0
   application_object_id = azuread_application.app_registration.object_id
 }
 

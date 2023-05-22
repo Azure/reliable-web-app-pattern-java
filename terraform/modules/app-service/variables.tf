@@ -84,3 +84,12 @@ variable "log_analytics_workspace_id" {
   description = "The id of the log analytics workspace"
 }
 
+variable "principal_type" {
+  type = string
+  description = "Describes the type of user running the deployment. Valid options are 'User' or 'ServicePrincipal'"
+  default = "User"
+  validation {
+    condition     = contains(["User", "ServicePrincipal"], var.principal_type)
+    error_message = "The principal_type value must be user or service_principal."
+  }
+}
