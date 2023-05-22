@@ -32,3 +32,12 @@ variable "host_name" {
   type        = string
   description = "The IPv4 address, IPv6 address or Domain name of the Origin."
 }
+
+# ----------------------------------------------------------------------------------------------
+#  Everything below this comment is for provisioning the 2nd region (if AZURE_LOCATION2 was set)
+# ----------------------------------------------------------------------------------------------
+
+variable "host_name2" {
+  type        = string
+  description = "The IPv4 address, IPv6 address or Domain name of the secondary Origin."
+}

@@ -40,3 +40,13 @@ variable "principal_type" {
     error_message = "The principal_type value must be user or service_principal."
   }
 }
+
+# ----------------------------------------------------------------------------------------------
+#  Everything below this comment is for provisioning the 2nd region (if AZURE_LOCATION2 was set)
+# ----------------------------------------------------------------------------------------------
+
+variable "location2" {
+  type        = string
+  description = "The 2nd Azure region where resources in this example should be created"
+  default     = "westus"
+}

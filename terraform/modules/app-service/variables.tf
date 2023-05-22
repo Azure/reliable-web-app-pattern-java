@@ -69,6 +69,11 @@ variable "frontdoor_host_name" {
   description = "The front door host name"
 }
 
+variable "frontdoor_profile_uuid" {
+  type        = string
+  description = "The UUID of this Front Door Profile which will be sent in the HTTP Header as the X-Azure-FDID attribute.."
+}
+
 variable "app_insights_connection_string" {
   type        = string
   description = "The app insights connection string"

@@ -45,10 +45,10 @@ resource "azurecaf_name" "app_service_plan" {
 
 # This creates the plan that the service use
 resource "azurerm_service_plan" "application" {
-  name                = azurecaf_name.app_service_plan.result
-  resource_group_name = var.resource_group
-  location            = var.location
-
+  name                         = azurecaf_name.app_service_plan.result
+  resource_group_name          = var.resource_group
+  location                     = var.location
+  
   sku_name = var.environment == "prod" ? "P2v3" : "P1v3"
   os_type  = "Linux"
 
@@ -68,57 +68,57 @@ resource "random_uuid" "admin_role_id" {}
 resource "random_uuid" "user_role_id" {}
 resource "random_uuid" "creator_role_id" {}
 
-# resource "azuread_application" "app_registration" {
-#   display_name     = "${azurecaf_name.app_service.result}-app"
-#   owners           = [data.azuread_client_config.current.object_id]
-#   sign_in_audience = "AzureADMyOrg"  # single tenant
+resource "azuread_application" "app_registration" {
+  display_name     = "${azurecaf_name.app_service.result}-app"
+  owners           = [data.azuread_client_config.current.object_id]
+  sign_in_audience = "AzureADMyOrg"  # single tenant
 
-#   app_role {
-#     allowed_member_types = ["User"]
-#     description          = "ReadOnly roles have limited query access"
-#     display_name         = "ReadOnly"
-#     enabled              = true
-#     id                   = random_uuid.user_role_id.result
-#     value                = "User"
-#   }
+  app_role {
+    allowed_member_types = ["User"]
+    description          = "ReadOnly roles have limited query access"
+    display_name         = "ReadOnly"
+    enabled              = true
+    id                   = random_uuid.user_role_id.result
+    value                = "User"
+  }
 
-#   app_role {
-#     allowed_member_types = ["User"]
-#     description          = "Creator roles allows users to create content"
-#     display_name         = "Creator"
-#     enabled              = true
-#     id                   = random_uuid.creator_role_id.result
-#     value                = "Creator"
-#   }
+  app_role {
+    allowed_member_types = ["User"]
+    description          = "Creator roles allows users to create content"
+    display_name         = "Creator"
+    enabled              = true
+    id                   = random_uuid.creator_role_id.result
+    value                = "Creator"
+  }
 
-#   required_resource_access {
-#     resource_app_id = "00000003-0000-0000-c000-000000000000" # Microsoft Graph
+  required_resource_access {
+    resource_app_id = "00000003-0000-0000-c000-000000000000" # Microsoft Graph
 
-#     resource_access {
-#       id   = "e1fe6dd8-ba31-4d61-89e7-88639da4683d" # User.Read https://marketplace.visualstudio.com/items?itemName=stephane-eyskens.aadv1appprovisioning
-#       type = "Scope"
-#     }
-#   }
+    resource_access {
+      id   = "e1fe6dd8-ba31-4d61-89e7-88639da4683d" # User.Read https://marketplace.visualstudio.com/items?itemName=stephane-eyskens.aadv1appprovisioning
+      type = "Scope"
+    }
+  }
 
-#   web {
-#     homepage_url  = "https://${azurecaf_name.app_service.result}.azurewebsites.net"
-#     logout_url    = "https://${azurecaf_name.app_service.result}.azurewebsites.net/logout"
-#     redirect_uris = ["https://${azurecaf_name.app_service.result}.azurewebsites.net/login/oauth2/code/", "https://${azurecaf_name.app_service.result}.azurewebsites.net/.auth/login/aad/callback", "https://${var.frontdoor_host_name}/.auth/login/aad/callback"]
-#     implicit_grant {
-#       id_token_issuance_enabled     = true
-#     }
-#   }
-# }
+  web {
+    homepage_url  = "https://${var.frontdoor_host_name}"
+    logout_url    = "https://${var.frontdoor_host_name}/logout"
+    redirect_uris = ["https://${var.frontdoor_host_name}/login/oauth2/code/"]
+    implicit_grant {
+      id_token_issuance_enabled     = true
+    }
+  }
+}
 
-# resource "azuread_service_principal" "application_service_principal" {
-#   application_id               = local.proseware_client_id
-#   app_role_assignment_required = false
-#   owners                       = [local.proseware_aad_object_id]
-# }
+resource "azuread_service_principal" "application_service_principal" {
+  application_id               = azuread_application.app_registration.application_id
+  app_role_assignment_required = false
+  owners                       = [data.azuread_client_config.current.object_id]
+}
 
-# resource "azuread_application_password" "application_password" {
-#   application_object_id = azuread_application.app_registration.object_id
-# }
+resource "azuread_application_password" "application_password" {
+  application_object_id = azuread_application.app_registration.object_id
+}
 
 # This is not guidance and is done for demo purposes. The resource below will add the 
 # "Creator" app role assignment for the application of the current user deploying this sample.
@@ -130,11 +130,12 @@ resource "random_uuid" "creator_role_id" {}
 
 # This creates the linux web app
 resource "azurerm_linux_web_app" "application" {
-  name                = azurecaf_name.app_service.result
-  location            = var.location
-  resource_group_name = var.resource_group
-  service_plan_id     = azurerm_service_plan.application.id
-  https_only          = true
+  name                    = azurecaf_name.app_service.result
+  location                = var.location
+  resource_group_name     = var.resource_group
+  service_plan_id         = azurerm_service_plan.application.id
+  client_affinity_enabled = true
+  https_only              = true
 
   virtual_network_subnet_id = var.subnet_id
 
@@ -158,6 +159,21 @@ resource "azurerm_linux_web_app" "application" {
       java_server = "TOMCAT"
       java_server_version = "9.0"
       java_version = "11"
+    }
+
+    ip_restriction {
+      service_tag               = "AzureFrontDoor.Backend"
+      ip_address                = null
+      virtual_network_subnet_id = null
+      action                    = "Allow"
+      priority                  = 100
+      headers {
+        x_azure_fdid      = [var.frontdoor_profile_uuid]
+        x_fd_health_probe = []
+        x_forwarded_for   = []
+        x_forwarded_host  = []
+      }
+      name = "Allow traffic from Front Door"
     }
   }
 
@@ -209,25 +225,6 @@ resource "azurerm_linux_web_app" "application" {
         retention_in_mb   = 35
         retention_in_days = 30
       }
-    }
-  }
-
-  auth_settings_v2 {
-    auth_enabled                  = true
-    require_authentication        = true    
-    forward_proxy_convention = "Standard"
-    default_provider = "AzureActiveDirectory"
-
-    active_directory_v2 {
-      client_id                   = local.proseware_client_id
-      tenant_auth_endpoint        = "https://login.microsoftonline.com/${local.proseware_tenant_id}/v2.0/"
-      client_secret_setting_name  = "MICROSOFT_PROVIDER_AUTHENTICATION_SECRET"
-      allowed_applications        = [var.frontdoor_host_name]
-    }
-
-    login {
-      token_store_enabled = true
-      allowed_external_redirect_urls = [var.frontdoor_host_name]
     }
   }
 }
