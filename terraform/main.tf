@@ -100,11 +100,7 @@ module "key-vault" {
 }
 
 # For demo purposes, allow current user access to the key vault
-resource azurerm_role_assignment kv_contributor_user_role_assignement {
-  scope                 = module.key-vault.vault_id
-  role_definition_name  = "Key Vault Contributor"
-  principal_id          = data.azurerm_client_config.current.object_id
-}
+# Note: when running as a service principal, this is also needed
 resource azurerm_role_assignment kv_administrator_user_role_assignement {
   scope                 = module.key-vault.vault_id
   role_definition_name  = "Key Vault Administrator"
@@ -115,9 +111,7 @@ resource "azurerm_key_vault_secret" "airsonic_database_admin" {
   name         = "airsonic-database-admin"
   value        = module.postresql_database.database_username
   key_vault_id = module.key-vault.vault_id
-
-  depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement,
+  depends_on = [ 
     azurerm_role_assignment.kv_administrator_user_role_assignement
   ]
 }
@@ -126,20 +120,16 @@ resource "azurerm_key_vault_secret" "airsonic_database_admin_password" {
   name         = "airsonic-database-admin-password"
   value        = var.database_administrator_password
   key_vault_id = module.key-vault.vault_id
-
-  depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement,
+  depends_on = [ 
     azurerm_role_assignment.kv_administrator_user_role_assignement
   ]
 }
 
 resource "azurerm_key_vault_secret" "airsonic_application_client_secret" {
   name         = "airsonic-application-client-secret"
-  value        = module.application.application_client_secret
+  value        = "foo" # Todo - determine if this secret is used/needed
   key_vault_id = module.key-vault.vault_id
-
-  depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement,
+  depends_on = [ 
     azurerm_role_assignment.kv_administrator_user_role_assignement
   ]
 }
@@ -148,56 +138,16 @@ resource "azurerm_key_vault_secret" "airsonic_cache_secret" {
   name         = "airsonic-redis-password"
   value        = module.cache.cache_secret
   key_vault_id = module.key-vault.vault_id
-
-  depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement,
+  depends_on = [ 
     azurerm_role_assignment.kv_administrator_user_role_assignement
   ]
 }
 
 # Give the app access to the key vault secrets - https://learn.microsoft.com/azure/key-vault/general/rbac-guide?tabs=azure-cli#secret-scope-role-assignment
 resource azurerm_role_assignment app_database_admin_rbac_assignment {
-  scope                 = "${module.key-vault.vault_id}/secrets/${azurerm_key_vault_secret.airsonic_database_admin.name}"
+  scope                 = module.key-vault.vault_id
   role_definition_name  = "Key Vault Secrets User"
   principal_id          = module.application.application_principal_id
-
-   depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement,
-    azurerm_role_assignment.kv_administrator_user_role_assignement
-  ]
-}
-
-resource azurerm_role_assignment app_database_admin_password_rbac_assignment {
-  scope                 = "${module.key-vault.vault_id}/secrets/${azurerm_key_vault_secret.airsonic_database_admin_password.name}"
-  role_definition_name  = "Key Vault Secrets User"
-  principal_id          = module.application.application_principal_id
-
-   depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement,
-    azurerm_role_assignment.kv_administrator_user_role_assignement
-  ]
-}
-
-resource azurerm_role_assignment app_client_secret_rbac_assignment {
-  scope                 = "${module.key-vault.vault_id}/secrets/${azurerm_key_vault_secret.airsonic_application_client_secret.name}"
-  role_definition_name  = "Key Vault Secrets User"
-  principal_id          = module.application.application_principal_id
-
-   depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement,
-    azurerm_role_assignment.kv_administrator_user_role_assignement
-  ]
-}
-
-resource azurerm_role_assignment app_redis_password_rbac_assignment {
-  scope                 = "${module.key-vault.vault_id}/secrets/${azurerm_key_vault_secret.airsonic_cache_secret.name}"
-  role_definition_name  = "Key Vault Secrets User"
-  principal_id          = module.application.application_principal_id
-
-   depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement,
-    azurerm_role_assignment.kv_administrator_user_role_assignement
-  ]
 }
 
 # The application needs Key Vault Reader role in order to read the key vault meta data
@@ -207,7 +157,6 @@ resource azurerm_role_assignment app_key_vault_reader_rbac_assignment {
   principal_id          = module.application.application_principal_id
 
   depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement,
     azurerm_role_assignment.kv_administrator_user_role_assignement
   ]
 }
@@ -249,7 +198,9 @@ module "application" {
   frontdoor_profile_uuid  = module.frontdoor.resource_guid
 }
 
+# Demo purposes only: assign current user as admin to the created DB
 resource "azurerm_postgresql_flexible_server_active_directory_administrator" "airsonic-ad-admin" {
+  count               = var.principal_type == "User" ? 1 : 0
   server_name         = module.postresql_database.database_server_name
   resource_group_name = azurerm_resource_group.main.name
   tenant_id           = data.azurerm_client_config.current.tenant_id
@@ -290,7 +241,7 @@ data "http" "myip" {
 }
 
 locals {
-  myip = chomp(data.http.myip.body)
+  myip = chomp(data.http.myip.response_body)
 }
 
 resource "azurerm_storage_account_network_rules" "airsonic-storage-network-rules" {
@@ -301,12 +252,14 @@ resource "azurerm_storage_account_network_rules" "airsonic-storage-network-rules
   ip_rules                   = [local.myip]
 
   depends_on = [
-    module.storage
+    module.storage,
+    module.network
   ]
 }
 
-# Set Azure AD Application ID URI.
+# Set Azure AD Application redirectURI.
 resource "null_resource" "setup-application-uri" {
+  count   = var.principal_type == "User" ? 1 : 0
   depends_on = [
     module.application
   ]

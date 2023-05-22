@@ -11,7 +11,19 @@ terraform {
   }
 }
 
-data "azuread_client_config" "current" {}
+# temporary local vars need to be passed through as params
+# Todo
+# 1) create role assignment to give user access to Creator role (if not service principal)
+# 2) set key vault reference for App Svc Configuration - 
+# 3) update the guidance - or use AZD hook to automate as a "preprovision"
+locals {
+  proseware_creator_role_id = "4329c09a-589b-0d91-8732-a470d61b11eb"
+  proseware_client_id = "8bdc4585-8301-4ac3-9541-8a059444a65f"
+  proseware_aad_object_id = "d2ff0e67-55d5-4f73-b438-47f10658eda6"
+  proseware_tenant_id = "72f988bf-86f1-41af-91ab-2d7cd011db47"
+}
+
+# data "azuread_client_config" "current" {}
 
 resource "azurerm_storage_share" "sashare_trainings" {
   name                 = "trainings"
@@ -110,17 +122,11 @@ resource "azuread_application_password" "application_password" {
 
 # This is not guidance and is done for demo purposes. The resource below will add the 
 # "Creator" app role assignment for the application of the current user deploying this sample.
-resource "azuread_app_role_assignment" "application_role_current_user" {
-  app_role_id         = azuread_service_principal.application_service_principal.app_role_ids["Creator"]
-  principal_object_id = data.azuread_client_config.current.object_id
-  resource_object_id  = azuread_service_principal.application_service_principal.object_id
-}
-
-//not used
-# Retrieve domain information
-//data "azuread_domains" "domain" {
-//  only_initial = true
-//}
+# resource "azuread_app_role_assignment" "application_role_current_user" {
+#   app_role_id         = azuread_service_principal.application_service_principal.app_role_ids["Creator"]
+#   principal_object_id = local.proseware_aad_object_id
+#   resource_object_id  =  azuread_service_principal.application_service_principal.object_id
+# }
 
 # This creates the linux web app
 resource "azurerm_linux_web_app" "application" {
@@ -201,8 +207,8 @@ resource "azurerm_linux_web_app" "application" {
     SPRING_REDIS_HOST = var.redis_host
     SPRING_REDIS_PORT = var.redis_port
 
-    SPRING_CLOUD_AZURE_ACTIVE_DIRECTORY_CREDENTIAL_CLIENT_ID = azuread_application.app_registration.application_id
-    SPRING_CLOUD_AZURE_ACTIVE_DIRECTORY_PROFILE_TENANT_ID    = data.azuread_client_config.current.tenant_id
+    SPRING_CLOUD_AZURE_ACTIVE_DIRECTORY_CREDENTIAL_CLIENT_ID = local.proseware_client_id
+    SPRING_CLOUD_AZURE_ACTIVE_DIRECTORY_PROFILE_TENANT_ID    = local.proseware_tenant_id
 
     SPRING_CLOUD_AZURE_KEYVAULT_SECRET_PROPERTY_SOURCES_0_ENDPOINT=var.key_vault_uri
 
