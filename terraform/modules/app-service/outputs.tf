@@ -46,7 +46,7 @@ output "application_registration_id" {
 }
 
 output "application_client_secret" {
-  value       = var.principal_type == "User" ?  azuread_application_password.application_password.value : "TODO: Not set yet"
+  value       = var.principal_type == "User" ?  azuread_application_password.application_password[0].value : "TODO: Not set yet"
   sensitive   = true
   description = "The client secret of the application"
 }
