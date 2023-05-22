@@ -11,9 +11,7 @@ terraform {
   }
 }
 
-data "azuread_client_config" "current" {
-  count            = var.principal_type == "User" ? 1 : 0
-}
+data "azuread_client_config" "current" {}
 
 # temporary local vars need to be passed through as params
 # Todo
