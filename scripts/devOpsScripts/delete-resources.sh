@@ -26,7 +26,7 @@ done
 # check if resource group exists
 if [[ $(az group exists --name "$resourceGroupName") == false ]]; then
   echo "Resource group $resourceGroupName does not exist."
-  exit 1
+  exit 0
 fi
 
 # get location of resource group
