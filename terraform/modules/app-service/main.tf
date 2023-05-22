@@ -11,6 +11,10 @@ terraform {
   }
 }
 
+data "azuread_client_config" "current" {
+  count            = var.principal_type == "User" ? 1 : 0
+}
+
 # temporary local vars need to be passed through as params
 # Todo
 # 1) create role assignment to give user access to Creator role (if not service principal)
