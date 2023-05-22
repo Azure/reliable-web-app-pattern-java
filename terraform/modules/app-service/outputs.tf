@@ -45,12 +45,11 @@ output "application_registration_id" {
   description = "The id of application registration  (also called Client ID)."
 }
 
-# This is not created by TF it was created during app registration, stored in KV, and will be loaded as Key Vault reference
-# output "application_client_secret" {
-#   value       = azuread_application_password.application_password.value
-#   sensitive   = true
-#   description = "The client secret of the application"
-# }
+output "application_client_secret" {
+  value       = var.principal_type == "User" ?  azuread_application_password.application_password.value : "TODO: Not set yet"
+  sensitive   = true
+  description = "The client secret of the application"
+}
 
 output "application_principal_id" {
   value       = azurerm_linux_web_app.application.identity[0].principal_id
