@@ -69,7 +69,7 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-        #cache: 'maven'
+        cache: 'maven'
         
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
