@@ -55,8 +55,6 @@ jobs:
       
     name: 'Build & deploy infra'
     runs-on: ubuntu-latest
-    container:
-      image: mcr.microsoft.com/azure-dev-cli-apps:latest
     environment: production
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
@@ -80,6 +78,9 @@ jobs:
     - name: Describe Java version
       run: mvn -v
       
+    - name: Add AZD
+      run: curl -fsSL https://aka.ms/install-azd.sh | bash
+
     - name: print input env variables
       run: |
         echo $APP_NAME
