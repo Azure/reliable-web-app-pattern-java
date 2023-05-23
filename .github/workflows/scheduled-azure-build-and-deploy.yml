@@ -51,6 +51,7 @@ jobs:
       AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
       DATABASE_PASSWORD: ${{ vars.POSTGRES_DATABASE_PASSWORD }}
       ENABLE_TELEMETRY: true
+      PRINCIPAL_TYPE: ServicePrincipal
       TRAININGS_DIR: $PROJECT_ROOT/videos
       
     name: 'Build & deploy infra'

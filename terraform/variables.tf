@@ -37,7 +37,7 @@ variable "principal_type" {
   default = "User"
   validation {
     condition     = contains(["User", "ServicePrincipal"], var.principal_type)
-    error_message = "The principal_type value must be user or service_principal."
+    error_message = "The principal_type value must be User or ServicePrincipal."
   }
 }
 
