@@ -73,6 +73,8 @@ jobs:
         cache: 'maven'
 
     - name: Set env
+      # the script that uploads training videos requires an environment variable
+      # named PROJECT_ROOT to be set to the path of the project root
       run: echo "PROJECT_ROOT=$(pwd)" >> $GITHUB_ENV
 
     - name: Describe Java version
