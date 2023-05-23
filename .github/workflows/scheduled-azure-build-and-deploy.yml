@@ -67,7 +67,9 @@ jobs:
     steps:
     - uses: actions/setup-java@v3
       with:
-        java-version: 17
+        java-version: '17'
+        distribution: 'temurin'
+        cache: 'maven'
         
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
