@@ -93,3 +93,13 @@ variable "principal_type" {
     error_message = "The principal_type value must be user or service_principal."
   }
 }
+
+variable "proseware_client_id" {
+  type = string
+  description = "Azure AD App Registration: clientId"
+}
+
+variable "proseware_tenant_id" {
+  type = string
+  description = "Azure AD App Registration: tenantId"
+}

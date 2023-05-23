@@ -41,6 +41,21 @@ variable "principal_type" {
   }
 }
 
+variable "proseware_client_id" {
+  type = string
+  description = "Azure AD App Registration: clientId"
+}
+
+variable "proseware_client_secret" {
+  type = string
+  description = "Azure AD App Registration: clientSecret"
+}
+
+variable "proseware_tenant_id" {
+  type = string
+  description = "Azure AD App Registration: tenantId"
+}
+
 # ----------------------------------------------------------------------------------------------
 #  Everything below this comment is for provisioning the 2nd region (if AZURE_LOCATION2 was set)
 # ----------------------------------------------------------------------------------------------

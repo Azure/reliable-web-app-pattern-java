@@ -127,7 +127,7 @@ resource "azurerm_key_vault_secret" "airsonic_database_admin_password" {
 
 resource "azurerm_key_vault_secret" "airsonic_application_client_secret" {
   name         = "airsonic-application-client-secret"
-  value        = "foo" # Todo - determine if this secret is used/needed
+  value        = var.principal_type == "User" ? module.application.application_client_secret : var.
   key_vault_id = module.key-vault.vault_id
   depends_on = [ 
     azurerm_role_assignment.kv_administrator_user_role_assignement
@@ -179,7 +179,7 @@ module "application" {
   location           = var.location
   subnet_id          = module.network.app_subnet_id
   principal_type     = var.principal_type
-
+  
   app_insights_connection_string = module.app_insights.connection_string
   log_analytics_workspace_id     = module.app_insights.log_analytics_workspace_id
 
@@ -195,6 +195,8 @@ module "application" {
   storage_account_name               = module.storage.storage_account_name
   storage_account_primary_access_key = module.storage.storage_primary_access_key
 
+  proseware_client_id     = var.proseware_client_id
+  proseware_tenant_id     = var.proseware_tenant_id
   frontdoor_host_name     = module.frontdoor.host_name
   frontdoor_profile_uuid  = module.frontdoor.resource_guid
 }
