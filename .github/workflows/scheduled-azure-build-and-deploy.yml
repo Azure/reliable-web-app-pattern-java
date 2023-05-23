@@ -117,9 +117,17 @@ jobs:
         azd config set alpha.terraform on
 
     - name: Provision Infrastructure
+      id: azd_provision
+      continue-on-error: true
       run: azd provision --no-prompt
 
+    - name: Set AZD resource group
+      # temporary work around for known issue with multiple resource groups
+      # https://github.com/Azure/azure-dev/issues/690
+      run: azd env set AZURE_RESOURCE_GROUP ${AZURE_ENV_NAME}-rg
+
     - name: Deploy Application
+      if: steps.azd_provision.outcome == 'success'
       run: azd deploy --no-prompt
 
     - name: Delete Resources
