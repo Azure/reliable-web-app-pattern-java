@@ -36,23 +36,24 @@ permissions:
 
 concurrency: integration_testing
 
-env:
-  APP_NAME: ${{ vars.AZURE_APP_NAME }}
-  APP_ENVIRONMENT: ${{ inputs.environment || 'dev' }}
-  APP_DEPLOY_NAME: app-${{ vars.AZURE_APP_NAME }}-${{ inputs.environment || 'dev'}}
-  AZURE_ENV_NAME: ${{ inputs.environment || 'dev' }}
-  AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-  AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
-  AZURE_LOCATION2: ${{ vars.AZURE_LOCATION2 }}
-  AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
-  AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-  AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
-  DATABASE_PASSWORD: ${{ vars.POSTGRES_DATABASE_PASSWORD }}
-  ENABLE_TELEMETRY: true
-  TRAININGS_DIR: $PROJECT_ROOT/videos
 
 jobs:
   terraform:
+    env:
+      APP_NAME: ${{ vars.AZURE_APP_NAME }}
+      APP_ENVIRONMENT: ${{ inputs.environment || 'dev' }}
+      APP_DEPLOY_NAME: app-${{ vars.AZURE_APP_NAME }}-${{ inputs.environment || 'dev'}}
+      AZURE_ENV_NAME: ${{ inputs.environment || 'dev' }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+      AZURE_LOCATION2: ${{ vars.AZURE_LOCATION2 }}
+      AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+      AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+      AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+      DATABASE_PASSWORD: ${{ vars.POSTGRES_DATABASE_PASSWORD }}
+      ENABLE_TELEMETRY: true
+      TRAININGS_DIR: $PROJECT_ROOT/videos
+      
     name: 'Build & deploy infra'
     runs-on: ubuntu-latest
     container:
