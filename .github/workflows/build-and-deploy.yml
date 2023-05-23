@@ -130,8 +130,8 @@ jobs:
       if: steps.tf_apply.outcome == 'success'
       uses: actions/setup-java@v3
       with:
-        distribution: 'zulu'
         java-version: '17'
+        distribution: 'temurin'
 
     - name: Build with Maven
       id: build
