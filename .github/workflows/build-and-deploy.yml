@@ -169,14 +169,14 @@ jobs:
         # slot-name: APP_SERVICE_DEPLOY_SLOT
         package: 'airsonic.war'
 
-    - name: 'delete-resources'
+    - name: Delete Resources
       if: ${{ inputs.run_tear_down || github.event_name == 'schedule' }}
       run: |
         chmod +x ./scripts/devOpsScripts/delete-resources.sh
         ./scripts/devOpsScripts/delete-resources.sh -g rg-$APP_NAME-${{ inputs.environment || 'dev' }}
         ./scripts/devOpsScripts/delete-resources.sh -g rg-${APP_NAME}s-${{ inputs.environment || 'dev' }}
 
-    - name: 'Check for success'
+    - name: Check for success
       run: |
         if [[ "${{ steps.tf_apply.outcome }}" == 'success' ]]; then
           echo "TF Apply SUCCESS"
