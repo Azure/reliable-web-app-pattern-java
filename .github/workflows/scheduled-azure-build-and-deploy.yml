@@ -43,6 +43,8 @@ env:
   SUBSCRIPTION: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   APP_DEPLOY_NAME: app-${{ vars.AZURE_APP_NAME }}-${{ inputs.environment || 'dev'}}
   TRAININGS_DIR: $PROJECT_ROOT/videos
+  AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+  AZURE_LOCATION2: ${{ vars.AZURE_LOCATION2 }}
 
 jobs:
   terraform:
@@ -72,6 +74,8 @@ jobs:
         echo $APP_DEPLOY_NAME
         echo $DATABASE_PASSWORD
         echo $PROJECT_ROOT
+        echo $AZURE_LOCATION
+        echo $AZURE_LOCATION2
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
@@ -93,7 +97,7 @@ jobs:
     - name: Terraform Plan
       # note that for our sample we regenerate the plan because we're integration testing the deployment as a unit of work
       # to use this pipeline to deploy to production, you would want to save the plan as an artifact and then use it in the apply step
-      run: terraform -chdir=./terraform plan -var application_name=$APP_NAME -var environment=$APP_ENVIRONMENT -var enable_telemetry=$ENABLE_TELEMETRY -var database_administrator_password="$DATABASE_PASSWORD" -out airsonic.tfplan -var principal_type=ServicePrincipal
+      run: terraform -chdir=./terraform plan -var application_name=$APP_NAME -var environment=$APP_ENVIRONMENT -var enable_telemetry=$ENABLE_TELEMETRY -var database_administrator_password="$DATABASE_PASSWORD" -var principal_type=ServicePrincipal -var location=$AZURE_LOCATION -var location2=$AZURE_LOCATION2 -out airsonic.tfplan
       
     - name: Terraform Apply
       id: tf_apply
