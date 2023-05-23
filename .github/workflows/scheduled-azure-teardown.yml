@@ -15,8 +15,9 @@ on:
         - dev
         - prod
   
-  schedule:
-    - cron: '0 15 * * *'
+  # Todo: uncomment this when you want to schedule the workflow
+  # schedule:
+  #   - cron: '0 15 * * *'
 
 # https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-portal%2Clinux#set-up-azure-login-with-openid-connect-authentication
 permissions:
