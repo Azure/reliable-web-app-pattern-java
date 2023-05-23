@@ -114,10 +114,10 @@ resource "azuread_application_password" "application_password" {
 # This is not guidance and is done for demo purposes. The resource below will add the 
 # "Creator" app role assignment for the application of the current user deploying this sample.
 resource "azuread_app_role_assignment" "application_role_current_user" {
-  app_role_id         = azuread_service_principal.application_service_principal.app_role_ids["Creator"]
+  app_role_id         = azuread_service_principal.application_service_principal[0].app_role_ids["Creator"]
   count               = var.principal_type == "User" ? 1 : 0
   principal_object_id = data.azuread_client_config.current.object_id
-  resource_object_id  = azuread_service_principal.application_service_principal.object_id
+  resource_object_id  = azuread_service_principal.application_service_principal[0].object_id
 }
 
 # This creates the linux web app
