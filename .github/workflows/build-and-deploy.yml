@@ -121,6 +121,8 @@ jobs:
       run: terraform -chdir=./terraform apply airsonic.tfplan
       
     - name: Download videos
+      # This step only runs if Azure resource were provisioned
+      if: steps.tf_apply.outcome == 'success'
       run: ./scripts/download-trainings.sh
       
     - name: Set up Java version
