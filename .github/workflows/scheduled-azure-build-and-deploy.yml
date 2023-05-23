@@ -79,8 +79,9 @@ jobs:
       run: echo "PROJECT_ROOT=$(pwd)" >> $GITHUB_ENV
 
     - name: Describe Java version
-      run: mvn -v
-      working-directory: ./src/airsonic-advanced
+      run: |
+        cd ./src/airsonic-advanced
+        mvn -v
       
     - name: print input env variables
       run: |
