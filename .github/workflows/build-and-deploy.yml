@@ -34,7 +34,7 @@ permissions:
   contents: read
 
 
-concurrency: integration_testing
+concurrency: tfintegration_testing
 
 env:
   APP_NAME: tf${{ vars.AZURE_APP_NAME }}
