@@ -405,6 +405,8 @@ module "application2" {
   storage_account_name               = module.storage2[0].storage_account_name
   storage_account_primary_access_key = module.storage2[0].storage_primary_access_key
 
+  proseware_client_id     = var.proseware_client_id
+  proseware_tenant_id     = var.proseware_tenant_id
   frontdoor_host_name = module.frontdoor.host_name
   frontdoor_profile_uuid  = module.frontdoor.resource_guid
 }
