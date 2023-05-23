@@ -127,7 +127,7 @@ resource "azurerm_key_vault_secret" "airsonic_database_admin_password" {
 
 resource "azurerm_key_vault_secret" "airsonic_application_client_secret" {
   name         = "airsonic-application-client-secret"
-  value        = var.principal_type == "User" ? module.application.application_client_secret : var.
+  value        = var.principal_type == "User" ? module.application.application_client_secret : var.proseware_client_secret
   key_vault_id = module.key-vault.vault_id
   depends_on = [ 
     azurerm_role_assignment.kv_administrator_user_role_assignement
