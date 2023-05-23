@@ -43,7 +43,7 @@ env:
   AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
   AZURE_LOCATION2: ${{ vars.AZURE_LOCATION2 }}
   AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
-  AZURE_CLIENT_SECRET: ${{ vars.AZURE_CLIENT_SECRET }}
+  AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
   AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
   DATABASE_PASSWORD: ${{ vars.POSTGRES_DATABASE_PASSWORD }}
   ENABLE_TELEMETRY: true
@@ -54,6 +54,8 @@ jobs:
   terraform:
     name: 'Build & deploy infra'
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/azure-dev-cli-apps:latest
     environment: production
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
@@ -80,12 +82,6 @@ jobs:
         echo $PROJECT_ROOT
         echo $AZURE_LOCATION
         echo $AZURE_LOCATION2
-
-    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v2
-      with:
-        terraform_version: 1.4.6
      
      # Install the az cli with login using service principal created on az subscription
     - name: 'azure cli'
@@ -93,90 +89,57 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
-    - name: Terraform Init
-      run: terraform -chdir=./terraform init
-
-    # Generates an execution plan for Terraform
-    - name: Terraform Plan
-      # note that for our sample we regenerate the plan because we're integration testing the deployment as a unit of work
-      # to use this pipeline to deploy to production, you would want to save the plan as an artifact and then use it in the apply step
+    - name: Log in with Azure
       run: |
-        terraform   -chdir=./terraform plan \
-                    -var application_name=$APP_NAME \
-                    -var environment=$APP_ENVIRONMENT \
-                    -var enable_telemetry=$ENABLE_TELEMETRY \
-                    -var database_administrator_password="$DATABASE_PASSWORD" \
-                    -var principal_type=ServicePrincipal \
-                    -var location=$AZURE_LOCATION \
-                    -var location2=$AZURE_LOCATION2 \
-                    -var proseware_client_id=${AZURE_CLIENT_ID} \
-                    -var proseware_client_secret=${AZURE_CLIENT_SECRET} \
-                    -var proseware_tenant_id=${AZURE_TENANT_ID} \
-                    -out airsonic.tfplan
-      
-    - name: Terraform Apply
-      id: tf_apply
-      continue-on-error: true
-      run: terraform -chdir=./terraform apply airsonic.tfplan
-      
-    - name: Download videos
-      run: ./scripts/download-trainings.sh
-      
-    - name: Set up Java version
-      # This step only runs if Azure resource were provisioned
-      if: steps.tf_apply.outcome == 'success'
-      uses: actions/setup-java@v3
-      with:
-        distribution: 'zulu'
-        java-version: '11'
+        $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
+        Write-Host "::add-mask::$($info.clientSecret)"
 
-    - name: Build with Maven
-      id: build
-      # This step only runs if Azure resource were provisioned
-      if: steps.tf_apply.outcome == 'success'
+        azd auth login `
+          --client-id "$($info.clientId)" `
+          --client-secret "$($info.clientSecret)" `
+          --tenant-id "$($info.tenantId)"
+      shell: pwsh
+      env:
+        AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Enable terraform alpha feature
       run: |
-        echo ${{ github.workspace }}
-        echo $GITHUB_WORKSPACE
-        cd src/airsonic-advanced
-        mvn -Dmaven.test.skip=true -DskipTests package
-        
-    - name: Upload artifact for deployment job
-      # This step only runs if Azure resource were provisioned
-      # AND the build job was successful
-      if: steps.tf_apply.outcome == 'success' && steps.build.outcome == 'success'
-      uses: actions/upload-artifact@v3
-      with:
-        name: java-rwa
-        path: '${{ github.workspace }}/src/airsonic-advanced/airsonic-main/target/*.war'
-        
-    - name: Download artifact from build job
-      # This step only runs if Azure resource were provisioned
-      # AND the build job was successful
-      if: steps.tf_apply.outcome == 'success' && steps.build.outcome == 'success'
-      uses: actions/download-artifact@v3
-      with:
-        name: java-rwa
-        
-    - name: Deploy to Azure Web App
-      # This step only runs if Azure resource were provisioned
-      # AND the build job was successful
-      if: steps.tf_apply.outcome == 'success' && steps.build.outcome == 'success'
-      id: deploy-to-webapp
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: ${{ env.APP_DEPLOY_NAME }}
-        # slot-name: APP_SERVICE_DEPLOY_SLOT
-        package: 'airsonic.war'
+        azd config set alpha.terraform on
+        azd env DATABASE_PASSWORD ${{ vars.DATABASE_PASSWORD }}
+        azd env set AZURE_LOCATION ${{ vars.AZURE_LOCATION }}
+        azd env set AZURE_SUBSCRIPTION_ID ${{ vars.AZURE_SUBSCRIPTION_ID }}
+        azd env set AZURE_CLIENT_ID ${{ vars.AZURE_CLIENT_ID }}
+        azd env set AZURE_CLIENT_SECRET $AZURE_CLIENT_SECRET
+        azd env set AZURE_TENANT_ID ${{ vars.AZURE_TENANT_ID }}
 
-    - name: 'delete-resources'
+    - name: Provision Infrastructure
+      run: azd provision --no-prompt
+      env:
+        AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
+        AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+        AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+        ARM_TENANT_ID: ${{ vars.ARM_TENANT_ID }}
+        ARM_CLIENT_ID: ${{ vars.ARM_CLIENT_ID }}
+        ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+        RS_RESOURCE_GROUP: ${{ vars.RS_RESOURCE_GROUP }}
+        RS_STORAGE_ACCOUNT: ${{ vars.RS_STORAGE_ACCOUNT }}
+        RS_CONTAINER_NAME: ${{ vars.RS_CONTAINER_NAME }}
+
+    - name: Deploy Application
+      run: azd deploy --no-prompt
+      env:
+        AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
+        AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+        AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+    - name: Delete Resources
       if: ${{ inputs.run_tear_down || github.event_name == 'schedule' }}
       run: |
         chmod +x ./scripts/devOpsScripts/delete-resources.sh
         ./scripts/devOpsScripts/delete-resources.sh -g rg-$APP_NAME-${{ inputs.environment || 'dev' }}
         ./scripts/devOpsScripts/delete-resources.sh -g rg-${APP_NAME}s-${{ inputs.environment || 'dev' }}
 
-    - name: 'Check for success'
+    - name: Check for success
       run: |
         if [[ "${{ steps.tf_apply.outcome }}" == 'success' ]]; then
           echo "TF Apply SUCCESS"
