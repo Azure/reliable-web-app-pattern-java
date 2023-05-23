@@ -37,7 +37,7 @@ permissions:
 concurrency: integration_testing
 
 env:
-  APP_NAME: ${{ vars.AZURE_APP_NAME }}
+  APP_NAME: tf${{ vars.AZURE_APP_NAME }}
   APP_ENVIRONMENT: ${{ inputs.environment || 'dev' }}
   APP_DEPLOY_NAME: app-${{ vars.AZURE_APP_NAME }}-${{ inputs.environment || 'dev'}}
   AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
