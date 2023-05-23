@@ -110,8 +110,6 @@ jobs:
 
     - name: Provision Infrastructure
       run: azd provision --no-prompt
-      env:
-        AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
 
     - name: Deploy Application
       run: azd deploy --no-prompt
