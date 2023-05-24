@@ -36,11 +36,11 @@ output "storage_module_storage_primary_access_key" {
 }
 
 output "application_playlist_share_name" {
-  value       = module.application.application_playlist_share_name
+  value       = module.storage.playlist_share_name
   description = "The storage share name used for playlists"
 }
 
 output "application_video_share_name" {
-  value       = module.application.application_video_share_name
+  value       = module.storage.trainings_share_name
   description = "The storage share name used for training videos"
 }

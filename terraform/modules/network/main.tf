@@ -7,81 +7,33 @@ terraform {
   }
 }
 
-resource "azurecaf_name" "virtual_network_name" {
-  name          = var.application_name
-  resource_type = "azurerm_virtual_network"
-  suffixes      = ["vnet", var.environment]
-}
-
 resource "azurerm_virtual_network" "network" {
-  name                = azurecaf_name.virtual_network_name.result
+  name                = var.name
   location            = var.location
   resource_group_name = var.resource_group
-  address_space       = ["10.0.0.0/16"]
+  address_space       = var.vnet_cidr
 }
 
-# Create the data subnet
-resource "azurecaf_name" "app_subnet_name" {
-  name          = var.application_name
-  resource_type = "azurerm_subnet"
-  suffixes      = ["app", var.environment]
-}
+resource "azurerm_subnet" "network" {
+  count = length(var.subnets)
 
-# https://learn.microsoft.com/azure/app-service/overview-vnet-integration
-resource "azurerm_subnet" "app_subnet" {
-  name                 = azurecaf_name.app_subnet_name.result
+  name                 = var.subnets[count.index].name
+  address_prefixes     = var.subnets[count.index].subnet_cidr
   resource_group_name  = var.resource_group
   virtual_network_name = azurerm_virtual_network.network.name
-  address_prefixes     = ["10.0.1.0/24"]
 
-  service_endpoints = [ "Microsoft.Storage", "Microsoft.KeyVault"]
+  service_endpoints = var.subnets[count.index].service_endpoints
 
-  delegation {
-    name = "app-service"
-    service_delegation {
-      name    = "Microsoft.Web/serverFarms"
-      actions = ["Microsoft.Network/virtualNetworks/subnets/action"]
-    }
-  }
-}
+  dynamic "delegation" {
+    for_each = var.subnets[count.index].delegation == null ? [] : [var.subnets[count.index].delegation]
 
-# Create the private endpoint subnet. Private endpoint cannot be created in a subnet that's delegated
-resource "azurecaf_name" "private_endpoint_subnet_name" {
-  name          = var.application_name
-  resource_type = "azurerm_subnet"
-  suffixes      = ["pvtendpoint", var.environment]
-}
+    content {
+      name = var.subnets[count.index].delegation.name
 
-# https://learn.microsoft.com/azure/app-service/networking/private-endpoint
-resource "azurerm_subnet" "private_endpoint_subnet" {
-  name                 = azurecaf_name.private_endpoint_subnet_name.result
-  resource_group_name  = var.resource_group
-  virtual_network_name = azurerm_virtual_network.network.name
-  address_prefixes     = ["10.0.3.0/24"]
-}
-
-# Create the data subnet
-resource "azurecaf_name" "postgresql_subnet_name" {
-  name          = var.application_name
-  resource_type = "azurerm_subnet"
-  suffixes      = ["postgresql", var.environment]
-}
-
-resource "azurerm_subnet" "postgresql_subnet" {
-  name                 = azurecaf_name.postgresql_subnet_name.result
-  resource_group_name  = var.resource_group
-  virtual_network_name = azurerm_virtual_network.network.name
-  address_prefixes     = ["10.0.2.0/24"]
-  
-  service_endpoints    = ["Microsoft.Storage"]
-
-  delegation {
-    name = "fs"
-    service_delegation {
-      name = "Microsoft.DBforPostgreSQL/flexibleServers"
-      actions = [
-        "Microsoft.Network/virtualNetworks/subnets/join/action",
-      ]
+      service_delegation {
+        name    = var.subnets[count.index].delegation.service_delegation.name
+        actions = var.subnets[count.index].delegation.service_delegation.actions
+      }
     }
   }
 }

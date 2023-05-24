@@ -7,11 +7,6 @@ terraform {
   }
 }
 
-locals {
-  multi_region = var.host_name2 == "" ? 0 : 1
-}
-
-
 resource "azurecaf_name" "cdn_frontdoor_profile_name" {
   name          = var.application_name
   resource_type = "azurerm_frontdoor"
@@ -151,7 +146,7 @@ resource "azurerm_cdn_frontdoor_origin" "app_service_origin2" {
   name                          = azurecaf_name.front_door_origin_name2.result
   cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.origin_group.id
 
-  enabled                        = length(var.host_name2) > 0 ? true : false
+  enabled                        = false
   host_name                      = length(var.host_name2) > 0 ? var.host_name2 : var.host_name
   http_port                      = 80
   https_port                     = 443

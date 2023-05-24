@@ -13,18 +13,6 @@ terraform {
 
 data "azuread_client_config" "current" {}
 
-resource "azurerm_storage_share" "sashare_trainings" {
-  name                 = "trainings"
-  storage_account_name = var.storage_account_name
-  quota                = 50
-}
-
-resource "azurerm_storage_share" "sashare_playlist" {
-  name                 = "playlist"
-  storage_account_name = var.storage_account_name
-  quota                = 50
-}
-
 resource "azurecaf_name" "app_service_plan" {
   name          = var.application_name
   resource_type = "azurerm_app_service_plan"
@@ -176,7 +164,7 @@ resource "azurerm_linux_web_app" "application" {
     type = "AzureFiles"
     account_name = var.storage_account_name
     access_key = var.storage_account_primary_access_key
-    share_name = azurerm_storage_share.sashare_trainings.name 
+    share_name = var.trainings_share_name
     mount_path = "/var/proseware"
   }
 
@@ -185,7 +173,7 @@ resource "azurerm_linux_web_app" "application" {
     type = "AzureFiles"
     account_name = var.storage_account_name
     access_key = var.storage_account_primary_access_key
-    share_name = azurerm_storage_share.sashare_playlist.name 
+    share_name = var.playlist_share_name
     mount_path = "/var/playlists"
   }
 

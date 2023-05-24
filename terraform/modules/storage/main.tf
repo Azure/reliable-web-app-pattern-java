@@ -19,5 +19,17 @@ resource "azurerm_storage_account" "sa" {
   location                 = var.location
   account_kind             = "StorageV2"
   account_tier             = "Standard"
-  account_replication_type = "ZRS"
+  account_replication_type = var.account_replication_type
+}
+
+resource "azurerm_storage_share" "sashare_trainings" {
+  name                 = "trainings"
+  storage_account_name = azurerm_storage_account.sa.name
+  quota                = 50
+}
+
+resource "azurerm_storage_share" "sashare_playlist" {
+  name                 = "playlist"
+  storage_account_name = azurerm_storage_account.sa.name
+  quota                = 50
 }

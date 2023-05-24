@@ -79,6 +79,16 @@ variable "app_insights_connection_string" {
   description = "The app insights connection string"
 }
 
+variable "trainings_share_name" {
+  type        = string
+  description = "The name of the share for training material"
+}
+
+variable "playlist_share_name" {
+  type        = string
+  description = "The name of the share for playlists"
+}
+
 variable "log_analytics_workspace_id" {
   type        = string
   description = "The id of the log analytics workspace"
