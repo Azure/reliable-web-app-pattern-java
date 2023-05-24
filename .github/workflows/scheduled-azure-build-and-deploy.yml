@@ -138,7 +138,7 @@ jobs:
 
     - name: Check for success
       run: |
-        if [[ "${{ steps.tf_apply.outcome }}" == 'success' ]]; then
+        if [[ "${{ steps.azd_provision.outcome }}" == 'success' ]]; then
           echo "TF Apply SUCCESS"
         else
           echo "TF Apply failed"
