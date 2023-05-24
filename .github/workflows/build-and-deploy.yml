@@ -164,7 +164,8 @@ jobs:
       # This step only runs if Azure resource were provisioned
       # AND the build job was successful
       if: steps.tf_apply.outcome == 'success' && steps.build.outcome == 'success'
-      id: deploy-to-webapp
+      id: deploy_webapp
+      continue-on-error: true
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.APP_DEPLOY_NAME }}
@@ -194,3 +195,9 @@ jobs:
           exit 2
         fi
         
+        if [[ "${{ steps.deploy_webapp.outcome }}" == 'success' ]]; then
+          echo "deploy web app SUCCESS"
+        else
+          echo "deploy web app failed"
+          exit 3
+        fi

@@ -127,7 +127,9 @@ jobs:
       run: azd env set AZURE_RESOURCE_GROUP ${AZURE_ENV_NAME}-rg
 
     - name: Deploy Application
+      id: azd_deploy
       if: steps.azd_provision.outcome == 'success'
+      continue-on-error: true
       run: azd deploy --no-prompt
 
     - name: Delete Resources
@@ -143,10 +145,10 @@ jobs:
           exit 1
         fi
         
-        if [[ "${{ steps.build.outcome }}" == 'success' ]]; then
-          echo "mvn build SUCCESS"
+        if [[ "${{ steps.azd_deploy.outcome }}" == 'success' ]]; then
+          echo "azd deploy SUCCESS"
         else
-          echo "mvn build failed"
+          echo "azd deploy failed"
           exit 2
         fi
         
