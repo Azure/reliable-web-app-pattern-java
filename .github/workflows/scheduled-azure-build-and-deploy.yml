@@ -94,7 +94,7 @@ jobs:
         echo $AZURE_SUBSCRIPTION_ID
 
     # Install the az cli with login using service principal created on az subscription
-    - name: 'azure cli'
+    - name: Azure CLI Login
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
@@ -132,9 +132,23 @@ jobs:
       continue-on-error: true
       run: azd deploy --no-prompt
 
+    # At this time we are not using AZD down with terraform because it
+    # is not as robust as the scripted approach. tf destroy was not able to destroy
+    # diagnostic settings which were left dangling from a previous run. When a
+    # resource group is deleted, these diagnostics are left behind and it causes
+    # the next run to fail with a message like:
+    #   A resource with the ID "/subscriptions/***/Microsoft.Web/sites/app-kenghpipeline-dev|app-service-diagnostic-settings"
+    #   already exists - to be managed via Terraform this resource needs to be imported into the State.
+    # - name: Delete Resources
+    #   if: ${{ inputs.run_tear_down || github.event_name == 'schedule' }}
+    #   run: azd down --force --purge --no-prompt
+
     - name: Delete Resources
       if: ${{ inputs.run_tear_down || github.event_name == 'schedule' }}
-      run: azd down --force --purge --no-prompt
+      run: |
+        chmod +x ./scripts/devOpsScripts/delete-resources.sh
+        ./scripts/devOpsScripts/delete-resources.sh -g rg-$APP_NAME-$APP_ENVIRONMENT
+        ./scripts/devOpsScripts/delete-resources.sh -g rg-${APP_NAME}s-${{ inputs.environment || 'dev' }}
 
     - name: Check for success
       run: |

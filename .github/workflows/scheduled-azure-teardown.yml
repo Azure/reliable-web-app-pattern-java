@@ -38,17 +38,17 @@ jobs:
       image: mcr.microsoft.com/azure-dev-cli-apps:latest
     steps:
 
-      - name: Checkout
-        uses: actions/checkout@v3
+    - name: Checkout
+      uses: actions/checkout@v3
 
-      # Install the az cli with login using service principal created on az subscription
-      - name: 'azure cli'
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+    # Install the az cli with login using service principal created on az subscription
+    - name: Azure CLI Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: 'delete-resources'
-        run: |
-          chmod +x ./scripts/devOpsScripts/delete-resources.sh
-          ./scripts/devOpsScripts/delete-resources.sh -g rg-$APP_NAME-$APP_ENVIRONMENT
-          ./scripts/devOpsScripts/delete-resources.sh -g rg-${APP_NAME}s-${{ inputs.environment || 'dev' }}
+    - name: Delete Resources
+      run: |
+        chmod +x ./scripts/devOpsScripts/delete-resources.sh
+        ./scripts/devOpsScripts/delete-resources.sh -g rg-$APP_NAME-$APP_ENVIRONMENT
+        ./scripts/devOpsScripts/delete-resources.sh -g rg-${APP_NAME}s-${{ inputs.environment || 'dev' }}
