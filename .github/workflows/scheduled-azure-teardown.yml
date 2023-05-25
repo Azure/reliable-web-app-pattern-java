@@ -24,7 +24,6 @@ permissions:
   id-token: write
   contents: read
 
-
 concurrency: integration_testing
 
 env:
@@ -47,8 +46,14 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: Delete Resources
+    - name: Delete AZD primary & secondary
       run: |
         chmod +x ./scripts/devOpsScripts/delete-resources.sh
         ./scripts/devOpsScripts/delete-resources.sh -g rg-$APP_NAME-$APP_ENVIRONMENT
-        ./scripts/devOpsScripts/delete-resources.sh -g rg-${APP_NAME}s-${{ inputs.environment || 'dev' }}
+        ./scripts/devOpsScripts/delete-resources.sh -g rg-$APP_NAMEs-APP_ENVIRONMENT
+
+    - name: Delete TF primary & secondary
+      run: |
+        chmod +x ./scripts/devOpsScripts/delete-resources.sh
+        ./scripts/devOpsScripts/delete-resources.sh -g rg-tf$APP_NAME-$APP_ENVIRONMENT
+        ./scripts/devOpsScripts/delete-resources.sh -g rg-tf$APP_NAMEs-APP_ENVIRONMENT
