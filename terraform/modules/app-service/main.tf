@@ -187,8 +187,8 @@ resource "azurerm_linux_web_app" "application" {
     SPRING_REDIS_HOST = var.redis_host
     SPRING_REDIS_PORT = var.redis_port
 
-    SPRING_CLOUD_AZURE_ACTIVE_DIRECTORY_CREDENTIAL_CLIENT_ID = var.proseware_client_id
-    SPRING_CLOUD_AZURE_ACTIVE_DIRECTORY_PROFILE_TENANT_ID    = var.proseware_tenant_id
+    SPRING_CLOUD_AZURE_ACTIVE_DIRECTORY_CREDENTIAL_CLIENT_ID = var.principal_type == "User" ?  azuread_application.app_registration[0].application_id : var.proseware_client_id
+    SPRING_CLOUD_AZURE_ACTIVE_DIRECTORY_PROFILE_TENANT_ID    = var.principal_type == "User" ?  data.azuread_client_config.current.tenant_id : var.proseware_tenant_id
 
     SPRING_CLOUD_AZURE_KEYVAULT_SECRET_PROPERTY_SOURCES_0_ENDPOINT=var.key_vault_uri
 
