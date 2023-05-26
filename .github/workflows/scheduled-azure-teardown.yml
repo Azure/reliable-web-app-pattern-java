@@ -39,6 +39,7 @@ concurrency: integration_testing
 env:
   APP_NAME: ${{ vars.AZURE_APP_NAME }}
   APP_ENVIRONMENT: ${{ inputs.environment || 'dev' }}
+  AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
 
 jobs:
   build:
@@ -60,12 +61,12 @@ jobs:
       if: ${{ inputs.run_azd_tear_down || github.event_name == 'schedule' }}
       run: |
         chmod +x ./scripts/devOpsScripts/delete-resources.sh
-        ./scripts/devOpsScripts/delete-resources.sh -g rg-${APP_NAME}-${APP_ENVIRONMENT}
-        ./scripts/devOpsScripts/delete-resources.sh -g rg-${APP_NAME}s-${APP_ENVIRONMENT}
+        ./scripts/devOpsScripts/delete-resources.sh -g rg-${APP_NAME}-${AZURE_LOCATION}-${APP_ENVIRONMENT}
+        ./scripts/devOpsScripts/delete-resources.sh -g rg-${APP_NAME}s-${AZURE_LOCATION}-${APP_ENVIRONMENT}
 
     - name: Delete TF primary & secondary
       if: ${{ inputs.run_tf_tear_down || github.event_name == 'schedule' }}
       run: |
         chmod +x ./scripts/devOpsScripts/delete-resources.sh
-        ./scripts/devOpsScripts/delete-resources.sh -g rg-tf${APP_NAME}-${APP_ENVIRONMENT}
-        ./scripts/devOpsScripts/delete-resources.sh -g rg-tf${APP_NAME}s-${APP_ENVIRONMENT}
+        ./scripts/devOpsScripts/delete-resources.sh -g rg-tf${APP_NAME}-${AZURE_LOCATION}-${APP_ENVIRONMENT}
+        ./scripts/devOpsScripts/delete-resources.sh -g rg-tf${APP_NAME}s-${AZURE_LOCATION}-${APP_ENVIRONMENT}
