@@ -131,7 +131,7 @@ jobs:
       uses: actions/setup-java@v3
       with:
         java-version: '17'
-        distribution: 'temurin'
+        distribution: 'microsoft'
 
     - name: Build with Maven
       id: build
@@ -141,7 +141,7 @@ jobs:
         echo ${{ github.workspace }}
         echo $GITHUB_WORKSPACE
         cd src/airsonic-advanced
-        mvn -Dmaven.test.skip=true -DskipTests package
+        mvn -DskipTests package
         
     - name: Upload artifact for deployment job
       # This step only runs if Azure resource were provisioned
@@ -169,7 +169,6 @@ jobs:
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.APP_DEPLOY_NAME }}
-        # slot-name: APP_SERVICE_DEPLOY_SLOT
         package: 'airsonic.war'
 
     - name: Delete Resources
