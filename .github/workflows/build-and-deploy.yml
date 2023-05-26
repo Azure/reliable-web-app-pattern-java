@@ -186,23 +186,23 @@ jobs:
         clear='\033[0m'
 
         if [[ "${{ steps.tf_apply.outcome }}" == 'success' ]]; then
-          printf "TF apply ${green}success${clear}"
+          echo "TF apply ${green}success${clear}"
         else
-          printf "TF apply ${red}failed${clear}"
+          echo "TF apply ${red}failed${clear}"
           exit 1
         fi
         
         if [[ "${{ steps.build.outcome }}" == 'success' ]]; then
-          printf "mvn build ${green}success${clear}"
+          echo "mvn build ${green}success${clear}"
         else
-          printf "mvn build ${red}failed${clear}"
+          echo "mvn build ${red}failed${clear}"
           exit 2
         fi
-        
+
         if [[ "${{ steps.deploy_webapp.outcome }}" == 'success' ]]; then
-          printf "deploy web app ${green}success${clear}"
+          echo "deploy web app ${green}success${clear}"
         else
           echo "deploy web app failed"
-          printf "deploy web app ${red}failed${clear}"
+          echo "deploy web app ${red}failed${clear}"
           exit 3
         fi

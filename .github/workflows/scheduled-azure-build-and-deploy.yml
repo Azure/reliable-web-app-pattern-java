@@ -157,16 +157,16 @@ jobs:
         clear='\033[0m'
 
         if [[ "${{ steps.azd_provision.outcome }}" == 'success' ]]; then
-          printf "AZD provision ${green}success${clear}"
+          echo "AZD provision ${green}success${clear}"
         else
-          printf "AZD provision ${red}failed${clear}"
+          echo "AZD provision ${red}failed${clear}"
           exit 1
         fi
-        
+
         if [[ "${{ steps.azd_deploy.outcome }}" == 'success' ]]; then
-          printf "AZD deploy ${green}success${clear}"
+          echo "AZD deploy ${green}success${clear}"
         else
-          printf "AZD deploy ${red}failed${clear}"
+          echo "AZD deploy ${red}failed${clear}"
           exit 1
         fi
         
