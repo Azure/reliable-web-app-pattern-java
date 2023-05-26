@@ -45,6 +45,18 @@ variable "administrator_password" {
   description = "The password for the PostgreSQL administrator login"
 }
 
+variable "replication_enabled" {
+  type       = bool
+  description = "Is replication enabled"
+  default     = false
+}
+
+variable "source_server_id" {
+  type       = string
+  description = "The resource ID of the source PostgreSQL Flexible Server for replication"
+  default     = null
+}
+
 variable "log_analytics_workspace_id" {
   type        = string
   description = "The id of the log analytics workspace"

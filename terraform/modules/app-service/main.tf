@@ -16,7 +16,7 @@ data "azuread_client_config" "current" {}
 resource "azurecaf_name" "app_service_plan" {
   name          = var.application_name
   resource_type = "azurerm_app_service_plan"
-  suffixes      = [var.environment]
+  suffixes      = [var.location, var.environment]
 }
 
 # This creates the plan that the service use
@@ -37,7 +37,7 @@ resource "azurerm_service_plan" "application" {
 resource "azurecaf_name" "app_service" {
   name          = var.application_name
   resource_type = "azurerm_app_service"
-  suffixes      = [var.environment]
+  suffixes      = [var.location, var.environment]
 }
 
 resource "random_uuid" "admin_role_id" {}
