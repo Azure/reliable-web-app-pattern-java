@@ -19,11 +19,6 @@ variable "location" {
   description = "The Azure region where all resources in this example should be created"
 }
 
-variable "database_id" {
-  type        = string
-  description = "The id of the database"
-}
-
 variable "database_name" {
   type        = string
   description = "The name of the database"

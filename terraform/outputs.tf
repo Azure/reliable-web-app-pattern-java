@@ -1,29 +1,16 @@
-output "application_url" {
-  value       = module.application.application_url
-  description = "The Web application URL."
-}
-
 output "frontdoor_url" {
   value       = "https://${module.frontdoor.host_name}"
   description = "The Web application Front Door URL."
 }
 
-output "resource_group" {
+output "primary_resource_group" {
   value       = azurerm_resource_group.main.name
-  description = "The resource group."
+  description = "The primary resource group."
 }
 
-output "app_service_module_outputs" {
-  value = module.application
-  sensitive = true
-}
-
-output "postresql_database_module_outputs" {
-  value = module.postresql_database.database_url
-}
-
-output "keyvault_module_outputs" {
-  value = module.key-vault
+output "secondary_resource_group" {
+  value       = length(azurerm_resource_group.main2) > 0 ? azurerm_resource_group.main2[0].name : null
+  description = "The secondary resource group."
 }
 
 output "storage_module_storage_account_name" {

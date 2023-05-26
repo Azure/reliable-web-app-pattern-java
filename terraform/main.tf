@@ -12,6 +12,7 @@ locals {
   telemetryId = "92141f6a-c03e-4141-bc1c-2113e4772c8d-${var.location}"
 
   // Use GZRS storage if deploying in multi-region
+  is_multi_region          = length(var.location2) > 0
   account_replication_type = length(var.location2) > 0 ? "GZRS" : "ZRS"
 
   // Network cidrs for primary region
@@ -28,10 +29,6 @@ locals {
 }
 
 data "azurerm_client_config" "current" {}
-
-//data "azuread_user" "current_user" {
-//  object_id = data.azurerm_client_config.current.object_id
-//}
 
 resource "azurecaf_name" "resource_group" {
   name          = var.application_name
@@ -149,8 +146,14 @@ module "postresql_database" {
   location                    = var.location
   virtual_network_id          = module.network.vnet_id
   subnet_network_id           = module.network.subnets[index(module.network.subnets.*.name, azurecaf_name.postgresql_subnet_name.result)].id
+  replication_enabled         = true
   administrator_password      = var.database_administrator_password
   log_analytics_workspace_id  = module.app_insights.log_analytics_workspace_id
+}
+
+resource "azurerm_postgresql_flexible_server_database" "postresql_database" {
+  name                = "${var.application_name}db"
+  server_id           = module.postresql_database.database_server_id
 }
 
 module "key-vault" {
@@ -309,9 +312,8 @@ module "application" {
   app_insights_connection_string = module.app_insights.connection_string
   log_analytics_workspace_id     = module.app_insights.log_analytics_workspace_id
 
-  database_id      = module.postresql_database.database_id
   database_fqdn    = module.postresql_database.database_fqdn
-  database_name    = module.postresql_database.database_name
+  database_name    = azurerm_postgresql_flexible_server_database.postresql_database.name
 
   redis_host       = module.cache.cache_hostname
   redis_port       = module.cache.cache_ssl_port
@@ -343,7 +345,7 @@ module "frontdoor" {
   environment      = local.environment
   location         = var.location
   host_name        = module.application.application_fqdn
-  host_name2       = length(var.location2) > 0 ? module.application2[0].application_fqdn : ""
+  host_name2       = local.is_multi_region ? module.application2[0].application_fqdn : ""
 }
 
 resource "azurerm_resource_group_template_deployment" "deploymenttelemetry" {
@@ -369,7 +371,7 @@ data "http" "myip" {
 
 locals {
   myip = chomp(data.http.myip.body)
-  virtual_network_subnet_ids = length(var.location2) > 0 ? [module.network.subnets[index(module.network.subnets.*.name, azurecaf_name.app_subnet_name.result)].id, module.network2[0].subnets[index(module.network.subnets.*.name, azurecaf_name.app_subnet_name.result)].id] : [module.network.subnets[index(module.network.subnets.*.name, azurecaf_name.app_subnet_name.result)].id]
+  virtual_network_subnet_ids = local.is_multi_region ? [module.network.subnets[index(module.network.subnets.*.name, azurecaf_name.app_subnet_name.result)].id, module.network2[0].subnets[index(module.network.subnets.*.name, azurecaf_name.app_subnet_name.result)].id] : [module.network.subnets[index(module.network.subnets.*.name, azurecaf_name.app_subnet_name.result)].id]
 }
 
 resource "azurerm_storage_account_network_rules" "airsonic-storage-network-rules" {
@@ -413,7 +415,7 @@ resource "null_resource" "app_service_startup_script" {
 # Create 2nd region resource group name by appending "s".
 #
 resource "azurecaf_name" "resource_group2" {
-  count         = length(var.location2) > 0 ? 1 : 0
+  count         = local.is_multi_region ? 1 : 0
   name          = "${var.application_name}"
   resource_type = "azurerm_resource_group"
   suffixes      = [var.location2, local.environment]
@@ -423,7 +425,7 @@ resource "azurecaf_name" "resource_group2" {
 # Create 2nd resource group.
 #
 resource "azurerm_resource_group" "main2" {
-  count    = length(var.location2) > 0 ? 1 : 0
+  count    = local.is_multi_region ? 1 : 0
   name     = azurecaf_name.resource_group2[0].result
   location = var.location2
 
@@ -438,7 +440,7 @@ resource "azurerm_resource_group" "main2" {
 }
 
 module "network2" {
-  count              = length(var.location2) > 0 ? 1 : 0
+  count              = local.is_multi_region ? 1 : 0
   source             = "./modules/network"
   name               = azurecaf_name.virtual_network_name.result
   resource_group     = azurerm_resource_group.main2[0].name
@@ -484,22 +486,65 @@ module "network2" {
   ]
 }
 
+resource "azurerm_virtual_network_peering" "primary_to_secondary" {
+  count                        = local.is_multi_region ? 1 : 0
+  name                         = "primary-to-secondary-${var.application_name}"
+  resource_group_name          = azurerm_resource_group.main.name
+  virtual_network_name         = module.network.vnet_name
+  remote_virtual_network_id    = module.network2[0].vnet_id
+  allow_virtual_network_access = true
+  allow_forwarded_traffic      = false
+  allow_gateway_transit        = false
+  use_remote_gateways          = false
+
+  depends_on = [
+    module.network,
+    module.network2[0]
+  ]
+}
+
+resource "azurerm_virtual_network_peering" "secondary_to_primary" {
+  count                        = local.is_multi_region ? 1 : 0
+  name                         = "secondary-to-primary-${var.application_name}"
+  resource_group_name          = azurerm_resource_group.main2[0].name
+  virtual_network_name         = module.network2[0].vnet_name
+  remote_virtual_network_id    = module.network.vnet_id
+  allow_virtual_network_access = true
+  allow_forwarded_traffic      = false
+  allow_gateway_transit        = false
+  use_remote_gateways          = false
+
+  depends_on = [
+    module.network,
+    module.network2[0]
+  ]
+}
+
 module "postresql_database2" {
-  count                       = length(var.location2) > 0 ? 1 : 0
+  count                       = local.is_multi_region ? 1 : 0
   source                      = "./modules/postresql"
   azure_ad_tenant_id          = data.azurerm_client_config.current.tenant_id
-  resource_group              = azurerm_resource_group.main2[0].name
-  application_name            = "${var.application_name}s"
+  resource_group              = azurerm_resource_group.main.name
+  application_name            = "${var.application_name}"
   environment                 = local.environment
   location                    = var.location2
   virtual_network_id          = module.network2[0].vnet_id
   subnet_network_id           = module.network2[0].subnets[index(module.network.subnets.*.name, azurecaf_name.postgresql_subnet_name.result)].id
   administrator_password      = var.database_administrator_password
+  replication_enabled         = true
+  source_server_id            = module.postresql_database.database_server_id
   log_analytics_workspace_id  = module.app_insights.log_analytics_workspace_id
+
+  depends_on = [
+    module.network,
+    module.network2[0],
+    azurerm_virtual_network_peering.primary_to_secondary,
+    azurerm_virtual_network_peering.secondary_to_primary
+  ]
 }
 
 module "key-vault2" {
-  count            = length(var.location2) > 0 ? 1 : 0
+  count            = local.is_multi_region ? 1 : 0
   source           = "./modules/key-vault"
   resource_group   = azurerm_resource_group.main2[0].name
   application_name = var.application_name
@@ -522,7 +567,7 @@ module "key-vault2" {
 }
 
 module "cache2" {
-  count                       = length(var.location2) > 0 ? 1 : 0
+  count                       = local.is_multi_region ? 1 : 0
   source                      = "./modules/cache"
   resource_group              = azurerm_resource_group.main2[0].name
   environment                 = local.environment
@@ -533,10 +578,10 @@ module "cache2" {
 }
 
 module "application2" {
-  count               = length(var.location2) > 0 ? 1 : 0
+  count               = local.is_multi_region ? 1 : 0
   source              = "./modules/app-service"
   resource_group      = azurerm_resource_group.main2[0].name
-  application_name    = "${var.application_name}s"
+  application_name    = "${var.application_name}"
   environment         = local.environment
   location            = var.location2
   subnet_id           = module.network2[0].subnets[index(module.network.subnets.*.name, azurecaf_name.app_subnet_name.result)].id
@@ -544,9 +589,8 @@ module "application2" {
   app_insights_connection_string = module.app_insights.connection_string
   log_analytics_workspace_id     = module.app_insights.log_analytics_workspace_id
 
-  database_id      = module.postresql_database2[0].database_id
   database_fqdn    = module.postresql_database2[0].database_fqdn
-  database_name    = module.postresql_database2[0].database_name
+  database_name    = azurerm_postgresql_flexible_server_database.postresql_database.name
 
   redis_host       = module.cache2[0].cache_hostname
   redis_port       = module.cache2[0].cache_ssl_port
@@ -564,20 +608,20 @@ module "application2" {
 
 # For demo purposes, allow current user access to the key vault
 resource azurerm_role_assignment kv_contributor_user_role_assignement2 {
-  count                 = length(var.location2) > 0 ? 1 : 0
+  count                 = local.is_multi_region ? 1 : 0
   scope                 = module.key-vault2[0].vault_id
   role_definition_name  = "Key Vault Contributor"
   principal_id          = data.azurerm_client_config.current.object_id
 }
 resource azurerm_role_assignment kv_administrator_user_role_assignement2 {
-  count                 = length(var.location2) > 0 ? 1 : 0
+  count                 = local.is_multi_region ? 1 : 0
   scope                 = module.key-vault2[0].vault_id
   role_definition_name  = "Key Vault Administrator"
   principal_id          = data.azurerm_client_config.current.object_id
 }
 
 resource "azurerm_key_vault_secret" "airsonic_database_admin2" {
-  count        = length(var.location2) > 0 ? 1 : 0
+  count        = local.is_multi_region ? 1 : 0
   name         = "airsonic-database-admin"
   value        = module.postresql_database2[0].database_username
   key_vault_id = module.key-vault2[0].vault_id
@@ -589,7 +633,7 @@ resource "azurerm_key_vault_secret" "airsonic_database_admin2" {
 }
 
 resource "azurerm_key_vault_secret" "airsonic_database_admin_password2" {
-  count        = length(var.location2) > 0 ? 1 : 0
+  count        = local.is_multi_region ? 1 : 0
   name         = "airsonic-database-admin-password"
   value        = var.database_administrator_password
   key_vault_id = module.key-vault2[0].vault_id
@@ -601,7 +645,7 @@ resource "azurerm_key_vault_secret" "airsonic_database_admin_password2" {
 }
 
 resource "azurerm_key_vault_secret" "airsonic_application_client_secret2" {
-  count        = length(var.location2) > 0 ? 1 : 0
+  count        = local.is_multi_region ? 1 : 0
   name         = "airsonic-application-client-secret"
   value        = module.application2[0].application_client_secret
   key_vault_id = module.key-vault2[0].vault_id
@@ -613,7 +657,7 @@ resource "azurerm_key_vault_secret" "airsonic_application_client_secret2" {
 }
 
 resource "azurerm_key_vault_secret" "airsonic_cache_secret2" {
-  count        = length(var.location2) > 0 ? 1 : 0
+  count        = local.is_multi_region ? 1 : 0
   name         = "airsonic-redis-password"
   value        = module.cache2[0].cache_secret
   key_vault_id = module.key-vault2[0].vault_id
@@ -626,7 +670,7 @@ resource "azurerm_key_vault_secret" "airsonic_cache_secret2" {
 
 # Give the app access to the key vault secrets - https://learn.microsoft.com/azure/key-vault/general/rbac-guide?tabs=azure-cli#secret-scope-role-assignment
 resource azurerm_role_assignment app_database_admin_rbac_assignment2 {
-  count                 = length(var.location2) > 0 ? 1 : 0
+  count                 = local.is_multi_region ? 1 : 0
   scope                 = "${module.key-vault2[0].vault_id}/secrets/${azurerm_key_vault_secret.airsonic_database_admin.name}"
   role_definition_name  = "Key Vault Secrets User"
   principal_id          = module.application2[0].application_principal_id
@@ -638,7 +682,7 @@ resource azurerm_role_assignment app_database_admin_rbac_assignment2 {
 }
 
 resource azurerm_role_assignment app_database_admin_password_rbac_assignment2 {
-  count                 = length(var.location2) > 0 ? 1 : 0
+  count                 = local.is_multi_region ? 1 : 0
   scope                 = "${module.key-vault2[0].vault_id}/secrets/${azurerm_key_vault_secret.airsonic_database_admin_password.name}"
   role_definition_name  = "Key Vault Secrets User"
   principal_id          = module.application2[0].application_principal_id
@@ -650,7 +694,7 @@ resource azurerm_role_assignment app_database_admin_password_rbac_assignment2 {
 }
 
 resource azurerm_role_assignment app_client_secret_rbac_assignment2 {
-  count                 = length(var.location2) > 0 ? 1 : 0
+  count                 = local.is_multi_region ? 1 : 0
   scope                 = "${module.key-vault2[0].vault_id}/secrets/${azurerm_key_vault_secret.airsonic_application_client_secret.name}"
   role_definition_name  = "Key Vault Secrets User"
   principal_id          = module.application2[0].application_principal_id
@@ -662,7 +706,7 @@ resource azurerm_role_assignment app_client_secret_rbac_assignment2 {
 }
 
 resource azurerm_role_assignment app_redis_password_rbac_assignment2 {
-  count                 = length(var.location2) > 0 ? 1 : 0
+  count                 = local.is_multi_region ? 1 : 0
   scope                 = "${module.key-vault2[0].vault_id}/secrets/${azurerm_key_vault_secret.airsonic_cache_secret.name}"
   role_definition_name  = "Key Vault Secrets User"
   principal_id          = module.application2[0].application_principal_id
@@ -675,7 +719,7 @@ resource azurerm_role_assignment app_redis_password_rbac_assignment2 {
 
 # The application needs Key Vault Reader role in order to read the key vault meta data
 resource azurerm_role_assignment app_key_vault_reader_rbac_assignment2 {
-  count                 = length(var.location2) > 0 ? 1 : 0
+  count                 = local.is_multi_region ? 1 : 0
   scope                 = module.key-vault2[0].vault_id
   role_definition_name  = "Key Vault Reader"
   principal_id          = module.application2[0].application_principal_id
