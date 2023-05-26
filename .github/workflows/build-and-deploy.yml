@@ -6,7 +6,7 @@
 # Documentation for `hashicorp/setup-terraform` is located here: https://github.com/hashicorp/setup-terraform
 #
 
-name: 'RWA: TF Scheduled Build & Deploy'
+name: 'RWA: TF Build & Deploy'
 
 on:
   workflow_dispatch:
@@ -24,9 +24,6 @@ on:
         required: false
         default: true
         type: boolean
-  # Todo: uncomment this when you want to schedule the workflow
-  # schedule:
-  #   - cron: '0 14 * * *'
         
 # https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-portal%2Clinux#set-up-azure-login-with-openid-connect-authentication
 permissions:
