@@ -42,6 +42,7 @@ jobs:
     env:
       APP_NAME: ${{ vars.AZURE_APP_NAME }}
       APP_ENVIRONMENT: ${{ inputs.environment || 'dev' }}
+      AZURE_ENV_NAME: ${{ vars.AZURE_APP_NAME }}
       AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
       AZURE_LOCATION2: ${{ vars.AZURE_LOCATION2 }}
