@@ -42,7 +42,6 @@ jobs:
     env:
       APP_NAME: ${{ vars.AZURE_APP_NAME }}
       APP_ENVIRONMENT: ${{ inputs.environment || 'dev' }}
-      AZURE_ENV_NAME: app-${{ vars.AZURE_APP_NAME }}-${{ inputs.environment || 'dev'}}
       AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
       AZURE_LOCATION2: ${{ vars.AZURE_LOCATION2 }}
@@ -86,7 +85,6 @@ jobs:
       run: |
         echo $APP_NAME
         echo $APP_ENVIRONMENT
-        echo $AZURE_ENV_NAME
         echo $AZURE_LOCATION
         echo $AZURE_LOCATION2
         echo $DATABASE_PASSWORD
