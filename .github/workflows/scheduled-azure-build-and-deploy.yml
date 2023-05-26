@@ -123,7 +123,7 @@ jobs:
     - name: Set AZD resource group
       # temporary work around for known issue with multiple resource groups
       # https://github.com/Azure/azure-dev/issues/690
-      run: azd env set AZURE_RESOURCE_GROUP rg-${APP_NAME}-${APP_ENVIRONMENT}
+      run: azd env set AZURE_RESOURCE_GROUP rg-${APP_NAME}-${AZURE_LOCATION}-${APP_ENVIRONMENT}
 
     - name: AZD Deploy Application
       id: azd_deploy
@@ -146,8 +146,8 @@ jobs:
       if: ${{ inputs.run_tear_down || github.event_name == 'schedule' }}
       run: |
         chmod +x ./scripts/devOpsScripts/delete-resources.sh
-        ./scripts/devOpsScripts/delete-resources.sh -g rg-${APP_NAME}-${APP_ENVIRONMENT}
-        ./scripts/devOpsScripts/delete-resources.sh -g rg-${APP_NAME}s-${APP_ENVIRONMENT}
+        ./scripts/devOpsScripts/delete-resources.sh -g rg-${APP_NAME}-${AZURE_LOCATION}-${APP_ENVIRONMENT}
+        ./scripts/devOpsScripts/delete-resources.sh -g rg-${APP_NAME}s-${AZURE_LOCATION}-${APP_ENVIRONMENT}
 
     - name: Check for success
       run: |
