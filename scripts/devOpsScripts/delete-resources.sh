@@ -65,7 +65,7 @@ echo ""
 keyVaultName=$(az keyvault list --resource-group "$resourceGroupName" --query '[0].name' -o tsv)
 echo "Found $keyVaultName key vault in $resourceGroupName"
 
-echo "Deleting resources in $resourceGroupName in $location"
+echo "Deleting resource group $resourceGroupName in $location"
 # Delete the resource group
 az group delete --name "$resourceGroupName" --yes
 
