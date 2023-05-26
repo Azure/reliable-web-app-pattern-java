@@ -41,7 +41,7 @@ output "application_java_version" {
 }
 
 output "application_registration_id" {
-  value = var.proseware_client_id
+  value       = var.principal_type == "User" ?  azuread_application_password.app_registration[0].application_id : var.proseware_client_id
   description = "The id of application registration  (also called Client ID)."
 }
 
