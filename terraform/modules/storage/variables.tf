@@ -19,14 +19,8 @@ variable "location" {
   description = "The Azure region where all resources in this example should be created"
 }
 
-variable "virtual_network_id" {
+variable "account_replication_type" {
   type        = string
-  description = "The id of the vnet"
+  description = "The type of replication to use for this storage account. Valid options are LRS, GRS, RAGRS, ZRS, GZRS and RAGZRS"
 }
-
-variable "subnet_network_id" {
-  type        = string
-  description = "The id of the subnet storage"
-}
-
 

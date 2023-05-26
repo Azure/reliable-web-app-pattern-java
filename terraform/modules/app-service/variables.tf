@@ -19,11 +19,6 @@ variable "location" {
   description = "The Azure region where all resources in this example should be created"
 }
 
-variable "database_id" {
-  type        = string
-  description = "The id of the database"
-}
-
 variable "database_name" {
   type        = string
   description = "The name of the database"
@@ -77,6 +72,16 @@ variable "frontdoor_profile_uuid" {
 variable "app_insights_connection_string" {
   type        = string
   description = "The app insights connection string"
+}
+
+variable "trainings_share_name" {
+  type        = string
+  description = "The name of the share for training material"
+}
+
+variable "playlist_share_name" {
+  type        = string
+  description = "The name of the share for playlists"
 }
 
 variable "log_analytics_workspace_id" {

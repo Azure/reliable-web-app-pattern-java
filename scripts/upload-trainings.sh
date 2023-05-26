@@ -8,7 +8,7 @@ TRAININGS_DIR="videos"
 STORAGE_PRIMARY_KEY=$(azd env get-values --output json | jq -r .storage_module_storage_primary_access_key)
 STORAGE_ACCOUNT_NAME=$(azd env get-values --output json | jq -r .storage_module_storage_account_name)
 
-VIDEO_STORAGE_SHARE_NAME=$(azd env get-values --output json | jq -r .application_video_share_nameaform output -raw application_video_share_name)
+VIDEO_STORAGE_SHARE_NAME=$(azd env get-values --output json | jq -r .application_video_share_name)
 PLAYLIST_STORAGE_SHARE_NAME=$(azd env get-values --output json | jq -r .application_playlist_share_name)
 
 echo "account $STORAGE_ACCOUNT_NAME video share $VIDEO_STORAGE_SHARE_NAME playlist share $PLAYLIST_STORAGE_SHARE_NAME"
@@ -41,7 +41,7 @@ for file in $TRAININGS_DIR/*; do
     
 done
 
-PLAYLIST_DIR=${PROJECT_ROOT}/trainings
+PLAYLIST_DIR=trainings
 echo "Uploading playlists"
 
 for file in $PLAYLIST_DIR/*; do

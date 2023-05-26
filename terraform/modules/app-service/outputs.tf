@@ -55,14 +55,3 @@ output "application_principal_id" {
   value       = azurerm_linux_web_app.application.identity[0].principal_id
   description = "The id of system assigned managed identity"
 }
-
-output "application_video_share_name" {
-  value       = azurerm_storage_share.sashare_trainings.name
-  description = "The storage share name used for training videos"
-}
-
-output "application_playlist_share_name" {
-  value       = azurerm_storage_share.sashare_playlist.name
-  description = "The storage share name used for playlists"
-}
-
