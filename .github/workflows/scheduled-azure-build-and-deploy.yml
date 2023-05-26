@@ -1,0 +1,172 @@
+
+# This workflow installs the latest version of Terraform CLI, Java 11 SDK and AZ Cli, this workflow will run
+# `terraform init`, `terraform plan`, and `terraform apply` and then build teh java and deploy using
+# github az webapp plugin
+#
+# Documentation for `hashicorp/setup-terraform` is located here: https://github.com/hashicorp/setup-terraform
+#
+
+name: 'RWA: Scheduled Build & Deploy'
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'App environment'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+        - dev
+        - prod
+      run_tear_down:
+        description: 'When true, resources will be deleted after a run'
+        required: false
+        default: true
+        type: boolean
+  # Todo: uncomment this when you want to schedule the workflow
+  # schedule:
+  #   - cron: '0 14 * * *'
+        
+# https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-portal%2Clinux#set-up-azure-login-with-openid-connect-authentication
+permissions:
+  id-token: write
+  contents: read
+
+
+concurrency: integration_testing
+
+
+jobs:
+  terraform:
+    env:
+      APP_NAME: ${{ vars.AZURE_APP_NAME }}
+      APP_ENVIRONMENT: ${{ inputs.environment || 'dev' }}
+      AZURE_ENV_NAME: app-${{ vars.AZURE_APP_NAME }}-${{ inputs.environment || 'dev'}}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+      AZURE_LOCATION2: ${{ vars.AZURE_LOCATION2 }}
+      AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+      AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+      AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+      DATABASE_PASSWORD: ${{ vars.POSTGRES_DATABASE_PASSWORD }}
+      ENABLE_TELEMETRY: true
+      PRINCIPAL_TYPE: ServicePrincipal
+      TRAININGS_DIR: $PROJECT_ROOT/videos
+      
+    name: 'Build & deploy infra'
+    runs-on: ubuntu-latest
+    environment: production
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: 'maven'
+
+    - name: Set env
+      # the script that uploads training videos requires an environment variable
+      # named PROJECT_ROOT to be set to the path of the project root
+      run: echo "PROJECT_ROOT=$(pwd)" >> $GITHUB_ENV
+
+    - name: Describe Java version
+      run: mvn -v
+      
+    - name: Add AZD
+      run: curl -fsSL https://aka.ms/install-azd.sh | bash
+
+    - name: print input env variables
+      run: |
+        echo $APP_NAME
+        echo $APP_ENVIRONMENT
+        echo $AZURE_ENV_NAME
+        echo $AZURE_LOCATION
+        echo $AZURE_LOCATION2
+        echo $DATABASE_PASSWORD
+        echo $PROJECT_ROOT
+        echo $AZURE_SUBSCRIPTION_ID
+
+    # Install the az cli with login using service principal created on az subscription
+    - name: Azure CLI Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Log in with Azure
+      run: |
+        $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
+        Write-Host "::add-mask::$($info.clientSecret)"
+
+        azd auth login `
+          --client-id "$($info.clientId)" `
+          --client-secret "$($info.clientSecret)" `
+          --tenant-id "$($info.tenantId)"
+      shell: pwsh
+      env:
+        AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Enable terraform alpha feature
+      run: |
+        azd config set alpha.terraform on
+
+    - name: AZD Provision Infrastructure
+      id: azd_provision
+      continue-on-error: true
+      run: azd provision --no-prompt
+
+    - name: Set AZD resource group
+      # temporary work around for known issue with multiple resource groups
+      # https://github.com/Azure/azure-dev/issues/690
+      run: azd env set AZURE_RESOURCE_GROUP rg-${APP_NAME}-${APP_ENVIRONMENT}
+
+    - name: AZD Deploy Application
+      id: azd_deploy
+      if: steps.azd_provision.outcome == 'success'
+      continue-on-error: true
+      run: azd deploy --no-prompt
+
+    # At this time we are not using AZD down with terraform because it
+    # is not as robust as the scripted approach. tf destroy was not able to destroy
+    # diagnostic settings which were left dangling from a previous run. When a
+    # resource group is deleted, these diagnostics are left behind and it causes
+    # the next run to fail with a message like:
+    #   A resource with the ID "/subscriptions/***/Microsoft.Web/sites/app-kenghpipeline-dev|app-service-diagnostic-settings"
+    #   already exists - to be managed via Terraform this resource needs to be imported into the State.
+    # - name: Delete Resources
+    #   if: ${{ inputs.run_tear_down || github.event_name == 'schedule' }}
+    #   run: azd down --force --purge --no-prompt
+
+    - name: Delete Resources
+      if: ${{ inputs.run_tear_down || github.event_name == 'schedule' }}
+      run: |
+        chmod +x ./scripts/devOpsScripts/delete-resources.sh
+        ./scripts/devOpsScripts/delete-resources.sh -g rg-${APP_NAME}-${APP_ENVIRONMENT}
+        ./scripts/devOpsScripts/delete-resources.sh -g rg-${APP_NAME}s-${APP_ENVIRONMENT}
+
+    - name: Check for success
+      run: |
+        green='\033[0;32m'
+        red='\e[1;31m'
+        clear='\033[0m'
+
+        if [[ "${{ steps.azd_provision.outcome }}" == 'success' ]]; then
+          echo "AZD provision ${green}success${clear}"
+        else
+          echo "AZD provision ${red}failed${clear}"
+          exit 1
+        fi
+
+        if [[ "${{ steps.azd_deploy.outcome }}" == 'success' ]]; then
+          echo "AZD deploy ${green}success${clear}"
+        else
+          echo "AZD deploy ${red}failed${clear}"
+          exit 1
+        fi
+        

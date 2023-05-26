@@ -5,9 +5,8 @@
 #
 # Documentation for `hashicorp/setup-terraform` is located here: https://github.com/hashicorp/setup-terraform
 #
-#
 
-name: 'build & deploy'
+name: 'RWA: TF Scheduled Build & Deploy'
 
 on:
   workflow_dispatch:
@@ -20,31 +19,35 @@ on:
         options:
         - dev
         - prod
-      subscription:
-        description: 'Azure subscription ID'
-        required: true
-        type: string
-      appname:
-        description: 'Application Name'
-        required: true
-        type: string
-      dbpassword:
-        description: 'Database pwd'
-        required: true
-        type: string
+      run_tear_down:
+        description: 'When true, resources will be deleted after a run'
+        required: false
+        default: true
+        type: boolean
+  # Todo: uncomment this when you want to schedule the workflow
+  # schedule:
+  #   - cron: '0 14 * * *'
         
+# https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-portal%2Clinux#set-up-azure-login-with-openid-connect-authentication
 permissions:
+  id-token: write
   contents: read
-  
+
+
+concurrency: tfintegration_testing
+
 env:
-  APP_NAME: ${{ inputs.appname }}
-  PROJECT_ROOT: ${PWD}
-  APP_ENVIRONMENT: ${{ inputs.environment }}
-  DATABASE_PASSWORD: ${{ inputs.dbpassword }}
-  APP_SERVICE_DEPLOY_SLOT: production
+  APP_NAME: tf${{ vars.AZURE_APP_NAME }}
+  APP_ENVIRONMENT: ${{ inputs.environment || 'dev' }}
+  APP_DEPLOY_NAME: app-tf${{ vars.AZURE_APP_NAME }}-${{ inputs.environment || 'dev'}}
+  AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+  AZURE_LOCATION2: ${{ vars.AZURE_LOCATION2 }}
+  AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+  AZURE_CLIENT_SECRET: ${{ vars.AZURE_CLIENT_SECRET }}
+  AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+  DATABASE_PASSWORD: ${{ vars.POSTGRES_DATABASE_PASSWORD }}
   ENABLE_TELEMETRY: true
-  SUBSCRIPTION: ${{ inputs.subscription }}
-  APP_DEPLOY_NAME: app-${{ inputs.appname }}-${{ inputs.environment }}
+  SUBSCRIPTION: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   TRAININGS_DIR: $PROJECT_ROOT/videos
 
 jobs:
@@ -59,11 +62,13 @@ jobs:
         shell: bash
 
     steps:
-    
         
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v3
+
+    - name: Set env
+      run: echo "PROJECT_ROOT=$(pwd)" >> $GITHUB_ENV
       
     - name: print input env variables
       run: |
@@ -72,12 +77,15 @@ jobs:
         echo $APP_ENVIRONMENT
         echo $APP_DEPLOY_NAME
         echo $DATABASE_PASSWORD
+        echo $PROJECT_ROOT
+        echo $AZURE_LOCATION
+        echo $AZURE_LOCATION2
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
+      uses: hashicorp/setup-terraform@v2
       with:
-        terraform_version: 1.4.4
+        terraform_version: 1.4.6
      
      # Install the az cli with login using service principal created on az subscription
     - name: 'azure cli'
@@ -89,28 +97,46 @@ jobs:
     - name: Terraform Init
       run: terraform -chdir=./terraform init
 
-    # Checks that all Terraform configuration files adhere to a canonical format
-    #- name: Terraform Format
-    #  run: terraform -chdir=./terraform fmt -check
-
     # Generates an execution plan for Terraform
     - name: Terraform Plan
-      run: terraform -chdir=./terraform plan -var application_name=${APP_NAME} -var environment=${APP_ENVIRONMENT} -var enable_telemetry=${ENABLE_TELEMETRY} -var database_administrator_password=${DATABASE_PASSWORD} -out airsonic.tfplan
-       
+      # note that for our sample we regenerate the plan because we're integration testing the deployment as a unit of work
+      # to use this pipeline to deploy to production, you would want to save the plan as an artifact and then use it in the apply step
+      run: |
+        terraform   -chdir=./terraform plan \
+                    -var application_name=$APP_NAME \
+                    -var environment=$APP_ENVIRONMENT \
+                    -var enable_telemetry=$ENABLE_TELEMETRY \
+                    -var database_administrator_password="$DATABASE_PASSWORD" \
+                    -var principal_type=ServicePrincipal \
+                    -var location=$AZURE_LOCATION \
+                    -var location2=$AZURE_LOCATION2 \
+                    -var proseware_client_id=${AZURE_CLIENT_ID} \
+                    -var proseware_client_secret=${AZURE_CLIENT_SECRET} \
+                    -var proseware_tenant_id=${AZURE_TENANT_ID} \
+                    -out airsonic.tfplan
       
     - name: Terraform Apply
+      id: tf_apply
+      continue-on-error: true
       run: terraform -chdir=./terraform apply airsonic.tfplan
       
     - name: Download videos
-      run: ${PWD}/scripts/download-trainings.sh
-      
+      # This step only runs if Azure resource were provisioned
+      if: steps.tf_apply.outcome == 'success'
+      run: ./scripts/download-trainings.sh
       
     - name: Set up Java version
-      uses: actions/setup-java@v1
+      # This step only runs if Azure resource were provisioned
+      if: steps.tf_apply.outcome == 'success'
+      uses: actions/setup-java@v3
       with:
-        java-version: '11'
+        java-version: '17'
+        distribution: 'temurin'
 
     - name: Build with Maven
+      id: build
+      # This step only runs if Azure resource were provisioned
+      if: steps.tf_apply.outcome == 'success'
       run: |
         echo ${{ github.workspace }}
         echo $GITHUB_WORKSPACE
@@ -118,22 +144,65 @@ jobs:
         mvn -Dmaven.test.skip=true -DskipTests package
         
     - name: Upload artifact for deployment job
-      uses: actions/upload-artifact@v2
+      # This step only runs if Azure resource were provisioned
+      # AND the build job was successful
+      if: steps.tf_apply.outcome == 'success' && steps.build.outcome == 'success'
+      uses: actions/upload-artifact@v3
       with:
         name: java-rwa
         path: '${{ github.workspace }}/src/airsonic-advanced/airsonic-main/target/*.war'
         
     - name: Download artifact from build job
-      uses: actions/download-artifact@v2
+      # This step only runs if Azure resource were provisioned
+      # AND the build job was successful
+      if: steps.tf_apply.outcome == 'success' && steps.build.outcome == 'success'
+      uses: actions/download-artifact@v3
       with:
         name: java-rwa
         
     - name: Deploy to Azure Web App
-      id: deploy-to-webapp
+      # This step only runs if Azure resource were provisioned
+      # AND the build job was successful
+      if: steps.tf_apply.outcome == 'success' && steps.build.outcome == 'success'
+      id: deploy_webapp
+      continue-on-error: true
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.APP_DEPLOY_NAME }}
-        slot-name: APP_SERVICE_DEPLOY_SLOT
+        # slot-name: APP_SERVICE_DEPLOY_SLOT
         package: 'airsonic.war'
+
+    - name: Delete Resources
+      if: ${{ inputs.run_tear_down || github.event_name == 'schedule' }}
+      run: |
+        chmod +x ./scripts/devOpsScripts/delete-resources.sh
+        ./scripts/devOpsScripts/delete-resources.sh -g rg-${APP_NAME}-${{ inputs.environment || 'dev' }}
+        ./scripts/devOpsScripts/delete-resources.sh -g rg-${APP_NAME}s-${{ inputs.environment || 'dev' }}
+
+    - name: Check for success
+      run: |
+        green='\033[0;32m'
+        red='\e[1;31m'
+        clear='\033[0m'
+
+        if [[ "${{ steps.tf_apply.outcome }}" == 'success' ]]; then
+          echo "TF apply ${green}success${clear}"
+        else
+          echo "TF apply ${red}failed${clear}"
+          exit 1
+        fi
         
-   
+        if [[ "${{ steps.build.outcome }}" == 'success' ]]; then
+          echo "mvn build ${green}success${clear}"
+        else
+          echo "mvn build ${red}failed${clear}"
+          exit 2
+        fi
+
+        if [[ "${{ steps.deploy_webapp.outcome }}" == 'success' ]]; then
+          echo "deploy web app ${green}success${clear}"
+        else
+          echo "deploy web app failed"
+          echo "deploy web app ${red}failed${clear}"
+          exit 3
+        fi
