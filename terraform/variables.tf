@@ -3,8 +3,8 @@ variable "application_name" {
   description = "The application name"
 
   validation {
-    condition     = length(var.application_name) < 18
-    error_message = "The length of the application_name must be less than 18 characters."
+    condition     = length(var.application_name) > 0 && length(var.application_name) < 18
+    error_message = "application_name is required and the length must be less than 18 characters."
   }
 }
 
