@@ -116,7 +116,7 @@ jobs:
       run: |
         azd config set alpha.terraform on
 
-    - name: Provision Infrastructure
+    - name: AZD Provision Infrastructure
       id: azd_provision
       continue-on-error: true
       run: azd provision --no-prompt
@@ -126,7 +126,7 @@ jobs:
       # https://github.com/Azure/azure-dev/issues/690
       run: azd env set AZURE_RESOURCE_GROUP rg-${APP_NAME}-${APP_ENVIRONMENT}
 
-    - name: Deploy Application
+    - name: AZD Deploy Application
       id: azd_deploy
       if: steps.azd_provision.outcome == 'success'
       continue-on-error: true
