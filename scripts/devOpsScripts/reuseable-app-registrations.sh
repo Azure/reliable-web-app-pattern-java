@@ -175,7 +175,7 @@ tenantId=$(az account show --query "tenantId" -o tsv)
 # passwords for client secrets can never be accessed so we reset it every time we need it
 echo ''
 # added echo cmds to ensure that the warning printed by this cmd is visible
-prosewareClientSecret=$(az ad app credential reset --id $prosewareClientId --append --query "password")
+prosewareClientSecret=$(az ad app credential reset --id $prosewareClientId --append --query "password" -o tsv)
 echo ''
 
 # Print the settings we created or found
