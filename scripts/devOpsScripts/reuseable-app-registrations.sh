@@ -1,12 +1,20 @@
 #!/bin/bash
-
-# Decision point - client secrets will be created anew rather than replaced
-# Decision point - decided to create resourceGroup and KeyVault if they don't exist
-# Decision point - decided not to place the client secret in App Service config settings - will use Key Vault reference instead
+#
+# This script creates an Azure AD App Registration for the Reliable Web App Pattern which assumes a web app configured for id_tokens issued to users of "My Org" only.
+# When the arguments are present it will save the information to Key Vault.
+# When using the console-out option the configuration will print the to console so that you can save them to Key Vault, or GitHub pipeline variables.
+#
+# Options:
+# --app-name       -n  [Required] : The name used in Azure AD to uniquely identify this App Registration.
+# --key-vault      -kv            : Name of a key vault where the settings should be saved. When not provided, settings will be written to console output to be saved by the user.
+# --resource-group -g             : Name of the resource group where a key vault is located.
+# --location       -l             : Location (deaults to eastus). Values from: `az account list-locations`. You can configure the default location using `az configure --defaults location=<location>`.
+# --console-out    -c             : When provided, the script will print the settings to console output instead of saving them to Key Vault.
 
 POSITIONAL_ARGS=()
 
 debug=''
+consoleOutput=false
 
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -30,13 +38,17 @@ while [[ $# -gt 0 ]]; do
       shift # past argument
       shift # past value
       ;;
+    --console-out|-c)
+      consoleOutput=true
+      shift # past argument
+      ;;
     --debug)
       debug=1
       shift # past argument
       ;;
     --help*)
       echo ''
-      echo 'Use this command to create an Azure AD App Registration for the Reliable Web App Pattern which assumes a web app configured for Easy Auth.'
+      echo 'Use this command to create an Azure AD App Registration for the Reliable Web App Pattern which assumes a web app configured for id_tokens issued to users of "My Org" only.'
       echo ''
       echo 'Command'
       echo '    createAppRegistrations.sh : Uses the user'\''s `az account` context to create an App Registration. When the arguments are present it will save the information to Key Vault. And when they are unavailable it will print the required settings to console so that you can save them to Key Vault, or GitHub pipeline variables.'
@@ -45,8 +57,8 @@ while [[ $# -gt 0 ]]; do
       echo '    --app-name       -n  [Required] : The name used in Azure AD to uniquely identify this App Registration.'
       echo '    --key-vault      -kv            : Name of a key vault where the settings should be saved. When not provided, settings will be written to console output to be saved by the user.'
       echo '    --resource-group -g             : Name of the resource group where a key vault is located.'
-      echo '    --location       -l             : Location (deaults to eastus). Values from: `az account list-locations`. You can configure the default location using `az configure --defaults location=<location>`.'
-      echo ''
+      echo '    --location       -l             : Location (deaults to eastus). Values from: `az account list-locations`. You can configure the default location using `az configure --defaults location=<location>`.'      echo ''
+      echo '    --console-out    -c             : When provided, the script will print the settings to console output instead of saving them to Key Vault.'
       echo 'Global Arguments'
       echo '    --debug             : Increase logging verbosity to show all debug logs.'
       exit 1
@@ -71,13 +83,7 @@ clear='\033[0m'
 # So the only URI we set here is the one that supports local debugging
 # The final configuration of the redirectUri will be handled during TF deployment (see "setup-application-uri" ./terraform/main.tf)
 # when a user runs the `azd` commands
-redirectUri='https://localhost:8080/signin-oidc'
-
-if [[ ${#redirectUri} -eq 0 ]]; then
-  printf "${red}FATAL ERROR:${clear} Missing required parameter --redirect-uri"
-  echo ""
-  exit 6
-fi
+redirectUri='https://localhost:8080/login/oauth2/code/'
 
 if [[ ${#appName} -eq 0 ]]; then
   printf "${red}FATAL ERROR:${clear} Missing required parameter --app-name"
@@ -85,13 +91,13 @@ if [[ ${#appName} -eq 0 ]]; then
   exit 6
 fi
 
-if [[ ${#resourceGroupName} -eq 0 && ${#keyVaultName} -gt 0 ]]; then
+if [[ ! $consoleOutput && ${#resourceGroupName} -eq 0 && ${#keyVaultName} -gt 0 ]]; then
   printf "${red}FATAL ERROR:${clear} When, --key-vault is provided, --resource-group is required."
   echo ""
   exit 6
 fi
 
-if [[ ${#keyVaultName} -eq 0 && ${#resourceGroupName} -gt 0 ]]; then
+if [[ ! $consoleOutput && ${#keyVaultName} -eq 0 && ${#resourceGroupName} -gt 0 ]]; then
   printf "${red}FATAL ERROR:${clear} When, --resource-group is provided, --key-vault is required."
   echo ""
   exit 6
@@ -110,6 +116,7 @@ echo "keyVaultName='$keyVaultName'"
 echo "redirectUri='$redirectUri'"
 echo "debug='$debug'"
 echo "location='$location'"
+echo "consoleOutput='$consoleOutput'"
 echo ""
 
 if [[ $debug ]]; then
@@ -119,7 +126,7 @@ if [[ $debug ]]; then
 fi
 
 # if key vault and resource group are provided, then ensure that we can save the settings as intended before trying to create them
-if [[ ${#resourceGroupName} -gt 0 ]]; then
+if [[ ! $consoleOutput && ${#resourceGroupName} -gt 0 ]]; then
   echo "Checking for existing resource group..."
   resourceGroupExists=$(az group list --query "[?contains(name, '$resourceGroupName')].name" -o tsv)
   if [[ ${#resourceGroupExists} -eq 0 ]]; then
@@ -176,12 +183,6 @@ echo "App Registration Settings"
 echo "----------------------------------------------"
 echo "prosewareClientId='$prosewareClientId'"
 echo "tenantId='$tenantId'"
-if [[ $debug ]]; then
-    # The Java reliable web app solution expects to use this value as part of Terraform setup
-    # it should reference this value (via Key Vault reference) for the App Service Configuration setting named MICROSOFT_PROVIDER_AUTHENTICATION_SECRET
-    # https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-provider-aad
-    echo "prosewareClientSecret='$prosewareClientSecret'"
-fi
 echo ''
 
 if [[ $debug ]]; then
@@ -190,6 +191,12 @@ if [[ $debug ]]; then
     echo "..."
 fi
 
-az keyvault secret set --name 'AzureAd--ClientId' --vault-name $keyVaultName --value $prosewareClientId
-az keyvault secret set --name 'AzureAd--TenantId' --vault-name $keyVaultName --value $tenantId
-az keyvault secret set --name 'AzureAd--ClientSecret' --vault-name $keyVaultName --value $prosewareClientSecret
+if [[ $consoleOutput ]]; then
+  echo "Persisting settings to console..."
+  echo "clientSecret='$prosewareClientSecret'"
+else
+  echo "Persisting settings to key vault..."
+  az keyvault secret set --name 'AzureAd--ClientId' --vault-name $keyVaultName --value $prosewareClientId
+  az keyvault secret set --name 'AzureAd--TenantId' --vault-name $keyVaultName --value $tenantId
+  az keyvault secret set --name 'AzureAd--ClientSecret' --vault-name $keyVaultName --value $prosewareClientSecret
+fi
