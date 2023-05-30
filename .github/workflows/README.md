@@ -78,7 +78,7 @@ works around is the creation, and reuse, of an existing Azure AD app registratio
         |AZURE_CLIENT_ID            | (GUID FROM CONSOLE) |
         |AZURE_LOCATION             | australiaeast       |
         |AZURE_TENANT_ID            | (GUID FROM CONSOLE) |
-        |POSTGRES_DATABASE_PASSWORD | SUPER-sonic4114!    |
+        |POSTGRES_DATABASE_PASSWORD | SUPER-sonic4114    |
 
         **Outcome**
 
