@@ -36,14 +36,14 @@ works around is the creation, and reuse, of an existing Azure AD app registratio
 
 1. Give the ServicePrincipal access to assign Azure RBAC
 
-    Start by finding the objectId (not the clientId) for the service principal
+    Use the following command to find the objectId (not the clientId) for the service principal
 
-    Replace `clientId` with the value from the previous command:
+    Replace `clientId` with the value from the previous command
     ```bash
-    az ad sp show --id <clientId>
+    az ad sp show --query "id" -o tsv --id <clientId>
     ```
 
-    Use the *id* property from the previous command to replace `service_principal_object_id`
+    Use the output from the previous command to replace `service_principal_object_id`
     Set the *subscription_id* to the subscription where this Service Principal was granted **Contributor** access.
 
     > By default, this should be the subscription shown by `az account show`
