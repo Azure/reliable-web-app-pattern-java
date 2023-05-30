@@ -56,7 +56,6 @@ works around is the creation, and reuse, of an existing Azure AD app registratio
 
     The GitHub Service Principal now has access to perform Azure role assignments on RBAC provisioned services. This means that we can encode Key Vault Access Permissions (RBAC permissions) from infrastructure-as-code to give the managed identities (the web app's identity) access to read data from Key Vault.
 
-
   1. Set workflow variables & secrets in GitHub:
 
         *Secrets*
@@ -83,6 +82,17 @@ works around is the creation, and reuse, of an existing Azure AD app registratio
         **Outcome**
 
         The workflow is now ready to run.
+
+
+  1. Set the redirectUri
+
+    Run the deployment once. Then, using the Azure Portal, find the Front Door uri
+    that was created by the deployment and use that to override the "localhost:8080"
+    value that is set as the existing redirectUri in the App Registration.
+
+    **Outcome**
+
+    Users should be able to login to test the web app that was deployed via AZD pipeline.
 
 ## Workflow Overview
 There are three workflows:
