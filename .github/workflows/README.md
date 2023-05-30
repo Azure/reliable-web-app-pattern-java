@@ -65,7 +65,7 @@ works around is the creation, and reuse, of an existing Azure AD app registratio
         |---------------------------|---------------------|
         |AZURE_CLIENT_SECRET        | (TEXT FROM CONSOLE) |
         |AZURE_CREDENTIALS          | (TEXT FROM CONSOLE) |
-        |AZURE_CLIENT_SECRET        | (TEXT FROM CONSOLE) |
+        |AZURE_SUBSCRIPTION_ID      | (TEXT FROM CONSOLE) |
 
         > Paste all of the json from the previous command into the textarea as
          the value for the AZURE_CREDENTIALS secret.
