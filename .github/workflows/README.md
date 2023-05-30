@@ -7,12 +7,13 @@ works around is the creation, and reuse, of an existing Azure AD app registratio
 
 1. Create an Azure AD App Registration
 
-    > run the ./scripts/devOpsScripts/reuseable-app-registrations.sh command
+    > ./scripts/devOpsScripts/reuseable-app-registrations.sh --console-out --app-name rwa-java-pipeline-test1
 
     **Outcome**
 
     You should now be able to browse to Azure AD and see an App Registration that was created
-    for use when testing the Proseware web app.
+    for use when testing the Proseware web app. Save this data for later to be configured
+    in GitHub settings.
 
 1. Create a service principal for the workflow
 
@@ -24,22 +25,14 @@ works around is the creation, and reuse, of an existing Azure AD app registratio
     >     https://github.com/azure/login#configure-a-service-principal-with-a-secret
 
     ```bash
-    az ad sp create-for-rbac --name MyGitHubPipelineSP --sdk-auth --role contributor \
+    az ad sp create-for-rbac --name rwa-gh-java-spn --sdk-auth --role contributor \
     --scopes /subscriptions/{subscription_id}
     ```
 
     **Outcome**
 
     You have now created a service principal that GitHub can use to connect, and deploy, to an Azure subscription.
-
-1. Save these settings into GitHub
-
-    Create a new *Actions* secret named `AZURE_CREDENTIALS`
-
-    Paste all of the json from the previous command into the textarea as the value for this secret.
-
-    **Outcome**
-    The GitHub workflow can now access this Service Principal by using workflow secrets.
+    Save this data for later to be configured in GitHub settings.
 
 1. Give the ServicePrincipal access to assign Azure RBAC
 
@@ -63,22 +56,33 @@ works around is the creation, and reuse, of an existing Azure AD app registratio
 
     The GitHub Service Principal now has access to perform Azure role assignments on RBAC provisioned services. This means that we can encode Key Vault Access Permissions (RBAC permissions) from infrastructure-as-code to give the managed identities (the web app's identity) access to read data from Key Vault.
 
-1. Set workflow variables
 
-    **Secrets**
-    - AZURE_CLIENT_SECRET
-    - AZURE_SUBSCRIPTION_ID
+  1. Set workflow variables & secrets in GitHub:
 
-    **Variables**
-    - AZURE_APP_NAME
-    - AZURE_CLIENT_ID
-    - AZURE_LOCATION
-    - AZURE_TENANT_ID
-    - POSTGRES_DATABASE_PASSWORD
+        *Secrets*
 
-    **Outcome**
+        |Name                       |Value                |
+        |---------------------------|---------------------|
+        |AZURE_CLIENT_SECRET        | (TEXT FROM CONSOLE) |
+        |AZURE_CREDENTIALS          | (TEXT FROM CONSOLE) |
+        |AZURE_CLIENT_SECRET        | (TEXT FROM CONSOLE) |
 
-    The workflow is now ready to run.
+        > Paste all of the json from the previous command into the textarea as
+         the value for the AZURE_CREDENTIALS secret.
+
+        *Variables*
+
+        |Name                       |Value                |
+        |---------------------------|---------------------|
+        |AZURE_APP_NAME             | rwajavaghpipeline   |
+        |AZURE_CLIENT_ID            | (GUID FROM CONSOLE) |
+        |AZURE_LOCATION             | australiaeast       |
+        |AZURE_TENANT_ID            | (GUID FROM CONSOLE) |
+        |POSTGRES_DATABASE_PASSWORD | SUPER-sonic4114!    |
+
+        **Outcome**
+
+        The workflow is now ready to run.
 
 ## Workflow Overview
 There are three workflows:
@@ -88,7 +92,12 @@ There are three workflows:
 
 ### build-and-deploy.yml
 
-### scheduled-azure-build-and-deploy.yml
+This TerraForm workflow deployment is meant as a starter template to help readers with devOps
+deployments of this content.
 
-### scheduled-azure-teardown.yml
+The starter template is not currently complete and includes some remaining tasks that must
+be addressed before it can be applied in a dev environment:
 
+1. The tfplan file must be persisted so that infrastructure can be managed by Terraform
+1. The database should not be managed by the code, it should be managed by a database lifecylce process that manages schema changes as scripts that are under source control and reviewed by your database administrator to prevent any data loss as columns change.
+1. The war file packaged, and created by the pipeline, should support web app startup.
