@@ -20,8 +20,23 @@ variable "location" {
   default     = "eastus"
 }
 
+variable "database_administrator_password" {
+  type        = string
+  description = "The password for the PostgreSQL administrator login"
+}
+
 variable "enable_telemetry" {
   type        = bool
   description = "Telemetry collection is on by default"
   default     = true
+}
+
+# ----------------------------------------------------------------------------------------------
+#  Everything below this comment is for provisioning the 2nd region (if AZURE_LOCATION2 was set)
+# ----------------------------------------------------------------------------------------------
+
+variable "location2" {
+  type        = string
+  description = "The 2nd Azure region where resources in this example should be created"
+  default     = "westus"
 }

@@ -3,7 +3,7 @@
     "build": {
         "dockerfile": "Dockerfile",
         "args": {
-            "VARIANT": "jammy"
+            "IMAGE": "java:17"
         }
     },
 	"remoteUser": "vscode",
@@ -12,10 +12,10 @@
 	},
 	
     "features": {
-		"azure-cli": "2.44.1",
+		"azure-cli": "latest",
 		"docker-from-docker": "latest",
 		"ghcr.io/devcontainers/features/java:1": {
-			"version": "11",
+			"version": "17",
 			"installMaven": true,
 			"mavenVersion": "3.8.6"
 		},
@@ -24,10 +24,18 @@
 		"ghcr.io/eitsupi/devcontainer-features/jq-likes:1": {}
 	},
 	
-	"extensions": [
-		"ms-azuretools.azure-dev",
-		"vscjava.vscode-java-pack",
-		"Pivotal.vscode-spring-boot",
-		"redhat.vscode-yaml"
-	]
+	"customizations": {
+        "vscode": {
+            "extensions": [
+				"ms-azuretools.azure-dev",
+				"vscjava.vscode-java-pack",
+				"Pivotal.vscode-spring-boot",
+				"redhat.vscode-yaml",
+				"ms-azuretools.vscode-docker"
+            ]
+        }
+    },
+	"hostRequirements": {
+        "memory": "8gb"
+    }
 }

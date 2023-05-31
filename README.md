@@ -20,9 +20,9 @@ The internally accessible video covers the details of reliable web app pattern f
 
 [![Diagram showing the architecture of the reference implementation](docs/assets/java-architecture-reference-implementation.png)](docs/assets/java-architecture-reference-implementation.png)
 
-- [Production environment estimated cost](https://azure.com/e/c530c133f36c423e9774de286f7dd28a)
+- [Production environment estimated cost](https://azure.com/e/65354031bc084e539b6c8ccfc1a7b097)
 
-- [Non-production environment estimated cost](https://azure.com/e/48201e05118243e089ded6855839594a)
+- [Non-production environment estimated cost](https://azure.com/e/af7d105ce24340dab93dfe666909a3e0)
 
 ## Reference implementation workflow
 
@@ -33,17 +33,22 @@ The internally accessible video covers the details of reliable web app pattern f
 - The Azure Web App uses virtual network integration to connect to Azure Key Vault, Azure Cache for Redis, and Azure Database for PostgreSQL through private endpoints in the private virtual network. The App Services interface is located in the App Subnet, and all private endpoints use the Private Endpoint Subnet. Private DNS zones are used to resolve DNS queries.
 - The web app uses an account access key to mount a directory with Azure Files to the App Service. A private endpoint is not used for Azure Files to make deployment possible, as it would be less efficient. However, it is recommended to use a private endpoint in production as it adds an extra layer of security. Azure Files only accepts traffic from the virtual network and the local client IP address of the user executing the deployment.
 
+## Prerequisites
+
+* [Azure Subscription](https://azure.microsoft.com/pricing/member-offers/msdn-benefits-details/)
+* [Visual Studio Code](https://code.visualstudio.com/)
+* [Docker](https://www.docker.com/get-started/)
+* [Permissions to register an application](https://learn.microsoft.com/azure/active-directory/develop/quickstart-register-app)
+* [Dev Containers extension installed in VS Code](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension
+
 ## Steps to deploy the reference implementation
 
-Deploy this sample using [Visual Studio Code](https://code.visualstudio.com/) with [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension.
 
 Note - The following deployment has been tested using devcontainers on **macOS** and **Windows with [Ubuntu on WSL](https://ubuntu.com/wsl)**.
 
 **1. Clone the repo**
 
-If using WSL, start a WSL Ubuntu terminal and clone the repo to a WSL directory.
-
-[![WSL Ubuntu](docs/assets/wsl-ubuntu.png)
+Navigate to your desired directory and run the three following commands:
 
 ```shell
 git clone https://github.com/Azure/reliable-web-app-pattern-java.git
@@ -51,26 +56,59 @@ cd reliable-web-app-pattern-java
 code .
 ```
 
+If using WSL, start a WSL Ubuntu terminal and clone the repo to a WSL directory (see example in the following image).
+
+![WSL Ubuntu](docs/assets/wsl-ubuntu.png)
+
 Once Visual Studio Code is launched, you should see a popup allowing you to click on the button **Reopen in Container**.
 
-[![WSL Ubuntu](docs/assets/vscode-reopen-in-container.png)
+![WSL Ubuntu](docs/assets/vscode-reopen-in-container.png)
 
-If you don't see the popup, open up the Visual Studio Code Command Palette with the keyboard shortcut ⇧⌘P (Windows, Linux Ctrl+Shift+P) or navigating to View -> Command Palette... in the VS Code UI.
+If you don't see the popup, open up the Visual Studio Code Command Palette. There are three ways to open the Code Command Palette:
 
-[![WSL Ubuntu](docs/assets/vscode-reopen-in-container-command.png)
+- For Mac users, use the keyboard shortcut ⇧⌘P
+- For Windows and Linux users, use Ctrl+Shift+P
+- In the VS Code, navigate to View -> Command Palette.
+
+Then, search for `Dev Containers: Rebuild and Reopen in Container` in the Command Palette.
+
+![WSL Ubuntu](docs/assets/vscode-reopen-in-container-command.png)
 
 **2. Prepare for deployment**
 
-Open *./scripts/setup-initial-env.sh* and update the following variables:
-
 ```shell
-export SUBSCRIPTION=
-export APP_NAME=
+azd auth login
+azd config set alpha.terraform on
+azd env new
+azd env set DATABASE_PASSWORD <SOME_VALUE>
+azd env set AZURE_LOCATION <region>
+azd env set AZURE_SUBSCRIPTION_ID <SUBSCRIPTION_ID>
 ```
 
-*The variable APP_NAME needs to be globally unique across all of Azure and less than 16 characters.  This sample uses the APP_NAME as the base for names the Azure Resources. Some Azure Resources have a limit to the length of the name.*
+> You can find a list of available Azure regions by running
+> the following Azure CLI command.
+> 
+> ```shell
+> az account list-locations --query "[].name" -o tsv
+> ```
 
-You may change the `APP_ENVIRONMENT` variable to either *prod* or *dev*. The following table describes the differences in the resources deployed in the 2 environments.
+### Multi-region support
+
+Prosware devs also use the following command to choose a second Azure location because the production environment is multiregional.
+
+```shell
+azd env set AZURE_LOCATION2 <region>
+```
+
+### Select production or development environment.
+
+You should change the `APP_ENV_NAME` variable to either *prod* or *dev*. 
+
+```shell
+azd env set APP_ENV_NAME prod
+```
+
+The following table describes the differences in the resources deployed in the 2 environments.
 
 | Service | Dev SKU | Prod SKU | SKU options |
 | --- | --- | --- | --- |
@@ -78,113 +116,60 @@ You may change the `APP_ENVIRONMENT` variable to either *prod* or *dev*. The fol
 | App Service | P1v2 | P2v2 | [App Service SKU options](https://azure.microsoft.com/pricing/details/app-service/linux/)
 | PostgreSQL Flexible Server | Burstable B1ms (B_Standard_B1ms) | General Purpose D4s_v3 (GP_Standard_D4s_v3) | [PostgreSQL SKU options](https://learn.microsoft.com/azure/postgresql/flexible-server/concepts-compute-storage)
 
-*Note - There is a guided [demo.sh](./demo.sh) script that you can run that will execute the deployment steps.*
-
-```shell
-./demo.sh
-```
-
-Once the demo script completes, skip to the [Add Users to Azure Active Directory enterprise applications](#add-users-to-azure-active-directory-enterprise-applications) section.
-
-*You may choose to do this manually by following the steps below starting with [Start the deployment](#start-the-deployment)*
-
 **3. Start the Deployment**
 
-Run the following to set up the environment:
-
-```shell
-source ./scripts/setup-initial-env.sh
-```
-
-**4. Login using Azure CLI**
-
-Login to Azure using the Azure CLI and choose your active subscription.
+Provision the infrastructure using the commands below.
 
 ```shell
 az login --scope https://graph.microsoft.com//.default
-az account set --subscription ${SUBSCRIPTION}
+az account set --subscription <SUBSCRIPTION_ID>
+azd provision
 ```
 
-**5. Allow AZ CLI extensions to install without prompt**
+Deploy the web application to the primay region using the commands
+below.
+
+In the first command below substitute the FILL_IN_RESOURCE_GROUP_NAME
+with the resource group name of the primary region.
 
 ```shell
-az config set extension.use_dynamic_install=yes_without_prompt
+azd env set AZURE_RESOURCE_GROUP FILL_IN_RESOURCE_GROUP_NAME
+azd deploy
 ```
 
-**6. Deploy Azure Infrastructure**
+If you specified a secondary region then deploy the web application to
+it using the commands below.
 
-Create the Azure resources by running the following commands:
+In the command below substitute the FILL_IN_SECONDARY_RESOURCE_GROUP_NAME
+with the resource group name of the secondary region
 
 ```shell
-terraform -chdir=./terraform init
-terraform -chdir=./terraform plan -var application_name=${APP_NAME} -var environment=${APP_ENVIRONMENT} -var enable_telemetry=${ENABLE_TELEMETRY} -out airsonic.tfplan
-terraform -chdir=./terraform apply airsonic.tfplan
+azd env set AZURE_RESOURCE_GROUP FILL_IN_SECONDARY_RESOURCE_GROUP_NAME
+azd deploy
 ```
 
-**7. Download training videos**
+### (Optional) Add Users to Azure Active Directory enterprise applications
 
-If you plan on seeding the Proseware with videos and playlists, you may want to run the following scripts while the Azure resources defined in Terraform are being provisioned.  In a separate terminal, run the following.
+The next step is to add a user to the application and assign them a role. To do this, go to Azure Portal --> Azure Active Directory --> Enterprise Applications and search for the Proseware application. Add a user to the application.
+
+![Proseware Azure Active Directory Enterprise Applications](docs/assets/AAD-Enterprise-Application.png)
+
+### Navigate to Proseware
+
+After adding the user, open the browser and navigate to *Proseware*. Use the following command to get the site name.
 
 ```shell
-source ./scripts/setup-initial-env.sh
-./scripts/download-trainings.sh
+azd env get-values --output json | jq -r .frontdoor_url
 ```
 
-After the completion of this step, you should see a videos directory that contains training videos.
+![Proseware AAD](docs/assets/proseware.png)
 
-**8. Upload training videos and playlists**
+## Teardown
 
-The following command uploads the training videos and playlists to the `Azure Storage` account.  Run the following after Terraform has successfully completed deploying the Azure resources.
-
-```shell
-./scripts/upload-trainings.sh
-```
-
-**9. Set up local build environment**
+To tear down the deployment, run the two following commands.
 
 ```shell
-source ./scripts/setup-local-build-env.sh
-```
-
-**10. Package and deploy Airsonic**
-
-It's now time to compile and package Airsonic, skipping the unit tests.
-
-```shell
-cd src/airsonic-advanced
-mvn -DskipTests clean package
-```
-
-Now that we have a war file, we can deploy it to our Azure App Service.
-
-```shell
-mvn com.microsoft.azure:azure-webapp-maven-plugin:2.6.1:deploy -pl airsonic-main
-```
-
-**11. Add Users to Azure Active Directory enterprise applications**
-
-The next step is to add a user to the application and assign them a role. To do this, go to Azure Portal --> Azure Active Directory --> Enterprise Applications and search for the Airsonic application. Add a user to the application.
-
-![Aisonic Azure Active Directory Enterprise Applications](docs/assets/AAD-Enterprise-Application.png)
-
-After adding the user, open the browser and navigate to [Airsonic site](https://{AIRSONIC_SITE}). Use the following command to get the site name.
-
-```shell
-echo $(terraform -chdir=$PROJECT_ROOT/terraform output -raw frontdoor_url)
-```
-
-![Aisonic AAD](docs/assets/proseware.png)
-
-**12. Teardown**
-
-```shell
-RESOURCE_GROUP=$(terraform -chdir=$PROJECT_ROOT/terraform output -raw resource_group)
-echo $RESOURCE_GROUP
-az group delete --name $RESOURCE_GROUP --no-wait
-
-APP_REGISTRATION_ID=$(terraform -chdir=$PROJECT_ROOT/terraform show -json | jq .values.outputs.app_service_module_outputs.value.application_registration_id | tr -d \")
-echo $APP_REGISTRATION_ID
-az ad app delete --id $APP_REGISTRATION_ID
+azd down
 ```
 
 ## Data collection
@@ -193,7 +178,11 @@ The software in the reference implementation may collect information about you a
 
 Telemetry collection is on by default.
 
-To opt out, set the environment variable `ENABLE_TELEMETRY` to `false` in *./scripts/setup-initial-env.sh*.
+To opt out, set the environment variable `ENABLE_TELEMETRY` to `false`.
+
+```shell
+azd env set ENABLE_TELEMETRY false
+```
 
 ## Trademarks
 

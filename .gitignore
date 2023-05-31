@@ -167,3 +167,5 @@ src/airsonic-advanced/applicationinsights.log
 
 # Videos downloaded during deployment
 videos/
+
+.azure

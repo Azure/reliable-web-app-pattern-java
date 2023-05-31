@@ -12,3 +12,11 @@ output "storage_primary_access_key" {
 output "storage_account_id" {
     value = azurerm_storage_account.sa.id
 }
+
+output "trainings_share_name" {
+  value = azurerm_storage_share.sashare_trainings.name
+}
+
+output "playlist_share_name" {
+  value = azurerm_storage_share.sashare_playlist.name
+}

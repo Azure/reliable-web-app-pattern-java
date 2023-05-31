@@ -36,8 +36,25 @@ variable "subnet_network_id" {
 
 variable "administrator_login" {
   type        = string
-  description = "The MySQL administrator login"
+  description = "The PostgreSQL administrator login"
   default     = "myadmin"
+}
+
+variable "administrator_password" {
+  type        = string
+  description = "The password for the PostgreSQL administrator login"
+}
+
+variable "replication_enabled" {
+  type       = bool
+  description = "Is replication enabled"
+  default     = false
+}
+
+variable "source_server_id" {
+  type       = string
+  description = "The resource ID of the source PostgreSQL Flexible Server for replication"
+  default     = null
 }
 
 variable "log_analytics_workspace_id" {
