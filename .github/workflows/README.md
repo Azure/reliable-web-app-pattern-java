@@ -56,45 +56,54 @@ works around is the creation, and reuse, of an existing Azure AD app registratio
 
     The GitHub Service Principal now has access to perform Azure role assignments on RBAC provisioned services. This means that we can encode Key Vault Access Permissions (RBAC permissions) from infrastructure-as-code to give the managed identities (the web app's identity) access to read data from Key Vault.
 
-  1. Set workflow variables & secrets in GitHub:
+1. Set workflow variables & secrets in GitHub:
 
-        *Secrets*
+    *Secrets*
 
-        |Name                       |Value                |
-        |---------------------------|---------------------|
-        |AZURE_CLIENT_SECRET        | (TEXT FROM CONSOLE) |
-        |AZURE_CREDENTIALS          | (TEXT FROM CONSOLE) |
-        |AZURE_SUBSCRIPTION_ID      | (TEXT FROM CONSOLE) |
+    |Name                       |Value                |
+    |---------------------------|---------------------|
+    |AZURE_CLIENT_SECRET        | (TEXT FROM CONSOLE) |
+    |AZURE_CREDENTIALS          | (TEXT FROM CONSOLE) |
+    |AZURE_SUBSCRIPTION_ID      | (TEXT FROM CONSOLE) |
 
-        > Paste all of the json from the previous command into the textarea as
-         the value for the AZURE_CREDENTIALS secret.
+    > Paste all of the json from the previous command into the textarea as
+        the value for the AZURE_CREDENTIALS secret.
 
-        *Variables*
+    *Variables*
 
-        |Name                       |Value                |
-        |---------------------------|---------------------|
-        |AZURE_APP_NAME             | rwajavaghpipeline   |
-        |AZURE_CLIENT_ID            | (GUID FROM CONSOLE) |
-        |AZURE_LOCATION             | australiaeast       |
-        |AZURE_TENANT_ID            | (GUID FROM CONSOLE) |
-        |POSTGRES_DATABASE_PASSWORD | SUPER-sonic4114    |
+    |Name                       |Value                |
+    |---------------------------|---------------------|
+    |AZURE_APP_NAME             | rwajavaghpipeline   |
+    |AZURE_CLIENT_ID            | (GUID FROM CONSOLE) |
+    |AZURE_LOCATION             | australiaeast       |
+    |AZURE_TENANT_ID            | (GUID FROM CONSOLE) |
+    |POSTGRES_DATABASE_PASSWORD | SUPER-sonic4114    |
 
-        **Outcome**
+    **Outcome**
 
-        The workflow is now ready to run.
+    The workflow is now ready to run.
 
 
-  1. Set the redirectUri
+1. Set the redirectUri
 
-        Run the deployment once. Then, using the Azure Portal, find the Front Door uri
-        that was created by the deployment and use that to override the "localhost:8080"
-        value that is set as the existing redirectUri in the App Registration.
+    Run the deployment once. Then, using the Azure Portal, find the Front Door uri
+    that was created by the deployment and use that to override the "localhost:8080"
+    value that is set as the existing redirectUri in the App Registration.
 
-        **Outcome**
+    **Outcome**
 
-        Users should be able to login to test the web app that was deployed via AZD pipeline.
+    Users should be able to login to test the web app that was deployed via AZD pipeline.
 
-        > It may take a few minutes for the App Registration to be updated successfully to support testing.
+    > It may take a few minutes for the App Registration to be updated successfully to support testing.
+
+1. Add roles
+
+    Any user that wants to test the deployed DevOps web app must be added to the role.
+
+    Troubleshooting: `Airsonic encountered an internal error` status *403* error *Forbidden*
+
+    ![#Image of RBAC Error for 403 Forbidden](../../docs/assets/airsonic-missing-role-assignment-error.png)
+
 
 ## Workflow Overview
 There are three workflows:
