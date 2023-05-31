@@ -21,7 +21,7 @@ resource "azurecaf_name" "app_service_plan" {
 
 # This creates the plan that the service use
 resource "azurerm_service_plan" "application" {
-  name                         = "ken-app-svc-20230522-${var.principal_type}"#azurecaf_name.app_service_plan.result
+  name                         = azurecaf_name.app_service_plan.result
   resource_group_name          = var.resource_group
   location                     = var.location
   
