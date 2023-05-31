@@ -26,7 +26,7 @@ The internally accessible video covers the details of reliable web app pattern f
 
 ## Reference implementation workflow
 
-- The web app uses two regions in an active-passive configuration to meet the service level objective.
+- The web app uses two regions in an active-passive configuration to meet the service level objective. The deployment uses three resources groups: active region, passive region, and a shared resources group for Azure Front Door, Web Application Firewall, Private DNS Zones, and the Azure Database for PostgreSQL. The main database and the read replica need to be in the same resource group.
 - The web app uses the built-in authentication feature of App Service (EasyAuth) to manage the initial sign-in flow (cookies) and Azure AD as the identity platform.
 - All inbound HTTPS traffic passes through Azure Front Door and Azure Web Application Firewall (WAF). WAF inspects the traffic against WAF rules.
 - Front Door routes all traffic to the active region. The passive region is for failover only. The failover plan is manual and there are no automated scripts with this repo.
