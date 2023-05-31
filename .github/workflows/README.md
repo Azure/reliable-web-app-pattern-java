@@ -86,13 +86,15 @@ works around is the creation, and reuse, of an existing Azure AD app registratio
 
   1. Set the redirectUri
 
-    Run the deployment once. Then, using the Azure Portal, find the Front Door uri
-    that was created by the deployment and use that to override the "localhost:8080"
-    value that is set as the existing redirectUri in the App Registration.
+        Run the deployment once. Then, using the Azure Portal, find the Front Door uri
+        that was created by the deployment and use that to override the "localhost:8080"
+        value that is set as the existing redirectUri in the App Registration.
 
-    **Outcome**
+        **Outcome**
 
-    Users should be able to login to test the web app that was deployed via AZD pipeline.
+        Users should be able to login to test the web app that was deployed via AZD pipeline.
+
+        > It may take a few minutes for the App Registration to be updated successfully to support testing.
 
 ## Workflow Overview
 There are three workflows:
