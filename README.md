@@ -18,7 +18,7 @@ The internally accessible video covers the details of reliable web app pattern f
 
 ## Architecture
 
-[![Diagram showing the architecture of the reference implementation](docs/assets/java-architecture-reference-implementation.png)](docs/assets/java-architecture-reference-implementation.png)
+[![Diagram showing the architecture of the reference implementation](docs/assets/reliable-web-app-java-implementation.svg)](docs/assets/reliable-web-app-java-implementation.svg)
 
 - [Production environment estimated cost](https://azure.com/e/65354031bc084e539b6c8ccfc1a7b097)
 
@@ -26,12 +26,18 @@ The internally accessible video covers the details of reliable web app pattern f
 
 ## Reference implementation workflow
 
-- Poseware employees authenticate using Azure AD. The web app the built-in authentication feature of App Service (EasyAuth) to manage the initial sign-in flow (cookies) and Azure AD as the identity platform.
-- All incoming traffic is routed via Azure Front Door and passes through the Azure Web Application Firewall (WAF) before reaching the Azure Web App.
-- The code implements the Retry, Circuit Breaker, and Cache-Aside patterns and integrates app roles with Azure AD using the Microsoft Authentication Library (MSAL).
-- Proseware uses Application Insights as its application performance management tool to gather telemetry data.
-- The Azure Web App uses virtual network integration to connect to Azure Key Vault, Azure Cache for Redis, and Azure Database for PostgreSQL through private endpoints in the private virtual network. The App Services interface is located in the App Subnet, and all private endpoints use the Private Endpoint Subnet. Private DNS zones are used to resolve DNS queries.
+- The web app uses two regions in an active-passive configuration to meet the service level objective.
+- The web app uses the built-in authentication feature of App Service (EasyAuth) to manage the initial sign-in flow (cookies) and Azure AD as the identity platform.
+- All inbound HTTPS traffic passes through Azure Front Door and Azure Web Application Firewall (WAF). WAF inspects the traffic against WAF rules.
+- Front Door routes all traffic to the active region. The passive region is for failover only. The failover plan is manual and there are no automated scripts with this repo.
+- The web app code implements the Retry, Circuit Breaker, and Cache-Aside patterns and integrates app roles with Azure AD using the Microsoft Authentication Library (MSAL).
+- Application Insights is the application performance management tool, and it gathers telemetry data on the web app.
+- App Service uses virtual network integration to communicate with other Azure resources within the private virtual network. App Service requires an `App Service delegated subnet` in the virtual network to enable virtual network integration.
+- Key Vault and Azure Cache for Redis have private endpoints in the `Private endpoints subnet`. Private DNS zones linked to the virtual network resolve DNS queries for these Azure resources to their private endpoint IP address.
+- Azure Database for PostgreSQL - Flexible server uses virtual network integration for private communication. It doesn't support private endpoints.
 - The web app uses an account access key to mount a directory with Azure Files to the App Service. A private endpoint is not used for Azure Files to make deployment possible, as it would be less efficient. However, it is recommended to use a private endpoint in production as it adds an extra layer of security. Azure Files only accepts traffic from the virtual network and the local client IP address of the user executing the deployment.
+- App Service, Azure Files, Key Vault, Azure Cache for Redis, and Azure Database for PostgreSQL use diagnostic settings to send logs and metrics to Azure Log Analytics Workspace.
+- Azure Database for PostgreSQL uses a high-availability zone redundant configuration and a read replica in the passive region for failover.
 
 ## Prerequisites
 
