@@ -80,9 +80,8 @@ jobs:
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
+      # installs the latest version by default
       uses: hashicorp/setup-terraform@v2
-      with:
-        terraform_version: 1.4.6
      
      # Install the az cli with login using service principal created on az subscription
     - name: 'azure cli'
