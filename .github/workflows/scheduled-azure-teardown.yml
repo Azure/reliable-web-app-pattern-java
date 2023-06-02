@@ -25,9 +25,8 @@ on:
         default: true
         type: boolean
   
-  # Todo: uncomment this when you want to schedule the workflow
-  # schedule:
-  #   - cron: '0 15 * * *'
+  schedule:
+    - cron: '0 15 * * *'
 
 # https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-portal%2Clinux#set-up-azure-login-with-openid-connect-authentication
 permissions:
