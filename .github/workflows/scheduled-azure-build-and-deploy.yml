@@ -43,6 +43,8 @@ on:
         required: false
         default: true
         type: boolean
+  pull_request:
+    types: [opened, synchronize, ready_for_review, reopened]
   schedule:
     - cron: '0 14 * * *'
         
