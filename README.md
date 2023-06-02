@@ -30,7 +30,7 @@ The internally accessible video covers the details of reliable web app pattern f
 - The web app uses the built-in authentication feature of App Service (EasyAuth) to manage the initial sign-in flow (cookies) and Azure AD as the identity platform.
 - All inbound HTTPS traffic passes through Azure Front Door and Azure Web Application Firewall (WAF). WAF inspects the traffic against WAF rules.
 - Front Door routes all traffic to the active region. The passive region is for failover only. The failover plan is manual and there are no automated scripts with this repo.
-- The web app code implements the Retry, Circuit Breaker, and Cache-Aside patterns and integrates app roles with Azure AD using the Microsoft Authentication Library (MSAL).
+- The web app code implements the Retry, Circuit Breaker, and Cache-Aside patterns and integrates with Azure AD using the Spring Boot Starter for Azure Active Directory.
 - Application Insights is the application performance management tool, and it gathers telemetry data on the web app.
 - App Service uses virtual network integration to communicate with other Azure resources within the private virtual network. App Service requires an `App Service delegated subnet` in the virtual network to enable virtual network integration.
 - Key Vault and Azure Cache for Redis have private endpoints in the `Private endpoints subnet`. Private DNS zones linked to the virtual network resolve DNS queries for these Azure resources to their private endpoint IP address.
