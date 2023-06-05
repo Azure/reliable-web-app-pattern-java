@@ -1,3 +1,5 @@
+# This pipeline is a work-in-progress pipeline
+# https://github.com/Azure/reliable-web-app-pattern-java/issues/115
 
 # This workflow installs the latest version of Terraform CLI, Java 11 SDK and AZ Cli, this workflow will run
 # `terraform init`, `terraform plan`, and `terraform apply` and then build teh java and deploy using
