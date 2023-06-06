@@ -3,8 +3,8 @@ variable "application_name" {
   description = "The application name"
 
   validation {
-    condition     = length(var.application_name) < 18
-    error_message = "The length of the application_name must be less than 18 characters."
+    condition     = length(var.application_name) > 0 && length(var.application_name) < 18
+    error_message = "application_name is required and the length must be less than 18 characters."
   }
 }
 
@@ -29,6 +29,31 @@ variable "enable_telemetry" {
   type        = bool
   description = "Telemetry collection is on by default"
   default     = true
+}
+
+variable "principal_type" {
+  type = string
+  description = "Describes the type of user running the deployment. Valid options are 'User' or 'ServicePrincipal'"
+  default = "User"
+  validation {
+    condition     = contains(["User", "ServicePrincipal"], var.principal_type)
+    error_message = "The principal_type value must be User or ServicePrincipal."
+  }
+}
+
+variable "proseware_client_id" {
+  type = string
+  description = "Azure AD App Registration: clientId"
+}
+
+variable "proseware_client_secret" {
+  type = string
+  description = "Azure AD App Registration: clientSecret"
+}
+
+variable "proseware_tenant_id" {
+  type = string
+  description = "Azure AD App Registration: tenantId"
 }
 
 # ----------------------------------------------------------------------------------------------
