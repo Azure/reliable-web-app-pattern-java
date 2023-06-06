@@ -34,6 +34,9 @@ resource "azurecaf_name" "postgresql_server" {
   suffixes      = [var.location, var.environment]
 }
 
+# It's recommended to use fine-grained access control in PostgreSQL when connecting to the database.
+# https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/how-to-create-users
+# https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-azure-ad-authentication
 resource "azurerm_postgresql_flexible_server" "postresql_database" {
   name                = azurecaf_name.postgresql_server.result
   resource_group_name = var.resource_group

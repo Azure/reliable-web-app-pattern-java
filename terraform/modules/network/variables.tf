@@ -1,11 +1,16 @@
-variable "name" {
-  type        = string
-  description = "The name of the virtual network."
-}
-
 variable "resource_group" {
   type        = string
   description = "The resource group"
+}
+
+variable "application_name" {
+  type        = string
+  description = "The name of your application"
+}
+
+variable "environment" {
+  type        = string
+  description = "The environment (dev, test, prod...)"
 }
 
 variable "location" {
@@ -18,19 +23,17 @@ variable "vnet_cidr" {
   description = "The address space that is used by the virtual network."
 }
 
-variable "subnets" {
-  type = list(object({
-    name        = string,
-    subnet_cidr = list(string),
-    service_endpoints = list(string),
-    delegation = object({
-      name = string,
-      service_delegation = object({
-        name = string,
-        actions = list(string)
-      })
-    })
-  }))
+variable "app_subnet_cidr" {
+  type        = list(string)
+  description = "The subnet cidr for the app"
+}
 
-  description = "A list of subnets inside the virtual network."
+variable "postgresql_subnet_cidr" {
+  type        = list(string)
+  description = "The subnet cidr for PostgreSQL"
+}
+
+variable "private_endpoint_subnet_cidr" {
+  type        = list(string)
+  description = "The subnet cidr for the private endpoints"
 }
