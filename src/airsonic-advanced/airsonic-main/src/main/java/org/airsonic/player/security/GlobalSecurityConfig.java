@@ -179,7 +179,7 @@ public class GlobalSecurityConfig {
                     .frameOptions()
                     .sameOrigin()
                     .and().authorizeRequests()
-                    .antMatchers("/recover*", "/accessDenied*", "/style/**", "/icons/**", "/flash/**", "/script/**", "/error")
+                    .antMatchers("/recover*", "/accessDenied*", "/style/**", "/icons/**", "/flash/**", "/script/**", "/error", "/actuator/health")
                     .permitAll()
                     .antMatchers("/personalSettings*",
                             "/playerSettings*", "/shareSettings*", "/credentialsSettings*")
