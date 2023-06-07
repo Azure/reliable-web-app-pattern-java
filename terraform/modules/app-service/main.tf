@@ -133,7 +133,7 @@ resource "azurerm_linux_web_app" "application" {
     ftps_state              = "Disabled"
     minimum_tls_version     = "1.2"
     always_on               = true
-    health_check_path       = "/actuator/health"
+    health_check_path       = "/"
 
     application_stack {
       java_server = "TOMCAT"
