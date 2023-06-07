@@ -31,3 +31,8 @@ output "application_video_share_name" {
   value       = module.storage.trainings_share_name
   description = "The storage share name used for training videos"
 }
+
+output "SERVICE_APPLICATION_ENDPOINTS" {
+  value       = ["https://${module.frontdoor.host_name}"]
+  description = "The Web application Front Door URL."
+}
