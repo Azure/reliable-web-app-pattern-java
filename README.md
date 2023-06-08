@@ -1,6 +1,8 @@
 # Reliable web app pattern for Java
 
-This reference implementation provides a production-grade web application that uses best practices from our guidance and gives developers concrete examples to build their own Reliable Web Application in Azure. It simulates the journey from an on-premises Java application to a migration to Azure. It shows you what changes to make to maximize the benefits of the cloud in the initial cloud adoption phase. Here's an outline of the contents in this readme:
+This reference implementation provides a production-grade web application that uses best practices from our guidance and gives developers concrete examples to build their own reliable web application in Azure. 
+
+The reliable web app pattern shows you how to update web apps moving to the cloud. It defines the implementation guidance you need to re-platform web apps the right way. The reliable web app pattern focuses on the minimal code changes you need be successful in the cloud. It shows you how to add reliability design patterns to your code and choose managed services so that you can rapidly adopt the cloud. Here's an outline of the contents in this readme:
 
 - [Architecture guidance](#architecture-guidance)
 - [Videos](#videos)
@@ -10,10 +12,12 @@ This reference implementation provides a production-grade web application that u
 
 ## Architecture guidance
 
-This project has two companion articles in the Azure Architecture Center.
+This project has two companion articles in the Azure Architecture Center that provide detailed implementation guidance.
 
 - [Plan the implementation](https://learn.microsoft.com/azure/architecture/reference-architectures/reliable-web-app/java/plan-implementation): The first article explains how to plan the implementation of the reliable web app pattern for Java.
 - [Apply the pattern](https://learn.microsoft.com/azure/architecture/reference-architectures/reliable-web-app/java/apply-pattern): The seconde article shows you how to apply the pattern with code and architecture details.
+
+For more information on the reliable web app pattern, see [Overview](https://review.learn.microsoft.com/azure/architecture/reference-architectures/reliable-web-app/overview)
 
 ## Videos
 
