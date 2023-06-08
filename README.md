@@ -97,10 +97,10 @@ azd env set AZURE_LOCATION2 <region>
 
 ### Select production or development environment.
 
-You should change the `APP_ENV_NAME` variable to either *prod* or *dev*. 
+You should change the `APP_ENVIRONMENT` variable to either *prod* or *dev*. 
 
 ```shell
-azd env set APP_ENV_NAME prod
+azd env set APP_ENVIRONMENT prod
 ```
 
 The following table describes the differences in the resources deployed in the 2 environments.

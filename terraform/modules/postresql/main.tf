@@ -37,6 +37,7 @@ resource "azurecaf_name" "postgresql_server" {
 # It's recommended to use fine-grained access control in PostgreSQL when connecting to the database.
 # https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/how-to-create-users
 # https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-azure-ad-authentication
+
 resource "azurerm_postgresql_flexible_server" "postresql_database" {
   name                = azurecaf_name.postgresql_server.result
   resource_group_name = var.resource_group
@@ -54,7 +55,7 @@ resource "azurerm_postgresql_flexible_server" "postresql_database" {
   geo_redundant_backup_enabled = false
 
   dynamic high_availability {
-    for_each = var.environment == "prod" ? ["this"] : []
+    for_each = var.environment == "prod" && var.source_server_id == null? ["this"] : []
 
     content {
       mode = "ZoneRedundant"
@@ -62,8 +63,7 @@ resource "azurerm_postgresql_flexible_server" "postresql_database" {
     }
   }
 
-  zone = 1
-
+  zone = var.source_server_id == null ? 1 : null
   storage_mb = 32768
 
   create_mode = var.source_server_id != null ? "Replica" : null

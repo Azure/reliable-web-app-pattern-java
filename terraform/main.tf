@@ -33,7 +33,7 @@ data "azurerm_client_config" "current" {}
 resource "azurecaf_name" "resource_group" {
   name          = var.application_name
   resource_type = "azurerm_resource_group"
-  suffixes      = [var.location, local.environment]
+  suffixes      = ["app1", local.environment]
 }
 
 resource "azurerm_resource_group" "main" {
@@ -68,29 +68,6 @@ module "app_insights" {
   application_name   = var.application_name
   environment        = local.environment
   location           = var.location
-}
-
-module "storage" {
-  source             = "./modules/storage"
-  resource_group     = azurerm_resource_group.main.name
-  application_name   = var.application_name
-  environment        = local.environment
-  location           = var.location
-  account_replication_type = local.account_replication_type
-}
-
-module "postresql_database" {
-  source                      = "./modules/postresql"
-  azure_ad_tenant_id          = data.azurerm_client_config.current.tenant_id
-  resource_group              = azurerm_resource_group.main.name
-  application_name            = var.application_name
-  environment                 = local.environment
-  location                    = var.location
-  virtual_network_id          = module.network.vnet_id
-  subnet_network_id           = module.network.postgresql_subnet_id
-  replication_enabled         = true
-  administrator_password      = var.database_administrator_password
-  log_analytics_workspace_id  = module.app_insights.log_analytics_workspace_id
 }
 
 resource "azurerm_postgresql_flexible_server_database" "postresql_database" {
@@ -228,21 +205,11 @@ module "application" {
 resource "azurerm_postgresql_flexible_server_active_directory_administrator" "airsonic-ad-admin" {
   count               = var.principal_type == "User" ? 1 : 0
   server_name         = module.postresql_database.database_server_name
-  resource_group_name = azurerm_resource_group.main.name
+  resource_group_name = azurerm_resource_group.main_db.name
   tenant_id           = data.azurerm_client_config.current.tenant_id
   object_id           = data.azurerm_client_config.current.object_id
   principal_name      = data.azurerm_client_config.current.object_id
   principal_type      = "User"
-}
-
-module "frontdoor" {
-  source           = "./modules/frontdoor"
-  resource_group   = azurerm_resource_group.main.name
-  application_name = var.application_name
-  environment      = local.environment
-  location         = var.location
-  host_name        = module.application.application_fqdn
-  host_name2       = local.is_multi_region ? module.application2[0].application_fqdn : ""
 }
 
 resource "azurerm_resource_group_template_deployment" "deploymenttelemetry" {
@@ -307,6 +274,108 @@ resource "null_resource" "app_service_startup_script" {
 }
 
 # ----------------------------------------------------------------------------------------------
+#  Storage and PostgreSQL database
+# ----------------------------------------------------------------------------------------------
+
+resource "azurecaf_name" "resource_group_db" {
+  name          = "${var.application_name}"
+  resource_type = "azurerm_resource_group"
+  suffixes      = ["db", local.environment]
+}
+
+resource "azurerm_resource_group" "main_db" {
+  name     = azurecaf_name.resource_group_db.result
+  location = length(var.location_db) > 0 ? var.location_db : var.location
+  tags = {
+    "terraform"        = "true"
+    "environment"      = local.environment
+    "application-name" = var.application_name
+    "nubesgen-version" = "0.13.0"
+    "airsonic-version" = "1.0"
+    "azd-env-name"     = var.application_name
+  }
+}
+
+module "postresql_database" {
+  source                      = "./modules/postresql"
+  azure_ad_tenant_id          = data.azurerm_client_config.current.tenant_id
+  resource_group              = azurerm_resource_group.main_db.name
+  application_name            = var.application_name
+  environment                 = local.environment
+  location                    = var.location
+  virtual_network_id          = module.network.vnet_id
+  subnet_network_id           = module.network.postgresql_subnet_id
+  replication_enabled         = true
+  administrator_password      = var.database_administrator_password
+  log_analytics_workspace_id  = module.app_insights.log_analytics_workspace_id
+}
+
+module "postresql_database2" {
+  count                       = local.is_multi_region ? 1 : 0
+  source                      = "./modules/postresql"
+  azure_ad_tenant_id          = data.azurerm_client_config.current.tenant_id
+  resource_group              = azurerm_resource_group.main_db.name
+  application_name            = var.application_name
+  environment                 = local.environment
+  location                    = var.location2
+  virtual_network_id          = module.network2[0].vnet_id
+  subnet_network_id           = module.network2[0].postgresql_subnet_id
+  replication_enabled         = true
+  administrator_password      = var.database_administrator_password
+  source_server_id            = module.postresql_database.database_server_id
+  log_analytics_workspace_id  = module.app_insights.log_analytics_workspace_id
+
+  depends_on = [
+    module.network,
+    module.network2[0],
+    azurerm_virtual_network_peering.primary_to_secondary,
+    azurerm_virtual_network_peering.secondary_to_primary
+  ]
+}
+
+module "storage" {
+  source             = "./modules/storage"
+  resource_group     = azurerm_resource_group.main_db.name
+  application_name   = var.application_name
+  environment        = local.environment
+  location           = var.location
+  account_replication_type = local.account_replication_type
+}
+
+# ----------------------------------------------------------------------------------------------
+#  Azure Front Door and WAF policy
+# ----------------------------------------------------------------------------------------------
+
+resource "azurecaf_name" "resource_group_fd" {
+  name          = "${var.application_name}"
+  resource_type = "azurerm_resource_group"
+  suffixes      = ["fd", local.environment]
+}
+
+resource "azurerm_resource_group" "main_fd" {
+  name     = azurecaf_name.resource_group_fd.result
+  location = length(var.location_fd) > 0 ? var.location_fd : var.location
+  tags = {
+    "terraform"        = "true"
+    "environment"      = local.environment
+    "application-name" = var.application_name
+    "nubesgen-version" = "0.13.0"
+    "airsonic-version" = "1.0"
+    "azd-env-name"     = var.application_name
+  }
+}
+
+module "frontdoor" {
+  source           = "./modules/frontdoor"
+  resource_group   = azurerm_resource_group.main_fd.name
+  application_name = var.application_name
+  environment      = local.environment
+  location         = length(var.location_fd) > 0 ? var.location_fd : var.location
+  host_name        = module.application.application_fqdn
+  host_name2       = local.is_multi_region ? module.application2[0].application_fqdn : ""
+}
+
+# ----------------------------------------------------------------------------------------------
 #  Everything below this comment is for provisioning the 2nd region (if AZURE_LOCATION2 was set)
 # ----------------------------------------------------------------------------------------------
 
@@ -317,7 +386,7 @@ resource "azurecaf_name" "resource_group2" {
   count         = local.is_multi_region ? 1 : 0
   name          = "${var.application_name}"
   resource_type = "azurerm_resource_group"
-  suffixes      = [var.location2, local.environment]
+  suffixes      = ["app2", local.environment]
 }
 
 #
@@ -382,29 +451,6 @@ resource "azurerm_virtual_network_peering" "secondary_to_primary" {
   depends_on = [
     module.network,
     module.network2[0]
-  ]
-}
-
-module "postresql_database2" {
-  count                       = local.is_multi_region ? 1 : 0
-  source                      = "./modules/postresql"
-  azure_ad_tenant_id          = data.azurerm_client_config.current.tenant_id
-  resource_group              = azurerm_resource_group.main.name
-  application_name            = "${var.application_name}"
-  environment                 = local.environment
-  location                    = var.location2
-  virtual_network_id          = module.network2[0].vnet_id
-  subnet_network_id           = module.network2[0].postgresql_subnet_id
-  administrator_password      = var.database_administrator_password
-  replication_enabled         = true
-  source_server_id            = module.postresql_database.database_server_id
-  log_analytics_workspace_id  = module.app_insights.log_analytics_workspace_id
-
-  depends_on = [
-    module.network,
-    module.network2[0],
-    azurerm_virtual_network_peering.primary_to_secondary,
-    azurerm_virtual_network_peering.secondary_to_primary
   ]
 }
 
