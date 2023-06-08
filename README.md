@@ -4,9 +4,9 @@ This reference implementation provides a production-grade web application that u
 
 - [Architecture guidance](#architecture-guidance)
 - [Videos](#videos)
-- [Architecture](#architecture)
-- [Workflow](#workflow)
-- [Steps to deploy the reference implementation](#steps-to-deploy-the-reference-implementation)
+- [Architecture diagram](#architecture-diagram)
+- [Workflow](#reference-implementation-workflow)
+- [Steps to deploy](#steps-to-deploy-the-reference-implementation)
 
 ## Architecture guidance
 
@@ -19,7 +19,7 @@ This project has two companion articles in the Azure Architecture Center.
 
 The internally accessible video covers the details of reliable web app pattern for Java. For more information, see [Reliable web app pattern videos (Sharepoint)](https://aka.ms/rwa-java-video).
 
-## Architecture
+## Architecture diagram
 
 [![Diagram showing the architecture of the reference implementation](docs/assets/reliable-web-app-java-implementation.svg)](docs/assets/reliable-web-app-java-implementation.svg)
 
@@ -51,7 +51,6 @@ The internally accessible video covers the details of reliable web app pattern f
 * [Dev Containers extension installed in VS Code](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension
 
 ## Steps to deploy the reference implementation
-
 
 Note - The following deployment has been tested using devcontainers on **macOS** and **Windows with [Ubuntu on WSL](https://ubuntu.com/wsl)**.
 
