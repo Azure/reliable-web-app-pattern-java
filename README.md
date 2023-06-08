@@ -10,7 +10,10 @@ This reference implementation provides a production-grade web application that u
 
 ## Architecture guidance
 
-This project has [companion architecture guidance](adopt-pattern.md) that describes design patterns and best practices for migrating to the cloud. We suggest you read it as it will give important context to the considerations applied in this implementation.
+This project has two companion articles in the Azure Architecture Center.
+
+- [Plan the implementation](https://learn.microsoft.com/azure/architecture/reference-architectures/reliable-web-app/java/plan-implementation): The first article explains how to plan the implementation of the reliable web app pattern for Java.
+- [Apply the pattern](https://learn.microsoft.com/azure/architecture/reference-architectures/reliable-web-app/java/apply-pattern): The seconde article shows you how to apply the pattern with code and architecture details.
 
 ## Videos
 
@@ -27,7 +30,6 @@ The internally accessible video covers the details of reliable web app pattern f
 ## Reference implementation workflow
 
 - The web app uses two regions in an active-passive configuration to meet the service level objective. The deployment uses three resources groups: active region, passive region, and a shared resources group for Azure Front Door, Web Application Firewall, Private DNS Zones, and the Azure Database for PostgreSQL. The main database and the read replica need to be in the same resource group.
-- The web app uses the built-in authentication feature of App Service (EasyAuth) to manage the initial sign-in flow (cookies) and Azure AD as the identity platform.
 - All inbound HTTPS traffic passes through Azure Front Door and Azure Web Application Firewall (WAF). WAF inspects the traffic against WAF rules.
 - Front Door routes all traffic to the active region. The passive region is for failover only. The failover plan is manual and there are no automated scripts with this repo.
 - The web app code implements the Retry, Circuit Breaker, and Cache-Aside patterns and integrates with Azure AD using the Spring Boot Starter for Azure Active Directory.
