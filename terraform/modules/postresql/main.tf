@@ -46,7 +46,7 @@ resource "azurerm_postgresql_flexible_server" "postresql_database" {
   administrator_login    = var.administrator_login
   administrator_password = var.administrator_password
 
-  sku_name                     = var.environment == "prod" || var.replication_enabled ? "GP_Standard_D4s_v3" : "B_Standard_B1ms"
+  sku_name                     = var.environment == "prod" ? "GP_Standard_D4s_v3" : "B_Standard_B1ms"
   version                      = "12"
 
   delegated_subnet_id          = var.subnet_network_id
@@ -55,7 +55,7 @@ resource "azurerm_postgresql_flexible_server" "postresql_database" {
   geo_redundant_backup_enabled = false
 
   dynamic high_availability {
-    for_each = var.environment == "prod" && var.source_server_id == null? ["this"] : []
+    for_each = var.environment == "prod" ? ["this"] : []
 
     content {
       mode = "ZoneRedundant"
@@ -63,11 +63,11 @@ resource "azurerm_postgresql_flexible_server" "postresql_database" {
     }
   }
 
-  zone = var.source_server_id == null ? 1 : null
+  zone = 1
   storage_mb = 32768
 
-  create_mode = var.source_server_id != null ? "Replica" : null
-  source_server_id = var.source_server_id
+  create_mode = var.source_server_id != null && var.environment == "prod" ? "Replica" : null
+  source_server_id = var.environment == "prod" ? var.source_server_id : null
 
   authentication {
     active_directory_auth_enabled  = true

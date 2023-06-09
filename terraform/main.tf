@@ -305,7 +305,6 @@ module "postresql_database" {
   location                    = var.location
   virtual_network_id          = module.network.vnet_id
   subnet_network_id           = module.network.postgresql_subnet_id
-  replication_enabled         = true
   administrator_password      = var.database_administrator_password
   log_analytics_workspace_id  = module.app_insights.log_analytics_workspace_id
 }
@@ -320,7 +319,6 @@ module "postresql_database2" {
   location                    = var.location2
   virtual_network_id          = module.network2[0].vnet_id
   subnet_network_id           = module.network2[0].postgresql_subnet_id
-  replication_enabled         = true
   administrator_password      = var.database_administrator_password
   source_server_id            = module.postresql_database.database_server_id
   log_analytics_workspace_id  = module.app_insights.log_analytics_workspace_id
