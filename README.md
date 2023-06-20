@@ -128,7 +128,8 @@ In the first command below substitute the FILL_IN_RESOURCE_GROUP_NAME
 with the resource group name of the primary region.
 
 ```shell
-azd env set AZURE_RESOURCE_GROUP <FILL_IN_RESOURCE_GROUP_NAME>
+PRIMARY_RESOURCE_GROUP=$(azd env get-values --output json | jq -r .primary_resource_group)
+azd env set AZURE_RESOURCE_GROUP $PRIMARY_RESOURCE_GROUP
 azd deploy
 ```
 
@@ -139,7 +140,8 @@ In the command below substitute the FILL_IN_SECONDARY_RESOURCE_GROUP_NAME
 with the resource group name of the secondary region
 
 ```shell
-azd env set AZURE_RESOURCE_GROUP <FILL_IN_SECONDARY_RESOURCE_GROUP_NAME>
+SECONDARY_RESOURCE_GROUP=$(azd env get-values --output json | jq -r .secondary_resource_group)
+azd env set AZURE_RESOURCE_GROUP $SECONDARY_RESOURCE_GROUP
 azd deploy
 ```
 
