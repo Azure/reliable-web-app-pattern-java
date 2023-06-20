@@ -33,16 +33,15 @@ The internally accessible video covers the details of reliable web app pattern f
 
 ## Reference implementation workflow
 
-- The web app uses two regions in an active-passive configuration to meet the service level objective. The deployment uses three resources groups: active region, passive region, and a shared resources group for Azure Front Door, Web Application Firewall, Private DNS Zones, and the Azure Database for PostgreSQL. The main database and the read replica need to be in the same resource group.
-- All inbound HTTPS traffic passes through Azure Front Door and Azure Web Application Firewall (WAF). WAF inspects the traffic against WAF rules.
-- Front Door routes all traffic to the active region. The passive region is for failover only. The failover plan is manual and there are no automated scripts with this repo.
-- The web app code implements the Retry, Circuit Breaker, and Cache-Aside patterns and integrates with Azure AD using the Spring Boot Starter for Azure Active Directory.
+- The web app uses two regions in an active-passive configuration to meet the service level objective of 99.9%. The web app uses WebSockets. To support WebSockets, it uses Traffic Manager to route traffic across regions and Application Gateway for HTTP and WebSockets support. Traffic Manager uses DNS to route traffic and doesn't see the HTTP traffic. Traffic Manager routes all traffic to the Active Region. The passive region is for failover only. The failover plan is manual and there are no automated scripts with this repo.
+- All inbound HTTPS traffic passes through Application Gateway and Web Application Firewall (WAF). WAF inspects the traffic against WAF policies.
+- The web app code implements the Retry, Circuit Breaker, and Cache-Aside patterns. The web app integrates with Azure AD using the Spring Boot Starter for Azure Active Directory.
 - Application Insights is the application performance management tool, and it gathers telemetry data on the web app.
 - App Service uses virtual network integration to communicate securely with other Azure resources within the private virtual network. App Service requires an `App Service delegated subnet` in the virtual network to enable virtual network integration.
 - Key Vault and Azure Cache for Redis have private endpoints in the `Private endpoints subnet`. Private DNS zones linked to the virtual network resolve DNS queries for these Azure resources to their private endpoint IP address.
 - Azure Database for PostgreSQL - Flexible server uses virtual network integration for private communication. It doesn't support private endpoints.
 - The web app uses an account access key to mount a directory with Azure Files to the App Service. A private endpoint is not used for Azure Files to facilitate the deployment of the reference implementation for everyone. However, it is recommended to use a private endpoint in production as it adds an extra layer of security. Azure Files only accepts traffic from the virtual network and the local client IP address of the user executing the deployment.
-- App Service, Azure Files, Key Vault, Azure Cache for Redis, and Azure Database for PostgreSQL use diagnostic settings to send logs and metrics to Azure Log Analytics Workspace. Log Analytics Workspace is used to monitor the health of Azure services. 
+- App Service, Azure Files, Key Vault, Azure Cache for Redis, and Azure Database for PostgreSQL use diagnostic settings to send logs and metrics to Azure Log Analytics Workspace. Log Analytics Workspace is used to monitor the health of Azure services.
 - App Service sends application telemetry to Application Insights. Application insights monitors the health of the code.
 - Azure Database for PostgreSQL uses a high-availability zone redundant configuration and a read replica in the passive region for failover.
 
