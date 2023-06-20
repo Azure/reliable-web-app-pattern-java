@@ -93,8 +93,8 @@ azd auth login
 azd config set alpha.terraform on
 azd env new
 azd env set DATABASE_PASSWORD <SOME_VALUE>
-azd env set AZURE_LOCATION <region>
-azd env set AZURE_SUBSCRIPTION_ID <SUBSCRIPTION_ID>
+azd env set AZURE_LOCATION <AZURE_REGION_NAME e.g. eastus>
+azd env set AZURE_SUBSCRIPTION_ID <AZURE_SUBSCRIPTION_ID>
 ```
 
 > You can find a list of available Azure regions by running
@@ -145,7 +145,7 @@ In the first command below substitute the FILL_IN_RESOURCE_GROUP_NAME
 with the resource group name of the primary region.
 
 ```shell
-azd env set AZURE_RESOURCE_GROUP FILL_IN_RESOURCE_GROUP_NAME
+azd env set AZURE_RESOURCE_GROUP <FILL_IN_RESOURCE_GROUP_NAME>
 azd deploy
 ```
 
@@ -156,7 +156,7 @@ In the command below substitute the FILL_IN_SECONDARY_RESOURCE_GROUP_NAME
 with the resource group name of the secondary region
 
 ```shell
-azd env set AZURE_RESOURCE_GROUP FILL_IN_SECONDARY_RESOURCE_GROUP_NAME
+azd env set AZURE_RESOURCE_GROUP <FILL_IN_SECONDARY_RESOURCE_GROUP_NAME>
 azd deploy
 ```
 

@@ -1,0 +1,72 @@
+# This file is part of our engineering process to build and maintain this file.
+# See the README markdown file for further details
+
+name: "RWA: Scheduled Teardown"
+
+on:
+  pull_request:
+      types:
+      - closed
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'App environment'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+        - dev
+        - prod
+      run_tf_tear_down:
+        description: 'When true, TF resources will be deleted'
+        required: false
+        default: true
+        type: boolean
+      run_azd_tear_down:
+        description: 'When true, AZD resources will be deleted'
+        required: false
+        default: true
+        type: boolean
+  
+  schedule:
+    - cron: '0 13,15 * * *'
+
+# https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-portal%2Clinux#set-up-azure-login-with-openid-connect-authentication
+permissions:
+  id-token: write
+  contents: read
+
+concurrency: integration_testing
+
+env:
+  APP_NAME: ${{ vars.AZURE_APP_NAME }}
+  APP_ENVIRONMENT: ${{ inputs.environment || 'dev' }}
+  AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/azure-dev-cli-apps:latest
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    # Install the az cli with login using service principal created on az subscription
+    - name: Azure CLI Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Delete AZD primary & secondary
+      if: ${{ inputs.run_azd_tear_down || github.event_name == 'schedule' }}
+      run: |
+        ./scripts/devOpsScripts/delete-resources.sh -g rg-${APP_NAME}-${AZURE_LOCATION}-${APP_ENVIRONMENT}
+        ./scripts/devOpsScripts/delete-resources.sh -g rg-${APP_NAME}s-${AZURE_LOCATION}-${APP_ENVIRONMENT}
+
+    - name: Delete TF primary & secondary
+      if: ${{ inputs.run_tf_tear_down || github.event_name == 'schedule' }}
+      run: |
+        ./scripts/devOpsScripts/delete-resources.sh -g rg-tf${APP_NAME}-${AZURE_LOCATION}-${APP_ENVIRONMENT}
+        ./scripts/devOpsScripts/delete-resources.sh -g rg-tf${APP_NAME}s-${AZURE_LOCATION}-${APP_ENVIRONMENT}

@@ -17,15 +17,15 @@ locals {
 
   // Network cidrs for primary region
   primary_network_cidr = ["10.0.0.0/16"]
-  primary_app_subnet_cidr = ["10.0.1.0/24"]
-  primary_postgresql_subnet_cidr = ["10.0.2.0/24"]
-  primary_private_endpoint_subnet_cidr = ["10.0.3.0/24"]
+  primary_app_subnet_cidr = ["10.0.1.0/27"]
+  primary_postgresql_subnet_cidr = ["10.0.2.0/27"]
+  primary_private_endpoint_subnet_cidr = ["10.0.3.0/27"]
 
   // Network cidrs for secondary region
   secondary_network_cidr = ["10.1.0.0/16"]
-  secondary_app_subnet_cidr = ["10.1.1.0/24"]
-  secondary_postgresql_subnet_cidr = ["10.1.2.0/24"]
-  secondary_private_endpoint_subnet_cidr = ["10.1.3.0/24"]
+  secondary_app_subnet_cidr = ["10.1.1.0/27"]
+  secondary_postgresql_subnet_cidr = ["10.1.2.0/27"]
+  secondary_private_endpoint_subnet_cidr = ["10.1.3.0/27"]
 }
 
 data "azurerm_client_config" "current" {}
@@ -50,74 +50,16 @@ resource "azurerm_resource_group" "main" {
   }
 }
 
-resource "azurecaf_name" "virtual_network_name" {
-  name          = var.application_name
-  resource_type = "azurerm_virtual_network"
-  suffixes      = ["vnet", local.environment]
-}
-
-resource "azurecaf_name" "app_subnet_name" {
-  name          = var.application_name
-  resource_type = "azurerm_subnet"
-  suffixes      = ["app", local.environment]
-}
-
-resource "azurecaf_name" "private_endpoint_subnet_name" {
-  name          = var.application_name
-  resource_type = "azurerm_subnet"
-  suffixes      = ["pvtendpoint", local.environment]
-}
-
-resource "azurecaf_name" "postgresql_subnet_name" {
-  name          = var.application_name
-  resource_type = "azurerm_subnet"
-  suffixes      = ["postgresql", local.environment]
-}
-
 module "network" {
-  source             = "./modules/network"
-  name               = azurecaf_name.virtual_network_name.result
-  resource_group     = azurerm_resource_group.main.name
-  location           = var.location
-  vnet_cidr          = local.primary_network_cidr
-
-  subnets = [
-    # App subnet
-    # https://learn.microsoft.com/azure/app-service/overview-vnet-integration
-    {
-      name        = azurecaf_name.app_subnet_name.result
-      subnet_cidr = local.primary_app_subnet_cidr
-      service_endpoints = [ "Microsoft.Storage", "Microsoft.KeyVault"]
-      delegation = {
-        name = "app-service"
-        service_delegation = {
-          name    = "Microsoft.Web/serverFarms"
-          actions = ["Microsoft.Network/virtualNetworks/subnets/action"]
-        }
-      }
-    },
-    # Create the private endpoint subnet. Private endpoint cannot be created in a subnet that's delegated
-    # https://learn.microsoft.com/azure/app-service/networking/private-endpoint
-    {
-      name        = azurecaf_name.private_endpoint_subnet_name.result
-      subnet_cidr = local.primary_private_endpoint_subnet_cidr
-      service_endpoints = null
-      delegation  = null
-    },
-    # Create the data subnet
-    {
-      name        = azurecaf_name.postgresql_subnet_name.result
-      subnet_cidr = local.primary_postgresql_subnet_cidr
-      service_endpoints = [ "Microsoft.Storage"]
-      delegation = {
-        name = "data"
-        service_delegation = {
-          name    = "Microsoft.DBforPostgreSQL/flexibleServers"
-          actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
-        }
-      }
-    }
-  ]
+  source                       = "./modules/network"
+  resource_group               = azurerm_resource_group.main.name
+  application_name             = var.application_name
+  location                     = var.location
+  environment                  = local.environment
+  vnet_cidr                    = local.primary_network_cidr
+  app_subnet_cidr              = local.primary_app_subnet_cidr
+  postgresql_subnet_cidr       = local.primary_postgresql_subnet_cidr
+  private_endpoint_subnet_cidr = local.primary_private_endpoint_subnet_cidr
 }
 
 module "app_insights" {
@@ -145,7 +87,7 @@ module "postresql_database" {
   environment                 = local.environment
   location                    = var.location
   virtual_network_id          = module.network.vnet_id
-  subnet_network_id           = module.network.subnets[index(module.network.subnets.*.name, azurecaf_name.postgresql_subnet_name.result)].id
+  subnet_network_id           = module.network.postgresql_subnet_id
   replication_enabled         = true
   administrator_password      = var.database_administrator_password
   log_analytics_workspace_id  = module.app_insights.log_analytics_workspace_id
@@ -166,24 +108,20 @@ module "key-vault" {
   log_analytics_workspace_id     = module.app_insights.log_analytics_workspace_id
 
   virtual_network_id         = module.network.vnet_id
-  private_endpoint_subnet_id = module.network.subnets[index(module.network.subnets.*.name, azurecaf_name.private_endpoint_subnet_name.result)].id
+  private_endpoint_subnet_id = module.network.private_endpoint_subnet_id
 
   network_acls = {
     bypass                     = "None"
     default_action             = "Deny"
     ip_rules                   = [local.myip]
-    virtual_network_subnet_ids = [module.network.subnets[index(module.network.subnets.*.name, azurecaf_name.app_subnet_name.result)].id]
+    virtual_network_subnet_ids = [module.network.app_subnet_id]
   }
 
   azure_ad_tenant_id = data.azurerm_client_config.current.tenant_id
 }
 
 # For demo purposes, allow current user access to the key vault
-resource azurerm_role_assignment kv_contributor_user_role_assignement {
-  scope                 = module.key-vault.vault_id
-  role_definition_name  = "Key Vault Contributor"
-  principal_id          = data.azurerm_client_config.current.object_id
-}
+# Note: when running as a service principal, this is also needed
 resource azurerm_role_assignment kv_administrator_user_role_assignement {
   scope                 = module.key-vault.vault_id
   role_definition_name  = "Key Vault Administrator"
@@ -194,9 +132,7 @@ resource "azurerm_key_vault_secret" "airsonic_database_admin" {
   name         = "airsonic-database-admin"
   value        = module.postresql_database.database_username
   key_vault_id = module.key-vault.vault_id
-
-  depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement,
+  depends_on = [ 
     azurerm_role_assignment.kv_administrator_user_role_assignement
   ]
 }
@@ -205,20 +141,16 @@ resource "azurerm_key_vault_secret" "airsonic_database_admin_password" {
   name         = "airsonic-database-admin-password"
   value        = var.database_administrator_password
   key_vault_id = module.key-vault.vault_id
-
-  depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement,
+  depends_on = [ 
     azurerm_role_assignment.kv_administrator_user_role_assignement
   ]
 }
 
 resource "azurerm_key_vault_secret" "airsonic_application_client_secret" {
   name         = "airsonic-application-client-secret"
-  value        = module.application.application_client_secret
+  value        = var.principal_type == "User" ? module.application.application_client_secret : var.proseware_client_secret
   key_vault_id = module.key-vault.vault_id
-
-  depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement,
+  depends_on = [ 
     azurerm_role_assignment.kv_administrator_user_role_assignement
   ]
 }
@@ -227,56 +159,16 @@ resource "azurerm_key_vault_secret" "airsonic_cache_secret" {
   name         = "airsonic-redis-password"
   value        = module.cache.cache_secret
   key_vault_id = module.key-vault.vault_id
-
-  depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement,
+  depends_on = [ 
     azurerm_role_assignment.kv_administrator_user_role_assignement
   ]
 }
 
 # Give the app access to the key vault secrets - https://learn.microsoft.com/azure/key-vault/general/rbac-guide?tabs=azure-cli#secret-scope-role-assignment
 resource azurerm_role_assignment app_database_admin_rbac_assignment {
-  scope                 = "${module.key-vault.vault_id}/secrets/${azurerm_key_vault_secret.airsonic_database_admin.name}"
+  scope                 = module.key-vault.vault_id
   role_definition_name  = "Key Vault Secrets User"
   principal_id          = module.application.application_principal_id
-
-   depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement,
-    azurerm_role_assignment.kv_administrator_user_role_assignement
-  ]
-}
-
-resource azurerm_role_assignment app_database_admin_password_rbac_assignment {
-  scope                 = "${module.key-vault.vault_id}/secrets/${azurerm_key_vault_secret.airsonic_database_admin_password.name}"
-  role_definition_name  = "Key Vault Secrets User"
-  principal_id          = module.application.application_principal_id
-
-   depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement,
-    azurerm_role_assignment.kv_administrator_user_role_assignement
-  ]
-}
-
-resource azurerm_role_assignment app_client_secret_rbac_assignment {
-  scope                 = "${module.key-vault.vault_id}/secrets/${azurerm_key_vault_secret.airsonic_application_client_secret.name}"
-  role_definition_name  = "Key Vault Secrets User"
-  principal_id          = module.application.application_principal_id
-
-   depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement,
-    azurerm_role_assignment.kv_administrator_user_role_assignement
-  ]
-}
-
-resource azurerm_role_assignment app_redis_password_rbac_assignment {
-  scope                 = "${module.key-vault.vault_id}/secrets/${azurerm_key_vault_secret.airsonic_cache_secret.name}"
-  role_definition_name  = "Key Vault Secrets User"
-  principal_id          = module.application.application_principal_id
-
-   depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement,
-    azurerm_role_assignment.kv_administrator_user_role_assignement
-  ]
 }
 
 # The application needs Key Vault Reader role in order to read the key vault meta data
@@ -286,7 +178,6 @@ resource azurerm_role_assignment app_key_vault_reader_rbac_assignment {
   principal_id          = module.application.application_principal_id
 
   depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement,
     azurerm_role_assignment.kv_administrator_user_role_assignement
   ]
 }
@@ -297,7 +188,7 @@ module "cache" {
   environment                 = local.environment
   location                    = var.location
   private_endpoint_vnet_id    = module.network.vnet_id
-  private_endpoint_subnet_id  = module.network.subnets[index(module.network.subnets.*.name, azurecaf_name.private_endpoint_subnet_name.result)].id
+  private_endpoint_subnet_id  = module.network.private_endpoint_subnet_id
   log_analytics_workspace_id  = module.app_insights.log_analytics_workspace_id
 }
 
@@ -307,8 +198,10 @@ module "application" {
   application_name   = var.application_name
   environment        = local.environment
   location           = var.location
-  subnet_id          = module.network.subnets[index(module.network.subnets.*.name, azurecaf_name.app_subnet_name.result)].id
+  subnet_id          = module.network.app_subnet_id
 
+  principal_type     = var.principal_type
+  
   app_insights_connection_string = module.app_insights.connection_string
   log_analytics_workspace_id     = module.app_insights.log_analytics_workspace_id
 
@@ -325,11 +218,15 @@ module "application" {
   trainings_share_name               = module.storage.trainings_share_name
   playlist_share_name                = module.storage.playlist_share_name
 
+  proseware_client_id     = var.proseware_client_id
+  proseware_tenant_id     = var.proseware_tenant_id
   frontdoor_host_name     = module.frontdoor.host_name
   frontdoor_profile_uuid  = module.frontdoor.resource_guid
 }
 
+# Demo purposes only: assign current user as admin to the created DB
 resource "azurerm_postgresql_flexible_server_active_directory_administrator" "airsonic-ad-admin" {
+  count               = var.principal_type == "User" ? 1 : 0
   server_name         = module.postresql_database.database_server_name
   resource_group_name = azurerm_resource_group.main.name
   tenant_id           = data.azurerm_client_config.current.tenant_id
@@ -370,24 +267,26 @@ data "http" "myip" {
 }
 
 locals {
-  myip = chomp(data.http.myip.body)
-  virtual_network_subnet_ids = local.is_multi_region ? [module.network.subnets[index(module.network.subnets.*.name, azurecaf_name.app_subnet_name.result)].id, module.network2[0].subnets[index(module.network.subnets.*.name, azurecaf_name.app_subnet_name.result)].id] : [module.network.subnets[index(module.network.subnets.*.name, azurecaf_name.app_subnet_name.result)].id]
+  myip = chomp(data.http.myip.response_body)
+  virtual_network_app_subnet_ids = local.is_multi_region ? [module.network.app_subnet_id, module.network2[0].app_subnet_id] : [module.network.app_subnet_id]
 }
 
 resource "azurerm_storage_account_network_rules" "airsonic-storage-network-rules" {
   storage_account_id = module.storage.storage_account_id
 
   default_action             = "Deny"
-  virtual_network_subnet_ids = local.virtual_network_subnet_ids
+  virtual_network_subnet_ids = local.virtual_network_app_subnet_ids
   ip_rules                   = [local.myip]
 
   depends_on = [
-    module.storage
+    module.storage,
+    module.network
   ]
 }
 
-# Set Azure AD Application ID URI.
+# Set Azure AD Application redirectURI.
 resource "null_resource" "setup-application-uri" {
+  count   = var.principal_type == "User" ? 1 : 0
   depends_on = [
     module.application
   ]
@@ -440,50 +339,16 @@ resource "azurerm_resource_group" "main2" {
 }
 
 module "network2" {
-  count              = local.is_multi_region ? 1 : 0
-  source             = "./modules/network"
-  name               = azurecaf_name.virtual_network_name.result
-  resource_group     = azurerm_resource_group.main2[0].name
-  location           = var.location2
-  vnet_cidr          = local.secondary_network_cidr
-
-  subnets = [
-    # App subnet
-    # https://learn.microsoft.com/azure/app-service/overview-vnet-integration
-    {
-      name        = azurecaf_name.app_subnet_name.result
-      subnet_cidr = local.secondary_app_subnet_cidr
-      service_endpoints = [ "Microsoft.Storage", "Microsoft.KeyVault"]
-      delegation = {
-        name = "app-service"
-        service_delegation = {
-          name    = "Microsoft.Web/serverFarms"
-          actions = ["Microsoft.Network/virtualNetworks/subnets/action"]
-        }
-      }
-    },
-    # Create the private endpoint subnet. Private endpoint cannot be created in a subnet that's delegated
-    # https://learn.microsoft.com/azure/app-service/networking/private-endpoint
-    {
-      name        = azurecaf_name.private_endpoint_subnet_name.result
-      subnet_cidr = local.secondary_private_endpoint_subnet_cidr
-      service_endpoints = null
-      delegation  = null
-    },
-    # Create the data subnet
-    {
-      name        = azurecaf_name.postgresql_subnet_name.result
-      subnet_cidr = local.secondary_postgresql_subnet_cidr
-      service_endpoints = [ "Microsoft.Storage"]
-      delegation = {
-        name = "data"
-        service_delegation = {
-          name    = "Microsoft.DBforPostgreSQL/flexibleServers"
-          actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
-        }
-      }
-    }
-  ]
+  count                        = local.is_multi_region ? 1 : 0
+  source                       = "./modules/network"
+  resource_group               = azurerm_resource_group.main2[0].name
+  application_name             = var.application_name
+  location                     = var.location2
+  environment                  = local.environment
+  vnet_cidr                    = local.secondary_network_cidr
+  app_subnet_cidr              = local.secondary_app_subnet_cidr
+  postgresql_subnet_cidr       = local.secondary_postgresql_subnet_cidr
+  private_endpoint_subnet_cidr = local.secondary_private_endpoint_subnet_cidr
 }
 
 resource "azurerm_virtual_network_peering" "primary_to_secondary" {
@@ -529,7 +394,7 @@ module "postresql_database2" {
   environment                 = local.environment
   location                    = var.location2
   virtual_network_id          = module.network2[0].vnet_id
-  subnet_network_id           = module.network2[0].subnets[index(module.network.subnets.*.name, azurecaf_name.postgresql_subnet_name.result)].id
+  subnet_network_id           = module.network2[0].postgresql_subnet_id
   administrator_password      = var.database_administrator_password
   replication_enabled         = true
   source_server_id            = module.postresql_database.database_server_id
@@ -554,13 +419,13 @@ module "key-vault2" {
   log_analytics_workspace_id     = module.app_insights.log_analytics_workspace_id
 
   virtual_network_id         = module.network2[0].vnet_id
-  private_endpoint_subnet_id = module.network2[0].subnets[index(module.network.subnets.*.name, azurecaf_name.private_endpoint_subnet_name.result)].id
+  private_endpoint_subnet_id = module.network2[0].private_endpoint_subnet_id
 
   network_acls = {
     bypass                     = "None"
     default_action             = "Deny"
     ip_rules                   = [local.myip]
-    virtual_network_subnet_ids = [module.network2[0].subnets[index(module.network.subnets.*.name, azurecaf_name.app_subnet_name.result)].id]
+    virtual_network_subnet_ids = [module.network2[0].app_subnet_id]
   }
 
   azure_ad_tenant_id = data.azurerm_client_config.current.tenant_id
@@ -573,7 +438,7 @@ module "cache2" {
   environment                 = local.environment
   location                    = var.location2
   private_endpoint_vnet_id    = module.network2[0].vnet_id
-  private_endpoint_subnet_id  = module.network2[0].subnets[index(module.network.subnets.*.name, azurecaf_name.private_endpoint_subnet_name.result)].id
+  private_endpoint_subnet_id  = module.network2[0].private_endpoint_subnet_id
   log_analytics_workspace_id  = module.app_insights.log_analytics_workspace_id
 }
 
@@ -584,7 +449,7 @@ module "application2" {
   application_name    = "${var.application_name}"
   environment         = local.environment
   location            = var.location2
-  subnet_id           = module.network2[0].subnets[index(module.network.subnets.*.name, azurecaf_name.app_subnet_name.result)].id
+  subnet_id           = module.network2[0].app_subnet_id
 
   app_insights_connection_string = module.app_insights.connection_string
   log_analytics_workspace_id     = module.app_insights.log_analytics_workspace_id
@@ -602,6 +467,8 @@ module "application2" {
   trainings_share_name               = module.storage.trainings_share_name
   playlist_share_name                = module.storage.playlist_share_name
 
+  proseware_client_id     = var.proseware_client_id
+  proseware_tenant_id     = var.proseware_tenant_id
   frontdoor_host_name = module.frontdoor.host_name
   frontdoor_profile_uuid  = module.frontdoor.resource_guid
 }

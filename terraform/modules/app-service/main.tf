@@ -46,6 +46,7 @@ resource "random_uuid" "creator_role_id" {}
 
 resource "azuread_application" "app_registration" {
   display_name     = "${azurecaf_name.app_service.result}-app"
+  count            = var.principal_type == "User" ? 1 : 0
   owners           = [data.azuread_client_config.current.object_id]
   sign_in_audience = "AzureADMyOrg"  # single tenant
 
@@ -87,28 +88,25 @@ resource "azuread_application" "app_registration" {
 }
 
 resource "azuread_service_principal" "application_service_principal" {
-  application_id               = azuread_application.app_registration.application_id
+  application_id               = var.principal_type == "User" ? azuread_application.app_registration[0].application_id : "Ran as ServicePrincipal"
+  count                        = var.principal_type == "User" ? 1 : 0
   app_role_assignment_required = false
   owners                       = [data.azuread_client_config.current.object_id]
 }
 
 resource "azuread_application_password" "application_password" {
-  application_object_id = azuread_application.app_registration.object_id
+  count                 = var.principal_type == "User" ? 1 : 0
+  application_object_id = var.principal_type == "User" ? azuread_application.app_registration[0].object_id : "Ran as ServicePrincipal"
 }
 
 # This is not guidance and is done for demo purposes. The resource below will add the 
 # "Creator" app role assignment for the application of the current user deploying this sample.
 resource "azuread_app_role_assignment" "application_role_current_user" {
-  app_role_id         = azuread_service_principal.application_service_principal.app_role_ids["Creator"]
+  app_role_id         = azuread_service_principal.application_service_principal[0].app_role_ids["Creator"]
+  count               = var.principal_type == "User" ? 1 : 0
   principal_object_id = data.azuread_client_config.current.object_id
-  resource_object_id  = azuread_service_principal.application_service_principal.object_id
+  resource_object_id  = azuread_service_principal.application_service_principal[0].object_id
 }
-
-//not used
-# Retrieve domain information
-//data "azuread_domains" "domain" {
-//  only_initial = true
-//}
 
 # This creates the linux web app
 resource "azurerm_linux_web_app" "application" {
@@ -135,7 +133,7 @@ resource "azurerm_linux_web_app" "application" {
     ftps_state              = "Disabled"
     minimum_tls_version     = "1.2"
     always_on               = true
-    health_check_path       = "/actuator/health"
+    health_check_path       = "/"
 
     application_stack {
       java_server = "TOMCAT"
@@ -189,8 +187,8 @@ resource "azurerm_linux_web_app" "application" {
     SPRING_REDIS_HOST = var.redis_host
     SPRING_REDIS_PORT = var.redis_port
 
-    SPRING_CLOUD_AZURE_ACTIVE_DIRECTORY_CREDENTIAL_CLIENT_ID = azuread_application.app_registration.application_id
-    SPRING_CLOUD_AZURE_ACTIVE_DIRECTORY_PROFILE_TENANT_ID    = data.azuread_client_config.current.tenant_id
+    SPRING_CLOUD_AZURE_ACTIVE_DIRECTORY_CREDENTIAL_CLIENT_ID = var.principal_type == "User" ?  azuread_application.app_registration[0].application_id : var.proseware_client_id
+    SPRING_CLOUD_AZURE_ACTIVE_DIRECTORY_PROFILE_TENANT_ID    = var.principal_type == "User" ?  data.azuread_client_config.current.tenant_id : var.proseware_tenant_id
 
     SPRING_CLOUD_AZURE_KEYVAULT_SECRET_PROPERTY_SOURCES_0_ENDPOINT=var.key_vault_uri
 
@@ -247,53 +245,53 @@ resource "azurerm_monitor_diagnostic_setting" "app_service_diagnostic" {
 }
 
 # Configure scaling
-#resource "azurerm_monitor_autoscale_setting" "airsonicscaling" {
-#  name                = "airsonicscaling"
-#  resource_group_name = var.resource_group
-#  location            = var.location
-#  target_resource_id  = azurerm_service_plan.application.id
-#  profile {
-#    name = "default"
-#    capacity {
-#      default = 2
-#      minimum = 2
-#      maximum = 10
-#    }
-#    rule {
-#      metric_trigger {
-#        metric_name         = "CpuPercentage"
-#        metric_resource_id  = azurerm_service_plan.application.id
-#        time_grain          = "PT1M"
-#        statistic           = "Average"
-#        time_window         = "PT5M"
-#        time_aggregation    = "Average"
-#        operator            = "GreaterThan"
-#        threshold           = 85
-#      }
-#      scale_action {
-#        direction = "Increase"
-#        type      = "ChangeCount"
-#        value     = "1"
-#        cooldown  = "PT1M"
-#      }
-#    }
-#    rule {
-#      metric_trigger {
-#        metric_name         = "CpuPercentage"
-#        metric_resource_id  = azurerm_service_plan.application.id
-#        time_grain          = "PT1M"
-#        statistic           = "Average"
-#        time_window         = "PT5M"
-#        time_aggregation    = "Average"
-#        operator            = "LessThan"
-#        threshold           = 65
-#      }
-#      scale_action {
-#        direction = "Decrease"
-#        type      = "ChangeCount"
-#        value     = "1"
-#        cooldown  = "PT1M"
-#      }
-#    }
-#  }
-#}
+resource "azurerm_monitor_autoscale_setting" "airsonicscaling" {
+  name                = "airsonicscaling"
+  resource_group_name = var.resource_group
+  location            = var.location
+  target_resource_id  = azurerm_service_plan.application.id
+  profile {
+    name = "default"
+    capacity {
+      default = 2
+      minimum = 2
+      maximum = 10
+    }
+    rule {
+      metric_trigger {
+        metric_name         = "CpuPercentage"
+        metric_resource_id  = azurerm_service_plan.application.id
+        time_grain          = "PT1M"
+        statistic           = "Average"
+        time_window         = "PT5M"
+        time_aggregation    = "Average"
+        operator            = "GreaterThan"
+        threshold           = 85
+      }
+      scale_action {
+        direction = "Increase"
+        type      = "ChangeCount"
+        value     = "1"
+        cooldown  = "PT1M"
+      }
+    }
+    rule {
+      metric_trigger {
+        metric_name         = "CpuPercentage"
+        metric_resource_id  = azurerm_service_plan.application.id
+        time_grain          = "PT1M"
+        statistic           = "Average"
+        time_window         = "PT5M"
+        time_aggregation    = "Average"
+        operator            = "LessThan"
+        threshold           = 65
+      }
+      scale_action {
+        direction = "Decrease"
+        type      = "ChangeCount"
+        value     = "1"
+        cooldown  = "PT1M"
+      }
+    }
+  }
+}
