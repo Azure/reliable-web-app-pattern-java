@@ -32,7 +32,7 @@ RED='\033[0;31m'
 YELLOW='\033[0;33m'
 RESET='\033[0m'
 
-for group in $(az group list --query "[? location=='$location'].{Name:name, Tags:tags}" --output json | jq -r ".[] | select(.Tags.\"application-name\" == \"$applicationName\").Name"); do
+for resourceGroupName in $(az group list --query "[? location=='$location'].{Name:name, Tags:tags}" --output json | jq -r ".[] | select(.Tags.\"application-name\" == \"$applicationName\").Name"); do
  
   # check if resource group exists
   if [[ $(az group exists --name "$resourceGroupName") == false ]]; then
