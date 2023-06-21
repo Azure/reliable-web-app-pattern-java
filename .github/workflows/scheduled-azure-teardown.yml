@@ -63,4 +63,4 @@ jobs:
     - name: Delete AZD primary & secondary
       if: ${{ inputs.run_azd_tear_down || github.event_name == 'schedule' }}
       run: |
-        ./scripts/devOpsScripts/delete-resources.sh -application-name $APP_NAME -location $AZURE_LOCATION
+        ./scripts/devOpsScripts/delete-resources.sh --application-name $APP_NAME --location $AZURE_LOCATION

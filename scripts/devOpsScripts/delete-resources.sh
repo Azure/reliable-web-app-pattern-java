@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Example: ./delete-resources.sh -application-name rwajavaghpipeline -location australiaeast
+# Example: ./delete-resources.sh --application-name rwajavaghpipeline --location australiaeast
 
 POSITIONAL_ARGS=()
 
