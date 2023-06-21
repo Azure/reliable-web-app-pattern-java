@@ -58,7 +58,7 @@ concurrency: integration_testing
 jobs:
   terraform:
     env:
-      APP_NAME: ${{ vars.AZURE_APP_NAME }}${{ github.event.pull_request.number }}
+      APP_NAME: ${{ vars.AZURE_APP_NAME }}
       APP_ENVIRONMENT: ${{ inputs.environment || 'dev' }}
       AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
       AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
