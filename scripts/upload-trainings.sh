@@ -50,18 +50,13 @@ printf "account ${green}$STORAGE_ACCOUNT_NAME${clear} video share ${green}$VIDEO
 
 ALL_TRAININGS_DIR=AllTrainings
 
-# Check if directory already exists
-if az storage directory exists --name $ALL_TRAININGS_DIR --share-name $VIDEO_STORAGE_SHARE_NAME --account-name $STORAGE_ACCOUNT_NAME --account-key $STORAGE_PRIMARY_KEY; then
-  printf "Directory $ALL_TRAININGS_DIR ${green}already exists${clear}.\nExiting script.\n\n"
-  exit 0
-fi
-
 # Create directory if it doesn't exist
 az storage directory create --name $ALL_TRAININGS_DIR --share-name $VIDEO_STORAGE_SHARE_NAME --account-name $STORAGE_ACCOUNT_NAME --account-key $STORAGE_PRIMARY_KEY
 
 echo "Uploading videos"
-for file in $TRAININGS_DIR/*; do
-  echo "Processing $file"
+# foreach MP4 file in the trainings directory
+for file in $TRAININGS_DIR/*.mp4; do
+  echo "Examining $file"
 
   if [[ -d $file ]]; then
     # Skip directories
@@ -73,8 +68,15 @@ for file in $TRAININGS_DIR/*; do
 
   # if it's a training video, upload it to the incoming share
   if [[ $base_name == *.mp4 ]]; then
-    echo "Uploading video $base_name"
-    az storage file upload --account-name $STORAGE_ACCOUNT_NAME --account-key $STORAGE_PRIMARY_KEY --share-name $VIDEO_STORAGE_SHARE_NAME --path "$ALL_TRAININGS_DIR/$base_name" --source "$file"
+    echo "Processing video $base_name"
+
+    # Check if file already exists in Azure
+    if az storage file exists --account-name $STORAGE_ACCOUNT_NAME --account-key $STORAGE_PRIMARY_KEY --share-name $VIDEO_STORAGE_SHARE_NAME --path "$ALL_TRAININGS_DIR/$base_name" >/dev/null; then
+      printf "${yellow}File $base_name already exists${clear} in Azure, skipping upload\n"
+    else
+      az storage file upload --account-name $STORAGE_ACCOUNT_NAME --account-key $STORAGE_PRIMARY_KEY --share-name $VIDEO_STORAGE_SHARE_NAME --path "$ALL_TRAININGS_DIR/$base_name" --source "$file"
+      printf "${green}Uploaded $base_name${clear} to Azure\n"
+    fi
 
   # else print out unknown type
   else
