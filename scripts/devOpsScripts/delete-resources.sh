@@ -74,7 +74,11 @@ for group in $(az group list --query "[? location=='$location'].{Name:name, Tags
   # Delete the resource group
   az group delete --name "$resourceGroupName" --yes
    
-  echo "Purging $keyVaultName key vault in $resourceGroupName"
-  # Purge the deleted key vault
-  az keyvault purge --name "$keyVaultName" --location $location
+  if [[ ${#keyVaultName} -gt 0 ]]; then
+    echo "Purging $keyVaultName key vault in $resourceGroupName"
+    # Purge the deleted key vault
+    az keyvault purge --name "$keyVaultName" --location $location
+  else
+    echo "No key vault found in $resourceGroupName"
+  fi
 done
