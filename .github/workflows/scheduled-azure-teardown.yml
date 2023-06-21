@@ -54,11 +54,15 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-
     - name: print input env variables
       run: |
         echo $APP_NAME
         echo $AZURE_LOCATION
+
+    - name: Install jq tool
+      run: |
+        sudo apt-get update
+        sudo apt-get install jq
 
     - name: Delete AZD primary & secondary
       if: ${{ inputs.run_azd_tear_down || github.event_name == 'schedule' }}
