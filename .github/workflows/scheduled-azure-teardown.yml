@@ -4,9 +4,6 @@
 name: "RWA: Scheduled Teardown"
 
 on:
-  pull_request:
-      types:
-      - closed
   workflow_dispatch:
     inputs:
       environment:
