@@ -54,7 +54,6 @@ jobs:
 
     - name: print input env variables
       run: |
-        echo $APP_NAME
         echo $AZURE_LOCATION
 
     - name: Install jq tool
@@ -65,4 +64,4 @@ jobs:
     - name: Delete Resource Groups
       if: ${{ inputs.run_azd_tear_down || github.event_name == 'schedule' }}
       run: |
-        ./scripts/devOpsScripts/delete-resources.sh --application-name $APP_NAME --location $AZURE_LOCATION
+        ./scripts/devOpsScripts/delete-resources.sh --app-pattern-name java-rwa --location $AZURE_LOCATION
