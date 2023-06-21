@@ -17,11 +17,6 @@ on:
         options:
         - dev
         - prod
-      run_tf_tear_down:
-        description: 'When true, TF resources will be deleted'
-        required: false
-        default: true
-        type: boolean
       run_azd_tear_down:
         description: 'When true, AZD resources will be deleted'
         required: false
