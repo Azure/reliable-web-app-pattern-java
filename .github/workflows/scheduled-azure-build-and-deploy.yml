@@ -163,8 +163,7 @@ jobs:
     - name: Delete Resources
       if: ${{ inputs.run_tear_down || github.event_name == 'schedule' }}
       run: |
-        ./scripts/devOpsScripts/delete-resources.sh -g rg-${APP_NAME}-${AZURE_LOCATION}-${APP_ENVIRONMENT}
-        ./scripts/devOpsScripts/delete-resources.sh -g rg-${APP_NAME}s-${AZURE_LOCATION}-${APP_ENVIRONMENT}
+        ./scripts/devOpsScripts/delete-resources.sh --application-name $APP_NAME --location $AZURE_LOCATION
 
     - name: Check for success
       run: |
