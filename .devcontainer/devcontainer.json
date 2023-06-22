@@ -1,19 +1,23 @@
 {
     "name": "reliable-java-web-app",
     "build": {
-        "dockerfile": "Dockerfile",
-        "args": {
-            "IMAGE": "java:17"
-        }
-    },
+		"dockerfile": "Dockerfile",
+		"args": {
+			"VARIANT": "focal"
+		}
+	},
 	"remoteUser": "vscode",
 	"containerEnv": {
 		"M2": "/home/vscode" // required because the java feature is not setting this correctly
 	},
 	
     "features": {
-		"azure-cli": "latest",
-		"docker-from-docker": "latest",
+		"ghcr.io/devcontainers/features/azure-cli:1": {
+            "version": "latest"
+        },
+		"ghcr.io/devcontainers/features/docker-from-docker:1": {
+            "version": "20.10"
+        },
 		"ghcr.io/devcontainers/features/java:1": {
 			"version": "17",
 			"installMaven": true,
@@ -36,6 +40,6 @@
         }
     },
 	"hostRequirements": {
-        "memory": "8gb"
+        "cpus": 2
     }
 }

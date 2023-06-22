@@ -46,7 +46,7 @@ resource "azurerm_postgresql_flexible_server" "postresql_database" {
   administrator_login    = var.administrator_login
   administrator_password = var.administrator_password
 
-  sku_name                     = var.environment == "prod" ? "GP_Standard_D4s_v3" : "B_Standard_B1ms"
+  sku_name                     = var.sku_name
   version                      = "12"
 
   delegated_subnet_id          = var.subnet_network_id
@@ -66,8 +66,8 @@ resource "azurerm_postgresql_flexible_server" "postresql_database" {
   zone = 1
   storage_mb = 32768
 
-  create_mode = var.source_server_id != null && var.environment == "prod" ? "Replica" : null
-  source_server_id = var.environment == "prod" ? var.source_server_id : null
+  create_mode = var.source_server_id != null ? "Replica" : null
+  source_server_id = var.source_server_id
 
   authentication {
     active_directory_auth_enabled  = true

@@ -26,7 +26,12 @@ locals {
   secondary_app_subnet_cidr = ["10.1.1.0/27"]
   secondary_postgresql_subnet_cidr = ["10.1.2.0/27"]
   secondary_private_endpoint_subnet_cidr = ["10.1.3.0/27"]
-}
+
+  // Read Replicas are currently supported for the General Purpose and Memory Optimized server compute tiers, 
+  // Burstable server compute tier is not supported. (https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-read-replicas)
+  // The SKU therefore needs to be General Purpose for multi region deployments
+  postgresql_sku_name = var.environment == "prod" || length(var.location2) > 0 ? "GP_Standard_D4s_v3" : "B_Standard_B1ms"
+} 
 
 data "azurerm_client_config" "current" {}
 
@@ -307,6 +312,7 @@ module "postresql_database" {
   subnet_network_id           = module.network.postgresql_subnet_id
   administrator_password      = var.database_administrator_password
   log_analytics_workspace_id  = module.app_insights.log_analytics_workspace_id
+  sku_name                    = local.postgresql_sku_name
 }
 
 module "postresql_database2" {
@@ -322,6 +328,7 @@ module "postresql_database2" {
   administrator_password      = var.database_administrator_password
   source_server_id            = module.postresql_database.database_server_id
   log_analytics_workspace_id  = module.app_insights.log_analytics_workspace_id
+  sku_name                    = local.postgresql_sku_name
 
   depends_on = [
     module.network,
