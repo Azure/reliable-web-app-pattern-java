@@ -20,6 +20,18 @@ variable "location" {
   default     = "eastus"
 }
 
+variable "location_fd" {
+  type        = string
+  description = "The Azure region for Azure Front Door"
+  default     = "eastus2"
+}
+
+variable "location_db" {
+  type        = string
+  description = "The Azure region for Storage resource group"
+  default     = "eastus2"
+}
+
 variable "database_administrator_password" {
   type        = string
   description = "The password for the PostgreSQL administrator login"

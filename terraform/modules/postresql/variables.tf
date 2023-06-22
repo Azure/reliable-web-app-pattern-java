@@ -61,3 +61,8 @@ variable "log_analytics_workspace_id" {
   type        = string
   description = "The id of the log analytics workspace"
 }
+
+variable "sku_name" {
+  type    = string
+  default = "B_Standard_B1ms"
+}

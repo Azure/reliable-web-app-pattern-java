@@ -37,6 +37,7 @@ resource "azurecaf_name" "postgresql_server" {
 # It's recommended to use fine-grained access control in PostgreSQL when connecting to the database.
 # https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/how-to-create-users
 # https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-azure-ad-authentication
+
 resource "azurerm_postgresql_flexible_server" "postresql_database" {
   name                = azurecaf_name.postgresql_server.result
   resource_group_name = var.resource_group
@@ -45,7 +46,7 @@ resource "azurerm_postgresql_flexible_server" "postresql_database" {
   administrator_login    = var.administrator_login
   administrator_password = var.administrator_password
 
-  sku_name                     = var.environment == "prod" || var.replication_enabled ? "GP_Standard_D4s_v3" : "B_Standard_B1ms"
+  sku_name                     = var.sku_name
   version                      = "12"
 
   delegated_subnet_id          = var.subnet_network_id
@@ -63,7 +64,6 @@ resource "azurerm_postgresql_flexible_server" "postresql_database" {
   }
 
   zone = 1
-
   storage_mb = 32768
 
   create_mode = var.source_server_id != null ? "Replica" : null
