@@ -157,14 +157,13 @@ jobs:
     #   A resource with the ID "/subscriptions/***/Microsoft.Web/sites/app-kenghpipeline-dev|app-service-diagnostic-settings"
     #   already exists - to be managed via Terraform this resource needs to be imported into the State.
     # - name: Delete Resources
-    #   if: ${{ inputs.run_tear_down || github.event_name == 'schedule' }}
+    #   if: ${{ inputs.run_tear_down || github.event_name != 'workflow_run' }}
     #   run: azd down --force --purge --no-prompt
 
     - name: Delete Resources
-      if: ${{ inputs.run_tear_down || github.event_name == 'schedule' }}
+      if: ${{ inputs.run_tear_down || github.event_name != 'workflow_run' }}
       run: |
-        ./scripts/devOpsScripts/delete-resources.sh -g rg-${APP_NAME}-${AZURE_LOCATION}-${APP_ENVIRONMENT}
-        ./scripts/devOpsScripts/delete-resources.sh -g rg-${APP_NAME}s-${AZURE_LOCATION}-${APP_ENVIRONMENT}
+        ./scripts/devOpsScripts/delete-resources.sh --app-pattern-name java-rwa --location $AZURE_LOCATION
 
     - name: Check for success
       run: |

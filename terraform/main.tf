@@ -51,6 +51,7 @@ resource "azurerm_resource_group" "main" {
     "application-name" = var.application_name
     "nubesgen-version" = "0.13.0"
     "airsonic-version" = "1.0"
+    "app-pattern-name" = "java-rwa"
     "azd-env-name"     = var.application_name
   }
 }
@@ -408,6 +409,7 @@ resource "azurerm_resource_group" "main2" {
     "application-name" = var.application_name
     "nubesgen-version" = "0.13.0"
     "airsonic-version" = "1.0"
+    "app-pattern-name" = "java-rwa"
     "azd-env-name"     = var.application_name
   }
 }
