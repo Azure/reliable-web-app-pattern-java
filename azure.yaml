@@ -9,7 +9,7 @@ infra:
 hooks:
   postprovision:
     shell: sh
-    run: "./scripts/download-trainings.sh && ./scripts/upload-trainings.sh"
+    run: "./scripts/download-trainings.sh && ./scripts/upload-trainings.sh && ./scripts/set-default-rg.sh"
 services:
   application:
     project: ./src/airsonic-advanced

@@ -124,22 +124,16 @@ azd provision
 Deploy the web application to the primay region using the commands
 below.
 
-In the first command below substitute the FILL_IN_RESOURCE_GROUP_NAME
-with the resource group name of the primary region.
-
 ```shell
-azd env set AZURE_RESOURCE_GROUP <FILL_IN_RESOURCE_GROUP_NAME>
 azd deploy
 ```
 
 If you specified a secondary region then deploy the web application to
 it using the commands below.
 
-In the command below substitute the FILL_IN_SECONDARY_RESOURCE_GROUP_NAME
-with the resource group name of the secondary region
-
 ```shell
-azd env set AZURE_RESOURCE_GROUP <FILL_IN_SECONDARY_RESOURCE_GROUP_NAME>
+SECONDARY_RESOURCE_GROUP=$(azd env get-values --output json | jq -r .secondary_resource_group)
+azd env set AZURE_RESOURCE_GROUP $SECONDARY_RESOURCE_GROUP
 azd deploy
 ```
 
