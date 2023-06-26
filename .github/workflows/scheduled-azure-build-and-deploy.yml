@@ -138,10 +138,8 @@ jobs:
       continue-on-error: true
       run: azd provision --no-prompt
 
-    - name: Set AZD resource group
-      # temporary work around for known issue with multiple resource groups
-      # https://github.com/Azure/azure-dev/issues/690
-      run: azd env set AZURE_RESOURCE_GROUP rg-${APP_NAME}-${AZURE_LOCATION}-${APP_ENVIRONMENT}
+    - name: AZD env values
+      run: azd env get-values
 
     - name: AZD Deploy Application
       id: azd_deploy
