@@ -51,6 +51,14 @@ cd reliable-web-app-pattern-java
 code .
 ```
 
+If cloning in Windows, you may need to configure support for long paths in your environment depending on how long the folder path is you are cloning into. From the Registry Editor, navigate to HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem and set the DWORD LongPathsEnabled to 1.
+
+You can then enable support for long paths in git with the following command:
+```shell
+git config --system core.longpaths true
+```
+
+
 If using WSL, start a WSL Ubuntu terminal and clone the repo to a WSL directory (see example in the following image).
 
 ![WSL Ubuntu](docs/assets/wsl-ubuntu.png)
