@@ -11,7 +11,7 @@ Before we execute the failover plan we should understand the system and how it i
 The system is also placed behind an Azure Traffic Manager and Application Gateway with Azure Web Application Firewall enabled. This provides an active/passive load balancing capability between 1 instance of the application and another that provides high availability. The secondary region is a standby region that receives replicated data from the primary region.
 
 <!-- todo: assumes Application Gateway -->
-![Diagram showing the architecture of the reference implementation](docs/assets/java-architecture-reference-implementation.png)
+![Diagram showing the architecture of the reference implementation](docs/assets/reliable-web-app-java.png)
 
 In this system we have data stored in different places and each one of those should be handled by the failover.
 
