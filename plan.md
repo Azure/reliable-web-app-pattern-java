@@ -7,10 +7,8 @@ To transition from the primary region Proseware built the following plan that is
 ## Understaning the Proseware system
 Before we execute the failover plan we should understand the system and how it is used. Proseware is an Azure web application that provides streaming video training content. The solution architecture includes Azure App Service, Azure Storage (mounted as File Storage on App Service), Application Insights, Key Vault, Azure Cache for Redis, and Azure Database for Postgresql. These components are vnet integrated and secured with private endpoints. Users authenticate with Azure AD and diagnostics for Azure services are stored in Azure Log Analytics Workspace.
 
-<!-- todo: assumes Application Gateway -->
-The system is also placed behind an Azure Traffic Manager and Application Gateway with Azure Web Application Firewall enabled. This provides an active/passive load balancing capability between 1 instance of the application and another that provides high availability. The secondary region is a standby region that receives replicated data from the primary region.
+The system is also placed behind an Azure Front Door with Azure Web Application Firewall enabled. This provides an active/passive load balancing capability between 1 instance of the application and another that provides high availability. The secondary region is a standby region that receives replicated data from the primary region.
 
-<!-- todo: assumes Application Gateway -->
 ![Diagram showing the architecture of the reference implementation](docs/assets/reliable-web-app-java.png)
 
 In this system we have data stored in different places and each one of those should be handled by the failover.
