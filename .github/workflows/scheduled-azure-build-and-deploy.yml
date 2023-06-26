@@ -138,9 +138,6 @@ jobs:
       continue-on-error: true
       run: azd provision --no-prompt
 
-    - name: AZD env values
-      run: azd env get-values
-
     - name: AZD Deploy Application
       id: azd_deploy
       if: steps.azd_provision.outcome == 'success'
