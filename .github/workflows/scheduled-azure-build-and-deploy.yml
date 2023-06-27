@@ -38,11 +38,6 @@ on:
         options:
         - dev
         - prod
-      run_tear_down:
-        description: 'When true, resources will be deleted after a run'
-        required: false
-        default: true
-        type: boolean
   pull_request:
     types: [opened, synchronize, ready_for_review, reopened]
   schedule:
@@ -133,6 +128,12 @@ jobs:
       run: |
         azd config set alpha.terraform on
 
+    - name: Ename remote terraform state
+      run: |
+        azd env set RS_STORAGE_ACCOUNT ${{ vars.RS_STORAGE_ACCOUNT }}
+        azd env set RS_CONTAINER_NAME ${{ vars.RS_CONTAINER_NAME }}
+        azd env set RS_RESOURCE_GROUP ${{ vars.RS_RESOURCE_GROUP }}
+
     - name: AZD Provision Infrastructure
       id: azd_provision
       continue-on-error: true
@@ -144,21 +145,8 @@ jobs:
       continue-on-error: true
       run: azd deploy --no-prompt
 
-    # At this time we are not using AZD down with terraform because it
-    # is not as robust as the scripted approach. tf destroy was not able to destroy
-    # diagnostic settings which were left dangling from a previous run. When a
-    # resource group is deleted, these diagnostics are left behind and it causes
-    # the next run to fail with a message like:
-    #   A resource with the ID "/subscriptions/***/Microsoft.Web/sites/app-kenghpipeline-dev|app-service-diagnostic-settings"
-    #   already exists - to be managed via Terraform this resource needs to be imported into the State.
-    # - name: Delete Resources
-    #   if: ${{ inputs.run_tear_down || github.event_name != 'workflow_run' }}
-    #   run: azd down --force --purge --no-prompt
-
     - name: Delete Resources
-      if: ${{ inputs.run_tear_down || github.event_name != 'workflow_run' }}
-      run: |
-        ./scripts/devOpsScripts/delete-resources.sh --app-pattern-name java-rwa --location $AZURE_LOCATION
+      run: azd down --force --purge --no-prompt
 
     - name: Check for success
       run: |

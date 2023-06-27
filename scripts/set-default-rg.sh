@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# Invoked by AZD from the azure.yaml as a postprovision hook
 # executed by azd postprovision event we use the output of provision (which sets the azd env variable primary_resource_group)
 # to set the variable AZURE_RESOURCE_GROUP so that the `azd deploy` command knows which group to target when deploying
 
