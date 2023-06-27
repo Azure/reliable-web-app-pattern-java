@@ -128,7 +128,7 @@ jobs:
       run: |
         azd config set alpha.terraform on
 
-    - name: Ename remote terraform state
+    - name: Enable remote terraform state
       run: |
         azd env new $AZURE_ENV_NAME
         azd env set RS_STORAGE_ACCOUNT ${{ vars.RS_STORAGE_ACCOUNT }}
