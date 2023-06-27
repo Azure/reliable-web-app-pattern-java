@@ -126,10 +126,6 @@ jobs:
 
     - name: Enable remote terraform state
       run: |
-        export ARM_CLIENT_ID=$AZURE_CLIENT_ID
-        export ARM_CLIENT_SECRET=$AZURE_CLIENT_SECRET
-        export ARM_TENANT_ID=$AZURE_TENANT_ID
-
         azd env new $AZURE_ENV_NAME
         azd env set RS_STORAGE_ACCOUNT ${{ vars.RS_STORAGE_ACCOUNT }}
         azd env set RS_CONTAINER_NAME ${{ vars.RS_CONTAINER_NAME }}
@@ -138,7 +134,11 @@ jobs:
     - name: AZD Provision Infrastructure
       id: azd_provision
       continue-on-error: true
-      run: azd provision --no-prompt --debug
+      run: |
+        export ARM_CLIENT_ID=$AZURE_CLIENT_ID
+        export ARM_SUBSCRIPTION_ID=$AZURE_SUBSCRIPTION_ID
+        export ARM_TENANT_ID=$AZURE_TENANT_ID
+        azd provision --no-prompt --debug
 
     - name: AZD Deploy Application
       id: azd_deploy
