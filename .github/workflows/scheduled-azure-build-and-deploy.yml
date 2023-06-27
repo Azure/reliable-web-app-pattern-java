@@ -130,6 +130,7 @@ jobs:
 
     - name: Ename remote terraform state
       run: |
+        azd env new $AZURE_ENV_NAME
         azd env set RS_STORAGE_ACCOUNT ${{ vars.RS_STORAGE_ACCOUNT }}
         azd env set RS_CONTAINER_NAME ${{ vars.RS_CONTAINER_NAME }}
         azd env set RS_RESOURCE_GROUP ${{ vars.RS_RESOURCE_GROUP }}
