@@ -111,31 +111,14 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: AZD Login
+    - name: Log in with Azure (Federated Credentials)
+      if: ${{ env.AZURE_CLIENT_ID != '' }}
       run: |
-        $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
-        Write-Host "::add-mask::$($info.clientSecret)"
-
         azd auth login `
-          --client-id "$($info.clientId)" `
-          --client-secret "$($info.clientSecret)" `
-          --tenant-id "$($info.tenantId)"
-
-        export ARM_CLIENT_ID=$($info.clientId)
-        export ARM_CLIENT_SECRET=$($info.clientSecret)
-        export ARM_TENANT_ID=$($info.tenantId)
+          --client-id "$Env:AZURE_CLIENT_ID" `
+          --federated-credential-provider "github" `
+          --tenant-id "$Env:AZURE_TENANT_ID" `
       shell: pwsh
-      env:
-        AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
-
-    # - name: Log in with Azure (Federated Credentials)
-    #   if: ${{ env.AZURE_CLIENT_ID != '' }}
-    #   run: |
-    #     azd auth login `
-    #       --client-id "$Env:AZURE_CLIENT_ID" `
-    #       --federated-credential-provider "github" `
-    #       --tenant-id "$Env:AZURE_TENANT_ID" `
-    #   shell: pwsh
 
     - name: Enable terraform alpha feature
       run: |
@@ -143,6 +126,10 @@ jobs:
 
     - name: Enable remote terraform state
       run: |
+        export ARM_CLIENT_ID=$AZURE_CLIENT_ID
+        export ARM_CLIENT_SECRET=$AZURE_CLIENT_SECRET
+        export ARM_TENANT_ID=$AZURE_TENANT_ID
+
         azd env new $AZURE_ENV_NAME
         azd env set RS_STORAGE_ACCOUNT ${{ vars.RS_STORAGE_ACCOUNT }}
         azd env set RS_CONTAINER_NAME ${{ vars.RS_CONTAINER_NAME }}
