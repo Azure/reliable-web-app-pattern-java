@@ -160,7 +160,11 @@ jobs:
       run: azd deploy --no-prompt
 
     - name: Delete Resources
-      run: azd down --force --purge --no-prompt
+      run: |
+        export ARM_CLIENT_ID=$AZURE_CLIENT_ID
+        export ARM_CLIENT_SECRET=$AZURE_CLIENT_SECRET
+        export ARM_TENANT_ID=$AZURE_TENANT_ID
+        azd down --force --purge --no-prompt
 
     - name: Check for success
       run: |
