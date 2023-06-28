@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# Invoked by AZD from the azure.yaml as a postprovision hook
 # This script will download to the local file system previously recorded videos for Proseware from https://prosewaretrainingvideos.blob.core.windows.net.
 # This is intended for demo purposes.
 

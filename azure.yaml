@@ -7,6 +7,9 @@ infra:
     provider: "terraform"
     path: "terraform"
 hooks:
+  preprovision:
+    shell: sh
+    run: "./scripts/set-tfstate-vars.sh"
   postprovision:
     shell: sh
     run: "./scripts/download-trainings.sh && ./scripts/upload-trainings.sh && ./scripts/set-default-rg.sh"

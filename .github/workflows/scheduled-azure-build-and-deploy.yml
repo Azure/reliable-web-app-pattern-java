@@ -38,11 +38,6 @@ on:
         options:
         - dev
         - prod
-      run_tear_down:
-        description: 'When true, resources will be deleted after a run'
-        required: false
-        default: true
-        type: boolean
   pull_request:
     types: [opened, synchronize, ready_for_review, reopened]
   schedule:
@@ -116,7 +111,7 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: Log in with Azure
+    - name: AZD Login
       run: |
         $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
         Write-Host "::add-mask::$($info.clientSecret)"
@@ -129,14 +124,34 @@ jobs:
       env:
         AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
 
+    # - name: Log in with Azure (Federated Credentials)
+    #   if: ${{ env.AZURE_CLIENT_ID != '' }}
+    #   run: |
+    #     azd auth login `
+    #       --client-id "$Env:AZURE_CLIENT_ID" `
+    #       --federated-credential-provider "github" `
+    #       --tenant-id "$Env:AZURE_TENANT_ID" `
+    #   shell: pwsh
+
     - name: Enable terraform alpha feature
       run: |
         azd config set alpha.terraform on
 
+    - name: Enable remote terraform state
+      run: |
+        azd env new $AZURE_ENV_NAME
+        azd env set RS_STORAGE_ACCOUNT ${{ vars.RS_STORAGE_ACCOUNT }}
+        azd env set RS_CONTAINER_NAME ${{ vars.RS_CONTAINER_NAME }}
+        azd env set RS_RESOURCE_GROUP ${{ vars.RS_RESOURCE_GROUP }}
+
     - name: AZD Provision Infrastructure
       id: azd_provision
       continue-on-error: true
-      run: azd provision --no-prompt
+      run: |
+        export ARM_CLIENT_ID=$AZURE_CLIENT_ID
+        export ARM_CLIENT_SECRET=$AZURE_CLIENT_SECRET
+        export ARM_TENANT_ID=$AZURE_TENANT_ID
+        azd provision --no-prompt --debug
 
     - name: AZD Deploy Application
       id: azd_deploy
@@ -144,21 +159,12 @@ jobs:
       continue-on-error: true
       run: azd deploy --no-prompt
 
-    # At this time we are not using AZD down with terraform because it
-    # is not as robust as the scripted approach. tf destroy was not able to destroy
-    # diagnostic settings which were left dangling from a previous run. When a
-    # resource group is deleted, these diagnostics are left behind and it causes
-    # the next run to fail with a message like:
-    #   A resource with the ID "/subscriptions/***/Microsoft.Web/sites/app-kenghpipeline-dev|app-service-diagnostic-settings"
-    #   already exists - to be managed via Terraform this resource needs to be imported into the State.
-    # - name: Delete Resources
-    #   if: ${{ inputs.run_tear_down || github.event_name != 'workflow_run' }}
-    #   run: azd down --force --purge --no-prompt
-
     - name: Delete Resources
-      if: ${{ inputs.run_tear_down || github.event_name != 'workflow_run' }}
       run: |
-        ./scripts/devOpsScripts/delete-resources.sh --app-pattern-name java-rwa --location $AZURE_LOCATION
+        export ARM_CLIENT_ID=$AZURE_CLIENT_ID
+        export ARM_CLIENT_SECRET=$AZURE_CLIENT_SECRET
+        export ARM_TENANT_ID=$AZURE_TENANT_ID
+        azd down --force --purge --no-prompt
 
     - name: Check for success
       run: |
