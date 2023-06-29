@@ -7,7 +7,7 @@
 
 existing_container_name=$(azd env get-values --output json | jq -r .rs_container_name)
 
-if [[ ${#existing_container_name} -gt 0 ]]; then
+if [[ ${existing_container_name} -ne 'null' ]]; then
     echo 'Terraform values are already set'
     exit 0
 fi
