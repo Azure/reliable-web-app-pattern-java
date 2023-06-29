@@ -15,7 +15,7 @@ fi
 random_string=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 11 | head -n 1)
 
 # values must be set by GitHub pipeline as vars that are consistent across workflows because we have one that deploys and another that does teardown
-RS_STORAGE_ACCOUNT=stprosedevops$(random_string)
+RS_STORAGE_ACCOUNT=stprosedevops${random_string}
 RS_CONTAINER_NAME=terraform
 RS_RESOURCE_GROUP=rg-stprosedevops
 
