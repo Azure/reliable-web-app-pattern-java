@@ -10,7 +10,7 @@ hooks:
   preprovision:
     shell: sh
     interactive: true
-    run: "./scripts/set-tfstate-vars.sh"
+    run: "./scripts/teardown-tfstate.sh"
   postprovision:
     shell: sh
     interactive: true
