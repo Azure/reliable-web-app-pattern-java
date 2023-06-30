@@ -58,11 +58,7 @@ jobs:
       AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
       AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
       AZURE_ENV_NAME: ${{ vars.AZURE_APP_NAME }}
-      AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
-      AZURE_LOCATION2: ${{ vars.AZURE_LOCATION2 }}
-      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
-      DATABASE_PASSWORD: ${{ secrets.POSTGRES_DATABASE_PASSWORD }}
       ENABLE_TELEMETRY: true
       PRINCIPAL_TYPE: ServicePrincipal
       TRAININGS_DIR: $PROJECT_ROOT/videos
@@ -99,9 +95,6 @@ jobs:
       run: |
         echo $APP_NAME
         echo $APP_ENVIRONMENT
-        echo $AZURE_LOCATION
-        echo $AZURE_LOCATION2
-        echo $DATABASE_PASSWORD
         echo $PROJECT_ROOT
         echo $AZURE_SUBSCRIPTION_ID
 
@@ -128,13 +121,11 @@ jobs:
       run: |
         azd config set alpha.terraform on
 
-    # Allow GH pipeline to follow the flow users follow
-    # - name: Enable remote terraform state
-    #   run: |
-    #     azd env new $AZURE_ENV_NAME
-    #     azd env set RS_STORAGE_ACCOUNT ${{ vars.RS_STORAGE_ACCOUNT }}
-    #     azd env set RS_CONTAINER_NAME ${{ vars.RS_CONTAINER_NAME }}
-    #     azd env set RS_RESOURCE_GROUP ${{ vars.RS_RESOURCE_GROUP }}
+    - name: AZD set vars
+      run: |
+        azd env set DATABASE_PASSWORD ${{ secrets.POSTGRES_DATABASE_PASSWORD }}
+        azd env set AZURE_LOCATION ${{ vars.AZURE_LOCATION }}
+        azd env set AZURE_SUBSCRIPTION_ID ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     - name: AZD Provision Infrastructure
       id: azd_provision
