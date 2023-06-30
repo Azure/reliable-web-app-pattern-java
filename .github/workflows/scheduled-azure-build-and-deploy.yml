@@ -128,13 +128,12 @@ jobs:
       run: |
         azd config set alpha.terraform on
 
-    # TODO - let the script set these values
-    # - name: Enable remote terraform state
-    #   run: |
-    #     azd env new $AZURE_ENV_NAME
-    #     azd env set RS_STORAGE_ACCOUNT ${{ vars.RS_STORAGE_ACCOUNT }}
-    #     azd env set RS_CONTAINER_NAME ${{ vars.RS_CONTAINER_NAME }}
-    #     azd env set RS_RESOURCE_GROUP ${{ vars.RS_RESOURCE_GROUP }}
+    - name: Enable remote terraform state
+      run: |
+        azd env new $AZURE_ENV_NAME
+        azd env set RS_STORAGE_ACCOUNT ${{ vars.RS_STORAGE_ACCOUNT }}
+        azd env set RS_CONTAINER_NAME ${{ vars.RS_CONTAINER_NAME }}
+        azd env set RS_RESOURCE_GROUP ${{ vars.RS_RESOURCE_GROUP }}
 
     - name: AZD Provision Infrastructure
       id: azd_provision

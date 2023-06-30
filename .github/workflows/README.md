@@ -78,6 +78,9 @@ works around is the creation, and reuse, of an existing Azure AD app registratio
     |AZURE_CLIENT_ID            | (GUID FROM CONSOLE)       |
     |AZURE_LOCATION             | australiaeast             |
     |AZURE_TENANT_ID            | (GUID FROM CONSOLE)       |
+    |RS_STORAGE_ACCOUNT         | stprosedevops(unique)     |
+    |RS_CONTAINER_NAME          | terraform                 |
+    |RS_RESOURCE_GROUP          | rg-stprosedevops          |
 
     **Outcome**
 
