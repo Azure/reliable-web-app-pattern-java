@@ -143,7 +143,7 @@ jobs:
         export ARM_CLIENT_ID=$AZURE_CLIENT_ID
         export ARM_CLIENT_SECRET=$AZURE_CLIENT_SECRET
         export ARM_TENANT_ID=$AZURE_TENANT_ID
-        azd provision --no-prompt --debug
+        azd provision --no-prompt
 
     - name: AZD Deploy Application
       id: azd_deploy
