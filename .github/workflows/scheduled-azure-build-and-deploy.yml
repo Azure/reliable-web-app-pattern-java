@@ -123,6 +123,7 @@ jobs:
 
     - name: AZD set vars
       run: |
+        azd env new ${{ vars.AZURE_APP_NAME }}
         azd env set DATABASE_PASSWORD ${{ secrets.POSTGRES_DATABASE_PASSWORD }}
         azd env set AZURE_LOCATION ${{ vars.AZURE_LOCATION }}
         azd env set AZURE_SUBSCRIPTION_ID ${{ secrets.AZURE_SUBSCRIPTION_ID }}
