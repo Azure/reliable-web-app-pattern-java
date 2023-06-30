@@ -21,8 +21,11 @@ rs_container_name=terraform
 rs_resource_group=rg-stprosedevops${random_string}
 
 az group create --name $rs_resource_group --location $primary_region --tags app-pattern-name java-rwa
-az storage account create --name $rs_storage_account --resource-group $rs_resource_group --location $primary_region
-az storage container create --account-name $rs_storage_account --name $rs_container_name
+az storage account create --name $rs_storage_account --resource-group $rs_resource_group --location $primary_region --allow-blob-public-access false
+
+connection_string=$(az storage account show-connection-string --resource-group migrate-experiments --name kendemostorage --query "connectionString" -o tsv)
+
+az storage container create --account-name $rs_storage_account --name $rs_container_name --connection-string $connection_string
 
 azd env set RS_STORAGE_ACCOUNT $rs_storage_account
 azd env set RS_CONTAINER_NAME $rs_container_name
