@@ -3,7 +3,6 @@ Scripts in this folder are executed by the GitHub pipeline workflow. The support
 
 Scripts include:
 - delete-resources.sh
-- get-aad-settings-from-vault.sh
 - reusable-app-registrations.sh
 
 ## delete-resources.sh
