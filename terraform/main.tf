@@ -241,7 +241,7 @@ resource "azurerm_resource_group_template_deployment" "deploymenttelemetry" {
 }
 
 data "http" "myip" {
-  url = "http://whatismyip.dev/api/ip"
+  url = "https://whatsmyip.dev/api/ip"
 }
 
 locals {
