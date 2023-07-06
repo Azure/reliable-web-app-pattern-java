@@ -116,7 +116,7 @@ azd env set AZURE_LOCATION2 <region>
 
 ### (Optional) Select production or development environment.
 
-You should change the `APP_ENVIRONMENT` variable to either *prod* or *dev*. 
+You should change the `APP_ENVIRONMENT` variable to *prod* for production SKUs.  Default value is *dev* 
 
 ```shell
 azd env set APP_ENVIRONMENT prod
