@@ -50,7 +50,11 @@ Application logging is enabled. To view the logs, navigate to *Diagnose and solv
 
 ## Application Insights
 
-Exceptions in the Prosware web application are reported with Application Insights. Some videos in Proseware can not be played correctly. Using *Application Insights*, we see that a null pointer exception was thrown while processing the videos.
+Exceptions in the Prosware web application are reported with Application Insights. Some videos in Proseware cannot be played correctly. 
+
+![VideoError](docs/assets/proseware-video-error.png)
+
+Using *Application Insights*, we see that a NullPointerException was thrown while processing the videos.
 
 ![AppInsightsFailures](docs/assets/application-insights-failures.png)
 ![AppInsightsEndToEndDetails](docs/assets/application-insights-end-to-end-details.png)
