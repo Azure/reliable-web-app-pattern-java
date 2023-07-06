@@ -241,11 +241,11 @@ resource "azurerm_resource_group_template_deployment" "deploymenttelemetry" {
 }
 
 data "http" "myip" {
-  url = "https://whatsmyip.dev/api/ip"
+  url = "https://api.ipify.org"
 }
 
 locals {
-  myip = jsondecode(data.http.myip.response_body).addr
+  myip = chomp(data.http.myip.response_body)
   virtual_network_app_subnet_ids = local.is_multi_region ? [module.network.app_subnet_id, module.network2[0].app_subnet_id] : [module.network.app_subnet_id]
 }
 
