@@ -58,11 +58,7 @@ jobs:
       AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
       AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
       AZURE_ENV_NAME: ${{ vars.AZURE_APP_NAME }}
-      AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
-      AZURE_LOCATION2: ${{ vars.AZURE_LOCATION2 }}
-      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
-      DATABASE_PASSWORD: ${{ secrets.POSTGRES_DATABASE_PASSWORD }}
       ENABLE_TELEMETRY: true
       PRINCIPAL_TYPE: ServicePrincipal
       TRAININGS_DIR: $PROJECT_ROOT/videos
@@ -99,9 +95,6 @@ jobs:
       run: |
         echo $APP_NAME
         echo $APP_ENVIRONMENT
-        echo $AZURE_LOCATION
-        echo $AZURE_LOCATION2
-        echo $DATABASE_PASSWORD
         echo $PROJECT_ROOT
         echo $AZURE_SUBSCRIPTION_ID
 
@@ -124,25 +117,16 @@ jobs:
       env:
         AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
 
-    # - name: Log in with Azure (Federated Credentials)
-    #   if: ${{ env.AZURE_CLIENT_ID != '' }}
-    #   run: |
-    #     azd auth login `
-    #       --client-id "$Env:AZURE_CLIENT_ID" `
-    #       --federated-credential-provider "github" `
-    #       --tenant-id "$Env:AZURE_TENANT_ID" `
-    #   shell: pwsh
-
     - name: Enable terraform alpha feature
       run: |
         azd config set alpha.terraform on
 
-    - name: Enable remote terraform state
+    - name: AZD set vars
       run: |
-        azd env new $AZURE_ENV_NAME
-        azd env set RS_STORAGE_ACCOUNT ${{ vars.RS_STORAGE_ACCOUNT }}
-        azd env set RS_CONTAINER_NAME ${{ vars.RS_CONTAINER_NAME }}
-        azd env set RS_RESOURCE_GROUP ${{ vars.RS_RESOURCE_GROUP }}
+        azd env new ${{ vars.AZURE_APP_NAME }}
+        azd env set DATABASE_PASSWORD ${{ secrets.POSTGRES_DATABASE_PASSWORD }}
+        azd env set AZURE_LOCATION ${{ vars.AZURE_LOCATION }}
+        azd env set AZURE_SUBSCRIPTION_ID ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     - name: AZD Provision Infrastructure
       id: azd_provision
@@ -151,7 +135,7 @@ jobs:
         export ARM_CLIENT_ID=$AZURE_CLIENT_ID
         export ARM_CLIENT_SECRET=$AZURE_CLIENT_SECRET
         export ARM_TENANT_ID=$AZURE_TENANT_ID
-        azd provision --no-prompt --debug
+        azd provision --no-prompt
 
     - name: AZD Deploy Application
       id: azd_deploy
