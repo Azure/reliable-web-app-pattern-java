@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# Invoked by AZD from the azure.yaml as a postprovision hook
 # This script will upload training vidoes stored on the local file system to Proseware.  This assumes that the download-tranings.sh script was previously executed.
 # This is intended for demo purposes.
 
@@ -71,11 +72,12 @@ for file in $TRAININGS_DIR/*.mp4; do
     echo "Processing video $base_name"
 
     # Check if file already exists in Azure
-    if az storage file exists --account-name $STORAGE_ACCOUNT_NAME --account-key $STORAGE_PRIMARY_KEY --share-name $VIDEO_STORAGE_SHARE_NAME --path "$ALL_TRAININGS_DIR/$base_name" >/dev/null; then
-      printf "${yellow}File $base_name already exists${clear} in Azure, skipping upload\n"
+    exists=$(az storage file exists --account-name $STORAGE_ACCOUNT_NAME --account-key $STORAGE_PRIMARY_KEY --share-name $VIDEO_STORAGE_SHARE_NAME --path "$ALL_TRAININGS_DIR/$base_name" --query "exists" -o tsv)
+    if [[ $exists == 'true' ]]; then
+      printf "File ${yellow}$base_name${clear} already exists in Azure, skipping upload\n"
     else
       az storage file upload --account-name $STORAGE_ACCOUNT_NAME --account-key $STORAGE_PRIMARY_KEY --share-name $VIDEO_STORAGE_SHARE_NAME --path "$ALL_TRAININGS_DIR/$base_name" --source "$file"
-      printf "${green}Uploaded $base_name${clear} to Azure\n"
+      printf "Uploaded ${green}$base_name${clear} to Azure\n"
     fi
 
   # else print out unknown type

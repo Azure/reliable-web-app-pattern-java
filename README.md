@@ -38,7 +38,6 @@ A detailed workflow of the reference implementation is forthcoming.
 
 ## Steps to deploy the reference implementation
 
-
 Note - The following deployment has been tested using devcontainers on **macOS** and **Windows with [Ubuntu on WSL](https://ubuntu.com/wsl)**.
 
 **1. Clone the repo**
@@ -49,6 +48,13 @@ Navigate to your desired directory and run the three following commands:
 git clone https://github.com/Azure/reliable-web-app-pattern-java.git
 cd reliable-web-app-pattern-java
 code .
+```
+
+If cloning in Windows, you may need to configure support for long paths in your environment depending on how long the folder path is you are cloning into. From the Registry Editor, navigate to HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem and set the DWORD LongPathsEnabled to 1.
+
+You can then enable support for long paths in git with the following command:
+```shell
+git config --system core.longpaths true
 ```
 
 If using WSL, start a WSL Ubuntu terminal and clone the repo to a WSL directory (see example in the following image).
@@ -71,6 +77,8 @@ Then, search for `Dev Containers: Rebuild and Reopen in Container` in the Comman
 
 **2. Prepare for deployment**
 
+Open a terminal in VS Code and enter the following.
+
 ```shell
 azd auth login
 azd config set alpha.terraform on
@@ -87,17 +95,28 @@ azd env set AZURE_SUBSCRIPTION_ID <AZURE_SUBSCRIPTION_ID>
 > az account list-locations --query "[].name" -o tsv
 > ```
 
-### Multi-region support
+### (Optional) Multi-region support
 
-Prosware devs also use the following command to choose a second Azure location because the production environment is multiregional.
+Prosware devs also use the following command to choose a second Azure location for multiregional deployments. The following constraints were considered for choosing paired regions for Proseware.
+
+1. Regional pairs that align with [Azure Storage redundancy (GZRS)](https://learn.microsoft.com/en-us/azure/storage/common/storage-redundancy#geo-zone-redundant-storage).
+2. Regions that support [Azure Database for PostgreSQL - Flexible Server](https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/overview) with [availability zones](https://learn.microsoft.com/en-us/azure/reliability/availability-zones-overview#availability-zones).
+
+We have validated the following paired regions.
+
+| AZURE_LOCATION | AZURE_LOCATION2 |
+| ----- | ----- |
+| westus3 | eastus |
+| westeurope | northeurope |
+| australiaeast | australiasoutheast |
 
 ```shell
 azd env set AZURE_LOCATION2 <region>
 ```
 
-### Select production or development environment.
+### (Optional) Select production or development environment.
 
-You should change the `APP_ENVIRONMENT` variable to either *prod* or *dev*. 
+You should change the `APP_ENVIRONMENT` variable to *prod* for production SKUs.  Default value is *dev* 
 
 ```shell
 azd env set APP_ENVIRONMENT prod

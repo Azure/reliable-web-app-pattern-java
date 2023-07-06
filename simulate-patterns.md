@@ -44,6 +44,17 @@ Using the (PREVIEW) Redis Console we can see this data stored in Redis.
 
 Application logging is enabled. To view the logs, navigate to *Diagnose and solve problems*. From there, click on *Application Logs*.
 
-![Diagnose and solve problems](assets/appservice-diagnose-and-solve-problems.png)
+![Diagnose and solve problems](docs/assets/appservice-diagnose-and-solve-problems.png)
 
-![Application Logs](assets/appservice-diagnose-and-solve-problems-application-logs.png)
+![Application Logs](docs/assets/appservice-diagnose-and-solve-problems-application-logs.png)
+
+## Application Insights
+
+Exceptions in the Prosware web application are reported with Application Insights. Some videos in Proseware cannot be played correctly. 
+
+![VideoError](docs/assets/proseware-video-error.png)
+
+Using *Application Insights*, we see that a NullPointerException was thrown while processing the videos.
+
+![AppInsightsFailures](docs/assets/application-insights-failures.png)
+![AppInsightsEndToEndDetails](docs/assets/application-insights-end-to-end-details.png)
