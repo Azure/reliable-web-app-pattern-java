@@ -101,7 +101,7 @@ module "key-vault" {
   network_acls = {
     bypass                     = "None"
     default_action             = "Deny"
-    ip_rules                   = [local.myip]
+    ip_rules                   = [local.mynetwork]
     virtual_network_subnet_ids = [module.network.app_subnet_id]
   }
 
@@ -246,6 +246,7 @@ data "http" "myip" {
 
 locals {
   myip = chomp(data.http.myip.response_body)
+  mynetwork = cidrhost("${local.myip}/16", 0)
   virtual_network_app_subnet_ids = local.is_multi_region ? [module.network.app_subnet_id, module.network2[0].app_subnet_id] : [module.network.app_subnet_id]
 }
 
@@ -254,7 +255,7 @@ resource "azurerm_storage_account_network_rules" "airsonic-storage-network-rules
 
   default_action             = "Deny"
   virtual_network_subnet_ids = local.virtual_network_app_subnet_ids
-  ip_rules                   = [local.myip]
+  ip_rules                   = [local.mynetwork]
 
   depends_on = [
     module.storage,
@@ -484,7 +485,7 @@ module "key-vault2" {
   network_acls = {
     bypass                     = "None"
     default_action             = "Deny"
-    ip_rules                   = [local.myip]
+    ip_rules                   = [local.mynetwork]
     virtual_network_subnet_ids = [module.network2[0].app_subnet_id]
   }
 
