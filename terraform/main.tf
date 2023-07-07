@@ -246,7 +246,7 @@ data "http" "myip" {
 
 locals {
   myip = chomp(data.http.myip.response_body)
-  mynetwork = cidrhost("${local.myip}/16", 0)
+  mynetwork = "${cidrhost("${local.myip}/16", 0)}/16"
   virtual_network_app_subnet_ids = local.is_multi_region ? [module.network.app_subnet_id, module.network2[0].app_subnet_id] : [module.network.app_subnet_id]
 }
 
