@@ -14,16 +14,16 @@ terraform {
 # Azure Private DNS provides a reliable, secure DNS service to manage and
 # resolve domain names in a virtual network without the need to add a custom DNS solution
 # https://docs.microsoft.com/azure/dns/private-dns-privatednszone
-resource "azurerm_private_dns_zone" "postresql_database" {
+resource "azurerm_private_dns_zone" "postgresql_database" {
   name                = "privatelink.${var.location}.postgres.database.azure.com"
   resource_group_name = var.resource_group
 }
 
 # After you create a private DNS zone in Azure, you'll need to link a virtual network to it.
 # https://docs.microsoft.com/azure/dns/private-dns-virtual-network-links
-resource "azurerm_private_dns_zone_virtual_network_link" "postresql_database" {
-  name                  = azurerm_private_dns_zone.postresql_database.name
-  private_dns_zone_name = azurerm_private_dns_zone.postresql_database.name
+resource "azurerm_private_dns_zone_virtual_network_link" "postgresql_database" {
+  name                  = azurerm_private_dns_zone.postgresql_database.name
+  private_dns_zone_name = azurerm_private_dns_zone.postgresql_database.name
   virtual_network_id    = var.virtual_network_id
   resource_group_name   = var.resource_group
 }
@@ -38,7 +38,7 @@ resource "azurecaf_name" "postgresql_server" {
 # https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/how-to-create-users
 # https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-azure-ad-authentication
 
-resource "azurerm_postgresql_flexible_server" "postresql_database" {
+resource "azurerm_postgresql_flexible_server" "postgresql_database" {
   name                = azurecaf_name.postgresql_server.result
   resource_group_name = var.resource_group
   location            = var.location
@@ -50,7 +50,7 @@ resource "azurerm_postgresql_flexible_server" "postresql_database" {
   version                      = "12"
 
   delegated_subnet_id          = var.subnet_network_id
-  private_dns_zone_id          = azurerm_private_dns_zone.postresql_database.id
+  private_dns_zone_id          = azurerm_private_dns_zone.postgresql_database.id
 
   geo_redundant_backup_enabled = false
 
@@ -81,13 +81,13 @@ resource "azurerm_postgresql_flexible_server" "postresql_database" {
     "application-name" = var.application_name
   }
 
-  depends_on = [azurerm_private_dns_zone_virtual_network_link.postresql_database]
+  depends_on = [azurerm_private_dns_zone_virtual_network_link.postgresql_database]
 }
 
 # Configure Diagnostic Settings for PostgreSQL
 resource "azurerm_monitor_diagnostic_setting" "postgresql_diagnostic" {
   name                           = "postgresql-diagnostic-settings"
-  target_resource_id             = azurerm_postgresql_flexible_server.postresql_database.id
+  target_resource_id             = azurerm_postgresql_flexible_server.postgresql_database.id
   log_analytics_workspace_id     = var.log_analytics_workspace_id
 
   enabled_log {
