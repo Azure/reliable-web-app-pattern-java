@@ -63,7 +63,7 @@ This document helps with troubleshooting and provides an introduction to the mos
 
     ![Aisonic AAD](docs/assets/appservice-welcome-java.png)
 
-    This is because App Service may require additional time to process the recently uploaded *WAR* package. Refresh the page after a minute or two to see the Proseware site. 
+    This is because App Service may require additional time to process the recently uploaded *WAR* package. Refresh the page after a minute or two to see the Proseware site. It can take up to 5 minutes to see the Proseware site.
 
 * Connection time out errors in the azd provision step
 
