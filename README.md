@@ -83,6 +83,11 @@ Open a terminal in VS Code and enter the following.
 azd auth login
 azd config set alpha.terraform on
 azd env new
+```
+
+Set the environment variables.
+
+```shell
 azd env set DATABASE_PASSWORD <SOME_VALUE>
 azd env set AZURE_LOCATION <AZURE_REGION_NAME e.g. eastus>
 azd env set AZURE_SUBSCRIPTION_ID <AZURE_SUBSCRIPTION_ID>
@@ -127,7 +132,7 @@ The following table describes the differences in the resources deployed in the 2
 | Service | Dev SKU | Prod SKU | SKU options |
 | --- | --- | --- | --- |
 | Cache for Redis | Basic | Standard | [Redis Cache SKU options](https://azure.microsoft.com/pricing/details/cache/)
-| App Service | P1v2 | P2v2 | [App Service SKU options](https://azure.microsoft.com/pricing/details/app-service/linux/)
+| App Service | P1v3 | P2v3 | [App Service SKU options](https://azure.microsoft.com/pricing/details/app-service/linux/)
 | PostgreSQL Flexible Server | Burstable B1ms (B_Standard_B1ms) | General Purpose D4s_v3 (GP_Standard_D4s_v3) | [PostgreSQL SKU options](https://learn.microsoft.com/azure/postgresql/flexible-server/concepts-compute-storage)
 
 **3. Start the Deployment**
