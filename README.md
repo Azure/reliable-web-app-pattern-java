@@ -67,6 +67,13 @@ cd reliable-web-app-pattern-java
 code .
 ```
 
+If cloning in Windows, you may need to configure support for long paths in your environment depending on how long the folder path is you are cloning into. From the Registry Editor, navigate to HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem and set the DWORD LongPathsEnabled to 1.
+
+You can then enable support for long paths in git with the following command:
+```shell
+git config --system core.longpaths true
+```
+
 If using WSL, start a WSL Ubuntu terminal and clone the repo to a WSL directory (see example in the following image).
 
 ![WSL Ubuntu](docs/assets/wsl-ubuntu.png)
@@ -87,6 +94,8 @@ Then, search for `Dev Containers: Rebuild and Reopen in Container` in the Comman
 
 **2. Prepare for deployment**
 
+Open a terminal in VS Code and enter the following.
+
 ```shell
 azd auth login
 azd config set alpha.terraform on
@@ -103,20 +112,31 @@ azd env set AZURE_SUBSCRIPTION_ID <AZURE_SUBSCRIPTION_ID>
 > az account list-locations --query "[].name" -o tsv
 > ```
 
-### Multi-region support
+### (Optional) Multi-region support
 
-Prosware devs also use the following command to choose a second Azure location because the production environment is multiregional.
+Prosware devs also use the following command to choose a second Azure location for multiregional deployments. The following constraints were considered for choosing paired regions for Proseware.
+
+1. Regional pairs that align with [Azure Storage redundancy (GZRS)](https://learn.microsoft.com/en-us/azure/storage/common/storage-redundancy#geo-zone-redundant-storage).
+2. Regions that support [Azure Database for PostgreSQL - Flexible Server](https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/overview) with [availability zones](https://learn.microsoft.com/en-us/azure/reliability/availability-zones-overview#availability-zones).
+
+We have validated the following paired regions.
+
+| AZURE_LOCATION | AZURE_LOCATION2 |
+| ----- | ----- |
+| westus3 | eastus |
+| westeurope | northeurope |
+| australiaeast | australiasoutheast |
 
 ```shell
 azd env set AZURE_LOCATION2 <region>
 ```
 
-### Select production or development environment.
+### (Optional) Select production or development environment.
 
-You should change the `APP_ENV_NAME` variable to either *prod* or *dev*. 
+You should change the `APP_ENVIRONMENT` variable to *prod* for production SKUs.  Default value is *dev* 
 
 ```shell
-azd env set APP_ENV_NAME prod
+azd env set APP_ENVIRONMENT prod
 ```
 
 The following table describes the differences in the resources deployed in the 2 environments.
@@ -140,22 +160,16 @@ azd provision
 Deploy the web application to the primay region using the commands
 below.
 
-In the first command below substitute the FILL_IN_RESOURCE_GROUP_NAME
-with the resource group name of the primary region.
-
 ```shell
-azd env set AZURE_RESOURCE_GROUP <FILL_IN_RESOURCE_GROUP_NAME>
 azd deploy
 ```
 
 If you specified a secondary region then deploy the web application to
 it using the commands below.
 
-In the command below substitute the FILL_IN_SECONDARY_RESOURCE_GROUP_NAME
-with the resource group name of the secondary region
-
 ```shell
-azd env set AZURE_RESOURCE_GROUP <FILL_IN_SECONDARY_RESOURCE_GROUP_NAME>
+SECONDARY_RESOURCE_GROUP=$(azd env get-values --output json | jq -r .secondary_resource_group)
+azd env set AZURE_RESOURCE_GROUP $SECONDARY_RESOURCE_GROUP
 azd deploy
 ```
 

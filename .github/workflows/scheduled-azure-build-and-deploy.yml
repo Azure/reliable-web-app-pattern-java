@@ -38,11 +38,6 @@ on:
         options:
         - dev
         - prod
-      run_tear_down:
-        description: 'When true, resources will be deleted after a run'
-        required: false
-        default: true
-        type: boolean
   pull_request:
     types: [opened, synchronize, ready_for_review, reopened]
   schedule:
@@ -63,11 +58,7 @@ jobs:
       AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
       AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
       AZURE_ENV_NAME: ${{ vars.AZURE_APP_NAME }}
-      AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
-      AZURE_LOCATION2: ${{ vars.AZURE_LOCATION2 }}
-      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
-      DATABASE_PASSWORD: ${{ secrets.POSTGRES_DATABASE_PASSWORD }}
       ENABLE_TELEMETRY: true
       PRINCIPAL_TYPE: ServicePrincipal
       TRAININGS_DIR: $PROJECT_ROOT/videos
@@ -104,9 +95,6 @@ jobs:
       run: |
         echo $APP_NAME
         echo $APP_ENVIRONMENT
-        echo $AZURE_LOCATION
-        echo $AZURE_LOCATION2
-        echo $DATABASE_PASSWORD
         echo $PROJECT_ROOT
         echo $AZURE_SUBSCRIPTION_ID
 
@@ -116,7 +104,7 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: Log in with Azure
+    - name: AZD Login
       run: |
         $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
         Write-Host "::add-mask::$($info.clientSecret)"
@@ -133,15 +121,21 @@ jobs:
       run: |
         azd config set alpha.terraform on
 
+    - name: AZD set vars
+      run: |
+        azd env new ${{ vars.AZURE_APP_NAME }}
+        azd env set DATABASE_PASSWORD ${{ secrets.POSTGRES_DATABASE_PASSWORD }}
+        azd env set AZURE_LOCATION ${{ vars.AZURE_LOCATION }}
+        azd env set AZURE_SUBSCRIPTION_ID ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
     - name: AZD Provision Infrastructure
       id: azd_provision
       continue-on-error: true
-      run: azd provision --no-prompt
-
-    - name: Set AZD resource group
-      # temporary work around for known issue with multiple resource groups
-      # https://github.com/Azure/azure-dev/issues/690
-      run: azd env set AZURE_RESOURCE_GROUP rg-${APP_NAME}-${AZURE_LOCATION}-${APP_ENVIRONMENT}
+      run: |
+        export ARM_CLIENT_ID=$AZURE_CLIENT_ID
+        export ARM_CLIENT_SECRET=$AZURE_CLIENT_SECRET
+        export ARM_TENANT_ID=$AZURE_TENANT_ID
+        azd provision --no-prompt
 
     - name: AZD Deploy Application
       id: azd_deploy
@@ -149,22 +143,12 @@ jobs:
       continue-on-error: true
       run: azd deploy --no-prompt
 
-    # At this time we are not using AZD down with terraform because it
-    # is not as robust as the scripted approach. tf destroy was not able to destroy
-    # diagnostic settings which were left dangling from a previous run. When a
-    # resource group is deleted, these diagnostics are left behind and it causes
-    # the next run to fail with a message like:
-    #   A resource with the ID "/subscriptions/***/Microsoft.Web/sites/app-kenghpipeline-dev|app-service-diagnostic-settings"
-    #   already exists - to be managed via Terraform this resource needs to be imported into the State.
-    # - name: Delete Resources
-    #   if: ${{ inputs.run_tear_down || github.event_name == 'schedule' }}
-    #   run: azd down --force --purge --no-prompt
-
     - name: Delete Resources
-      if: ${{ inputs.run_tear_down || github.event_name == 'schedule' }}
       run: |
-        ./scripts/devOpsScripts/delete-resources.sh -g rg-${APP_NAME}-${AZURE_LOCATION}-${APP_ENVIRONMENT}
-        ./scripts/devOpsScripts/delete-resources.sh -g rg-${APP_NAME}s-${AZURE_LOCATION}-${APP_ENVIRONMENT}
+        export ARM_CLIENT_ID=$AZURE_CLIENT_ID
+        export ARM_CLIENT_SECRET=$AZURE_CLIENT_SECRET
+        export ARM_TENANT_ID=$AZURE_TENANT_ID
+        azd down --force --purge --no-prompt
 
     - name: Check for success
       run: |
