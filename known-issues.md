@@ -2,9 +2,9 @@
 
 This document helps with troubleshooting and provides an introduction to the most requested features, gotchas, and questions.
 
-*  We allow access to Azure Storage and Key Vault by adding the user's IP address to the Firewall rules. Deployment of Proseware must come from a system that has a stable IP address.
+* To facilitate deployment from a developer system, we explicitly allow the IP address of the current system through the firewall for Azure Storage and Key Vault. Ensure you are running the deployment from a system where the external IP address (as seen by Azure) does not change during the deployment.
 
-* Follow the following steps if you need to restart the deployment process.
+* Perform the following steps if you need to restart the deployment process.
 
     1. Teardown the deployment.
     
@@ -57,13 +57,13 @@ This document helps with troubleshooting and provides an introduction to the mos
 
     ![Aisonic AAD](docs/assets/azure-redis-enable-public-network-access.png)
 
-* App Service Timing Issue After Deploying Prozeware
+* App Service Timing Issue After Deploying seware
 
-    You may see the following *Welcome* page after you deploy Prozeware and navigate to the site.
+    You may see the following *Welcome* page after you deploy Proseware and navigate to the site.
 
     ![Aisonic AAD](docs/assets/appservice-welcome-java.png)
 
-    This is because App Service may require additional time to process the recently uploaded *WAR* package. Refresh the page after a minute or two to see the Proseware site. It can take up to 5 minutes to see the Proseware site.
+    This is because App Service may require additional time to process the recently uploaded *WAR* package. It may take up to 5 minutes for the uploaded WAR package to be processed. Refresh the page to see the Proseware site.
 
 * Connection time out errors in the azd provision step
 
