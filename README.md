@@ -77,7 +77,7 @@ Then, search for `Dev Containers: Rebuild and Reopen in Container` in the Comman
 
 **2. Prepare for deployment**
 
-Open a terminal in VS Code and enter the following.
+Open a terminal in VS Code and enter the following. When prompted to enter a new environment name, choose one that's less than 18 characters.
 
 ```shell
 azd auth login
