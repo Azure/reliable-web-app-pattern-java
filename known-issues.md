@@ -15,7 +15,7 @@ This document helps with troubleshooting and provides an introduction to the mos
     1. Start a new azd deployment.
 
         ```shell
-        azd new
+        azd env new
         ```
 
     1. Retry from *Set the environment variables* under *Prepare for deployment* in [README.md](./README.md).
