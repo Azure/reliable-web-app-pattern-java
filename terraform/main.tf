@@ -66,6 +66,7 @@ module "ad" {
   application_name             = var.application_name
   environment                  = local.environment
   frontdoor_host_name          = module.frontdoor.host_name
+  principal_type               = var.principal_type
 }
 
 module "network" {
@@ -143,7 +144,7 @@ resource "azurerm_key_vault_secret" "airsonic_database_admin_password" {
 
 resource "azurerm_key_vault_secret" "airsonic_application_client_secret" {
   name         = "airsonic-application-client-secret"
-  value        = var.principal_type == "User" ? module.application.application_client_secret : var.proseware_client_secret
+  value        = var.principal_type == "User" ? module.ad.application_client_secret : var.proseware_client_secret
   key_vault_id = module.key-vault.vault_id
   depends_on = [ 
     azurerm_role_assignment.kv_administrator_user_role_assignement
@@ -278,7 +279,7 @@ resource "null_resource" "setup-application-uri" {
   ]
 
   provisioner "local-exec" {
-    command = "az ad app update --id ${module.application.application_registration_id} --identifier-uris api://${module.application.application_registration_id}"
+    command = "az ad app update --id ${module.ad.application_registration_id} --identifier-uris api://${module.ad.application_registration_id}"
   }
 }
 
@@ -582,7 +583,7 @@ resource "azurerm_key_vault_secret" "airsonic_database_admin_password2" {
 resource "azurerm_key_vault_secret" "airsonic_application_client_secret2" {
   count        = local.is_multi_region ? 1 : 0
   name         = "airsonic-application-client-secret"
-  value        = module.application2[0].application_client_secret
+  value        = module.ad.application_client_secret
   key_vault_id = module.key-vault2[0].vault_id
 
   depends_on = [

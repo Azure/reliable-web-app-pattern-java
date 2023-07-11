@@ -2,11 +2,11 @@ terraform {
   required_providers {
     azurecaf = {
       source  = "aztfmod/azurecaf"
-      version = "1.2.16"
+      version = "1.2.26"
     }
     azuread = {
       source = "hashicorp/azuread"
-      version = "2.33.0"
+      version = "2.39.0"
     }
   }
 }
