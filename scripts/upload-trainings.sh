@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Invoked by AZD from the azure.yaml as a postprovision hook
-# This script will upload training vidoes stored on the local file system to Proseware.  This assumes that the download-tranings.sh script was previously executed.
+# This script will upload training vidoes stored on the local file system to Proseware.  This assumes that the download-trainings.sh script was previously executed.
 # This is intended for demo purposes.
 
 green='\033[0;32m'
