@@ -25,7 +25,6 @@ resource "random_uuid" "creator_role_id" {}
 
 resource "azuread_application" "app_registration" {
   display_name     = "${azurecaf_name.app_service.result}-app"
-  count            = var.principal_type == "User" ? 1 : 0
   owners           = [data.azuread_client_config.current.object_id]
   sign_in_audience = "AzureADMyOrg"  # single tenant
 
@@ -67,22 +66,19 @@ resource "azuread_application" "app_registration" {
 }
 
 resource "azuread_service_principal" "application_service_principal" {
-  application_id               = var.principal_type == "User" ? azuread_application.app_registration[0].application_id : "Ran as ServicePrincipal"
-  count                        = var.principal_type == "User" ? 1 : 0
+  application_id               = azuread_application.app_registration.application_id
   app_role_assignment_required = false
   owners                       = [data.azuread_client_config.current.object_id]
 }
 
 resource "azuread_application_password" "application_password" {
-  count                 = var.principal_type == "User" ? 1 : 0
-  application_object_id = var.principal_type == "User" ? azuread_application.app_registration[0].object_id : "Ran as ServicePrincipal"
+  application_object_id = azuread_application.app_registration.object_id
 }
 
 # This is not guidance and is done for demo purposes. The resource below will add the 
 # "Creator" app role assignment for the application of the current user deploying this sample.
 resource "azuread_app_role_assignment" "application_role_current_user" {
-  app_role_id         = azuread_service_principal.application_service_principal[0].app_role_ids["Creator"]
-  count               = var.principal_type == "User" ? 1 : 0
+  app_role_id         = azuread_service_principal.application_service_principal.app_role_ids["Creator"]
   principal_object_id = data.azuread_client_config.current.object_id
-  resource_object_id  = azuread_service_principal.application_service_principal[0].object_id
+  resource_object_id  = azuread_service_principal.application_service_principal.object_id
 }
