@@ -1,32 +1,48 @@
 # Reliable web app pattern for Java
 
-This reference implementation provides a production-grade web application that uses best practices from our guidance and gives developers concrete examples to build their own Reliable Web Application in Azure. It simulates the journey from an on-premises Java application to a migration to Azure. It shows you what changes to make to maximize the benefits of the cloud in the initial cloud adoption phase. Here's an outline of the contents in this readme:
+This reference implementation provides a production-grade web application that uses best practices from our guidance and gives developers concrete examples to build their own reliable web application in Azure.
+
+The reliable web app pattern shows you how to update web apps moving to the cloud. It defines the implementation guidance you need to re-platform web apps the right way. The reliable web app pattern focuses on the minimal code changes you need be successful in the cloud. It shows you how to add reliability design patterns to your code and choose managed services so that you can rapidly adopt the cloud. Here's an outline of the contents in this readme:
 
 - [Architecture guidance](#architecture-guidance)
 - [Videos](#videos)
-- [Architecture](#architecture)
-- [Workflow](#workflow)
-- [Steps to deploy the reference implementation](#steps-to-deploy-the-reference-implementation)
+- [Architecture diagram](#architecture-diagram)
+- [Workflow](#reference-implementation-workflow)
+- [Steps to deploy](#steps-to-deploy-the-reference-implementation)
 
 ## Architecture guidance
 
-This project has [companion architecture guidance](adopt-pattern.md) that describes design patterns and best practices for migrating to the cloud. We suggest you read it as it will give important context to the considerations applied in this implementation.
+This project has two companion articles in the Azure Architecture Center that provide detailed implementation guidance.
+
+- [Plan the implementation](https://learn.microsoft.com/azure/architecture/web-apps/guides/reliable-web-app/java/plan-implementation): The first article explains how to plan the implementation of the reliable web app pattern for Java.
+- [Apply the pattern](https://learn.microsoft.com/azure/architecture/web-apps/guides/reliable-web-app/java/apply-pattern): The second article shows you how to apply the pattern with code and architecture details.
+
+For more information on the reliable web app pattern, see [Overview](https://review.learn.microsoft.com/azure/architecture/web-apps/guides/reliable-web-app/overview)
 
 ## Videos
 
 The internally accessible video covers the details of reliable web app pattern for Java. For more information, see [Reliable web app pattern videos (Sharepoint)](https://aka.ms/rwa-java-video).
 
-## Architecture
+## Architecture diagram
 
-[![Diagram showing the architecture of the reference implementation](docs/assets/reliable-web-app-java.png)](docs/assets/reliable-web-app-java.png)
+[![Diagram showing the architecture of the reference implementation](docs/assets/reliable-web-app-java.svg)](docs/assets/reliable-web-app-java.svg#lightbox)
 
 - [Production environment estimated cost](https://azure.com/e/a44f5feb443f430abbd9116b6cc879bf)
 
 - [Non-production environment estimated cost](https://azure.com/e/807cdb0d6d9a41899885bd875deb12f5)
 
-## Workflow
+## Reference implementation workflow
 
-A detailed workflow of the reference implementation is forthcoming.
+- The web app uses two regions in an active-passive configuration to meet the service level objective of 99.9%. The web app uses WebSockets. To support WebSockets, the web app runs on a single instance. Front Door routes all traffic to the Active Region. The passive region is for failover only. The failover plan is manual and there are no automated scripts with this repo.
+- All inbound HTTPS traffic passes through Front Door and Web Application Firewall (WAF). WAF inspects the traffic against WAF policies.
+- The web app code implements the Retry, Circuit Breaker, and Cache-Aside patterns. The web app integrates with Azure AD using the Spring Boot Starter for Azure Active Directory.
+- Application Insights is the application performance management tool, and it gathers telemetry data on the web app.
+- App Service uses virtual network integration to communicate securely with other Azure resources within the private virtual network. App Service requires an `App Service delegated subnet` in the virtual network to enable virtual network integration.
+- Key Vault and Azure Cache for Redis have private endpoints in the `Private endpoints subnet`. Private DNS zones linked to the virtual network resolve DNS queries for these Azure resources to their private endpoint IP address.
+- Azure Database for PostgreSQL - Flexible server uses virtual network integration for private communication. It doesn't support private endpoints.
+- The web app uses an account access key to mount a directory with Azure Files to the App Service. A private endpoint is not used for Azure Files to facilitate the deployment of the reference implementation for everyone. However, it is recommended to use a private endpoint in production as it adds an extra layer of security. Azure Files only accepts traffic from the virtual network and the local client IP address of the user executing the deployment.
+- App Service, Azure Files, Key Vault, Azure Cache for Redis, and Azure Database for PostgreSQL use diagnostic settings to send logs and metrics to Azure Log Analytics Workspace. Log Analytics Workspace is used to monitor the health of Azure services.
+- Azure Database for PostgreSQL uses a high-availability zone redundant configuration and a read replica in the passive region for failover.
 
 ## Prerequisites
 
