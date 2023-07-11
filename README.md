@@ -140,7 +140,7 @@ az account set --subscription <SUBSCRIPTION_ID>
 azd provision
 ```
 
-Deploy the web application to the primay region using the commands
+Deploy the web application to the primary region using the commands
 below.
 
 ```shell

@@ -4,8 +4,8 @@ One of Proseware's business objectives was to operate a system that is available
 
 To transition from the primary region Proseware built the following plan that is executed manually. Health checks and automated transition are not part of the plan in this phase.
 
-## Understaning the Proseware system
-Before we execute the failover plan we should understand the system and how it is used. Proseware is an Azure web application that provides streaming video training content. The solution architecture includes Azure App Service, Azure Storage (mounted as File Storage on App Service), Application Insights, Key Vault, Azure Cache for Redis, and Azure Database for Postgresql. These components are vnet integrated or secured with private endpoints. Users authenticate with Azure AD and diagnostics for Azure services are stored in Azure Log Analytics Workspace.
+## Understanding the Proseware system
+Before we execute the failover plan we should understand the system and how it is used. Proseware is an Azure web application that provides streaming video training content. The solution architecture includes Azure App Service, Azure Storage (mounted as File Storage on App Service), Application Insights, Key Vault, Azure Cache for Redis, and Azure Database for PostgreSQL. These components are vnet integrated or secured with private endpoints. Users authenticate with Azure AD and diagnostics for Azure services are stored in Azure Log Analytics Workspace.
 
 The system is also placed behind an Azure Front Door with Azure Web Application Firewall enabled. This provides active/passive load balancing between 1 instance of the application and another to achieve high availability. The secondary region is a standby region that receives replicated data from the primary region.
 
@@ -18,7 +18,7 @@ In this system we have data stored in different places and each one of those sho
 1. System settings: Configuration in Key Vault, and other environment settings
 1. Monitoring: Diagnostic data stored in Log Analytics and Application Insights
 
-For this plan, Proseware chooses only to address the first two considerations. When traffic is transitioned from primary to secondary region we expect users to continue where they left off with minimal impact to their experience. To support this goal we need to replicae data for Azure Storage and Azure Database for PostgreSQL. The system settings and configuration data are expected to be handled with infrastructure as code keeping both regions synchronized. Diagnostic data in Log Analytics and Application Insights are not replicated. This approach is also designed to rebuild any information that was stored in Redis as traffic is migrated to the new region.
+For this plan, Proseware chooses only to address the first two considerations. When traffic is transitioned from primary to secondary region we expect users to continue where they left off with minimal impact to their experience. To support this goal we need to replica data for Azure Storage and Azure Database for PostgreSQL. The system settings and configuration data are expected to be handled with infrastructure as code keeping both regions synchronized. Diagnostic data in Log Analytics and Application Insights are not replicated. This approach is also designed to rebuild any information that was stored in Redis as traffic is migrated to the new region.
 
 ## Executing the transition
 Use the following steps to transition users from primary to secondary region. At this point, the decision to failover has been made. Interruption of services and the risk of potential data-loss has been communicated to users.
@@ -34,7 +34,7 @@ The two flows of traffic we will address are:
 
 ### Cut-off traffic to the *westus3* region
 
-We want to inform users about the outage and stop traffic flowing to *westus3* while we peform maintenance on the system.
+We want to inform users about the outage and stop traffic flowing to *westus3* while we perform maintenance on the system.
 
 1. Create a new Azure App Service
     1. Deploy an informational maintenance page to the new App Service
@@ -53,7 +53,7 @@ With these changes complete, the simplified Proseware multi-region solution is a
 We want to disconnect the solid green arrow in this step of the failover. In this simplified representation, the line represents two types of data (Azure Files and Database replication).
 
 1. Initiate storage account failover
-    <!-- intentially omitting Last Sync Time as data loss is expected to be handled by re-uploading any training videos that were uploaded -->
+    <!-- intentionally omitting Last Sync Time as data loss is expected to be handled by re-uploading any training videos that were uploaded -->
     
     ```sh
     az storage account show --name <accountName> --expand geoReplicationStats
@@ -159,4 +159,4 @@ With these changes complete, the simplified Proseware multi-region solution is a
 
 
 ## Failback
-Using the steps described above Proseware plans to migrate their traffic from *eastus* back to *westus3* when possible as latency in the web app is a primary concern for thier users.
+Using the steps described above Proseware plans to migrate their traffic from *eastus* back to *westus3* when possible as latency in the web app is a primary concern for their users.
