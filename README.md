@@ -18,7 +18,7 @@ The internally accessible video covers the details of reliable web app pattern f
 
 ## Architecture
 
-[![Diagram showing the architecture of the reference implementation](docs/assets/java-architecture-reference-implementation.png)](docs/assets/java-architecture-reference-implementation.png)
+[![Diagram showing the architecture of the reference implementation](docs/assets/reliable-web-app-java.png)](docs/assets/reliable-web-app-java.png)
 
 - [Production environment estimated cost](https://azure.com/e/65354031bc084e539b6c8ccfc1a7b097)
 
