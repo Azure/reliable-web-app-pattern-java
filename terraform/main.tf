@@ -214,8 +214,8 @@ module "application" {
   trainings_share_name               = module.storage.trainings_share_name
   playlist_share_name                = module.storage.playlist_share_name
 
-  proseware_client_id     = var.proseware_client_id
-  proseware_tenant_id     = var.proseware_tenant_id
+  proseware_client_id     = var.principal_type == "User" ?  azuread_application.app_registration[0].application_id : var.proseware_client_id
+  proseware_tenant_id     = var.principal_type == "User" ?  data.azuread_client_config.current.tenant_id : var.proseware_tenant_id
   frontdoor_host_name     = module.frontdoor.host_name
   frontdoor_profile_uuid  = module.frontdoor.resource_guid
 }
@@ -536,8 +536,8 @@ module "application2" {
   trainings_share_name               = module.storage.trainings_share_name
   playlist_share_name                = module.storage.playlist_share_name
 
-  proseware_client_id     = var.proseware_client_id
-  proseware_tenant_id     = var.proseware_tenant_id
+  proseware_client_id     = var.principal_type == "User" ?  azuread_application.app_registration[0].application_id : var.proseware_client_id
+  proseware_tenant_id     = var.principal_type == "User" ?  data.azuread_client_config.current.tenant_id : var.proseware_tenant_id
   frontdoor_host_name = module.frontdoor.host_name
   frontdoor_profile_uuid  = module.frontdoor.resource_guid
 }
