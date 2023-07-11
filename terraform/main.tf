@@ -61,6 +61,13 @@ resource "azurerm_resource_group" "main" {
   }
 }
 
+module "ad" {
+  source                       = "./modules/active-directory"
+  application_name             = var.application_name
+  environment                  = local.environment
+  frontdoor_host_name          = module.frontdoor.host_name
+}
+
 module "network" {
   source                       = "./modules/network"
   resource_group               = azurerm_resource_group.main.name
