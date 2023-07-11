@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Invoked by AZD from the azure.yaml as a postprovision hook
-# This script will upload training vidoes stored on the local file system to Proseware.  This assumes that the download-tranings.sh script was previously executed.
+# This script will upload training vidoes stored on the local file system to Proseware.  This assumes that the download-trainings.sh script was previously executed.
 # This is intended for demo purposes.
 
 green='\033[0;32m'
@@ -10,15 +10,6 @@ red='\e[1;31m'
 clear='\033[0m'
 
 TRAININGS_DIR="videos"
-
-STORAGE_PRIMARY_KEY=$(azd env get-values --output json | jq -r .storage_module_storage_primary_access_key)
-
-if [[ $STORAGE_PRIMARY_KEY == 'null' ]]; then
-  printf "${red}ERROR:${clear} STORAGE_PRIMARY_KEY could not be set from AZD env values\n\n"
-  exit 1
-else
-  echo "loaded STORAGE_PRIMARY_KEY..."
-fi
 
 STORAGE_ACCOUNT_NAME=$(azd env get-values --output json | jq -r .storage_module_storage_account_name)
 
@@ -51,41 +42,19 @@ printf "account ${green}$STORAGE_ACCOUNT_NAME${clear} video share ${green}$VIDEO
 
 ALL_TRAININGS_DIR=AllTrainings
 
-# Create directory if it doesn't exist
-az storage directory create --name $ALL_TRAININGS_DIR --share-name $VIDEO_STORAGE_SHARE_NAME --account-name $STORAGE_ACCOUNT_NAME --account-key $STORAGE_PRIMARY_KEY
+CONNECTION_STRING=`az storage account show-connection-string --name $STORAGE_ACCOUNT_NAME --query "connectionString" -o tsv`
 
 echo "Uploading videos"
-# foreach MP4 file in the trainings directory
-for file in $TRAININGS_DIR/*.mp4; do
-  echo "Examining $file"
 
-  if [[ -d $file ]]; then
-    # Skip directories
-    echo "Skipping directory $file"
-    continue
-  fi
+# Create directory if it doesn't exist
+az storage directory create --name $ALL_TRAININGS_DIR --share-name $VIDEO_STORAGE_SHARE_NAME --account-name $STORAGE_ACCOUNT_NAME --connection-string $CONNECTION_STRING 
 
-  base_name=$(basename "${file}")
+EXPIRY=`date -u -d "30 minutes" '+%Y-%m-%dT%H:%MZ'`
+SAS=`az storage share generate-sas -n $VIDEO_STORAGE_SHARE_NAME --connection-string $CONNECTION_STRING --account-name $STORAGE_ACCOUNT_NAME --https-only --permissions dlrw --expiry $EXPIRY -o tsv`
 
-  # if it's a training video, upload it to the incoming share
-  if [[ $base_name == *.mp4 ]]; then
-    echo "Processing video $base_name"
-
-    # Check if file already exists in Azure
-    exists=$(az storage file exists --account-name $STORAGE_ACCOUNT_NAME --account-key $STORAGE_PRIMARY_KEY --share-name $VIDEO_STORAGE_SHARE_NAME --path "$ALL_TRAININGS_DIR/$base_name" --query "exists" -o tsv)
-    if [[ $exists == 'true' ]]; then
-      printf "File ${yellow}$base_name${clear} already exists in Azure, skipping upload\n"
-    else
-      az storage file upload --account-name $STORAGE_ACCOUNT_NAME --account-key $STORAGE_PRIMARY_KEY --share-name $VIDEO_STORAGE_SHARE_NAME --path "$ALL_TRAININGS_DIR/$base_name" --source "$file"
-      printf "Uploaded ${green}$base_name${clear} to Azure\n"
-    fi
-
-  # else print out unknown type
-  else
-    echo "Skipping unknown type $base_name"
-  fi
-    
-done
+# move all files from proseware videos into our newly created storage account using Azure server to server APIs
+# https://learn.microsoft.com/azure/storage/common/storage-use-azcopy-blobs-copy#copy-a-directory
+azcopy copy "https://prosewaretrainingvideos.blob.core.windows.net/videos/" "https://$STORAGE_ACCOUNT_NAME.file.core.windows.net/$VIDEO_STORAGE_SHARE_NAME/$ALL_TRAININGS_DIR?${SAS}" --recursive=true --as-subdir=false --overwrite=false
 
 PLAYLIST_DIR=trainings
 echo "Uploading playlists"
@@ -104,7 +73,7 @@ for file in $PLAYLIST_DIR/*; do
   # if it's a playlist, upload it to the playlist share
   if [[ $base_name == *.m3u8 ]]; then
     echo "Uploading playlist $base_name"
-    az storage file upload --account-name $STORAGE_ACCOUNT_NAME --account-key $STORAGE_PRIMARY_KEY --share-name $PLAYLIST_STORAGE_SHARE_NAME --path "$base_name" --source "$file"
+    az storage file upload --account-name $STORAGE_ACCOUNT_NAME --connection-string $CONNECTION_STRING --share-name $PLAYLIST_STORAGE_SHARE_NAME --path "$base_name" --source "$file"
 
   # else print out unknown type
   else

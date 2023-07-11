@@ -17,11 +17,6 @@ output "storage_module_storage_account_name" {
   value = module.storage.storage_account_name
 }
 
-output "storage_module_storage_primary_access_key" {
-  value = module.storage.storage_primary_access_key
-  sensitive = true
-}
-
 output "application_playlist_share_name" {
   value       = module.storage.playlist_share_name
   description = "The storage share name used for playlists"
