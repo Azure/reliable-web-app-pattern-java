@@ -17,7 +17,7 @@ This project has two companion articles in the Azure Architecture Center that pr
 - [Plan the implementation](https://learn.microsoft.com/azure/architecture/web-apps/guides/reliable-web-app/java/plan-implementation): The first article explains how to plan the implementation of the reliable web app pattern for Java.
 - [Apply the pattern](https://learn.microsoft.com/azure/architecture/web-apps/guides/reliable-web-app/java/apply-pattern): The second article shows you how to apply the pattern with code and architecture details.
 
-For more information on the reliable web app pattern, see [Overview](https://review.learn.microsoft.com/azure/architecture/web-apps/guides/reliable-web-app/overview)
+For more information on the reliable web app pattern, see [Overview](https://review.learn.microsoft.com/azure/architecture/web-apps/guides/reliable-web-app/overview).
 
 ## Videos
 
@@ -28,12 +28,11 @@ The internally accessible video covers the details of reliable web app pattern f
 [![Diagram showing the architecture of the reference implementation](docs/assets/reliable-web-app-java.svg)](docs/assets/reliable-web-app-java.svg#lightbox)
 
 - [Production environment estimated cost](https://azure.com/e/a44f5feb443f430abbd9116b6cc879bf)
-
 - [Non-production environment estimated cost](https://azure.com/e/807cdb0d6d9a41899885bd875deb12f5)
 
 ## Reference implementation workflow
 
-- The web app uses two regions in an active-passive configuration to meet the service level objective of 99.9%. The web app uses WebSockets. To support WebSockets, the web app runs on a single instance. Front Door routes all traffic to the Active Region. The passive region is for failover only. The failover plan is manual and there are no automated scripts with this repo.
+- The web app uses two regions in an active-passive configuration to meet the service level objective of 99.9%. It uses Azure Front Door as the global load balancer. Front Door routes all traffic to the active region. The passive region is for failover only. The failover plan is manual and there are no automated scripts with this repo.
 - All inbound HTTPS traffic passes through Front Door and Web Application Firewall (WAF). WAF inspects the traffic against WAF policies.
 - The web app code implements the Retry, Circuit Breaker, and Cache-Aside patterns. The web app integrates with Azure AD using the Spring Boot Starter for Azure Active Directory.
 - Application Insights is the application performance management tool, and it gathers telemetry data on the web app.
