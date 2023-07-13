@@ -105,7 +105,6 @@ works around is the creation, and reuse, of an existing Azure AD app registratio
 
     ![#Image of RBAC Error for 403 Forbidden](../../docs/assets/airsonic-missing-role-assignment-error.png)
 
-
 ## Workflow Overview
 There are three workflows:
 - build-and-deploy.yml: a terraform based workflow that builds a war file artifact
