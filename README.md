@@ -21,7 +21,7 @@ For more information on the reliable web app pattern, see [Overview](https://rev
 
 ## Videos
 
-The internally accessible video covers the details of reliable web app pattern for Java. For more information, see [Reliable web app pattern videos (Sharepoint)](https://aka.ms/rwa-java-video).
+The internally accessible video covers the details of reliable web app pattern for Java. For more information, see [Reliable web app pattern videos (SharePoint)](https://aka.ms/rwa-java-video).
 
 ## Architecture diagram
 
@@ -160,7 +160,7 @@ az account set --subscription <SUBSCRIPTION_ID>
 azd provision
 ```
 
-Deploy the web application to the primay region using the commands
+Deploy the web application to the primary region using the commands
 below.
 
 ```shell
