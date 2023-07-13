@@ -72,12 +72,14 @@ works around is the creation, and reuse, of an existing Azure AD app registratio
 
     *Variables*
 
-    |Name                       |Value                      |
-    |---------------------------|---------------------------|
-    |AZURE_APP_NAME             | rwajavaghpipeline         |
-    |AZURE_CLIENT_ID            | (GUID FROM CONSOLE)       |
-    |AZURE_LOCATION             | australiaeast             |
-    |AZURE_TENANT_ID            | (GUID FROM CONSOLE)       |
+    |Name                       |Value                                       |
+    |---------------------------|--------------------------------------------|
+    |AZURE_APP_NAME             | rwajavaghdeploy                            |
+    |AZURE_LOCATION             | australiaeast                              |
+    |AZURE_CLIENT_ID            | (GUID FROM APP REGISTRATIONS SCRIPT)       |
+    |AZURE_TENANT_ID            | (GUID FROM APP REGISTRATIONS SCRIPT)       |
+    |TERRAFORM_CLIENT_ID        | (GUID FROM SERVICE PRINCIPAL CMD)          |
+    |TERRAFORM_CLIENT_SECRET    | (GUID FROM SERVICE PRINCIPAL CMD)          |
 
     **Outcome**
 
