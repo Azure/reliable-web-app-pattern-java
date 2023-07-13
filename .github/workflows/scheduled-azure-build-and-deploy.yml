@@ -94,7 +94,6 @@ jobs:
         echo $APP_NAME
         echo $APP_ENVIRONMENT
         echo $PROJECT_ROOT
-        echo $AZURE_SUBSCRIPTION_ID
         az --version
 
     # Install the az cli with login using service principal created on az subscription
