@@ -60,26 +60,26 @@ works around is the creation, and reuse, of an existing Azure AD app registratio
 
     *Secrets*
 
-    |Name                       |Value                |
-    |---------------------------|---------------------|
-    |AZURE_CLIENT_SECRET        | (TEXT FROM CONSOLE) |
-    |AZURE_CREDENTIALS          | (TEXT FROM CONSOLE) |
-    |AZURE_SUBSCRIPTION_ID      | (TEXT FROM CONSOLE) |
-    |POSTGRES_DATABASE_PASSWORD | (pick a password)   |
+    |Name                       |Value                                       | Description                                                          |
+    |---------------------------|--------------------------------------------|----------------------------------------------------------------------|
+    |AZURE_CLIENT_SECRET        | (GUID FROM APP REGISTRATIONS SCRIPT)       |Provides Proseware with ability to use Azure AD to authenticate users |
+    |TERRAFORM_CLIENT_SECRET    | (GUID FROM SERVICE PRINCIPAL CMD)          |Used by the devops pipeline for integration testing                   |
+    |AZURE_CREDENTIALS          | (TEXT FROM CONSOLE)                        |Used by the devops pipeline for integration testing                   |
+    |AZURE_SUBSCRIPTION_ID      | (TEXT FROM CONSOLE)                        |                                                                      |
+    |POSTGRES_DATABASE_PASSWORD | (pick a password)                          |                                                                      |
 
     > Paste all of the json from the previous command into the textarea as
         the value for the AZURE_CREDENTIALS secret.
 
     *Variables*
 
-    |Name                       |Value                                       |
-    |---------------------------|--------------------------------------------|
-    |AZURE_APP_NAME             | rwajavaghdeploy                            |
-    |AZURE_LOCATION             | australiaeast                              |
-    |AZURE_CLIENT_ID            | (GUID FROM APP REGISTRATIONS SCRIPT)       |
-    |AZURE_TENANT_ID            | (GUID FROM APP REGISTRATIONS SCRIPT)       |
-    |TERRAFORM_CLIENT_ID        | (GUID FROM SERVICE PRINCIPAL CMD)          |
-    |TERRAFORM_CLIENT_SECRET    | (GUID FROM SERVICE PRINCIPAL CMD)          |
+    |Name                       |Value                                       | Description                                                          |
+    |---------------------------|--------------------------------------------|----------------------------------------------------------------------|
+    |AZURE_APP_NAME             | rwajavaghdeploy                            |                                                                      |
+    |AZURE_LOCATION             | australiaeast                              |                                                                      |
+    |AZURE_CLIENT_ID            | (GUID FROM APP REGISTRATIONS SCRIPT)       |Provides Proseware with ability to use Azure AD to authenticate users |
+    |AZURE_TENANT_ID            | (GUID FROM APP REGISTRATIONS SCRIPT)       |Provides Proseware with ability to use Azure AD to authenticate users |
+    |TERRAFORM_CLIENT_ID        | (GUID FROM SERVICE PRINCIPAL CMD)          |Provides Proseware with ability to use Azure AD to authenticate users |
 
     **Outcome**
 
