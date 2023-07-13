@@ -85,7 +85,6 @@ works around is the creation, and reuse, of an existing Azure AD app registratio
 
     The workflow is now ready to run.
 
-
 1. Set the redirectUri
 
     Run the deployment once. Then, using the Azure Portal, find the Front Door uri
