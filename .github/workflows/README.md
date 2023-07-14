@@ -75,7 +75,7 @@ works around is the creation, and reuse, of an existing Azure AD app registratio
 
     |Name                       |Value                                       | Description                                                          |
     |---------------------------|--------------------------------------------|----------------------------------------------------------------------|
-    |AZURE_APP_NAME             | eapghjavarwa                               |                                                                      |
+    |AZURE_APP_NAME             | eapjavarwagh                               |                                                                      |
     |AZURE_LOCATION             | australiaeast                              |                                                                      |
     |AZURE_CLIENT_ID            | (GUID FROM APP REGISTRATIONS SCRIPT)       |Provides Proseware with ability to use Azure AD to authenticate users |
     |AZURE_TENANT_ID            | (GUID FROM APP REGISTRATIONS SCRIPT)       |Provides Proseware with ability to use Azure AD to authenticate users |
