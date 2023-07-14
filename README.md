@@ -5,7 +5,6 @@ This reference implementation provides a production-grade web application that u
 The reliable web app pattern shows you how to update web apps moving to the cloud. It defines the implementation guidance you need to re-platform web apps the right way. The reliable web app pattern focuses on the minimal code changes you need be successful in the cloud. It shows you how to add reliability design patterns to your code and choose managed services so that you can rapidly adopt the cloud. Here's an outline of the contents in this readme:
 
 - [Architecture guidance](#architecture-guidance)
-- [Videos](#videos)
 - [Architecture diagram](#architecture-diagram)
 - [Workflow](#reference-implementation-workflow)
 - [Steps to deploy](#steps-to-deploy-the-reference-implementation)
@@ -18,10 +17,6 @@ This project has two companion articles in the Azure Architecture Center that pr
 - [Apply the pattern](https://learn.microsoft.com/azure/architecture/web-apps/guides/reliable-web-app/java/apply-pattern): The second article shows you how to apply the pattern with code and architecture details.
 
 For more information on the reliable web app pattern, see [Overview](https://review.learn.microsoft.com/azure/architecture/web-apps/guides/reliable-web-app/overview).
-
-## Videos
-
-The internally accessible video covers the details of reliable web app pattern for Java. For more information, see [Reliable web app pattern videos (SharePoint)](https://aka.ms/rwa-java-video).
 
 ## Architecture diagram
 
