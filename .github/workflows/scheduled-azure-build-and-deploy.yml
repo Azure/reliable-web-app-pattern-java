@@ -48,16 +48,14 @@ permissions:
   id-token: write
   contents: read
 
-concurrency: integration_testing
-
 jobs:
   terraform:
     env:
-      APP_NAME: ${{ vars.AZURE_APP_NAME }}
+      APP_NAME: ${{ vars.AZURE_APP_NAME }}${{ github.run_number }}v${{ github.run_attempt }}
       APP_ENVIRONMENT: ${{ inputs.environment || 'dev' }}
       AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
       AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-      AZURE_ENV_NAME: ${{ vars.AZURE_APP_NAME }}
+      AZURE_ENV_NAME: ${{ vars.AZURE_APP_NAME }}${{ github.run_number }}v${{ github.run_attempt }}
       AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
       ENABLE_TELEMETRY: true
       PRINCIPAL_TYPE: ServicePrincipal
@@ -96,7 +94,7 @@ jobs:
         echo $APP_NAME
         echo $APP_ENVIRONMENT
         echo $PROJECT_ROOT
-        echo $AZURE_SUBSCRIPTION_ID
+        az --version
 
     # Install the az cli with login using service principal created on az subscription
     - name: Azure CLI Login
@@ -123,7 +121,7 @@ jobs:
 
     - name: AZD set vars
       run: |
-        azd env new ${{ vars.AZURE_APP_NAME }}
+        azd env new $APP_NAME
         azd env set DATABASE_PASSWORD ${{ secrets.POSTGRES_DATABASE_PASSWORD }}
         azd env set AZURE_LOCATION ${{ vars.AZURE_LOCATION }}
         azd env set AZURE_SUBSCRIPTION_ID ${{ secrets.AZURE_SUBSCRIPTION_ID }}
@@ -132,8 +130,8 @@ jobs:
       id: azd_provision
       continue-on-error: true
       run: |
-        export ARM_CLIENT_ID=$AZURE_CLIENT_ID
-        export ARM_CLIENT_SECRET=$AZURE_CLIENT_SECRET
+        export ARM_CLIENT_ID=${{ vars.TERRAFORM_CLIENT_ID }}
+        export ARM_CLIENT_SECRET=${{ secrets.TERRAFORM_CLIENT_SECRET }}
         export ARM_TENANT_ID=$AZURE_TENANT_ID
         azd provision --no-prompt
 
@@ -145,8 +143,8 @@ jobs:
 
     - name: Delete Resources
       run: |
-        export ARM_CLIENT_ID=$AZURE_CLIENT_ID
-        export ARM_CLIENT_SECRET=$AZURE_CLIENT_SECRET
+        export ARM_CLIENT_ID=${{ vars.TERRAFORM_CLIENT_ID }}
+        export ARM_CLIENT_SECRET=${{ secrets.TERRAFORM_CLIENT_SECRET }}
         export ARM_TENANT_ID=$AZURE_TENANT_ID
         azd down --force --purge --no-prompt
 
