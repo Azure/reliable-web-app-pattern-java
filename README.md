@@ -22,7 +22,7 @@ For more information on the reliable web app pattern, see [Overview](https://rev
 
 [![Diagram showing the architecture of the reference implementation](docs/assets/reliable-web-app-java.svg)](docs/assets/reliable-web-app-java.svg#lightbox)
 
-- [Production environment estimated cost](https://azure.com/e/9ed08d9eb2ba426e95e4e7f5a8b075e7)
+- [Production environment estimated cost](https://azure.com/e/4e27d768a5924e3d93252eeceb4af4ad)
 - [Non-production environment estimated cost](https://azure.com/e/b6ac4fdb62f3475cb1c2dee388dc4b9a)
 
 ## Reference implementation workflow
