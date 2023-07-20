@@ -10,6 +10,10 @@ The project has the following prerequisites:
 1. [Terraform](https://developer.hashicorp.com/terraform/downloads)
 1. [JQ](https://jqlang.github.io/jq/download/)
 
+```
+NOTE If you are running on Windows please see the "Prerequisites for Windows" section below
+```
+
 ## Prerequisites for Windows
 
 TODO
