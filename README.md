@@ -46,6 +46,8 @@ For more information on the reliable web app pattern, see [Overview](https://rev
 * [Permissions to register an application](https://learn.microsoft.com/azure/active-directory/develop/quickstart-register-app)
 * [Dev Containers extension installed in VS Code](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension
 
+See [Prequisites](prerequisites.md) for more detailed information about our prerequisites.
+
 ## Steps to deploy the reference implementation
 
 Note - The following deployment has been tested using devcontainers on **macOS** and **Windows with [Ubuntu on WSL](https://ubuntu.com/wsl)**.
