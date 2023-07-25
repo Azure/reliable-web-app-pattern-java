@@ -217,8 +217,8 @@ Use of Microsoft trademarks or logos in modified versions of this project must n
 
 ## Additional links
 
-- [Patterns overview](adopt-pattern.md)
-- [Applying the patterns](apply-pattern.md)
+- [Patterns overview](https://learn.microsoft.com/azure/architecture/web-apps/guides/reliable-web-app/overview)
+- [Applying the patterns](https://learn.microsoft.com/azure/architecture/web-apps/guides/reliable-web-app/java/apply-pattern)
 - [Simulating developer patterns](simulate-patterns.md)
 - [Known issues](known-issues.md)
 - [Contributing](CONTRIBUTING.md)
