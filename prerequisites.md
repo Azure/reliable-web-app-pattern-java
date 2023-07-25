@@ -1,5 +1,9 @@
 # Prerequisites
 
+```
+ If you want to use a VSCode DevContainer see the `VSCode DevContainer prerequisites` section below
+```
+
 The project has the following prerequisites:
 
 1. [Java 17.0.7](https://learn.microsoft.com//java/openjdk/download)
@@ -29,3 +33,10 @@ If you are using VSCode, please install the following extensions:
 1. Pivotal.vscode-spring-boot
 1. redhat.vscode-yaml
 1. ms-azuretools.vscode-docker
+
+## VSCode DevContainer prerequisites
+
+1. Docker Desktop
+1. VSCode
+1. VSCode ms-vscode-remote.remote-containers extension
+1. git
