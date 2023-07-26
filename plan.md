@@ -23,12 +23,11 @@ The failover plan only preserves videos and user data. In a failover scenario, i
 However, system settings, cache, and monitoring data are not. Proseware is going to use infrastructure as code to configure system settings. The failover rebuilds any information that was stored in Redis as traffic is migrated to the new region. They are willing to lose monitoring data. Diagnostic data in Log Analytics and Application Insights are not replicated.
 
 ## Executing the transition
-Use the following steps to transition users from primary to secondary region. At this point, the decision to failover has been made. Interruption of services and the risk of potential data-loss has been communicated to users.
 
-> **Note**<br>
-> The following content describes failover by region name because the meaning of "primary" is adjusted throughout the context of the plan. In this context *westus3* is primary and *eastus* is secondary.
+At this point, the decision to failover has been made. Interruption of services and the risk of potential data-loss has been communicated to users. Use the following steps to transition users from primary to secondary region. 
 
 The two flows of traffic we will address are:
+
 * User traffic: dashed blue line
 * Data replication: solid green line
 
