@@ -48,46 +48,26 @@ For more information on the reliable web app pattern, see [Overview](https://rev
 
 ## Steps to deploy the reference implementation
 
-Note - The following deployment has been tested using devcontainers on **macOS** and **Windows with [Ubuntu on WSL](https://ubuntu.com/wsl)**.
+**1. Start VS Code and run Dev Containers: Clone Repository in Container Volume... from the Command Palette (F1).**
 
-**1. Clone the repo**
+![clone-repo-in-volume](docs/assets/clone-repo-in-container-volume.png)
 
-Navigate to your desired directory and run the three following commands:
+**2. Enter azure/reliable-web-app-pattern-java in the input box that appears and press Enter.**
 
-```shell
-git clone https://github.com/Azure/reliable-web-app-pattern-java.git
-cd reliable-web-app-pattern-java
-code .
-```
+![rwa-java-repo-to-clone](docs/assets/java-rwa-clone-url.png)
 
-If cloning in Windows, you may need to configure support for long paths in your environment depending on how long the folder path is you are cloning into. From the Registry Editor, navigate to HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem and set the DWORD LongPathsEnabled to 1.
+**3. Open a terminal in VS Code**
 
-You can then enable support for long paths in git with the following command:
-```shell
-git config --system core.longpaths true
-```
+Open a terminal in VS Code using one of the following methods.
 
-If using WSL, start a WSL Ubuntu terminal and clone the repo to a WSL directory (see example in the following image).
+* From the menu, use the Terminal > New Terminal or View > Terminal menu commands.
+* To create a new terminal, use the Ctrl+Shift+` keyboard shortcut.
 
-![WSL Ubuntu](docs/assets/wsl-ubuntu.png)
+![vscode-terminal](docs/assets/vscode-terminal.png)
+ 
+ **4. Prepare for deployment**
 
-Once Visual Studio Code is launched, you should see a popup allowing you to click on the button **Reopen in Container**.
-
-![WSL Ubuntu](docs/assets/vscode-reopen-in-container.png)
-
-If you don't see the popup, open up the Visual Studio Code Command Palette. There are three ways to open the Code Command Palette:
-
-- For Mac users, use the keyboard shortcut ⇧⌘P
-- For Windows and Linux users, use Ctrl+Shift+P
-- In the VS Code, navigate to View -> Command Palette.
-
-Then, search for `Dev Containers: Rebuild and Reopen in Container` in the Command Palette.
-
-![WSL Ubuntu](docs/assets/vscode-reopen-in-container-command.png)
-
-**2. Prepare for deployment**
-
-Open a terminal in VS Code and enter the following. When prompted to enter a new environment name, choose one that's less than 18 characters.
+Enter the following commands in the terminal in VS Code. When prompted to enter a new environment name, choose one that's less than 18 characters.
 
 ```shell
 azd auth login
@@ -145,7 +125,7 @@ The following table describes the differences in the resources deployed in the 2
 | App Service | P1v3 | P2v3 | [App Service SKU options](https://azure.microsoft.com/pricing/details/app-service/linux/)
 | PostgreSQL Flexible Server | Burstable B1ms (B_Standard_B1ms) | General Purpose D4s_v3 (GP_Standard_D4s_v3) | [PostgreSQL SKU options](https://learn.microsoft.com/azure/postgresql/flexible-server/concepts-compute-storage)
 
-**3. Start the Deployment**
+**5. Start the Deployment**
 
 Provision the infrastructure using the commands below.
 
