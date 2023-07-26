@@ -36,9 +36,12 @@ locals {
   // Burstable server compute tier is not supported. (https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-read-replicas)
   // The SKU therefore needs to be General Purpose for multi region deployments
   postgresql_sku_name = var.environment == "prod" || length(var.location2) > 0 ? "GP_Standard_D4s_v3" : "B_Standard_B1ms"
+
+  proseware_client_id     = var.principal_type == "User" ?  module.ad[0].application_registration_id : var.proseware_client_id
+  proseware_tenant_id     = var.principal_type == "User" ?  data.azuread_client_config.current.tenant_id : var.proseware_tenant_id 
 } 
 
-data "azurerm_client_config" "current" {}
+data "azuread_client_config" "current" {}
 
 resource "azurecaf_name" "resource_group" {
   name          = var.application_name
@@ -59,6 +62,14 @@ resource "azurerm_resource_group" "main" {
     "app-pattern-name" = "java-rwa"
     "azd-env-name"     = var.application_name
   }
+}
+
+module "ad" {
+  source                       = "./modules/active-directory"
+  count                        = var.principal_type == "User" ? 1 : 0
+  application_name             = var.application_name
+  environment                  = local.environment
+  frontdoor_host_name          = module.frontdoor.host_name
 }
 
 module "network" {
@@ -105,7 +116,7 @@ module "key-vault" {
     virtual_network_subnet_ids = [module.network.app_subnet_id]
   }
 
-  azure_ad_tenant_id = data.azurerm_client_config.current.tenant_id
+  azure_ad_tenant_id = data.azuread_client_config.current.tenant_id
 }
 
 # For demo purposes, allow current user access to the key vault
@@ -113,7 +124,7 @@ module "key-vault" {
 resource azurerm_role_assignment kv_administrator_user_role_assignement {
   scope                 = module.key-vault.vault_id
   role_definition_name  = "Key Vault Administrator"
-  principal_id          = data.azurerm_client_config.current.object_id
+  principal_id          = data.azuread_client_config.current.object_id
 }
 
 resource "azurerm_key_vault_secret" "airsonic_database_admin" {
@@ -136,7 +147,7 @@ resource "azurerm_key_vault_secret" "airsonic_database_admin_password" {
 
 resource "azurerm_key_vault_secret" "airsonic_application_client_secret" {
   name         = "airsonic-application-client-secret"
-  value        = var.principal_type == "User" ? module.application.application_client_secret : var.proseware_client_secret
+  value        = var.principal_type == "User" ? module.ad[0].application_client_secret : var.proseware_client_secret
   key_vault_id = module.key-vault.vault_id
   depends_on = [ 
     azurerm_role_assignment.kv_administrator_user_role_assignement
@@ -187,8 +198,6 @@ module "application" {
   environment        = local.environment
   location           = var.location
   subnet_id          = module.network.app_subnet_id
-
-  principal_type     = var.principal_type
   
   app_insights_connection_string = module.app_insights.connection_string
   log_analytics_workspace_id     = module.app_insights.log_analytics_workspace_id
@@ -206,8 +215,8 @@ module "application" {
   trainings_share_name               = module.storage.trainings_share_name
   playlist_share_name                = module.storage.playlist_share_name
 
-  proseware_client_id     = var.proseware_client_id
-  proseware_tenant_id     = var.proseware_tenant_id
+  proseware_client_id     = local.proseware_client_id
+  proseware_tenant_id     = local.proseware_tenant_id
   frontdoor_host_name     = module.frontdoor.host_name
   frontdoor_profile_uuid  = module.frontdoor.resource_guid
 }
@@ -217,9 +226,9 @@ resource "azurerm_postgresql_flexible_server_active_directory_administrator" "ai
   count               = var.principal_type == "User" ? 1 : 0
   server_name         = module.postresql_database.database_server_name
   resource_group_name = azurerm_resource_group.main_db.name
-  tenant_id           = data.azurerm_client_config.current.tenant_id
-  object_id           = data.azurerm_client_config.current.object_id
-  principal_name      = data.azurerm_client_config.current.object_id
+  tenant_id           = data.azuread_client_config.current.tenant_id
+  object_id           = data.azuread_client_config.current.object_id
+  principal_name      = data.azuread_client_config.current.object_id
   principal_type      = "User"
 }
 
@@ -271,7 +280,7 @@ resource "null_resource" "setup-application-uri" {
   ]
 
   provisioner "local-exec" {
-    command = "az ad app update --id ${module.application.application_registration_id} --identifier-uris api://${module.application.application_registration_id}"
+    command = "az ad app update --id ${local.proseware_client_id} --identifier-uris api://${local.proseware_client_id}"
   }
 }
 
@@ -311,7 +320,7 @@ resource "azurerm_resource_group" "main_db" {
 
 module "postresql_database" {
   source                      = "./modules/postresql"
-  azure_ad_tenant_id          = data.azurerm_client_config.current.tenant_id
+  azure_ad_tenant_id          = data.azuread_client_config.current.tenant_id
   resource_group              = azurerm_resource_group.main_db.name
   application_name            = var.application_name
   environment                 = local.environment
@@ -326,7 +335,7 @@ module "postresql_database" {
 module "postresql_database2" {
   count                       = local.is_multi_region ? 1 : 0
   source                      = "./modules/postresql"
-  azure_ad_tenant_id          = data.azurerm_client_config.current.tenant_id
+  azure_ad_tenant_id          = data.azuread_client_config.current.tenant_id
   resource_group              = azurerm_resource_group.main_db.name
   application_name            = var.application_name
   environment                 = local.environment
@@ -489,7 +498,7 @@ module "key-vault2" {
     virtual_network_subnet_ids = [module.network2[0].app_subnet_id]
   }
 
-  azure_ad_tenant_id = data.azurerm_client_config.current.tenant_id
+  azure_ad_tenant_id = data.azuread_client_config.current.tenant_id
 }
 
 module "cache2" {
@@ -528,8 +537,8 @@ module "application2" {
   trainings_share_name               = module.storage.trainings_share_name
   playlist_share_name                = module.storage.playlist_share_name
 
-  proseware_client_id     = var.proseware_client_id
-  proseware_tenant_id     = var.proseware_tenant_id
+  proseware_client_id     = local.proseware_client_id
+  proseware_tenant_id     = local.proseware_tenant_id
   frontdoor_host_name = module.frontdoor.host_name
   frontdoor_profile_uuid  = module.frontdoor.resource_guid
 }
@@ -539,13 +548,13 @@ resource azurerm_role_assignment kv_contributor_user_role_assignement2 {
   count                 = local.is_multi_region ? 1 : 0
   scope                 = module.key-vault2[0].vault_id
   role_definition_name  = "Key Vault Contributor"
-  principal_id          = data.azurerm_client_config.current.object_id
+  principal_id          = data.azuread_client_config.current.object_id
 }
 resource azurerm_role_assignment kv_administrator_user_role_assignement2 {
   count                 = local.is_multi_region ? 1 : 0
   scope                 = module.key-vault2[0].vault_id
   role_definition_name  = "Key Vault Administrator"
-  principal_id          = data.azurerm_client_config.current.object_id
+  principal_id          = data.azuread_client_config.current.object_id
 }
 
 resource "azurerm_key_vault_secret" "airsonic_database_admin2" {
@@ -575,7 +584,7 @@ resource "azurerm_key_vault_secret" "airsonic_database_admin_password2" {
 resource "azurerm_key_vault_secret" "airsonic_application_client_secret2" {
   count        = local.is_multi_region ? 1 : 0
   name         = "airsonic-application-client-secret"
-  value        = module.application2[0].application_client_secret
+  value        = module.ad[0].application_client_secret
   key_vault_id = module.key-vault2[0].vault_id
 
   depends_on = [
