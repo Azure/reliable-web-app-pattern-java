@@ -46,6 +46,8 @@ For more information on the reliable web app pattern, see [Overview](https://rev
 * [Permissions to register an application](https://learn.microsoft.com/azure/active-directory/develop/quickstart-register-app)
 * [Dev Containers extension installed in VS Code](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension
 
+See [Prequisites](prerequisites.md) for more detailed information about our prerequisites.
+
 ## Steps to deploy the reference implementation
 
 **1. Start VS Code and run Dev Containers: Clone Repository in Container Volume... from the Command Palette (F1).**
@@ -195,8 +197,8 @@ Use of Microsoft trademarks or logos in modified versions of this project must n
 
 ## Additional links
 
-- [Patterns overview](adopt-pattern.md)
-- [Applying the patterns](apply-pattern.md)
+- [Patterns overview](https://learn.microsoft.com/azure/architecture/web-apps/guides/reliable-web-app/overview)
+- [Applying the patterns](https://learn.microsoft.com/azure/architecture/web-apps/guides/reliable-web-app/java/apply-pattern)
 - [Simulating developer patterns](simulate-patterns.md)
 - [Known issues](known-issues.md)
 - [Contributing](CONTRIBUTING.md)
