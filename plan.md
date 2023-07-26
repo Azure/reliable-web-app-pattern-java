@@ -14,7 +14,7 @@ The web app stores several types of data and uses several different data stores:
 
 1. Videos: Proseware training videos are stored in Azure Storage
 1. User data: Relational user data is stored in PostgreSQL
-1 Cache: User data is stored in Azure Cache for Redis
+1. Cache: User data is stored in Azure Cache for Redis
 1. System settings: Configuration in Key Vault, and other environment settings
 1. Monitoring: Diagnostic data stored in Log Analytics and Application Insights
 
