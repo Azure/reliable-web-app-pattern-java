@@ -4,21 +4,23 @@ One of Proseware's business objectives was to reach a 99.9% service level object
 
 Proseware created a failover plan that outlines what to do in a disaster recovery scenario. Proseware decided to execute the failover manually instead with automation. Health checks and automated transition are not part of the plan in this phase.
 
-## Understanding the Proseware system
-Before we execute the failover plan we should understand the system and how it is used. Proseware is an Azure web application that provides streaming video training content. The solution architecture includes Azure App Service, Azure Storage (mounted as File Storage on App Service), Application Insights, Key Vault, Azure Cache for Redis, and Azure Database for PostgreSQL. These components are vnet integrated or secured with private endpoints. Users authenticate with Azure AD and diagnostics for Azure services are stored in Azure Log Analytics Workspace.
+## Understanding the architecture
 
-The system is also placed behind an Azure Front Door with Azure Web Application Firewall enabled. This provides active/passive load balancing between 1 instance of the application and another to achieve high availability. The secondary region is a standby region that receives replicated data from the primary region.
+Before we execute the failover plan, we should understand the web app architecture. Proseware's web app is running in Azure and provides streaming video training content. The architecture includes Azure App Service, Azure Storage, Azure Files (mounted as File Storage on App Service), Application Insights, Key Vault, Azure Cache for Redis, and Azure Database for PostgreSQL. Several of these components use virtual network integration, virtual network injection, and secured with private endpoints. Users authenticate with Azure AD and diagnostics for Azure services are stored in Azure Log Analytics Workspace. Proseware placed the web app behind Azure Front Door with Azure Web Application Firewall policies enabled. Front Door load balances traffic between regions.
 
 ![Diagram showing the architecture of the reference implementation](docs/assets/reliable-web-app-java.png)
 
-In this system we have data stored in different places and each one of those should be handled by the failover.
+The web app stores several types of data and uses several different data stores:
 
-1. Videos on disk: Proseware training videos are stored in Azure Storage
-1. User data: Relational user data is stored in PostgreSQL and cached user data is stored in Redis
+1. Videos: Proseware training videos are stored in Azure Storage
+1. User data: Relational user data is stored in PostgreSQL
+1 Cache: User data is stored in Azure Cache for Redis
 1. System settings: Configuration in Key Vault, and other environment settings
 1. Monitoring: Diagnostic data stored in Log Analytics and Application Insights
 
-For this plan, Proseware chooses only to address the first two considerations. When traffic is transitioned from primary to secondary region we expect users to continue where they left off with minimal impact to their experience. To support this goal we need to replica data for Azure Storage and Azure Database for PostgreSQL. The system settings and configuration data are expected to be handled with infrastructure as code keeping both regions synchronized. Diagnostic data in Log Analytics and Application Insights are not replicated. This approach is also designed to rebuild any information that was stored in Redis as traffic is migrated to the new region.
+The failover plan only preserves videos and user data. In a failover scenario, it's most important that users can continue where they left off with minimal impact to their experience. Backing up and restoring videos and user data is essential to meet this goal.
+
+However, system settings, cache, and monitoring data are not. Proseware is going to use infrastructure as code to configure system settings. The failover rebuilds any information that was stored in Redis as traffic is migrated to the new region. They are willing to lose monitoring data. Diagnostic data in Log Analytics and Application Insights are not replicated.
 
 ## Executing the transition
 Use the following steps to transition users from primary to secondary region. At this point, the decision to failover has been made. Interruption of services and the risk of potential data-loss has been communicated to users.
