@@ -1,8 +1,8 @@
-# Proseware Failover playbook
+# Proseware failover playbook
 
-One of Proseware's business objectives was to operate a system that is available 99.9% of the time. To meet that objective the team deploys the web app to two regions with active/passive configuration. In this setup 100% of user traffic is handled by a single region and data is replicated to a secondary region. This enables Proseware to quickly transition from the primary region to the secondary to mitigate the risk of an outage from impacting their availability.
+One of Proseware's business objectives was to reach a 99.9% service level objective for availability. To meet that objective, the team deployed the web app to two regions in an active-passive configuration. The active (primary) region handles 100% of user traffic under normal operations and data replicates to the passive (secondary) region asynchronously. This configuration enables Proseware to quickly transition from the primary region to the secondary to mitigate the risk of an outage from impacting their availability.
 
-To transition from the primary region Proseware built the following plan that is executed manually. Health checks and automated transition are not part of the plan in this phase.
+Proseware created a failover plan that outlines what to do in a disaster recovery scenario. Proseware decided to execute the failover manually instead with automation. Health checks and automated transition are not part of the plan in this phase.
 
 ## Understanding the Proseware system
 Before we execute the failover plan we should understand the system and how it is used. Proseware is an Azure web application that provides streaming video training content. The solution architecture includes Azure App Service, Azure Storage (mounted as File Storage on App Service), Application Insights, Key Vault, Azure Cache for Redis, and Azure Database for PostgreSQL. These components are vnet integrated or secured with private endpoints. Users authenticate with Azure AD and diagnostics for Azure services are stored in Azure Log Analytics Workspace.
