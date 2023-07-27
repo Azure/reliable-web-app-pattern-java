@@ -72,7 +72,7 @@ azd env set AZURE_LOCATION2 eastus
 azd up
 ```
 
-The following walk-through assumes you are using a DevContainer inside Visual Studio Code and walks you through executin
+The following walk-through assumes you are using a DevContainer inside Visual Studio Code and walks you through executing the above sequence.
 
 ### 1. Clone the repo
 
