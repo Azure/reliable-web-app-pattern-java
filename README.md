@@ -73,7 +73,6 @@ azd up
 ```
 
 The following walk-through assumes you are using a DevContainer inside Visual Studio Code and walks you through executin
-g the above sequence.
 
 ### 1. Clone the repo
 
