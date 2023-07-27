@@ -40,86 +40,127 @@ For more information on the reliable web app pattern, see [Overview](https://rev
 
 ## Prerequisites
 
-* [Azure Subscription](https://azure.microsoft.com/pricing/member-offers/msdn-benefits-details/)
-* [Visual Studio Code](https://code.visualstudio.com/)
-* [Docker](https://www.docker.com/get-started/)
-* [Permissions to register an application](https://learn.microsoft.com/azure/active-directory/develop/quickstart-register-app)
-* [Dev Containers extension installed in VS Code](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension
+We recommend that you use a DevContainer to deploy this application.  The requirements are as follows:
 
-See [Prequisites](prerequisites.md) for more detailed information about our prerequisites.
+- [Azure Subscription](https://azure.microsoft.com/pricing/member-offers/msdn-benefits-details/).
+- [Visual Studio Code](https://code.visualstudio.com/).
+- [Docker Desktop](https://www.docker.com/get-started/).
+- [Permissions to register an application](https://learn.microsoft.com/azure/active-directory/develop/quickstart-register-app).
+- Visual Studio Code [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers).
+
+If you do not wish to use a DevContainer, please refer to the [prerequisites](prerequisites.md) for detailed information on how to set up your development system to build, run, and deploy the application.
+
+> **WINDOWS**
+> If you are using Windows, you must enable long paths.  Do the following as a local Administrator:
+>
+> - Open the Registry Editor, navigate to `HKLM\SYSTEM\CurrentControlSet\Control\FileSystem` and set DWORD `LongPathsEnabled` to 1.
+> - Run `git config --system core.longpaths true`
 
 ## Steps to deploy the reference implementation
 
-Note - The following deployment has been tested using devcontainers on **macOS** and **Windows with [Ubuntu on WSL](https://ubuntu.com/wsl)**.
-
-**1. Clone the repo**
-
-Navigate to your desired directory and run the three following commands:
+The short version (assumes you are already logged into Azure through the Azure CLI and Azure Developer CLI, and that a suitable subscription is selected):
 
 ```shell
 git clone https://github.com/Azure/reliable-web-app-pattern-java.git
 cd reliable-web-app-pattern-java
+azd config set alpha.terraform on
+azd env new eap-javarwa
+azd env set DATABASE_PASSWORD "AV@lidPa33word"
+azd env set APP_ENVIRONMENT prod
+azd env set AZURE_LOCATION westus3
+azd env set AZURE_LOCATION2 eastus
+azd up
+```
+
+The following walk-through assumes you are using a DevContainer inside Visual Studio Code and walks you through executin
+g the above sequence.
+
+### 1. Clone the repo
+
+If using Windows, ensure you have enabled long paths.  Then clone the repository from GitHub:
+
+```shell
+git clone https://github.com/Azure/reliable-web-app-pattern-java.git
+cd reliable-web-app-pattern-java
+```
+
+### 2. Open DevContainer in Visual Studio Code (optional)
+
+If required, ensure Docker Desktop is started.  Open the repository folder in Visual Studio Code.  You can do this from the command prompt:
+
+```shell
 code .
 ```
 
-If cloning in Windows, you may need to configure support for long paths in your environment depending on how long the folder path is you are cloning into. From the Registry Editor, navigate to HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem and set the DWORD LongPathsEnabled to 1.
-
-You can then enable support for long paths in git with the following command:
-```shell
-git config --system core.longpaths true
-```
-
-If using WSL, start a WSL Ubuntu terminal and clone the repo to a WSL directory (see example in the following image).
-
-![WSL Ubuntu](docs/assets/wsl-ubuntu.png)
-
 Once Visual Studio Code is launched, you should see a popup allowing you to click on the button **Reopen in Container**.
 
-![WSL Ubuntu](docs/assets/vscode-reopen-in-container.png)
+![Reopen in Container](docs/assets/vscode-reopen-in-container.png)
 
-If you don't see the popup, open up the Visual Studio Code Command Palette. There are three ways to open the Code Command Palette:
+If you don't see the popup, open the Visual Studio Code Command Palette to execute the command. There are three ways to open the command palette:
 
 - For Mac users, use the keyboard shortcut ⇧⌘P
 - For Windows and Linux users, use Ctrl+Shift+P
-- In the VS Code, navigate to View -> Command Palette.
+- From the Visual Studio Code top menu, navigate to View -> Command Palette.
 
-Then, search for `Dev Containers: Rebuild and Reopen in Container` in the Command Palette.
+Once the command palette is open, search for `Dev Containers: Rebuild and Reopen in Container`.
 
 ![WSL Ubuntu](docs/assets/vscode-reopen-in-container-command.png)
 
-**2. Prepare for deployment**
+### 3. Log in to Azure
 
-Open a terminal in VS Code and enter the following. When prompted to enter a new environment name, choose one that's less than 18 characters.
+Before deploying, you must be authenticated to Azure and have the appropriate subscription selected.  To authenticate:
 
 ```shell
+az login --scope https://graph.microsoft.com//.default
 azd auth login
-azd config set alpha.terraform on
-azd env new
 ```
 
-Set the environment variables.
+Each command will open a browser allowing you to authenticate.  To list the subscriptions you have access to:
 
 ```shell
-azd env set DATABASE_PASSWORD <SOME_VALUE>
-azd env set AZURE_LOCATION <AZURE_REGION_NAME e.g. eastus>
-azd env set AZURE_SUBSCRIPTION_ID <AZURE_SUBSCRIPTION_ID>
+az account list
 ```
 
-> You can find a list of available Azure regions by running
-> the following Azure CLI command.
-> 
-> ```shell
-> az account list-locations --query "[].name" -o tsv
-> ```
+To set the active subscription:
 
-### (Optional) Multi-region support
+```shell
+az accout set --subscription "<your-subscription-id>"
+azd config set defaults.subscription "<your-subscription-id>"
+```
 
-Prosware devs also use the following command to choose a second Azure location for multiregional deployments. The following constraints were considered for choosing paired regions for Proseware.
+### 4. Create a new environment
 
-1. Regional pairs that align with [Azure Storage redundancy (GZRS)](https://learn.microsoft.com/en-us/azure/storage/common/storage-redundancy#geo-zone-redundant-storage).
-2. Regions that support [Azure Database for PostgreSQL - Flexible Server](https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/overview) with [availability zones](https://learn.microsoft.com/en-us/azure/reliability/availability-zones-overview#availability-zones).
+Choose an environment name - this should be less than 18 characters and must be comprised of lower-case, numeric, and dash characters. (For example, `eap-javarwa`).  The environment name is used for resource group naming and specific resource naming.
 
-We have validated the following paired regions.
+Also, select a password for the admin user of the database. 
+
+Run the following commands to set these values and create a new environment:
+
+```shell
+azd config set alpha.terraform on
+azd env new eap-javarwa
+azd env set DATABASE_PASSWORD "AV@lidPa33word"
+```
+
+Substitute the environment name and database password for your own values.
+
+By default, Azure resources are sized for a "development" mode.  To select the production mode:
+
+```shell
+azd env set APP_ENVIRONMENT prod
+```
+
+The following Azure resources change when changing to production mode:
+
+| Service | Dev SKU | Prod SKU | SKU options |
+| --- | --- | --- | --- |
+| Cache for Redis | Basic | Standard | [Redis Cache SKU options](https://azure.microsoft.com/pricing/details/cache/) |
+| App Service | P1v3 | P2v3 | [App Service SKU options](https://azure.microsoft.com/pricing/details/app-service/linux/) |
+| PostgreSQL Flexible Server | Burstable B1ms (B_Standard_B1ms) | General Purpose D4s_v3 (GP_Standard_D4s_v3) | [PostgreSQL SKU options](https://learn.microsoft.com/azure/postgresql/flexible-server/concepts-compute-storage) |
+
+### 5. Select a region for deployment
+
+The application can be deployed in either a single region or multi-region manner. The region you select must support [Azure Database for PostgreSQL - Flexible Server](https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/overview) with [availability zones](https://learn.microsoft.com/en-us/azure/reliability/availability-zones-overview#availability-zones).  If doing a multi-region deployment, you must choose a regional pair that aligns with [Azure Storage redundancy (GZRS)](https://learn.microsoft.com/en-us/azure/storage/common/storage-redundancy#geo-zone-redundant-storage).  The following region pairs are validated:
 
 | AZURE_LOCATION | AZURE_LOCATION2 |
 | ----- | ----- |
@@ -127,45 +168,39 @@ We have validated the following paired regions.
 | westeurope | northeurope |
 | australiaeast | australiasoutheast |
 
-```shell
-azd env set AZURE_LOCATION2 <region>
-```
+> You can find a list of available Azure regions by running the following Azure CLI command.
+>
+> ```shell
+> az account list-locations --query "[].name" -o tsv
+> ```
 
-### (Optional) Select production or development environment.
-
-You should change the `APP_ENVIRONMENT` variable to *prod* for production SKUs.  Default value is *dev* 
-
-```shell
-azd env set APP_ENVIRONMENT prod
-```
-
-The following table describes the differences in the resources deployed in the 2 environments.
-
-| Service | Dev SKU | Prod SKU | SKU options |
-| --- | --- | --- | --- |
-| Cache for Redis | Basic | Standard | [Redis Cache SKU options](https://azure.microsoft.com/pricing/details/cache/)
-| App Service | P1v3 | P2v3 | [App Service SKU options](https://azure.microsoft.com/pricing/details/app-service/linux/)
-| PostgreSQL Flexible Server | Burstable B1ms (B_Standard_B1ms) | General Purpose D4s_v3 (GP_Standard_D4s_v3) | [PostgreSQL SKU options](https://learn.microsoft.com/azure/postgresql/flexible-server/concepts-compute-storage)
-
-**3. Start the Deployment**
-
-Provision the infrastructure using the commands below.
+Set the `AZURE_LOCATION` to the primary region:
 
 ```shell
-az login --scope https://graph.microsoft.com//.default
-az account set --subscription <SUBSCRIPTION_ID>
-azd provision
+azd env set AZURE_LOCATION westus3
 ```
 
-Deploy the web application to the primary region using the commands
-below.
+If doing a multi-region deployment, set the `AZURE_LOCATION2` to the secondary region:
+
+```shell
+azd env set AZURE_LOCATION2 eastus
+```
+
+### 6. Provision and deploy the application
+
+Run the following command to create the infrastructure:
+
+```shell
+azd provision --no-prompt
+```
+
+Run the following command to deploy the code to the created infrastructure:
 
 ```shell
 azd deploy
 ```
 
-If you specified a secondary region then deploy the web application to
-it using the commands below.
+If you are doing a multi-region deployment, you must also deploy the code to the secondary region:
 
 ```shell
 SECONDARY_RESOURCE_GROUP=$(azd env get-values --output json | jq -r .secondary_resource_group)
@@ -173,15 +208,22 @@ azd env set AZURE_RESOURCE_GROUP $SECONDARY_RESOURCE_GROUP
 azd deploy
 ```
 
-### (Optional) Add Users to Azure Active Directory enterprise applications
+The provisioning and deployment process can take anywhere from 20 minutes to over an hour, depending on system load and your bandwidth.
 
-The next step is to add a user to the application and assign them a role. To do this, go to Azure Portal --> Azure Active Directory --> Enterprise Applications and search for the Proseware application. Add a user to the application.
+### 7. (Optional) Add Users to Azure Active Directory enterprise applications
+
+By default, your user account is added to the application.  To enable additional users:
+
+- Sign in to the [Azure Portal](https://portal.azure.com).
+- Select **Azure Active Directory** -> **Enterprise Applications**.
+- Search for, then select **Proseware**.
+- Add the user to the application:
 
 ![Proseware Azure Active Directory Enterprise Applications](docs/assets/AAD-Enterprise-Application.png)
 
-### Navigate to Proseware
+### 8. Open and use the application
 
-After adding the user, open the browser and navigate to *Proseware*. Use the following command to get the site name.
+Use the following to find the URL for the Proseware application that you have deployed:
 
 ```shell
 azd env get-values --output json | jq -r .frontdoor_url
@@ -191,7 +233,7 @@ azd env get-values --output json | jq -r .frontdoor_url
 
 ## Teardown
 
-To tear down the deployment, run the two following commands.
+To tear down the deployment, run the following command:
 
 ```shell
 azd down
