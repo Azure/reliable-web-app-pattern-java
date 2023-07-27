@@ -45,7 +45,7 @@ We recommend that you use a DevContainer to deploy this application.  The requir
 - [Azure Subscription](https://azure.microsoft.com/pricing/member-offers/msdn-benefits-details/).
 - [Visual Studio Code](https://code.visualstudio.com/).
 - [Docker Desktop](https://www.docker.com/get-started/).
-- [Permissions to register an application](https://learn.microsoft.com/azure/active-directory/develop/quickstart-register-app).
+- [Permissions to register an application in Azure AD](https://learn.microsoft.com/azure/active-directory/develop/quickstart-register-app).
 - Visual Studio Code [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers).
 
 If you do not wish to use a DevContainer, please refer to the [prerequisites](prerequisites.md) for detailed information on how to set up your development system to build, run, and deploy the application.
