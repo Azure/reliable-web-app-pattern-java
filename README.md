@@ -40,7 +40,7 @@ For more information on the reliable web app pattern, see [Overview](https://rev
 
 ## Prerequisites
 
-We recommend that you use a DevContainer to deploy this application.  The requirements are as follows:
+We recommend that you use a Dev Container to deploy this application.  The requirements are as follows:
 
 - [Azure Subscription](https://azure.microsoft.com/pricing/member-offers/msdn-benefits-details/).
 - [Visual Studio Code](https://code.visualstudio.com/).
@@ -48,7 +48,7 @@ We recommend that you use a DevContainer to deploy this application.  The requir
 - [Permissions to register an application in Azure AD](https://learn.microsoft.com/azure/active-directory/develop/quickstart-register-app).
 - Visual Studio Code [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers).
 
-If you do not wish to use a DevContainer, please refer to the [prerequisites](prerequisites.md) for detailed information on how to set up your development system to build, run, and deploy the application.
+If you do not wish to use a Dev Container, please refer to the [prerequisites](prerequisites.md) for detailed information on how to set up your development system to build, run, and deploy the application.
 
 > **WINDOWS**
 > If you are using Windows, you must enable long paths.  Do the following as a local Administrator:
@@ -70,9 +70,12 @@ azd env set APP_ENVIRONMENT prod
 azd env set AZURE_LOCATION westus3
 azd env set AZURE_LOCATION2 eastus
 azd up
+SECONDARY_RESOURCE_GROUP=$(azd env get-values --output json | jq -r .secondary_resource_group)
+azd env set AZURE_RESOURCE_GROUP $SECONDARY_RESOURCE_GROUP
+azd deploy
 ```
 
-The following walk-through assumes you are using a DevContainer inside Visual Studio Code and walks you through executing the above sequence.
+The following walk-through assumes you are using a Dev Container inside Visual Studio Code and walks you through executing the above sequence.
 
 ### 1. Clone the repo
 
@@ -83,7 +86,7 @@ git clone https://github.com/Azure/reliable-web-app-pattern-java.git
 cd reliable-web-app-pattern-java
 ```
 
-### 2. Open DevContainer in Visual Studio Code (optional)
+### 2. Open Dev Container in Visual Studio Code (optional)
 
 If required, ensure Docker Desktop is started and enabled for your WSL terminal [more details](https://learn.microsoft.com/en-us/windows/wsl/tutorials/wsl-containers#install-docker-desktop). Open the repository folder in Visual Studio Code. You can do this from the command prompt:
 
@@ -123,15 +126,16 @@ az account list
 To set the active subscription:
 
 ```shell
-az account set --subscription "<your-subscription-id>"
-azd config set defaults.subscription "<your-subscription-id>"
+export AZURE_SUBSCRIPTION="<your-subscription-id>"
+az account set --subscription $AZURE_SUBSCRIPTION
+azd config set defaults.subscription $AZURE_SUBSCRIPTION
 ```
 
 ### 4. Create a new environment
 
 Choose an environment name - this should be less than 18 characters and must be comprised of lower-case, numeric, and dash characters. (For example, `eap-javarwa`).  The environment name is used for resource group naming and specific resource naming.
 
-Also, select a password for the admin user of the database. 
+Also, select a password for the admin user of the database.
 
 Run the following commands to set these values and create a new environment:
 
