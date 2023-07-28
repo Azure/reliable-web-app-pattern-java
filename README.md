@@ -85,7 +85,7 @@ cd reliable-web-app-pattern-java
 
 ### 2. Open DevContainer in Visual Studio Code (optional)
 
-If required, ensure Docker Desktop is started.  Open the repository folder in Visual Studio Code.  You can do this from the command prompt:
+If required, ensure Docker Desktop is started and enabled for your WSL terminal [more details](https://learn.microsoft.com/en-us/windows/wsl/tutorials/wsl-containers#install-docker-desktop). Open the repository folder in Visual Studio Code. You can do this from the command prompt:
 
 ```shell
 code .
