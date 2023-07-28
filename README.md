@@ -123,7 +123,7 @@ az account list
 To set the active subscription:
 
 ```shell
-az accout set --subscription "<your-subscription-id>"
+az account set --subscription "<your-subscription-id>"
 azd config set defaults.subscription "<your-subscription-id>"
 ```
 
