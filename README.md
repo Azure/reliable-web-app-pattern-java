@@ -230,6 +230,8 @@ azd env get-values --output json | jq -r .frontdoor_url
 
 ![Proseware AAD](docs/assets/proseware.png)
 
+It takes approximately 5 minutes for the Azure App Service to respond to requests using the code deployed during step 6.
+
 ## Teardown
 
 To tear down the deployment, run the following command:
