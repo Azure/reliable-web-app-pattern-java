@@ -1,6 +1,8 @@
-# Known issues
+# Troubleshooting and Known issues
 
 This document helps with troubleshooting and provides an introduction to the most requested features, gotchas, and questions.
+
+## Troubleshooting
 
 * To facilitate deployment from a developer system, we explicitly allow the IP address of the current system through the firewall for Azure Storage and Key Vault. Ensure you are running the deployment from a system where the external IP address (as seen by Azure) does not change during the deployment.
 
@@ -19,6 +21,21 @@ This document helps with troubleshooting and provides an introduction to the mos
         ```
 
     1. Retry from *Set the environment variables* under *Prepare for deployment* in [README.md](./README.md).
+
+## Known issues
+
+* Maven fails to run  with error `Unable to parse maven.config file options`
+
+  You have installed Maven 3.9.0 or later.  Check the version you have installed using `mvn --version`.  Maven 3.9.0 contains a breaking change, and Airsonic uses Maven 3.8.6.
+
+  Downgrade the Maven version to v3.8.6.  Alternatively, edit the `src/airsonic-advanced/.mvn/maven.config` file so that the arguments are on separate lines.  The resulting file should look like this:
+
+  ```text
+  --settings
+  ./.mvn/settings.xml
+  ```
+
+  **Note**: Ensure there is no white space at the end of each line.
 
 * Login with OAuth 2.0 Invalid credentials
 
