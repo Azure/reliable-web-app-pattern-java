@@ -64,7 +64,7 @@ The short version (assumes you are already logged into Azure through the Azure C
 git clone https://github.com/Azure/reliable-web-app-pattern-java.git
 cd reliable-web-app-pattern-java
 azd config set alpha.terraform on
-azd env new eap-javarwa
+azd env new <your-environment>
 azd env set DATABASE_PASSWORD "AV@lidPa33word"
 azd env set APP_ENVIRONMENT prod
 azd env set AZURE_LOCATION westus3
@@ -133,7 +133,7 @@ azd config set defaults.subscription $AZURE_SUBSCRIPTION
 
 ### 4. Create a new environment
 
-Choose an environment name - this should be less than 18 characters and must be comprised of lower-case, numeric, and dash characters. (For example, `eap-javarwa`).  The environment name is used for resource group naming and specific resource naming.
+Choose an environment name (`<your-environment>`) - this should be less than 18 characters and must be comprised of lower-case, numeric, and dash characters. (For example, `eap-javarwa`).  The environment name is used for resource group naming and specific resource naming.
 
 Also, select a password for the admin user of the database.
 
@@ -141,11 +141,11 @@ Run the following commands to set these values and create a new environment:
 
 ```shell
 azd config set alpha.terraform on
-azd env new eap-javarwa
+azd env new <your-environment>
 azd env set DATABASE_PASSWORD "AV@lidPa33word"
 ```
 
-Substitute the environment name and database password for your own values.
+Substitute the environment name (`<your-environment>`) and database password for your own values.
 
 By default, Azure resources are sized for a "development" mode.  To select the production mode:
 
