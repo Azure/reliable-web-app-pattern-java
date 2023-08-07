@@ -69,7 +69,7 @@ azd env set DATABASE_PASSWORD "AV@lidPa33word"
 azd env set APP_ENVIRONMENT prod
 azd env set AZURE_LOCATION westus3
 azd env set AZURE_LOCATION2 eastus
-azd up
+azd provision --no-prompt
 SECONDARY_RESOURCE_GROUP=$(azd env get-values --output json | jq -r .secondary_resource_group)
 azd env set AZURE_RESOURCE_GROUP $SECONDARY_RESOURCE_GROUP
 azd deploy

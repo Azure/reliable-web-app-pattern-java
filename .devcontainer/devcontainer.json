@@ -17,8 +17,7 @@
 		},
 		"ghcr.io/devcontainers/features/java:1": {
 			"version": "17",
-			"installMaven": "true",
-			"mavenVersion": "3.8.6",
+			"installMaven": "false",
 			"installGradle": "false"
 		},
 		"ghcr.io/devcontainers/features/terraform:1": {},
