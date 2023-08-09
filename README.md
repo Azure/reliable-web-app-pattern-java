@@ -88,7 +88,7 @@ cd reliable-web-app-pattern-java
 
 ### 2. Open Dev Container in Visual Studio Code (optional)
 
-If required, ensure Docker Desktop is started and enabled for your WSL terminal [more details](https://learn.microsoft.com/en-us/windows/wsl/tutorials/wsl-containers#install-docker-desktop). Open the repository folder in Visual Studio Code. You can do this from the command prompt:
+If required, ensure Docker Desktop is started and enabled for your WSL terminal [more details](https://learn.microsoft.com/windows/wsl/tutorials/wsl-containers#install-docker-desktop). Open the repository folder in Visual Studio Code. You can do this from the command prompt:
 
 ```shell
 code .
@@ -133,9 +133,7 @@ azd config set defaults.subscription $AZURE_SUBSCRIPTION
 
 ### 4. Create a new environment
 
-Choose an environment name - this should be less than 18 characters and must be comprised of lower-case, numeric, and dash characters. (For example, `eap-javarwa`).  The environment name is used for resource group naming and specific resource naming.
-
-Also, select a password for the admin user of the database.
+The environment name should be less than 18 characters and must be comprised of lower-case, numeric, and dash characters (for example, `eap-javarwa`).  The environment name is used for resource group naming and specific resource naming. Also, select a password for the admin user of the database.
 
 Run the following commands to set these values and create a new environment:
 
@@ -147,13 +145,13 @@ azd env set DATABASE_PASSWORD "AV@lidPa33word"
 
 Substitute the environment name and database password for your own values.
 
-By default, Azure resources are sized for a "development" mode.  To select the production mode:
+By default, Azure resources are sized for a "development" mode. Set the `APP_ENVIRONMENT` to `prod` using the following code to deploy production SKUs:
 
 ```shell
 azd env set APP_ENVIRONMENT prod
 ```
 
-The following Azure resources change when changing to production mode:
+The following table lists the the development and production SKU differences.
 
 | Service | Dev SKU | Prod SKU | SKU options |
 | --- | --- | --- | --- |
@@ -163,16 +161,8 @@ The following Azure resources change when changing to production mode:
 
 ### 5. Select a region for deployment
 
-The application can be deployed in either a single region or multi-region manner. The region you select must support [Azure Database for PostgreSQL - Flexible Server](https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/overview) with [availability zones](https://learn.microsoft.com/en-us/azure/reliability/availability-zones-overview#availability-zones).  If doing a multi-region deployment, you must choose a regional pair that aligns with [Azure Storage redundancy (GZRS)](https://learn.microsoft.com/en-us/azure/storage/common/storage-redundancy#geo-zone-redundant-storage).  The following region pairs are validated:
+The application can be deployed in either a single region or multi-region manner. You can find a list of available Azure regions by running the following Azure CLI command.
 
-| AZURE_LOCATION | AZURE_LOCATION2 |
-| ----- | ----- |
-| westus3 | eastus |
-| westeurope | northeurope |
-| australiaeast | australiasoutheast |
-
-> You can find a list of available Azure regions by running the following Azure CLI command.
->
 > ```shell
 > az account list-locations --query "[].name" -o tsv
 > ```
@@ -183,11 +173,21 @@ Set the `AZURE_LOCATION` to the primary region:
 azd env set AZURE_LOCATION westus3
 ```
 
+You want to make sure the region has availability zones. Azure Database for PostgreSQL - Flexible Server [zone-redundant high availability](https://learn.microsoft.com/azure/postgresql/flexible-server/concepts-high-availability) requires availability zones.
+
 If doing a multi-region deployment, set the `AZURE_LOCATION2` to the secondary region:
 
 ```shell
 azd env set AZURE_LOCATION2 eastus
 ```
+
+Make sure the secondary region is a paired region with the primary region (`AZURE_LOCATION`). Paired regions are required to support [geo-zone-redundant storage (GZRS) failover](https://learn.microsoft.com/azure/storage/common/storage-disaster-recovery-guidance). For a full list of region pairs, see [Azure region pairs](https://learn.microsoft.com/azure/reliability/cross-region-replication-azure#azure-cross-region-replication-pairings-for-all-geographies). We have validated the following paired regions.
+
+| AZURE_LOCATION | AZURE_LOCATION2 |
+| ----- | ----- |
+| westus3 | eastus |
+| westeurope | northeurope |
+| australiaeast | australiasoutheast |
 
 ### 6. Provision and deploy the application
 
@@ -213,14 +213,14 @@ azd deploy
 
 The provisioning and deployment process can take anywhere from 20 minutes to over an hour, depending on system load and your bandwidth.
 
-### 7. (Optional) Add Users to Azure Active Directory enterprise applications
+### 7. Add users to Azure Active Directory enterprise applications (optional)
 
 By default, your user account is added to the application.  To enable additional users:
 
 - Sign in to the [Azure Portal](https://portal.azure.com).
 - Select **Azure Active Directory** -> **Enterprise Applications**.
 - Search for, then select **Proseware**.
-- Add the user to the application:
+- Add the user to the application.
 
 ![Proseware Azure Active Directory Enterprise Applications](docs/assets/AAD-Enterprise-Application.png)
 
@@ -236,7 +236,7 @@ azd env get-values --output json | jq -r .frontdoor_url
 
 It takes approximately 5 minutes for the Azure App Service to respond to requests using the code deployed during step 6.
 
-## Teardown
+### 9. Teardown
 
 To tear down the deployment, run the following command:
 
