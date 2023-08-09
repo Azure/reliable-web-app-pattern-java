@@ -48,9 +48,9 @@ For more information on the reliable web app pattern, see [Overview](https://rev
 
 ## Steps to deploy the reference implementation
 
-Note - The following deployment has been tested using devcontainers on **macOS** and **Windows with [Ubuntu on WSL](https://ubuntu.com/wsl)**.
+The following deployment has been tested using dev containers on Windows, macOS, and Windows with [Ubuntu on WSL](https://ubuntu.com/wsl). Read the following steps to deploy.
 
-**1. Clone the repo**
+### 1. Clone the repo
 
 Navigate to your desired directory and run the three following commands:
 
@@ -60,16 +60,20 @@ cd reliable-web-app-pattern-java
 code .
 ```
 
-If cloning in Windows, you may need to configure support for long paths in your environment depending on how long the folder path is you are cloning into. From the Registry Editor, navigate to HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem and set the DWORD LongPathsEnabled to 1.
+*Windows: enabling long paths.* In Windows, there's a limitation on the length of paths (260 characters). Newer versions of Windows and applications have started supporting longer paths, but the feature might be disabled by default. You need to enable it in the registry and with git.
 
-You can then enable support for long paths in git with the following command:
+- From the Registry Editor, navigate to `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem` and set the `DWORD LongPathsEnabled` to 1.
+- You can then enable support for long paths in git with the following command:
+
 ```shell
-git config --system core.longpaths true
+    git config --system core.longpaths true
 ```
 
-If using WSL, start a WSL Ubuntu terminal and clone the repo to a WSL directory (see example in the following image).
+*Using Windows with Ubuntu on WSL.* If you're using WSL, start a WSL Ubuntu terminal, and clone the repo to a WSL directory (see example in the following image).
 
 ![WSL Ubuntu](docs/assets/wsl-ubuntu.png)
+
+### 2. Navigate Visual Studio Code
 
 Once Visual Studio Code is launched, you should see a popup allowing you to click on the button **Reopen in Container**.
 
@@ -77,15 +81,15 @@ Once Visual Studio Code is launched, you should see a popup allowing you to clic
 
 If you don't see the popup, open up the Visual Studio Code Command Palette. There are three ways to open the Code Command Palette:
 
-- For Mac users, use the keyboard shortcut ⇧⌘P
-- For Windows and Linux users, use Ctrl+Shift+P
-- In the VS Code, navigate to View -> Command Palette.
+- Mac: Use the keyboard shortcut `⇧⌘P`
+- Windows and Linux: Use `Ctrl+Shift+P`
+- VS Code: navigate to `View` then `Command Palette`.
 
-Then, search for `Dev Containers: Rebuild and Reopen in Container` in the Command Palette.
+Once the Code Command Palette is open, search for `Dev Containers: Rebuild and Reopen in Container` in the Command Palette.
 
 ![WSL Ubuntu](docs/assets/vscode-reopen-in-container-command.png)
 
-**2. Prepare for deployment**
+### 3. Prepare for deployment
 
 Open a terminal in VS Code and enter the following. When prompted to enter a new environment name, choose one that's less than 18 characters.
 
@@ -103,19 +107,15 @@ azd env set AZURE_LOCATION <AZURE_REGION_NAME e.g. eastus>
 azd env set AZURE_SUBSCRIPTION_ID <AZURE_SUBSCRIPTION_ID>
 ```
 
-> You can find a list of available Azure regions by running
-> the following Azure CLI command.
-> 
+You can find a list of available Azure regions by running the following Azure CLI command.
+
 > ```shell
 > az account list-locations --query "[].name" -o tsv
 > ```
 
-### (Optional) Multi-region support
+### 4. Select a secondary region (optional)
 
-Prosware devs also use the following command to choose a second Azure location for multiregional deployments. The following constraints were considered for choosing paired regions for Proseware.
-
-1. Regional pairs that align with [Azure Storage redundancy (GZRS)](https://learn.microsoft.com/en-us/azure/storage/common/storage-redundancy#geo-zone-redundant-storage).
-2. Regions that support [Azure Database for PostgreSQL - Flexible Server](https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/overview) with [availability zones](https://learn.microsoft.com/en-us/azure/reliability/availability-zones-overview#availability-zones).
+To deploy the web app to two region, you should use the following command. Make sure the second you choose is a paired region with the first region you set in step two (`AZURE_LOCATION`). Paired regions support disaster recovery with [geo-zone-redundant storage (GZRS)](https://learn.microsoft.com/azure/storage/common/storage-redundancy#geo-zone-redundant-storage). For more information, see [full list of Azure region pairs](https://learn.microsoft.com/azure/reliability/cross-region-replication-azure#azure-cross-region-replication-pairings-for-all-geographies).
 
 We have validated the following paired regions.
 
@@ -125,19 +125,21 @@ We have validated the following paired regions.
 | westeurope | northeurope |
 | australiaeast | australiasoutheast |
 
+You also want to make sure the second region supports availability zones. [Azure Database for PostgreSQL - Flexible Server](https://learn.microsoft.com/azure/postgresql/flexible-server/overview) replication
+
 ```shell
 azd env set AZURE_LOCATION2 <region>
 ```
 
-### (Optional) Select production or development environment.
+### 5. Select production or development SKUs (optional)**
 
-You should change the `APP_ENVIRONMENT` variable to *prod* for production SKUs.  Default value is *dev* 
+You can change the `APP_ENVIRONMENT` variable to *dev* for development SKUs. The default value is *prod*
 
 ```shell
 azd env set APP_ENVIRONMENT prod
 ```
 
-The following table describes the differences in the resources deployed in the 2 environments.
+The following table describes the differences in the resources deployed.
 
 | Service | Dev SKU | Prod SKU | SKU options |
 | --- | --- | --- | --- |
@@ -145,9 +147,9 @@ The following table describes the differences in the resources deployed in the 2
 | App Service | P1v3 | P2v3 | [App Service SKU options](https://azure.microsoft.com/pricing/details/app-service/linux/)
 | PostgreSQL Flexible Server | Burstable B1ms (B_Standard_B1ms) | General Purpose D4s_v3 (GP_Standard_D4s_v3) | [PostgreSQL SKU options](https://learn.microsoft.com/azure/postgresql/flexible-server/concepts-compute-storage)
 
-**3. Start the Deployment**
+### 6. Start the deployment
 
-Provision the infrastructure using the commands below.
+Deploy the infrastructure using the commands below.
 
 ```shell
 az login --scope https://graph.microsoft.com//.default
@@ -171,13 +173,18 @@ azd env set AZURE_RESOURCE_GROUP $SECONDARY_RESOURCE_GROUP
 azd deploy
 ```
 
-### (Optional) Add Users to Azure Active Directory enterprise applications
+### 7. Add users to Azure Active Directory enterprise applications (optional)
 
-The next step is to add a user to the application and assign them a role. To do this, go to Azure Portal --> Azure Active Directory --> Enterprise Applications and search for the Proseware application. Add a user to the application.
+Add a user to the application and assign them a role. You might not need this step :
+
+- your application is for testing or development. You might not need to add users to Azure Active Directory.
+- you're deploying to an environment where Azure AD is already set up and users are already assigned to applications. This step might not be needed.
+
+To do add a user and permissions, go to Azure Portal. Select Azure Active Directory. Select Enterprise Applications and search for the Proseware application you just deployed. Add a user to the application.
 
 ![Proseware Azure Active Directory Enterprise Applications](docs/assets/AAD-Enterprise-Application.png)
 
-### Navigate to Proseware
+### 8. Navigate to Proseware
 
 After adding the user, open the browser and navigate to *Proseware*. Use the following command to get the site name.
 
@@ -187,7 +194,7 @@ azd env get-values --output json | jq -r .frontdoor_url
 
 ![Proseware AAD](docs/assets/proseware.png)
 
-## Teardown
+### 9. Teardown
 
 To tear down the deployment, run the two following commands.
 
