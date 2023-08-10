@@ -58,7 +58,9 @@ If you do not wish to use a Dev Container, please refer to the [prerequisites](p
 
 ## Steps to deploy the reference implementation
 
-The short version (assumes you are already logged into Azure through the Azure CLI and Azure Developer CLI, and that a suitable subscription is selected):
+This section describes the deployment steps for the reference implementation of a reliable web application pattern with Java on Microsoft Azure. There are nine steps, including teardown.
+
+For users familiar with the deployment process, you can use the following list of the deployments commands as a quick reference. The commands assume you have logged into Azure through the Azure CLI and Azure Developer CLI and have selected a suitable subscription:
 
 ```shell
 git clone https://github.com/Azure/reliable-web-app-pattern-java.git
@@ -75,7 +77,7 @@ azd env set AZURE_RESOURCE_GROUP $SECONDARY_RESOURCE_GROUP
 azd deploy
 ```
 
-The following walk-through assumes you are using a Dev Container inside Visual Studio Code and walks you through executing the above sequence.
+The following detailed deployment steps assume you are using a Dev Container inside Visual Studio Code.
 
 ### 1. Clone the repo
 
