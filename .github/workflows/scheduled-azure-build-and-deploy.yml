@@ -41,7 +41,7 @@ on:
   pull_request:
     types: [opened, synchronize, ready_for_review, reopened]
   schedule:
-    - cron: '0 14 * * *'
+    - cron: '0 14 1 * *' # Run at 14:00 on the 1st day of the month
         
 # https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-portal%2Clinux#set-up-azure-login-with-openid-connect-authentication
 permissions:
