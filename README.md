@@ -271,3 +271,4 @@ Use of Microsoft trademarks or logos in modified versions of this project must n
 - [Simulating developer patterns](simulate-patterns.md)
 - [Known issues](known-issues.md)
 - [Contributing](CONTRIBUTING.md)
+- [Proseware failover playbook](plan.md)
