@@ -1,0 +1,39 @@
+volumes:
+  postgres:
+    name: contoso_fiber_postgres_postgres_data
+  pgadmin:
+    name: contoso_fiber_postgres_pgadmin_data
+
+services:
+  postgres:
+    container_name: contoso_fiber_postgres
+    image: postgres:15
+    environment:
+      POSTGRES_DB: contoso_fiber
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      PGDATA: "/data/postgres"
+    volumes:
+        - postgres:/data/postgres
+    ports:
+      - "54321:5432"
+    restart: unless-stopped
+
+  pgadmin:
+    container_name: contoso_fiber_pgadmin
+    image: dpage/pgadmin4:7.8
+    environment:
+        PGADMIN_DEFAULT_EMAIL: admin@contosofiber.com
+        PGADMIN_DEFAULT_PASSWORD: admin
+        PGADMIN_CONFIG_SERVER_MODE: "False"
+        PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    volumes:
+        - pgadmin:/var/lib/pgadmin
+        - ./docker_pgadmin_servers.json:/pgadmin4/servers.json
+    ports:
+      - "5050:80"
+    entrypoint:
+        - "/bin/sh"
+        - "-c"
+        - "/bin/echo 'postgres:5432:*:postgres:${PG_PASSWORD}' > /tmp/pgpassfile && chmod 600 /tmp/pgpassfile && /entrypoint.sh"
+    restart: unless-stopped

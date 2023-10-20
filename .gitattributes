@@ -1,6 +1,16 @@
-*            text=auto
-*.java       text eol=lf
-*.properties text eol=lf
-*.ps1        text eol=crlf
-*.sh         text eol=lf
-*.xml        text eol=lf
+* text=auto eol=lf
+
+# Java specific settings
+*.java       text
+*.properties text
+*.sh         text
+*.xml        text
+*.html       text
+*.css        text
+*.js         text
+*.json       text
+*.yml        text
+*.yaml       text
+
+# Maven wrapper
+mvnw         text

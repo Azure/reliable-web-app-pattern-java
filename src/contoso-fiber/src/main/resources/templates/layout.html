@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layoyt="http://www.ultraq.net.nz/thymelead/layout">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title layout:title-pattern="$LAYOUT_TITLE :: $CONTENT_TITLE">CAMS</title>
+
+    <link th:href=@{/vendor/fontawesome-free/css/all.min.css} rel="stylesheet" type="text/css">
+    <link th:href=@{/css/fonts/nunito.css} rel="stylesheet">
+    <link th:href=@{/css/sb-admin-2.min.css} rel="stylesheet">
+</head>
+
+<body id="page-top">
+    <div id="wrapper">
+        <ul th:replace="~{fragments/sidebar :: sidebar}"></ul>
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content" th:with="message=${message} ?: ''">
+                <div class="content-wrapper" th:replace="~{fragments/topbar :: topbar}"></div>
+                <!-- Message from the backend service -->
+                <div th:if="${message} != ''" class="alert alert-warning alert-dismissible fade show auto-dismiss-alert" role="alert">
+                    <span th:text="${message}">Alert message</span>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <section class="container-fluid" layout:fragment="content"></section>
+            </div>
+            <footer th:replace="~{fragments/footer :: footer}">
+        </div>
+    </div>
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    </div>
+
+    <script th:src=@{/vendor/jquery/jquery.min.js}></script>
+    <script th:src=@{/vendor/bootstrap/js/bootstrap.bundle.min.js}></script>
+    <script th:src=@{/vendor/jquery-easing/jquery.easing.min.js}></script>
+    <script th:src=@{/js/sb-admin-2.min.js}></script>
+    <script th:inline="javascript">
+        $(document).ready(() => {
+          // If there are any auto-dismiss-alerts, then automatically dismiss them after a few seconds.
+          $('.auto-dismiss-alert').each(function() {
+            setTimeout(() => {
+              $(this).fadeTo(2000, 400).slideUp(500, () => {
+                $(this).slideUp(500);
+              });
+            });
+          });
+        });
+    </script>
+    <section class="d-none" layout:fragment="javascript"></section>
+</body>
+</html>

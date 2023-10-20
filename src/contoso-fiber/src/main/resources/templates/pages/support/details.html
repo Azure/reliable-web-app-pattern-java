@@ -1,0 +1,218 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout.html}">
+
+<head>
+    <link th:href=@{/vendor/bootstrap-table/bootstrap-table.min.css} rel="stylesheet" />
+</head>
+
+<body>
+    <section class="container-fluid" layout:fragment="content">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Support Case :: <span th:text="${caseDetails.caseId}">case_id</span></h1>
+        </div>
+
+        <!-- Basic Account Information -->
+        <div class="container border rounded-3">
+            <div class="row py-2">
+                <div class="col-md-6">
+                    <label class="form-label mt-2 mb-0">Account ID</label>
+                    <div class="form-control">
+                        <a th:href=@{~/account/details(id=${caseDetails.accountId})} th:text="${caseDetails.accountId}">account_id</a>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label mt-2 mb-0">Queue / Status</label>
+                    <div class="form-control">
+                        <span th:text="${caseDetails.status}">case_status</span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label mt-2 mb-0">First Name</label>
+                    <div class="form-control">
+                        <span th:text="${caseDetails.customerFirstName}">first_name</span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label mt-2 mb-0">Last Name</label>
+                    <div class="form-control">
+                        <span th:text="${caseDetails.customerLastName}">last_name</span>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <label class="form-label mt-2 mb-0">Address</label>
+                    <div class="form-control">
+                        <span th:text="${caseDetails.address}">address</span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label mt-2 mb-0">City</label>
+                    <div class="form-control">
+                        <span th:text="${caseDetails.city}">city</span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label mt-2 mb-0">Email Address</label>
+                    <div class="form-control">
+                        <span th:text="${caseDetails.customerEmailAddress}">email@address.com</span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label mt-2 mb-0">Phone Number</label>
+                    <div class="form-control">
+                        <span th:text="${caseDetails.customerPhoneNumber}">00 1234 5678</span>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label mt-2 mb-0">Description</label>
+                    <div id="caseDetailsMarkdown" class="border rounded bg-white text-dark p-2">
+                        <pre th:text="${caseDetails.description}">Markdown **description**</pre>
+                    </div>
+                </div>
+            </div>
+            <div class="row my-2" sec:authorize="hasAnyAuthority('APPROLE_L1Support', 'APPROLE_L2Support', 'APPROLE_FieldService')" th:with="SupportCaseQueue=${T(com.contoso.cams.model.SupportCaseQueue)}">
+               <form th:if="${caseDetails.status == SupportCaseQueue.L1} or ${caseDetails.status == SupportCaseQueue.SITE_VISIT}" method="POST" th:action="@{'~/support/' + ${caseDetails.caseId} + '/assign/queue/L2'}">
+                    <input type="hidden" th:field="${caseDetails.caseId}" />
+                    <input type="hidden" name="queue" value="L2" />
+                    <button class="btn btn-primary mx-2" type="submit">
+                        <i class="fas fa-headset"></i> Escalate to L2
+                    </button>
+                </form>
+                <form th:if="${caseDetails.status == SupportCaseQueue.L1} or ${caseDetails.status == SupportCaseQueue.L2}" method="POST" th:action="@{'~/support/' + ${caseDetails.caseId} + '/assign/queue/SITE_VISIT'}">
+                    <input type="hidden" th:field="${caseDetails.caseId}" />
+                    <input type="hidden" name="queue" value="SITE_VISIT" />
+                    <button class="btn btn-primary mx-2" type="submit">
+                        <i class="fas fa-truck-pickup"></i> Site Visit
+                    </button>
+                </form>
+                <div class="flex-grow-1"></div>
+                <form th:unless="${caseDetails.status == SupportCaseQueue.CLOSED or caseDetails.assignee == userInfo.employeeId}" method="POST" th:action="@{'~/support/' + ${caseDetails.caseId} + '/assign/user/me'}">
+                    <input type="hidden" th:field="${caseDetails.caseId}" />
+                    <button class="btn btn-primary mx-2" type="submit">
+                        <i class="fas fa-user"></i> Assign to Me
+                    </button>
+                </form>
+                <form th:unless="${caseDetails.status == SupportCaseQueue.CLOSED}" method="POST" th:action="@{'~/support/' + ${caseDetails.caseId} + '/assign/queue/CLOSED'}">
+                    <input type="hidden" th:field="${caseDetails.caseId}" />
+                    <button class="btn btn-danger mx-2" type="submit">
+                        <i class="fas fa-times"></i> Close Case
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Call details -->
+        <div class="container">
+            <h3>Activity Log</h3>
+            <div id="toolbar" sec:authorize="hasAnyAuthority('APPROLE_L1Support', 'APPROLE_L2Support', 'APPROLE_FieldService')">
+                <button id="addActivityButton" class="btn btn-primary" data-toggle="modal" data-target="#newActivityModal">
+                    <i class="fa fa-plus"></i> Add Activity
+                </button>
+            </div>
+            <table
+                id="activityLogTable"
+                data-toggle="table"
+                data-toolbar="#toolbar"
+                data-pagination="true"
+                data-sortable="true"
+                data-classes="table table-bordered table-hover table-striped"
+                >
+                <thead>
+                    <tr>
+                        <th data-sortable="true">Timestamp</th>
+                        <th data-sortable="true">Employee ID</th>
+                        <th data-sortable="true">Activity Type</th>
+                        <th data-sortable="false">Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="activity : ${caseDetails.activities}">
+                      <td th:text="${activity.timestamp}"></td>
+                      <td th:text="${activity.assignee}"></td>
+                      <td th:text="${activity.activityType}"></td>
+                      <td th:text="${activity.notes}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Modal for adding a note.-->
+        <div class="modal fade" id="newActivityModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="newActivityModal" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <form id="newActivityForm" method="POST" th:action=@{~/support/newactivity}>
+                        <input type="hidden" name="caseId" th:value="${caseDetails.caseId}" />
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5">Add Activity note</h1>
+                            <button type="button" class="close new-activity-cancel" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body row">
+                            <div class="col-4">
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" id="activityTypeRadioHomeVisit" name="activityType" class="custom-control-input" value="HOME_VISIT" />
+                                    <label class="custom-control-label" for="activityTypeRadioHomeVisit"><i class="fas fa-home"></i> Home visit</label>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" id="activityTypeRadioInboundCall" name="activityType" class="custom-control-input" value="INBOUND_CALL" />
+                                    <label class="custom-control-label" for="activityTypeRadioInboundCall"><i class="fas fa-phone"></i> Inbound Call</label>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" id="activityTypeRadioOutboundCall" name="activityType" class="custom-control-input" value="OUTBOUND_CALL" />
+                                    <label class="custom-control-label" for="activityTypeRadioOutboundCall"><i class="fas fa-headset"></i> Outbound Call</label>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" id="activityTypeRadioInboundEmail" name="activityType" class="custom-control-input" value="INBOUND_EMAIL" />
+                                    <label class="custom-control-label" for="activityTypeRadioInboundCall"><i class="fas fa-inbox"></i> Inbound Email</label>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" id="activityTypeRadioOutboundEmail" name="activityType" class="custom-control-input" value="OUTBOUND_EMAIL" />
+                                    <label class="custom-control-label" for="activityTypeRadioOutboundEmail"><i class="fas fa-envelope"></i> Outbound Email</label>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" id="activityTypeRadioNote" name="activityType" class="custom-control-input" value="NOTE" checked/>
+                                <label class="custom-control-label" for="activityTypeRadioNote"><i class="fas fa-comment"></i> Note</label>
+                            </div>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label mt-2 mb-0">Notes</label>
+                                <textarea class="form-control" name="notes" rows="5" placeholder="Enter notes here..."></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary new-activity-cancel" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Add Activity</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="d-none" layout:fragment="javascript">
+        <script th:src=@{/vendor/bootstrap-table/bootstrap-table.min.js}></script>
+        <script th:src=@{/vendor/markdown-it/markdown-it.min.js}></script>
+        <script th:inline="javascript">
+            $(document).ready(() => {
+                var caseDetails = /*[[${caseDetails}]]*/ { "caseId": "1234", "description": "This is a test description" };
+
+                document.getElementById("caseDetailsMarkdown").innerHTML = window.markdownit().render(caseDetails.description);
+
+                // When the close or cancel button is used in the modal, reset the text area and radio buttons.
+                $('button.new-activity-cancel').on('click', (evt) => {
+                    $('#newActivityForm').trigger('reset');
+                });
+            });
+        </script>
+    </section>
+</body>

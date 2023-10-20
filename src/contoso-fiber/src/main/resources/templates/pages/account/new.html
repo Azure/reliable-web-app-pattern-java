@@ -1,0 +1,57 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout.html}">
+<head>
+</head>
+
+<body>
+  <section class="container-fluid" layout:fragment="content">
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 mb-0 text-gray-800">New Account</h1>
+    </div>
+
+    <!-- Basic Account Information -->
+    <div class="container border rounded-3">
+      <form id="accountForm" class="form-group" method="POST" th:action=@{~/accounts/new} th:object="${account}">
+        <div class="row py-2">
+          <div class="col-md-6">
+            <label for="firstName" class="form-label mt-2 mb-0">First Name</label>
+            <input type="text" th:field="*{customerFirstName}" class="form-control"></input>
+          </div>
+          <div class="col-md-6">
+            <label for="lastName" class="form-label mt-2 mb-0">Last Name</label>
+            <input type="text" th:field="*{customerLastName}" class="form-control"></input>
+          </div>
+          <div class="col-md-8">
+            <label for="address" class="form-label mt-2 mb-0">Address</label>
+            <input type="text" th:field="*{address}" class="form-control"></input>
+          </div>
+          <div class="col-md-4">
+            <label for="city" class="form-label mt-2 mb-0">City</label>
+            <input type="text" th:field="*{city}" class="form-control"></input>
+          </div>
+          <div class="col-md-4">
+            <label for="emailAddress" class="form-label mt-2 mb-0">Email Address</label>
+            <input type="email" th:field="*{customerEmail}" class="form-control"></input>
+          </div>
+          <div class="col-md-4">
+            <label for="phoneNumber" class="form-label mt-2 mb-0">Phone Number</label>
+            <input type="tel" th:field="*{customerPhoneNumber}" class="form-control"></input>
+          </div>
+          <div class="col-md-4">
+            <label for="servicePlan" class="form-label mt-2 mb-0">Service Plan</label>
+            <select id="servicePlan" name="servicePlan" class="form-control" th:field=*{selectedServicePlanId}>
+              <option th:each="plan : ${servicePlans}" th:value="${plan.id}" th:text="${plan.description}" th:selected="${account.selectedServicePlanId == plan.id}"></option>
+            </select>
+          </div>
+        </div>
+        <div class="d-flex flex-row mb-2">
+          <button type="submit" class="btn btn-primary mx-2" id="accountFormSubmit">
+            <i class="fas fa-check-circle"></i>
+            Add account
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+</body>
+</html>

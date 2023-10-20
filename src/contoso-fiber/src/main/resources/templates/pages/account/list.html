@@ -1,0 +1,95 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout.html}">
+<head>
+    <link th:href=@{/vendor/bootstrap-table/bootstrap-table.min.css} rel="stylesheet" />
+</head>
+<body>
+    <section class="container-fluid" layout:fragment="content">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Accounts</h1>
+        </div>
+
+        <div id="toolbar" sec:authorize="hasAuthority('APPROLE_AccountManager')">
+            <a id="addAccount" class="btn btn-primary" th:href=@{~/accounts/new}>
+                <i class="fa fa-plus"></i> Add Account
+            </a>
+        </div>
+        <table id="accountTable"
+               data-toggle="table"
+               data-classes="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th th:replace="~{fragments/sorting :: sorting('/accounts/list', 'id','Account ID')}"></th>
+                    <th th:replace="~{fragments/sorting :: sorting('/accounts/list', 'customer.firstName','First Name')}"></th>
+                    <th th:replace="~{fragments/sorting :: sorting('/accounts/list', 'customer.lastName','Last Name')}"></th>
+                    <th th:replace="~{fragments/sorting :: sorting('/accounts/list', 'address','Address')}"></th>
+                    <th th:replace="~{fragments/sorting :: sorting('/accounts/list', 'city','City')}"></th>
+                    <th th:replace="~{fragments/sorting :: sorting('/accounts/list', 'active','Active?')}"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="account : ${accounts}">
+                    <td th:text="${account.id}"></td>
+                    <td th:text="${account.customer.firstName}"></td>
+                    <td th:text="${account.customer.lastName}"></td>
+                    <td th:text="${account.address}"></td>
+                    <td th:text="${account.city}"></td>
+                    <td th:text="${account.active}"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <nav aria-label="Pagination" th:if="${totalPages > 0}">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                    <a th:replace="~{fragments/paging :: paging('/accounts/list', 1, '<<', 'First Page')}"></a>
+                </li>
+                <li class="page-item font-weight-bold" th:classappend="${currentPage == 1} ? 'disabled'">
+                    <a th:replace="~{fragments/paging :: paging('/accounts/list', ${currentPage - 1}, 'Prev', 'Previous Page')}"></a>
+                </li>
+                <li class="page-item disabled" th:if="${currentPage - 2 > 1}">
+                    <a class="page-link" href="#">...</a>
+                </li>
+                <li class="page-item" th:classappend="${page == currentPage} ? 'active'"
+                    th:each="page : ${#numbers.sequence(currentPage > 2 ? currentPage - 2 : 1, currentPage + 2 < totalPages ? currentPage + 2 : totalPages)}">
+                    <a th:replace="~{fragments/paging :: paging('/accounts/list', ${page}, ${page}, 'Page ' + ${page})}"></a>
+                </li>
+                <li class="page-item disabled" th:if="${currentPage + 2 < totalPages}">
+                    <a class="page-link" href="#">...</a>
+                </li>
+                <li class="page-item font-weight-bold" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                    <a th:replace="~{fragments/paging :: paging('/accounts/list', ${currentPage + 1},'Next', 'Next Page')}"></a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                    <a th:replace="~{fragments/paging :: paging('/accounts/list', ${totalPages}, '>>', 'Last Page')}"></a>
+                </li>
+            </ul>
+        </nav>
+    </section>
+
+    <section class="d-none" layout:fragment="javascript">
+        <script th:src=@{/vendor/bootstrap-table/bootstrap-table.min.js}></script>
+        <script th:inline="javascript">
+            $(document).ready(() => {
+                var uri = "/accounts/details?id=";
+
+                $('#accountTable').on('click-row.bs.table', rowClicked);
+
+                function rowClicked(evt, row, $el, field) {
+                    console.log("row", row);
+                    console.log("field", field);
+                    evt.preventDefault();
+                    window.location.href = uri + row[0];
+                }
+            })
+
+            function activeFormatter(value, row) {
+                var icon = value ? 'fa-check' : 'fa-times';
+                var color = value ? '#404040' : 'red';
+                return `<span style="color: ${color}"><i class="fas ${icon}"></i></span>`;
+            }
+        </script>
+    </section>
+</body>
+</html>
+

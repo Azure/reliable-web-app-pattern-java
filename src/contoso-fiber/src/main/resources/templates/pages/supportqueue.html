@@ -1,0 +1,18 @@
+<main xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout.html}">
+    <section class="container-fluid" layout:fragment="content">
+
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Support Queue :: <span th:text="${supportQueueName}">Unspecified</span>
+            </h1>
+        </div>
+
+        <!-- Content Row -->
+        <div class="row">
+            <div class="col-xl-12">
+                <p>execInfo.templateName: <span th:text="${#execInfo.templateName}">${#execInfo.templateName}</span></p>
+                <p>execInfo.templateMode: <span th:text="${#execInfo.templateMode}">${#execInfo.templateMode}</span></p>
+            </div>
+        </div>
+    </section>
+</main>

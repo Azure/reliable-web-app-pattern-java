@@ -1,0 +1,56 @@
+<div class="content-wrapper" th:fragment="menu">
+    <li th:class="${#execInfo.templateNames[0]} == 'pages/dashboard' ? @{nav-item active} : @{nav-item}">
+        <a class="nav-link" th:href=@{~/dashboard}>
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+        </a>
+    </li>
+    <li th:class="${#execInfo.templateNames[0]} == 'pages/accounts' ? @{nav-item active} : @{nav-item}">
+        <a class="nav-link" th:href=@{~/accounts/list}>
+            <i class="fas fa-fw fa-users"></i>
+            <span>Accounts</span>
+        </a>
+    </li>
+
+    <div sec:authorize="hasAnyAuthority('APPROLE_L1Support', 'APPROLE_L2Support', 'APPROLE_FieldService')">
+        <hr class="sidebar-divider">
+        <div class="sidebar-heading">
+            Support Queues
+        </div>
+        <li th:class="${#execInfo.templateNames[0]} == 'pages/support/queue' ? @{nav-item active} : @{nav-item}">
+            <a class="nav-link" th:href=@{~/support/cases/assignedTo/me}>
+                <i class="fas fa-fw fa-user"></i>
+                <span>My Cases</span>
+            </a>
+        </li>
+        <li th:class="${#execInfo.templateNames[0]} == 'pages/support/queue' ? @{nav-item active} : @{nav-item}">
+            <a class="nav-link" th:href=@{~/support/cases}>
+                <i class="fas fa-fw fa-user"></i>
+                <span>All Cases</span>
+            </a>
+        </li>
+        <li th:class="${#execInfo.templateNames[0]} == 'pages/support/queue' ? @{nav-item active} : @{nav-item}">
+            <a class="nav-link" th:href=@{~/support/cases(queue='L2')}>
+                <i class="fas fa-fw fa-phone"></i>
+                <span>Level 2</span>
+            </a>
+        </li>
+        <li th:class="${#execInfo.templateNames[0]} == 'pages/support/queue' ? @{nav-item active} : @{nav-item}">
+            <a class="nav-link" th:href=@{~/support/cases(queue='SITE_VISIT')}>
+                <i class="fas fa-fw fa-car"></i>
+                <span>Field Service</span>
+            </a>
+        </li>
+    </div>
+
+    <hr class="sidebar-divider">
+    <div class="sidebar-heading">
+        Business Operations
+    </div>
+    <li th:class="${#execInfo.templateNames[0] == 'pages/plans/list'} ? @{nav-item active} : @{nav-item}">
+        <a class="nav-link" th:href=@{~/plans/list}>
+            <i class="fas fa-fw fa-shapes"></i>
+            <span>Service Plans</span>
+        </a>
+    </li>
+</div>

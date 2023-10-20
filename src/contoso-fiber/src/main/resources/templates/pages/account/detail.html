@@ -1,0 +1,215 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout.html}">
+
+<head>
+  <link th:href=@{/vendor/bootstrap-table/bootstrap-table.min.css} rel="stylesheet" />
+</head>
+
+<body>
+  <section class="container-fluid" layout:fragment="content">
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 mb-0 text-gray-800">Account :: <span th:text="${account.accountId}">id</span></h1>
+    </div>
+
+    <!-- Basic Account Information -->
+    <div class="container border rounded-3" th:fragment="account-form">
+      <form id="accountForm" th:method="POST" th:action=@{~/accounts/update} th:object="${account}">
+        <input type="hidden" th:field="*{accountId}" />
+        <input type="hidden" th:field="*{active}" />
+        <input type="hidden" th:field="*{customerId}" />
+        <div class="row py-2">
+          <div class="col-md-6">
+            <label for="firstName" class="form-label mt-2 mb-0">First Name</label>
+            <input type="text" class="form-control" readonly th:field="*{customerFirstName}"></input>
+          </div>
+          <div class="col-md-6">
+            <label for="lastName" class="form-label mt-2 mb-0">Last Name</label>
+            <input type="text" class="form-control" readonly th:field="*{customerLastName}"></input>
+          </div>
+          <div class="col-md-8">
+            <label for="address" class="form-label mt-2 mb-0">Address</label>
+            <input type="text" class="form-control" readonly th:field="*{address}"></input>
+          </div>
+          <div class="col-md-4">
+            <label for="city" class="form-label mt-2 mb-0">City</label>
+            <input type="text" class="form-control" readonly th:field="*{city}"></input>
+          </div>
+          <div class="col-md-4">
+            <label for="emailAddress" class="form-label mt-2 mb-0">Email Address</label>
+            <input type="email" class="form-control" th:field="*{customerEmail}"></input>
+          </div>
+          <div class="col-md-4">
+            <label for="phoneNumber" class="form-label mt-2 mb-0">Phone Number</label>
+            <input type="tel" class="form-control" th:field="*{customerPhoneNumber}"></input>
+          </div>
+          <div class="col-md-4">
+            <label for="servicePlan" class="form-label mt-2 mb-0">Service Plan</label>
+            <select id="servicePlan" name="servicePlan" class="form-control" th:field=*{selectedServicePlanId}>
+              <option th:each="plan : ${servicePlans}" th:value="${plan.id}" th:text="${plan.description}" th:selected="${account.selectedServicePlanId == plan.id}"></option>
+            </select>
+          </div>
+        </div>
+        <div class="d-flex flex-row mb-2">
+          <button type="submit" class="btn btn-primary mx-2" id="accountFormSubmit" style="display: none;" disabled>
+            <i class="fas fa-check-circle"></i>
+            Save changes
+          </button>
+          <button type="reset" class="btn btn-secondary mx-2" id="accountFormReset" style="display: none;">
+            <i class="fas fa-times"></i>
+            Cancel changes
+          </button>
+          <div class="flex-grow-1"></div>
+          <div sec:authorize="hasAuthority('APPROLE_AccountManager')">
+            <button th:if="${account.active}" type="button" class="btn btn-danger" data-toggle="modal" data-target="#stopServiceModal">
+                <i class="fas fa-stop"></i> Stop service
+            </button>
+            <button th:unless="${account.active}" type="button" class="btn btn-success" data-toggle="modal" data-target="#startServiceModal">
+                <i class="fas fa-play"></i> Restart service
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="container p-1 mt-2">
+      <div class="d-flex flex-row mb-2">
+        <div class="table-title">
+          <h3 class="text-gray-800">Support Cases</h3>
+        </div>
+        <div class="flex-grow-1"></div>
+        <div sec:authorize="hasAnyAuthority('APPROLE_L1Support', 'APPROLE_L2Support', 'APPROLE_FieldService')">
+            <a th:href=@{~/support/new(account-id=${account.accountId})} type="button" class="btn btn-primary mb-1">
+            <i class="fas fa-plus"></i> New Support Case
+            </a>
+        </div>
+      </div>
+
+      <table
+        id="supportCaseTable"
+        data-toggle="table"
+        data-toolbar="#toolbar"
+        data-pagination="true"
+        data-sortable="true"
+        data-classes="table table-bordered table-hover table-striped">
+        <thead>
+          <tr>
+            <th data-sortable="true">Case ID</th>
+            <th data-sortable="true">Created At</th>
+            <th data-sortable="false">Description</th>
+            <th data-sortable="true">Status</th>
+        </tr>
+        </thead>
+        <tbody>
+          <tr th:each="case : ${account.supportCases}">
+            <td th:text="${case.supportCaseId}"></td>
+            <td th:text="${case.creationDate}"></td>
+            <td th:text="${case.description}"></td>
+            <td th:text="${case.queue}"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="modal fade" id="stopServiceModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="stopServiceModal" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5">Stop service?</h1>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure the customer wants to stop service? Ask them!</p>
+          </div>
+          <div class="modal-footer">
+            <form th:method="POST" th:action="@{'~/accounts/' + ${account.accountId} + '/deactivate'}">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+              <button type="submit" class="btn btn-success">Yes</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="modal fade" id="startServiceModal" tabindex="-1" role="dialog" data-backdrop="static"
+      data-keyboard="false" aria-labelledby="startServiceModal" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5">Restart service?</h1>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure the customer wants to restart service? Ask them!</p>
+          </div>
+          <div class="modal-footer">
+            <form th:method="POST" th:action="@{'~/accounts/' + ${account.accountId} + '/activate'}">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+              <button type="submit" class="btn btn-success">Yes</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="d-none" layout:fragment="javascript">
+    <script th:src=@{/vendor/bootstrap-table/bootstrap-table.min.js}></script>
+    <script th:inline="javascript">
+      function dateCellFormatter(value, row, index, field) {
+        return new Date(value).toLocaleString();
+      }
+
+      $(document).ready(() => {
+        // The save button for the account form only appears when there have been changes.
+        var accountFormChangedFields = new Set();
+        $('#accountForm').on('change keyup paste', ':input', (evt) => {
+          if (evt.target.value !== evt.target.defaultValue) {
+            accountFormChangedFields.add(evt.target.name);
+          } else if (accountFormChangedFields.has(evt.target.name)) {
+            accountFormChangedFields.delete(evt.target.name);
+          }
+          if (accountFormChangedFields.size > 0) {
+            $('#accountFormSubmit').show();
+            $('#accountFormReset').show();
+            $('#accountFormSubmit').prop('disabled', false);
+          } else {
+            $('#accountFormSubmit').hide();
+            $('#accountFormReset').hide();
+            $('#accountFormSubmit').prop('disabled', true);
+          }
+        });
+
+        // When you click on reset, the change event is fired for all fields, but the changed values remain in the target
+        // As a result, we handle reset differently from the basic field change event.
+        $('#accountFormReset').on('click', (evt) => {
+          accountFormChangedFields.clear();
+          $('#accountFormSubmit').hide();
+          $('#accountFormReset').hide();
+          $('#accountFormSubmit').prop('disabled', true);
+        });
+
+        // Rows in Support Cases are clickable through to the details page
+        var uri = /*[[@{~/support/details}]]*/ "/support/details";
+        $('#supportCaseTable').on('click-row.bs.table', (evt, row, $el, field) => {
+          evt.preventDefault();
+          window.location.href = uri + "?id=" + row[0];
+        });
+
+        // Handle toggle "showClosedCases" switch
+        $('#showClosedCases').on('change', (evt) => {
+          $('#supportCaseTable').bootstrapTable('refreshOptions', {
+            url: $('#supportCaseTable').data('url') + '?showClosedCases=' + evt.target.checked
+          });
+          $('#supportCaseTable').bootstrapTable('refresh');
+        });
+      });
+    </script>
+  </section>
+</body>
+
+</html>

@@ -1,0 +1,103 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout.html}">
+
+<head>
+  <link rel="stylesheet" th:href=@{/vendor/easymde/easymde.min.css}/>
+</head>
+
+<body>
+  <section class="container-fluid" layout:fragment="content">
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 mb-0 text-gray-800">Service Plan :: <span th:text="${servicePlan.name}">plan_name</span></h1>
+    </div>
+
+    <!-- Basic Service Plan Information -->
+    <div class="container border rounded-3" th:fragment="serviceplan-form">
+      <form id="servicePlanForm" method="POST" th:action=@{~/plans/update} th:object="${servicePlan}">
+        <input type="hidden" name="id" th:value="*{id}"/>
+        <input type="hidden" name="name" th:value="*{name}"/>
+        <div class="row py-2">
+          <div class="col-md-6">
+            <label for="installationPrice" class="form-label mt-2 mb-0">Installation Price (pennies)</label>
+            <input type="number" class="form-control" min="100" name="installationPrice" th:value="*{installationPrice}"></input>
+          </div>
+          <div class="col-md-6">
+            <label for="monthlyPrice" class="form-label mt-2 mb-0">Monthly Price (pennies)</label>
+            <input type="number" class="form-control" min="100" name="monthlyPrice" th:value="*{monthlyPrice}"></input>
+          </div>
+          <div class="col-md-12">
+            <label for="service-plan-content-editor" class="form-label mt-2 mb-0">Description</label>
+            <textarea id="service-plan-content-editor" name="description" data-provide="markdown" rows="10" th:text="*{description}"></textarea>
+        </div>
+        </div>
+        <div class="d-flex flex-row mb-2">
+          <!-- TODO: make button appear if text is different
+          <button type="submit" class="btn btn-primary mx-2" id="planFormSubmit" style="display: none;" disabled>-->
+          <button type="submit" class="btn btn-primary mx-2" id="planFormSubmit">
+            <i class="fas fa-check-circle"></i>
+            Save changes
+          </button>
+          <!--TODO: <button type="reset" class="btn btn-secondary mx-2" id="planFormReset" style="display: none;">
+            <i class="fas fa-times"></i>
+            Cancel changes
+          </button>-->
+          <div class="flex-grow-1"></div>
+          <!-- Additional buttons here -->
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <section class="d-none" layout:fragment="javascript">
+    <script th:src=@{/vendor/easymde/easymde.min.js}></script>
+    <script th:inline="javascript">
+      $(document).ready(() => {
+        var servicePlanId = /*[[${servicePlan.id}]]*/ "1234";
+
+        // The save button for the account form only appears when there have been changes.
+        var formChangedFields = new Set();
+        $('#servicePlanForm input,#servicePlanForm textarea').on('change keyup paste', (evt) => {
+          if (evt.target.value !== evt.target.defaultValue) {
+            formChangedFields.add(evt.target.name);
+          } else if (formChangedFields.has(evt.target.name)) {
+            formChangedFields.delete(evt.target.name);
+          }
+          if (formChangedFields.size > 0) {
+            $('#planFormSubmit').show();
+            $('#planFormReset').show();
+            $('#planFormSubmit').prop('disabled', false);
+          } else {
+            $('#planFormSubmit').hide();
+            $('#planFormReset').hide();
+            $('#planFormSubmit').prop('disabled', true);
+          }
+        });
+
+        // When you click on reset, the change event is fired for all fields, but the changed values remain in the target
+        // As a result, we handle reset differently from the basic field change event.
+        $('#planFormReset').on('click', (evt) => {
+          formChangedFields.clear();
+          $('#planFormSubmit').hide();
+          $('#planFormReset').hide();
+          $('#planFormSubmit').prop('disabled', true);
+        });
+
+        const editor = new EasyMDE({
+          autofocus: false,
+          autosave: {
+            enabled: true,
+            uniqueId: `update-service-plan-${servicePlanId}`
+          },
+          element: document.getElementById('service-plan-content-editor'),
+          forceSync: true,
+          hideIcons: [
+            'image',
+            'upload-image'
+          ]
+        });
+      });
+    </script>
+  </section>
+</body>
+
+</html>

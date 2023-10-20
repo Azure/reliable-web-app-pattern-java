@@ -1,0 +1,66 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout.html}">
+<head>
+    <link th:href=@{/vendor/bootstrap-table/bootstrap-table.min.css} rel="stylesheet" /> 
+</head>
+<body>
+    <section class="container-fluid" layout:fragment="content">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Service Plans</h1>
+        </div>
+    
+        <!--<div id="toolbar">
+            <a id="addServicePlan" class="btn btn-primary" th:href=@{~/plans/new}>
+                <i class="fa fa-plus"></i> Add Service Plan
+            </a>
+        </div>-->
+        <table 
+            id="servicePlanTable" 
+            data-toggle="table"
+            data-toolbar="#toolbar" 
+            data-pagination="true"
+            data-sortable="true"
+            data-classes="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th data-field="id" data-sortable="true">ID</th>
+                    <th data-field="name" data-sortable="true">Name</th>
+                    <th data-field="installationPrice" data-sortable="true" data-formatter="priceFormatter">Installation Price</th>
+                    <th data-field="monthlyPrice" data-sortable="true" data-formatter="priceFormatter">Monthly Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="plan : ${servicePlans}">
+                  <td th:text="${plan.id}"></td>
+                  <td th:text="${plan.name}"></td>
+                  <td th:text="${plan.installationPrice}"></td>
+                  <td th:text="${plan.monthlyPrice}"></td>
+                </tr>
+              </tbody>
+        </table>
+    </section>
+
+    <section class="d-none" layout:fragment="javascript">
+        <script th:src=@{/vendor/bootstrap-table/bootstrap-table.min.js}></script>
+        <script th:inline="javascript">
+            $(document).ready(() => {
+                var uri = /*[[@{~/plans/details}]]*/ "/plans/details";
+
+                $('#servicePlanTable').on('click-row.bs.table', rowClicked);
+
+                function rowClicked(evt, row, $el, field) {
+                    evt.preventDefault();
+                    window.location.href = uri + "?id=" + row.id;
+                }
+            });
+
+            function priceFormatter(value, row) {
+                let fValue = value / 100;
+                return "$" + fValue.toFixed(2);
+            }
+        </script>
+    </section>
+</body>
+</html>
+
+                

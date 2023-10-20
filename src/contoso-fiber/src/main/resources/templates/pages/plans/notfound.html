@@ -1,0 +1,20 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout.html}">
+<head>
+
+</head>
+<body>
+    <section class="container-fluid" layout:fragment="content">
+        <div class="p-5 mb-4 bg-body-tertiary border rounded-3">
+            <div class="container-fluid py-5">
+              <h1 class="display-5 fw-bold">No such service plan</h1>
+              <p class="col-md-8 fs-4">The service plan ID you entered does not exist.  Use the Service Plans page to find details of a service plan.</p>
+              <a th:href=@{~/plans/list}>
+                <button class="btn btn-primary btn-lg" type="button">
+                  <i class="fas fa-shapes"></i> Service Plans
+                </button>
+              </a>
+            </div>
+          </div>
+    </section>
+</body>
+</html>

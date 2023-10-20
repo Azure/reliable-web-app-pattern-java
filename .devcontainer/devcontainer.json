@@ -1,0 +1,46 @@
+{
+	"name": "web-app-pattern-java",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"args": {
+			"VARIANT": "jammy"
+		}
+	},
+	"remoteUser": "vscode",
+	"containerEnv": {
+		"M2": "/home/vscode" // required because the java feature is not setting this correctly
+	},
+	"features": {
+		// https://containers.dev/features
+		"docker-from-docker": "latest",
+		"ghcr.io/devcontainers/features/azure-cli:1": {
+			"version": "latest"
+		},
+		"ghcr.io/devcontainers/features/java:1": {
+			"version": "17",
+			"installMaven": "true",
+			"installGradle": "false"
+		},
+		"ghcr.io/devcontainers/features/github-cli:1": {},
+		"ghcr.io/devcontainers/features/terraform:1": {},
+		"ghcr.io/azure/azure-dev/azd:latest": {}
+	},
+	//"forwardPorts": [ ],
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				// Extension Pack for Java; includes language support, debugging, maven.
+				"vscjava.vscode-java-pack",
+				// Spring Boot Extension Pack
+				"vmware.vscode-boot-dev-pack",
+				// YAML language support
+				"redhat.vscode-yaml",
+				// Terraform
+				"ms-azuretools.vscode-azureterraform"
+			]
+		}
+	},
+	"hostRequirements": {
+		"cpus": 2
+	}
+}

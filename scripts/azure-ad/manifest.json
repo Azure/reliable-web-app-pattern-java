@@ -1,0 +1,47 @@
+[
+    {
+        "allowedMemberTypes": [
+            "User"
+        ],
+        "description": "Account Managers",
+        "displayName": "Account Manager",
+        "isEnabled": "true",
+        "value": "AccountManager"
+    },
+    {
+        "allowedMemberTypes": [
+            "User"
+        ],
+        "description": "L1 Support representative",
+        "displayName": "L1 Support",
+        "isEnabled": "true",
+        "value": "L1Support"
+    },
+    {
+        "allowedMemberTypes": [
+            "User"
+        ],
+        "description": "L2 Support representative",
+        "displayName": "L2 Support",
+        "isEnabled": "true",
+        "value": "L2Support"
+    },
+    {
+        "allowedMemberTypes": [
+            "User"
+        ],
+        "description": "Field Service engineer",
+        "displayName": "Field Service",
+        "isEnabled": "true",
+        "value": "FieldService"
+    },
+    {
+        "allowedMemberTypes": [
+            "User"
+        ],
+        "description": "Business owner",
+        "displayName": "Business Owner",
+        "isEnabled": "true",
+        "value": "BusinessOwner"
+    }
+]
