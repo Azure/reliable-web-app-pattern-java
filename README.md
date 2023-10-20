@@ -4,6 +4,10 @@
 
 Local development is supported on Windows, Linux, and macOS. Please follow the instructions in the [development.md](./development.md) file to get started.
 
+## Deploy Azure Infrastructure
+
+Please follow the instructions in the [azure-deploy.md](./azure-deploy.md) file to deploy the Azure infrastructure.
+
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
