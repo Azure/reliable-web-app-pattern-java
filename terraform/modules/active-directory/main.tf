@@ -107,7 +107,7 @@ resource "azuread_application_password" "application_password" {
 # This is not guidance and is done for demo purposes. The resource below will add the 
 # "L1Support" app role assignment for the application of the current user deploying this sample.
 resource "azuread_app_role_assignment" "application_role_current_user" {
-  app_role_id         = azuread_service_principal.application_service_principal.app_role_ids["L1Support"]
+  app_role_id         = azuread_service_principal.application_service_principal.app_role_ids["AccountManager"]
   principal_object_id = data.azuread_client_config.current.object_id
   resource_object_id  = azuread_service_principal.application_service_principal.object_id
 }

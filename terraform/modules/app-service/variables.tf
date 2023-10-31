@@ -44,12 +44,16 @@ variable "log_analytics_workspace_id" {
   description = "The id of the log analytics workspace"
 }
 
-variable "contoso_client_id" {
-  type = string
-  description = "Azure AD App Registration: clientId"
-}
+variable "contoso_webapp_options" {
+  type = object({
+    contoso_active_directory_tenant_id      = string
+    contoso_active_directory_client_id      = string
+    contoso_active_directory_client_secret  = string
 
-variable "contoso_tenant_id" {
-  type = string
-  description = "Azure AD App Registration: tenantId"
+    postgresql_database_url       = string
+    postgresql_database_user      = string
+    postgresql_database_password  = string
+  })
+
+  description = "The options for the webapp"
 }

@@ -53,7 +53,6 @@ public class AccountController {
             model.addAttribute("keyword", keyword);
         }
 
-        //Page<Account> accounts = (keyword == null) ? accountRepository.findAll(pageable) : accountRepository.findByKeyword(keyword, pageable);
         Page<Account> accounts = accountService.findAll(pageable);
         model.addAttribute("accounts", accounts.getContent());
         model.addAttribute("currentPage", accounts.getNumber() + 1);

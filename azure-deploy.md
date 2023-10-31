@@ -16,6 +16,7 @@ Before deploying, you must be authenticated to Azure and have the appropriate su
 
 ```shell
 az login --scope https://graph.microsoft.com//.default
+
 azd auth login
 ```
 
@@ -28,9 +29,11 @@ az account list
 To set the active subscription:
 
 ```shell
-export AZURE_SUBSCRIPTION="<your-subscription-id>"
-az account set --subscription $AZURE_SUBSCRIPTION
-azd config set defaults.subscription $AZURE_SUBSCRIPTION
+export AZURE_SUBSCRIPTION_ID="<your-subscription-id>"
+
+az account set --subscription $AZURE_SUBSCRIPTION_ID
+
+azd config set defaults.subscription $AZURE_SUBSCRIPTION_ID
 ```
 
 ### 2. Create a new environment
@@ -41,7 +44,9 @@ Run the following commands to set these values and create a new environment:
 
 ```shell
 azd config set alpha.terraform on
+
 azd env new eap-javarwa
+
 azd env set DATABASE_PASSWORD "AV@lidPa33word"
 ```
 
@@ -85,13 +90,31 @@ azd env set AZURE_LOCATION2 eastus
 
 ### 6. Provision infrastructure
 
-Run the following command to create the infrastructure:
+Run the following command to create the infrastructure and deploy the app:
 
 ```shell
-azd provision --no-prompt
+azd up
 ```
 
-### 7. Tear down infrastructure
+If you are doing a multi-region deployment, you must also deploy the code to the secondary region:
+
+```shell
+SECONDARY_RESOURCE_GROUP=$(azd env get-values --output json | jq -r .secondary_resource_group)
+
+azd env set AZURE_RESOURCE_GROUP $SECONDARY_RESOURCE_GROUP
+
+azd deploy
+```
+
+### 7. Open and use the application
+
+Use the following to find the URL for the Contoso Fiber App that you have deployed:
+
+```shell
+azd env get-values --output json | jq -r .frontdoor_url
+```
+
+### 8. Tear down infrastructure
 
 Run the following command to tear down the infrastructure:
 

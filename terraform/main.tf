@@ -16,7 +16,7 @@ locals {
   environment = var.environment == "" ? "dev" : var.environment
   telemetryId = "92141f6a-c03e-4141-bc1c-2113e4772c8d-${var.location}"
 
-  // Use GZRS storage if deploying in multi-region
+  // If a location2 is set up, then the deployment is multi region
   is_multi_region          = length(var.location2) > 0
 
   // Network cidrs for primary region
@@ -31,14 +31,14 @@ locals {
   secondary_postgresql_subnet_cidr = ["10.1.2.0/27"]
   secondary_private_endpoint_subnet_cidr = ["10.1.3.0/27"]
 
-  // Read Replicas are currently supported for the General Purpose and Memory Optimized server compute tiers, 
+  // Read Replicas are currently supported for the General Purpose and Memory Optimized server compute tiers,
   // Burstable server compute tier is not supported. (https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-read-replicas)
   // The SKU therefore needs to be General Purpose for multi region deployments
   postgresql_sku_name = var.environment == "prod" || length(var.location2) > 0 ? "GP_Standard_D4s_v3" : "B_Standard_B1ms"
 
   contoso_client_id     = var.principal_type == "User" ?  module.ad[0].application_registration_id : var.contoso_client_id
-  contoso_tenant_id     = var.principal_type == "User" ?  data.azuread_client_config.current.tenant_id : var.contoso_tenant_id 
-} 
+  contoso_tenant_id     = var.principal_type == "User" ?  data.azuread_client_config.current.tenant_id : var.contoso_tenant_id
+}
 
 data "azuread_client_config" "current" {}
 
@@ -118,68 +118,6 @@ module "key-vault" {
   azure_ad_tenant_id = data.azuread_client_config.current.tenant_id
 }
 
-# For demo purposes, allow current user access to the key vault
-# Note: when running as a service principal, this is also needed
-resource azurerm_role_assignment kv_administrator_user_role_assignement {
-  scope                 = module.key-vault.vault_id
-  role_definition_name  = "Key Vault Administrator"
-  principal_id          = data.azuread_client_config.current.object_id
-}
-
-resource "azurerm_key_vault_secret" "contoso_database_admin" {
-  name         = "contoso-database-admin"
-  value        = module.postresql_database.database_username
-  key_vault_id = module.key-vault.vault_id
-  depends_on = [ 
-    azurerm_role_assignment.kv_administrator_user_role_assignement
-  ]
-}
-
-resource "azurerm_key_vault_secret" "contoso_database_admin_password" {
-  name         = "contoso-database-admin-password"
-  value        = var.database_administrator_password
-  key_vault_id = module.key-vault.vault_id
-  depends_on = [ 
-    azurerm_role_assignment.kv_administrator_user_role_assignement
-  ]
-}
-
-resource "azurerm_key_vault_secret" "contoso_application_client_secret" {
-  name         = "contoso-application-client-secret"
-  value        = var.principal_type == "User" ? module.ad[0].application_client_secret : var.contoso_client_secret
-  key_vault_id = module.key-vault.vault_id
-  depends_on = [ 
-    azurerm_role_assignment.kv_administrator_user_role_assignement
-  ]
-}
-
-resource "azurerm_key_vault_secret" "contoso_cache_secret" {
-  name         = "contoso-redis-password"
-  value        = module.cache.cache_secret
-  key_vault_id = module.key-vault.vault_id
-  depends_on = [ 
-    azurerm_role_assignment.kv_administrator_user_role_assignement
-  ]
-}
-
-# Give the app access to the key vault secrets - https://learn.microsoft.com/azure/key-vault/general/rbac-guide?tabs=azure-cli#secret-scope-role-assignment
-resource azurerm_role_assignment app_database_admin_rbac_assignment {
-  scope                 = module.key-vault.vault_id
-  role_definition_name  = "Key Vault Secrets User"
-  principal_id          = module.application.application_principal_id
-}
-
-# The application needs Key Vault Reader role in order to read the key vault meta data
-resource azurerm_role_assignment app_key_vault_reader_rbac_assignment {
-  scope                 = module.key-vault.vault_id
-  role_definition_name  = "Key Vault Reader"
-  principal_id          = module.application.application_principal_id
-
-  depends_on = [
-    azurerm_role_assignment.kv_administrator_user_role_assignement
-  ]
-}
-
 module "cache" {
   source                      = "./modules/cache"
   resource_group              = azurerm_resource_group.main.name
@@ -197,12 +135,20 @@ module "application" {
   environment        = local.environment
   location           = var.location
   subnet_id          = module.network.app_subnet_id
-  
+
   app_insights_connection_string = module.app_insights.connection_string
   log_analytics_workspace_id     = module.app_insights.log_analytics_workspace_id
 
-  contoso_client_id     = local.contoso_client_id
-  contoso_tenant_id     = local.contoso_tenant_id
+  contoso_webapp_options = {
+    contoso_active_directory_tenant_id = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.contoso_application_tenant_id.id})"
+    contoso_active_directory_client_id = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.contoso_application_client_id.id})"
+    contoso_active_directory_client_secret = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.contoso_application_client_secret.id})"
+
+    postgresql_database_url = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.contoso_database_url.id})"
+    postgresql_database_user = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.contoso_database_admin.id})"
+    postgresql_database_password = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.contoso_database_admin_password.id})"
+  }
+
   frontdoor_host_name     = module.frontdoor.host_name
   frontdoor_profile_uuid  = module.frontdoor.resource_guid
 }
@@ -210,7 +156,7 @@ module "application" {
 # Demo purposes only: assign current user as admin to the created DB
 resource "azurerm_postgresql_flexible_server_active_directory_administrator" "contoso-ad-admin" {
   count               = var.principal_type == "User" ? 1 : 0
-  server_name         = module.postresql_database.database_server_name
+  server_name         = module.postresql_database.database_name
   resource_group_name = azurerm_resource_group.main_db.name
   tenant_id           = data.azuread_client_config.current.tenant_id
   object_id           = data.azuread_client_config.current.object_id
@@ -223,7 +169,7 @@ resource "azurerm_resource_group_template_deployment" "deploymenttelemetry" {
   name                = local.telemetryId
   resource_group_name = azurerm_resource_group.main.name
   deployment_mode     = "Incremental"
-  
+
   template_content = <<TEMPLATE
   {
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
@@ -250,7 +196,7 @@ locals {
 resource "null_resource" "setup-application-uri" {
   count   = var.principal_type == "User" ? 1 : 0
   depends_on = [
-    module.application
+    module.ad
   ]
 
   provisioner "local-exec" {
@@ -481,132 +427,16 @@ module "application2" {
   app_insights_connection_string = module.app_insights.connection_string
   log_analytics_workspace_id     = module.app_insights.log_analytics_workspace_id
 
-  contoso_client_id     = local.contoso_client_id
-  contoso_tenant_id     = local.contoso_tenant_id
+  contoso_webapp_options = {
+    contoso_active_directory_tenant_id = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.contoso_application_tenant_id.id})"
+    contoso_active_directory_client_id = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.contoso_application_client_id2[0].id})"
+    contoso_active_directory_client_secret = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.contoso_application_client_secret2[0].id})"
+
+    postgresql_database_url = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.contoso_database_url2[0].id})"
+    postgresql_database_user = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.contoso_database_admin2[0].id})"
+    postgresql_database_password = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.contoso_database_admin_password2[0].id})"
+  }
+
   frontdoor_host_name = module.frontdoor.host_name
   frontdoor_profile_uuid  = module.frontdoor.resource_guid
-}
-
-# For demo purposes, allow current user access to the key vault
-resource azurerm_role_assignment kv_contributor_user_role_assignement2 {
-  count                 = local.is_multi_region ? 1 : 0
-  scope                 = module.key-vault2[0].vault_id
-  role_definition_name  = "Key Vault Contributor"
-  principal_id          = data.azuread_client_config.current.object_id
-}
-resource azurerm_role_assignment kv_administrator_user_role_assignement2 {
-  count                 = local.is_multi_region ? 1 : 0
-  scope                 = module.key-vault2[0].vault_id
-  role_definition_name  = "Key Vault Administrator"
-  principal_id          = data.azuread_client_config.current.object_id
-}
-
-resource "azurerm_key_vault_secret" "contoso_database_admin2" {
-  count        = local.is_multi_region ? 1 : 0
-  name         = "contoso-database-admin"
-  value        = module.postresql_database2[0].database_username
-  key_vault_id = module.key-vault2[0].vault_id
-
-  depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement2,
-    azurerm_role_assignment.kv_administrator_user_role_assignement2
-  ]
-}
-
-resource "azurerm_key_vault_secret" "contoso_database_admin_password2" {
-  count        = local.is_multi_region ? 1 : 0
-  name         = "contoso-database-admin-password"
-  value        = var.database_administrator_password
-  key_vault_id = module.key-vault2[0].vault_id
-
-  depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement2,
-    azurerm_role_assignment.kv_administrator_user_role_assignement2
-  ]
-}
-
-resource "azurerm_key_vault_secret" "contoso_application_client_secret2" {
-  count        = local.is_multi_region ? 1 : 0
-  name         = "contoso-application-client-secret"
-  value        = module.ad[0].application_client_secret
-  key_vault_id = module.key-vault2[0].vault_id
-
-  depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement2,
-    azurerm_role_assignment.kv_administrator_user_role_assignement2
-  ]
-}
-
-resource "azurerm_key_vault_secret" "contoso_cache_secret2" {
-  count        = local.is_multi_region ? 1 : 0
-  name         = "contoso-redis-password"
-  value        = module.cache2[0].cache_secret
-  key_vault_id = module.key-vault2[0].vault_id
-
-  depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement2,
-    azurerm_role_assignment.kv_administrator_user_role_assignement2
-  ]
-}
-
-# Give the app access to the key vault secrets - https://learn.microsoft.com/azure/key-vault/general/rbac-guide?tabs=azure-cli#secret-scope-role-assignment
-resource azurerm_role_assignment app_database_admin_rbac_assignment2 {
-  count                 = local.is_multi_region ? 1 : 0
-  scope                 = "${module.key-vault2[0].vault_id}/secrets/${azurerm_key_vault_secret.contoso_database_admin.name}"
-  role_definition_name  = "Key Vault Secrets User"
-  principal_id          = module.application2[0].application_principal_id
-
-   depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement2,
-    azurerm_role_assignment.kv_administrator_user_role_assignement2
-  ]
-}
-
-resource azurerm_role_assignment app_database_admin_password_rbac_assignment2 {
-  count                 = local.is_multi_region ? 1 : 0
-  scope                 = "${module.key-vault2[0].vault_id}/secrets/${azurerm_key_vault_secret.contoso_database_admin_password.name}"
-  role_definition_name  = "Key Vault Secrets User"
-  principal_id          = module.application2[0].application_principal_id
-
-   depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement2,
-    azurerm_role_assignment.kv_administrator_user_role_assignement2
-  ]
-}
-
-resource azurerm_role_assignment app_client_secret_rbac_assignment2 {
-  count                 = local.is_multi_region ? 1 : 0
-  scope                 = "${module.key-vault2[0].vault_id}/secrets/${azurerm_key_vault_secret.contoso_application_client_secret.name}"
-  role_definition_name  = "Key Vault Secrets User"
-  principal_id          = module.application2[0].application_principal_id
-
-   depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement2,
-    azurerm_role_assignment.kv_administrator_user_role_assignement2
-  ]
-}
-
-resource azurerm_role_assignment app_redis_password_rbac_assignment2 {
-  count                 = local.is_multi_region ? 1 : 0
-  scope                 = "${module.key-vault2[0].vault_id}/secrets/${azurerm_key_vault_secret.contoso_cache_secret.name}"
-  role_definition_name  = "Key Vault Secrets User"
-  principal_id          = module.application2[0].application_principal_id
-
-   depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement2,
-    azurerm_role_assignment.kv_administrator_user_role_assignement2
-  ]
-}
-
-# The application needs Key Vault Reader role in order to read the key vault meta data
-resource azurerm_role_assignment app_key_vault_reader_rbac_assignment2 {
-  count                 = local.is_multi_region ? 1 : 0
-  scope                 = module.key-vault2[0].vault_id
-  role_definition_name  = "Key Vault Reader"
-  principal_id          = module.application2[0].application_principal_id
-
-  depends_on = [
-    azurerm_role_assignment.kv_contributor_user_role_assignement2,
-    azurerm_role_assignment.kv_administrator_user_role_assignement2
-  ]
 }

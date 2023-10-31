@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.azure.core.annotation.Get;
 import com.contoso.cams.model.SupportCaseQueue;
 import com.contoso.cams.security.UserInfo;
 import com.contoso.cams.security.UserInfoService;
