@@ -64,7 +64,7 @@ resource "azurerm_resource_group" "main" {
 }
 
 module "ad" {
-  source                       = "./modules/active-directory"
+  source                       = "../shared/modules/active-directory"
   count                        = var.principal_type == "User" ? 1 : 0
   application_name             = var.application_name
   environment                  = local.environment
@@ -72,7 +72,7 @@ module "ad" {
 }
 
 module "network" {
-  source                       = "./modules/network"
+  source                       = "../shared/modules/network"
   resource_group               = azurerm_resource_group.main.name
   application_name             = var.application_name
   location                     = var.location
@@ -84,7 +84,7 @@ module "network" {
 }
 
 module "app_insights" {
-  source = "./modules/app-insights"
+  source = "../shared/modules/app-insights"
   resource_group     = azurerm_resource_group.main.name
   application_name   = var.application_name
   environment        = local.environment
@@ -97,7 +97,7 @@ resource "azurerm_postgresql_flexible_server_database" "postresql_database" {
 }
 
 module "key-vault" {
-  source           = "./modules/key-vault"
+  source           = "../shared/modules/key-vault"
   resource_group   = azurerm_resource_group.main.name
   application_name = var.application_name
   environment      = local.environment
@@ -119,7 +119,7 @@ module "key-vault" {
 }
 
 module "cache" {
-  source                      = "./modules/cache"
+  source                      = "../shared/modules/cache"
   resource_group              = azurerm_resource_group.main.name
   environment                 = local.environment
   location                    = var.location
@@ -129,7 +129,7 @@ module "cache" {
 }
 
 module "application" {
-  source             = "./modules/app-service"
+  source             = "../shared/modules/app-service"
   resource_group     = azurerm_resource_group.main.name
   application_name   = var.application_name
   environment        = local.environment
@@ -230,7 +230,7 @@ resource "azurerm_resource_group" "main_db" {
 }
 
 module "postresql_database" {
-  source                      = "./modules/postresql"
+  source                      = "../shared/modules/postresql"
   azure_ad_tenant_id          = data.azuread_client_config.current.tenant_id
   resource_group              = azurerm_resource_group.main_db.name
   application_name            = var.application_name
@@ -245,7 +245,7 @@ module "postresql_database" {
 
 module "postresql_database2" {
   count                       = local.is_multi_region ? 1 : 0
-  source                      = "./modules/postresql"
+  source                      = "../shared/modules/postresql"
   azure_ad_tenant_id          = data.azuread_client_config.current.tenant_id
   resource_group              = azurerm_resource_group.main_db.name
   application_name            = var.application_name
@@ -292,7 +292,7 @@ resource "azurerm_resource_group" "main_fd" {
 }
 
 module "frontdoor" {
-  source           = "./modules/frontdoor"
+  source           = "../shared/modules/frontdoor"
   resource_group   = azurerm_resource_group.main_fd.name
   application_name = var.application_name
   environment      = local.environment
@@ -336,7 +336,7 @@ resource "azurerm_resource_group" "main2" {
 
 module "network2" {
   count                        = local.is_multi_region ? 1 : 0
-  source                       = "./modules/network"
+  source                       = "../shared/modules/network"
   resource_group               = azurerm_resource_group.main2[0].name
   application_name             = var.application_name
   location                     = var.location2
@@ -383,7 +383,7 @@ resource "azurerm_virtual_network_peering" "secondary_to_primary" {
 
 module "key-vault2" {
   count            = local.is_multi_region ? 1 : 0
-  source           = "./modules/key-vault"
+  source           = "../shared/modules/key-vault"
   resource_group   = azurerm_resource_group.main2[0].name
   application_name = var.application_name
   environment      = local.environment
@@ -406,7 +406,7 @@ module "key-vault2" {
 
 module "cache2" {
   count                       = local.is_multi_region ? 1 : 0
-  source                      = "./modules/cache"
+  source                      = "../shared/modules/cache"
   resource_group              = azurerm_resource_group.main2[0].name
   environment                 = local.environment
   location                    = var.location2
@@ -417,7 +417,7 @@ module "cache2" {
 
 module "application2" {
   count               = local.is_multi_region ? 1 : 0
-  source              = "./modules/app-service"
+  source              = "../shared/modules/app-service"
   resource_group      = azurerm_resource_group.main2[0].name
   application_name    = "${var.application_name}"
   environment         = local.environment

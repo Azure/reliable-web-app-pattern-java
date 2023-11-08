@@ -5,7 +5,7 @@ metadata:
   template: web-app-pattern-java@0.0.1-beta
 infra:
     provider: "terraform"
-    path: "terraform"
+    path: "./scenarios/legacy"
 hooks:
   preprovision:
     shell: sh
