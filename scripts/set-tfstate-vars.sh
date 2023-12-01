@@ -10,6 +10,7 @@ primary_region=$(azd env get-values --output json | jq -r .AZURE_LOCATION)
 existing_container_name=$(azd env get-values --output json | jq -r .RS_CONTAINER_NAME)
 app_environment=$(azd env get-values --output json | jq -r .APP_ENVIRONMENT)
 
+
 if [[ $app_environment == "null" ]]; then
     # default to dev
     app_environment="dev"
@@ -20,10 +21,10 @@ if [[ $existing_container_name != 'null' ]]; then
     exit 0
 fi
 
-random_string=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 8 | head -n 1)
+random_string=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 11 | head -n 1)
 
 # values must be set by GitHub pipeline as vars that are consistent across workflows because we have one that deploys and another that does teardown
-rs_storage_account=stcontosodevops${random_string}
+rs_storage_account=stprosedevops${random_string}
 rs_container_name=terraform
 rs_resource_group=rg-${environment_name}-terraform
 
