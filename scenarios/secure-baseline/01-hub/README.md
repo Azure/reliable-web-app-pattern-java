@@ -16,15 +16,19 @@ Before deploying, you must be authenticated to Azure and have the appropriate su
 
 ### 2. Create a new environment
 
-The environment name should be less than 18 characters and must be comprised of lower-case, numeric, and dash characters (for example, `contoso-hub`).  The environment name is used for resource group naming and specific resource naming. Also, select a password for the admin user of the database.
+The environment name should be less than 18 characters and must be comprised of lower-case, numeric, and dash characters (for example, `contosohub`).  The environment name is used for resource group naming and specific resource naming. Also, select a password for the admin user of the database.
 
 Run the following commands to set these values and create a new environment:
 
 ```shell
-azd env new contoso-hub
+azd env new contosohub
 ```
 
-### 3. Select a region for deployment
+### 3. (Optional) Update Terraform Values
+
+If you want to change the defaults, update the `terraform.tfvars`.
+
+### 4. Select a region for deployment
 
 You can find a list of available Azure regions by running the following Azure CLI command.
 
@@ -35,13 +39,27 @@ You can find a list of available Azure regions by running the following Azure CL
 Set the `AZURE_LOCATION` to the primary region:
 
 ```shell
-azd env set AZURE_LOCATION westus3
+azd env set AZURE_LOCATION eastus
 ```
 
-### 4. Provision infrastructure
+### 5. Provision infrastructure
 
 Run the following command to create the infrastructure and deploy the app:
 
 ```shell
 azd up
+```
+
+### 6. Record the output
+
+The output of the deployment will be displayed in the terminal.  Record the following values for use in the next step:
+
+```
+Outputs:
+
+hub_resource_group = "rg-contosohub-dev"
+
+hub_vnet_id = "/subscriptions/<id>/resourceGroups/rg-contosohub-dev/providers/Microsoft.Network/virtualNetworks/hub-vnet-contosohub-dev"
+
+hub_vnet_name = "hub-vnet-contosohub-dev"
 ```

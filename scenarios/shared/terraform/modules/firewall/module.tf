@@ -194,3 +194,5 @@ resource "azurerm_firewall_application_rule_collection" "azure_monitor" {
     }
   }
 }
+
+# TODO: VM firewall from devops subnet

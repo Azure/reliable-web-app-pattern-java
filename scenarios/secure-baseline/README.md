@@ -51,4 +51,4 @@ azd config set alpha.terraform on
 
 ### 1. Deploy the HUB.  See [01-hub/README.md](./01-hub/README.md) for instructions.
 
-### TODO: 2. Deploy the SPOKE.   See [02-spoke/README.md](./02-spoke/README.md) for instructions.
+### 2. Deploy the SPOKE.   See [02-spoke/README.md](./02-spoke/README.md) for instructions.

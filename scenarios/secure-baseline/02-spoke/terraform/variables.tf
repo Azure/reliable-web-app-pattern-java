@@ -29,24 +29,20 @@ variable "tags" {
 #####################################
 # Hub Network Configuration Variables
 #####################################
+
 variable "hub_vnet_cidr" {
   type        = list(string)
   description = "[Optional] The CIDR block(s) for the hub virtual network. Defaults to 10.242.0.0/20"
 }
 
-variable "firewall_subnet_cidr" {
-  type        = list(string)
-  description = "[Optional] The CIDR block(s) for the firewall subnet. Defaults to 10.242.0.0/26"
+variable "hub_vnet_id" {
+  type = string
+  description = "The hub virtual network id"
 }
 
-variable "bastion_subnet_cidr" {
-  type        = list(string)
-  description = "[Optional] The CIDR block(s) for the bastion subnet. Defaults to 10.242.0.64/26"
-}
-
-#####################################
-# Spoke Network Configuration Variables
-#####################################
+########################################
+# Spoke Resource Configuration Variables
+########################################
 
 variable "spoke_vnet_cidr" {
   type        = list(string)
@@ -58,14 +54,30 @@ variable "devops_subnet_cidr" {
   description = "[Optional] The CIDR block for the subnet. Defaults to 10.240.10.128/16"
 }
 
+variable "appsvc_subnet_cidr" {
+  type        = list(string)
+  description = "The CIDR block for the subnet."
+}
+
+variable "front_door_subnet_cidr" {
+  type        = list(string)
+  description = "The CIDR block for the subnet."
+}
+
+variable "private_link_subnet_cidr" {
+  type        = list(string)
+  description = "The CIDR block for the subnet."
+}
+
 variable "deployment_options" {
   type = object({
-    deploy_bastion             = bool
+    deploy_jumpbox             = bool
   })
 
-  description = "Opt-in settings for the deployment."
+  description = "Opt-in settings for the deployment"
 
   default = {
-    deploy_bastion             = true
+    deploy_jumpbox             = true
   }
 }
+
