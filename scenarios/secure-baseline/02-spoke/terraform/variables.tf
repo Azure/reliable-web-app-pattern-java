@@ -49,11 +49,6 @@ variable "spoke_vnet_cidr" {
   description = "[Optional] The CIDR block(s) for the virtual network for whitelisting on the firewall. Defaults to 10.240.0.0/20"
 }
 
-variable "devops_subnet_cidr" {
-  type        = list(string)
-  description = "[Optional] The CIDR block for the subnet. Defaults to 10.240.10.128/16"
-}
-
 variable "appsvc_subnet_cidr" {
   type        = list(string)
   description = "The CIDR block for the subnet."
@@ -71,13 +66,11 @@ variable "private_link_subnet_cidr" {
 
 variable "deployment_options" {
   type = object({
-    deploy_jumpbox             = bool
   })
 
   description = "Opt-in settings for the deployment"
 
   default = {
-    deploy_jumpbox             = true
   }
 }
 

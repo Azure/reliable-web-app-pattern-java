@@ -63,11 +63,6 @@ module "vnet" {
       delegation  = null
     },
     {
-      name        = "devops"
-      subnet_cidr = var.devops_subnet_cidr
-      delegation  = null
-    },
-    {
       name        = "privateLink"
       subnet_cidr = var.private_link_subnet_cidr
       delegation  = null
@@ -93,4 +88,12 @@ module "peeringHubToSpoke" {
   remote_vnet_id   = module.vnet.vnet_id
   remote_vnet_name = local.hub_vnet_name
   remote_resource_group_name = local.hub_vnet_resource_group
+}
+
+module "app_insights" {
+  source = "../../../shared/terraform/modules/app-insights"
+  resource_group     = azurerm_resource_group.spoke.name
+  application_name   = var.application_name
+  environment        = local.environment
+  location           = var.location
 }

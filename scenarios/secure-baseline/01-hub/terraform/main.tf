@@ -17,6 +17,8 @@ provider "azurerm" {
   }
 }
 
+data "azuread_client_config" "current" {}
+
 resource "azurecaf_name" "hub_resource_group" {
   name          = var.application_name
   resource_type = "azurerm_resource_group"
@@ -55,7 +57,13 @@ module "vnet" {
       name        = local.bastion_subnet_name
       subnet_cidr = var.bastion_subnet_cidr
       delegation  = null
-  }]
+    },
+    {
+      name        = local.devops_subnet_name
+      subnet_cidr = var.devops_subnet_cidr
+      delegation  = null
+    }
+  ]
 
   tags = local.base_tags
 }
@@ -100,5 +108,4 @@ module "bastion" {
   location        = azurerm_resource_group.hub.location
 
   tags = local.base_tags
-  
 }

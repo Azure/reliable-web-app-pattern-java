@@ -58,14 +58,32 @@ variable "devops_subnet_cidr" {
   description = "[Optional] The CIDR block for the subnet. Defaults to 10.240.10.128/16"
 }
 
+variable "jumpbox_username" {
+  type        = string
+  description = "The username for the jumpbox."
+}
+
+variable "jumpbox_password" {
+  type        = string
+  description = "The password for the jumpbox."
+}
+
+variable "jumpbox_vm_size" {
+  type        = string
+  description = "The size of the jumpbox."
+  default     = "Standard_B2ms"
+}
+
 variable "deployment_options" {
   type = object({
     deploy_bastion             = bool
+    deploy_jumpbox             = bool
   })
 
   description = "Opt-in settings for the deployment."
 
   default = {
     deploy_bastion             = true
+    deploy_jumpbox             = true
   }
 }
