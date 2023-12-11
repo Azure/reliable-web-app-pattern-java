@@ -5,16 +5,14 @@ tags                    = {}
 #####################################
 # Hub Network Configuration Variables
 #####################################
-hub_vnet_id                 = "<Hub VNET ID>"
+app_insights_id             = "<App Insights Id>"
+log_analytics_workspace_id  = "<Log Analytics Workspace ID>"
+key_vault_id                = "<Key Vault ID>"
 
 #######################################
 # Spoke Network Configuration Variables
 #######################################
-spoke_vnet_cidr           = ["10.240.0.0/20"]
-appsvc_subnet_cidr        = ["10.240.0.0/26"]
-front_door_subnet_cidr    = ["10.240.0.64/26"]
-postgresql_subnet_cidr    = ["10.240.0.128/26"]
-private_link_subnet_cidr  = ["10.240.11.0/24"]
+spoke_vnet_id                = "<Spoke VNet ID>"
 
 deployment_options = {
 }

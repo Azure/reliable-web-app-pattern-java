@@ -90,6 +90,8 @@ resource "azurerm_linux_web_app" "application" {
   }
 
   app_settings = {
+    APPLICATIONINSIGHTS_CONNECTION_STRING = var.app_insights_connection_string
+
     SPRING_DATASOURCE_URL      = var.contoso_webapp_options.postgresql_database_url
     SPRING_DATASOURCE_USERNAME = var.contoso_webapp_options.postgresql_database_user
     SPRING_DATASOURCE_PASSWORD = var.contoso_webapp_options.postgresql_database_password

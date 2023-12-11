@@ -44,6 +44,11 @@ variable "bastion_subnet_cidr" {
   description = "[Optional] The CIDR block(s) for the bastion subnet. Defaults to 10.242.0.64/26"
 }
 
+variable "private_link_subnet_cidr" {
+  type        = list(string)
+  description = "The CIDR block for the private link subnet."
+}
+
 #####################################
 # Spoke Network Configuration Variables
 #####################################
@@ -66,6 +71,7 @@ variable "jumpbox_username" {
 variable "jumpbox_password" {
   type        = string
   description = "The password for the jumpbox."
+  sensitive   = true
 }
 
 variable "jumpbox_vm_size" {

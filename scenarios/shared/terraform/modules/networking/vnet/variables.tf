@@ -33,6 +33,7 @@ variable "subnets" {
   type = list(object({
     name        = string,
     subnet_cidr = list(string),
+    service_endpoints = list(string),
     delegation = object({
       name = string,
       service_delegation = object({

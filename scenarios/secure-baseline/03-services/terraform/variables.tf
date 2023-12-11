@@ -30,38 +30,35 @@ variable "tags" {
 # Hub Network Configuration Variables
 #####################################
 
-variable "hub_vnet_id" {
+variable "log_analytics_workspace_id" {
   type = string
-  description = "The hub virtual network id"
+  description = "The id of the log analytics workspace"
+  
+}
+
+variable "app_insights_id" {
+  type = string
+  description = "The id of the app insights"
+}
+
+variable "key_vault_id" {
+  type = string
+  description = "The id of the key vault"
+  
 }
 
 ########################################
 # Spoke Resource Configuration Variables
 ########################################
-
-variable "spoke_vnet_cidr" {
-  type        = list(string)
-  description = "[Optional] The CIDR block(s) for the virtual network for whitelisting on the firewall. Defaults to 10.240.0.0/20"
+variable "spoke_vnet_id" {
+  type = string
+  description = "The spoke virtual network id"
 }
 
-variable "appsvc_subnet_cidr" {
-  type        = list(string)
-  description = "The CIDR block for the subnet."
-}
-
-variable "front_door_subnet_cidr" {
-  type        = list(string)
-  description = "The CIDR block for the subnet."
-}
-
-variable "postgresql_subnet_cidr" {
-  type        = list(string)
-  description = "The CIDR block for the subnet."
-}
-
-variable "private_link_subnet_cidr" {
-  type        = list(string)
-  description = "The CIDR block for the subnet."
+variable "database_administrator_password" {
+  type        = string
+  description = "The database administrator password"
+  default     = null
 }
 
 variable "deployment_options" {

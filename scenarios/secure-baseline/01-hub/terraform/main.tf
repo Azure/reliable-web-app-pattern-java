@@ -62,6 +62,11 @@ module "vnet" {
       name        = local.devops_subnet_name
       subnet_cidr = var.devops_subnet_cidr
       delegation  = null
+    },
+    {
+      name        = local.private_link_subnet_name
+      subnet_cidr = var.private_link_subnet_cidr
+      delegation  = null
     }
   ]
 
@@ -108,4 +113,12 @@ module "bastion" {
   location        = azurerm_resource_group.hub.location
 
   tags = local.base_tags
+}
+
+module "app_insights" {
+  source = "../../../shared/terraform/modules/app-insights"
+  resource_group     = azurerm_resource_group.hub.name
+  application_name   = var.application_name
+  environment        = local.environment
+  location           = var.location
 }

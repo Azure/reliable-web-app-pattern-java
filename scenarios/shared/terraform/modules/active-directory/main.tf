@@ -6,7 +6,7 @@ terraform {
     }
     azuread = {
       source = "hashicorp/azuread"
-      version = "2.43.0"
+      version = "2.46.0"
     }
   }
 }
@@ -95,13 +95,14 @@ resource "azuread_application" "app_registration" {
 }
 
 resource "azuread_service_principal" "application_service_principal" {
-  application_id               = azuread_application.app_registration.application_id
+  client_id = azuread_application.app_registration.client_id
   app_role_assignment_required = false
   owners                       = [data.azuread_client_config.current.object_id]
 }
 
 resource "azuread_application_password" "application_password" {
-  application_object_id = azuread_application.app_registration.object_id
+  application_id = azuread_application.app_registration.id
+
 }
 
 # This is not guidance and is done for demo purposes. The resource below will add the 

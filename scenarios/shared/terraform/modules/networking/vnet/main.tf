@@ -17,6 +17,8 @@ resource "azurerm_subnet" "this" {
   resource_group_name  = var.resource_group
   virtual_network_name = azurerm_virtual_network.vnet.name
 
+  service_endpoints = var.subnets[count.index].service_endpoints == null ? [] : var.subnets[count.index].service_endpoints
+
   dynamic "delegation" {
     for_each = var.subnets[count.index].delegation == null ? [] : [var.subnets[count.index].delegation]
 

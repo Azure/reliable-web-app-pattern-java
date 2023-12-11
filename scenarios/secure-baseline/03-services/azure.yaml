@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+
+name: web-app-pattern-java-secure-baseline-services
+metadata:
+  template: web-app-pattern-java-secure-baseline-services@0.0.1-beta
+infra:
+    provider: "terraform"
+    path: "terraform"
+hooks:
+  preprovision:
+    interactive: true
+    run: "../../../scripts/set-tfstate-vars.sh"
+  postdown:
+    interactive: true
+    run: "../../../scripts/teardown-tfstate.sh"
+

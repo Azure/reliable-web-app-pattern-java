@@ -47,8 +47,9 @@ module "vnet" {
 
   subnets = [
     {
-      name        = "serverFarm"
-      subnet_cidr = var.appsvc_subnet_cidr
+      name              = local.app_service_subnet_name
+      subnet_cidr       = var.appsvc_subnet_cidr
+      service_endpoints = null
       delegation = {
         name = "Microsoft.Web/serverFarms"
         service_delegation = {
@@ -58,14 +59,30 @@ module "vnet" {
       }
     },
     {
-      name        = "ingress"
-      subnet_cidr = var.front_door_subnet_cidr
-      delegation  = null
+      name              = local.ingress_subnet_name
+      subnet_cidr       = var.front_door_subnet_cidr
+      service_endpoints = null
+      delegation        = null
     },
     {
-      name        = "privateLink"
-      subnet_cidr = var.private_link_subnet_cidr
-      delegation  = null
+      name              = local.private_link_subnet_name
+      subnet_cidr       = var.private_link_subnet_cidr
+      service_endpoints = null
+      delegation        = null
+    },
+    {
+      name = local.postgresql_subnet_name
+      subnet_cidr = var.postgresql_subnet_cidr
+
+      service_endpoints = ["Microsoft.Storage"]
+
+      delegation = {
+        name = "Microsoft.DBforPostgreSQL/flexibleServers"
+        service_delegation = {
+          name    = "Microsoft.DBforPostgreSQL/flexibleServers"
+          actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
+        }
+      }
     }
   ]
 
@@ -88,12 +105,4 @@ module "peeringHubToSpoke" {
   remote_vnet_id   = module.vnet.vnet_id
   remote_vnet_name = local.hub_vnet_name
   remote_resource_group_name = local.hub_vnet_resource_group
-}
-
-module "app_insights" {
-  source = "../../../shared/terraform/modules/app-insights"
-  resource_group     = azurerm_resource_group.spoke.name
-  application_name   = var.application_name
-  environment        = local.environment
-  location           = var.location
 }

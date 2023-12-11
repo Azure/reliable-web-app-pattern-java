@@ -16,4 +16,9 @@ locals {
   hub_subscription_id     = local.hub_tokens[2]
   hub_vnet_resource_group = local.hub_tokens[4]
   hub_vnet_name           = local.hub_tokens[8]
+
+  app_service_subnet_name   = "serverFarm"
+  ingress_subnet_name       = "ingress"
+  postgresql_subnet_name    = "fs"
+  private_link_subnet_name  = "privateLink"
 }

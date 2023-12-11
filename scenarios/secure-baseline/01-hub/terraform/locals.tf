@@ -15,4 +15,5 @@ locals {
   firewall_subnet_name = "AzureFirewallSubnet"
   bastion_subnet_name  = "AzureBastionSubnet"
   devops_subnet_name   = "devops"
+  private_link_subnet_name = "privateLink"
 }
