@@ -73,6 +73,13 @@ resource "azurerm_cdn_frontdoor_origin" "app_service_origin" {
   priority                       = 1
   weight                         = 1000
   certificate_name_check_enabled = false
+
+  #private_link {
+  #  request_message        = "Request access for CDN Frontdoor Private Link Origin to Web App 2"
+  #  target_type            = var.private_link_target_type
+  #  location               = var.location
+  #  private_link_target_id = var.web_app_id
+  #}
 }
 
 resource "azurecaf_name" "front_door_route_name" {
@@ -136,22 +143,22 @@ resource "azurerm_cdn_frontdoor_security_policy" "web_app_waf" {
 #  Everything below this comment is for provisioning the 2nd region (if AZURE_LOCATION2 was set)
 # ----------------------------------------------------------------------------------------------
 
-resource "azurecaf_name" "front_door_origin_name2" {
-  name          = "${var.application_name}s"
-  resource_type = "azurerm_frontdoor"
-  suffixes      = ["origin", "group", var.environment]
-}
+#resource "azurecaf_name" "front_door_origin_name2" {
+#  name          = "${var.application_name}s"
+#  resource_type = "azurerm_frontdoor"
+#  suffixes      = ["origin", "group", var.environment]
+#}
 
-resource "azurerm_cdn_frontdoor_origin" "app_service_origin2" {
-  name                          = azurecaf_name.front_door_origin_name2.result
-  cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.origin_group.id
+#resource "azurerm_cdn_frontdoor_origin" "app_service_origin2" {
+#  name                          = azurecaf_name.front_door_origin_name2.result
+#  cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.origin_group.id#
 
-  enabled                        = false
-  host_name                      = length(var.host_name2) > 0 ? var.host_name2 : var.host_name
-  http_port                      = 80
-  https_port                     = 443
-  origin_host_header             = length(var.host_name2) > 0 ? var.host_name2 : var.host_name
-  priority                       = 2
-  weight                         = 1000
-  certificate_name_check_enabled = false
-}
+#  enabled                        = false
+#  host_name                      = length(var.host_name2) > 0 ? var.host_name2 : var.host_name
+#  http_port                      = 80
+#  https_port                     = 443
+#  origin_host_header             = length(var.host_name2) > 0 ? var.host_name2 : var.host_name
+#  priority                       = 2
+#  weight                         = 1000
+#  certificate_name_check_enabled = false
+#}

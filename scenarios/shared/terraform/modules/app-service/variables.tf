@@ -44,6 +44,12 @@ variable "log_analytics_workspace_id" {
   description = "The id of the log analytics workspace"
 }
 
+variable "public_network_access_enabled" {
+  type        = bool
+  description = "(Optional) Should public network access be enabled for the Web App. Defaults to true"
+  default     = true
+}
+
 variable "contoso_webapp_options" {
   type = object({
     contoso_active_directory_tenant_id      = string

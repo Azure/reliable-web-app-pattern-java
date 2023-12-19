@@ -1,7 +1,7 @@
 locals {
   // If an environment is set up (dev, test, prod...), it is used in the application name
   environment = var.environment == "" ? "dev" : var.environment
-  telemetryId = "92141f6a-c03e-4141-bc1c-2113e4772c8d-${var.location}"
+  telemetryId = "BB720B18-3C24-4D84-8C28-7AC01F4D7F2C-services-${var.location}"
 
   base_tags = merge({
     "terraform"         = true
@@ -28,6 +28,8 @@ locals {
   
   // TODO: multi region deployments are not supported yet
   postgresql_sku_name = var.environment == "prod" ? "GP_Standard_D4s_v3" : "B_Standard_B1ms"
+
+  front_door_sku_name = "Premium_AzureFrontDoor"
 
   app_service_subnet_name   = "serverFarm"
   ingress_subnet_name       = "ingress"

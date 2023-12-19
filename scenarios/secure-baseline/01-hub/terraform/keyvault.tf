@@ -28,11 +28,3 @@ module "key-vault" {
   log_analytics_workspace_id = module.app_insights.log_analytics_workspace_id
   azure_ad_tenant_id         = data.azuread_client_config.current.tenant_id
 }
-
-# For demo purposes, allow current user access to the key vault
-# Note: when running as a service principal, this is also needed
-resource azurerm_role_assignment kv_administrator_user_role_assignement {
-  scope                 = module.key-vault.vault_id
-  role_definition_name  = "Key Vault Administrator"
-  principal_id          = data.azuread_client_config.current.object_id
-}

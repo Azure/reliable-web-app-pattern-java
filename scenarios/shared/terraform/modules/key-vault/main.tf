@@ -49,7 +49,7 @@ resource "azurerm_private_dns_zone" "key_vault_dns_zone" {
   resource_group_name = var.resource_group
 }
 
-resource "azurerm_private_dns_zone_virtual_network_link" "virtual_network_link_redis" {
+resource "azurerm_private_dns_zone_virtual_network_link" "virtual_network_link_vault" {
   name                  = "privatelink.vaultcore.azure.net"
   private_dns_zone_name = azurerm_private_dns_zone.key_vault_dns_zone.name
   virtual_network_id    = var.virtual_network_id
@@ -63,7 +63,7 @@ resource "azurerm_private_endpoint" "keyvault_private_endpoint" {
   subnet_id           = var.private_endpoint_subnet_id
 
   private_dns_zone_group {
-    name                 = "privatednsrediszonegroup"
+    name                 = "privatednskeyvaultzonegroup"
     private_dns_zone_ids = [azurerm_private_dns_zone.key_vault_dns_zone.id]
   }
   

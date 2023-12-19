@@ -51,21 +51,25 @@ module "vnet" {
     {
       name        = local.firewall_subnet_name
       subnet_cidr = var.firewall_subnet_cidr
+      service_endpoints = null
       delegation  = null
     },
     {
       name        = local.bastion_subnet_name
       subnet_cidr = var.bastion_subnet_cidr
+      service_endpoints = null
       delegation  = null
     },
     {
       name        = local.devops_subnet_name
       subnet_cidr = var.devops_subnet_cidr
+      service_endpoints = null
       delegation  = null
     },
     {
       name        = local.private_link_subnet_name
       subnet_cidr = var.private_link_subnet_cidr
+      service_endpoints = null
       delegation  = null
     }
   ]

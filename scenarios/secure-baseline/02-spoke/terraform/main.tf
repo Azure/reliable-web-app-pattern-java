@@ -49,7 +49,7 @@ module "vnet" {
     {
       name              = local.app_service_subnet_name
       subnet_cidr       = var.appsvc_subnet_cidr
-      service_endpoints = null
+      service_endpoints = [ "Microsoft.Storage", "Microsoft.KeyVault"]
       delegation = {
         name = "Microsoft.Web/serverFarms"
         service_delegation = {

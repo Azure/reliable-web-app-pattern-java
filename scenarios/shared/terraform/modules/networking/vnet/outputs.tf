@@ -13,3 +13,7 @@ output "vnet_name" {
 output "subnets" {
   value = { for subnet in azurerm_subnet.this : subnet.name => subnet }
 }
+
+output "subnet_ids" {
+  value = [for subnet in azurerm_subnet.this : subnet.id]
+}

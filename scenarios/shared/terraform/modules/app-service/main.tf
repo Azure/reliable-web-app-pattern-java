@@ -40,8 +40,10 @@ resource "azurerm_linux_web_app" "application" {
   location                = var.location
   resource_group_name     = var.resource_group
   service_plan_id         = azurerm_service_plan.application.id
-  client_affinity_enabled = true
+  client_affinity_enabled = false
   https_only              = true
+
+  public_network_access_enabled = var.public_network_access_enabled
 
   virtual_network_subnet_id = var.subnet_id
 
@@ -56,6 +58,9 @@ resource "azurerm_linux_web_app" "application" {
   }
 
   site_config {
+    vnet_route_all_enabled = true
+    use_32_bit_worker      = false
+    
     ftps_state              = "Disabled"
     minimum_tls_version     = "1.2"
     always_on               = true
@@ -121,27 +126,31 @@ resource "azurerm_monitor_diagnostic_setting" "app_service_diagnostic" {
   enabled_log {
     category_group = "allLogs"
 
-    retention_policy {
-      days    = 0
-      enabled = false
-    }
+    ## `retention_policy` has been deprecated in favor of `azurerm_storage_management_policy` resource - to learn more https://aka.ms/diagnostic_settings_log_retention
+    # retention_policy {
+    #   days    = 0
+    #   enabled = false
+    # }
   }
 
   enabled_log {
     category_group = "audit"
 
-    retention_policy {
-      days    = 0
-      enabled = false
-    }
+    ## `retention_policy` has been deprecated in favor of `azurerm_storage_management_policy` resource - to learn more https://aka.ms/diagnostic_settings_log_retention
+    # retention_policy {
+    #   days    = 0
+    #   enabled = false
+    # }
   }
 
   metric {
     category = "AllMetrics"
     enabled  = true
-    retention_policy {
-      enabled = false
-      days    = 0
-    }
+    
+    ## `retention_policy` has been deprecated in favor of `azurerm_storage_management_policy` resource - to learn more https://aka.ms/diagnostic_settings_log_retention
+    # retention_policy {
+    #   days    = 0
+    #   enabled = false
+    # }
   }
 }

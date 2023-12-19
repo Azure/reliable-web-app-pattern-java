@@ -36,6 +36,9 @@ module "frontdoor" {
   environment                  = local.environment
   location                     = var.location
   host_name                    = module.application.application_fqdn
+  front_door_sku_name          = local.front_door_sku_name
+  web_app_id                   = module.application.web_app_id
+  private_link_target_type     = "sites"
   host_name2                   = "" #TODO: multi-region
 }
 

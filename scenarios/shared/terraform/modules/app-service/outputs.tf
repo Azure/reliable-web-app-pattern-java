@@ -3,6 +3,11 @@ output "application_fqdn" {
   description = "The Web application fully qualified domain name (FQDN)."
 }
 
+output "web_app_id" {
+  value       = azurerm_linux_web_app.application.id
+  description = "The ID of the web app."
+}
+
 output "application_principal_id" {
   value       = azurerm_linux_web_app.application.identity[0].principal_id
   description = "The id of system assigned managed identity"

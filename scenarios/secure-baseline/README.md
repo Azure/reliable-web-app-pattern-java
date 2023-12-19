@@ -52,3 +52,7 @@ azd config set alpha.terraform on
 ### 1. Deploy the HUB.  See [01-hub/README.md](./01-hub/README.md) for instructions.
 
 ### 2. Deploy the SPOKE.   See [02-spoke/README.md](./02-spoke/README.md) for instructions.
+
+### 3. Deploy the Services.  See [03-services/README.md](./03-services/README.md) for instructions.
+
+### 4. Deploy the Contoso Fiber App.  See [04-contoso-app/README.md](./04-contoso-app/README.md) for instructions.

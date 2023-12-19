@@ -63,3 +63,34 @@ Run the following command to create the infrastructure and deploy the app:
 ```shell
 azd up
 ```
+
+### 6. Record the output
+
+The output of the deployment will be displayed in the terminal.  Record the following values for use in the next step:
+
+```
+Outputs:
+
+app_service_name = "app-contosserv7-eastus-dev"
+frontdoor_url = "https://fd-contosserv7-dev-eacycvb0bnd8f5ay.b01.azurefd.net"
+```
+
+### 7. Configure Key Vault Firewall
+
+The Key Vault Firewall must be configured to allow the App Service to access the Key Vault.  
+
+Run the following command to get the private IP address of the App Service:
+
+```shell
+az keyvault network-rule add --name <key vault name in the hub> --subnet <id of the serverFarm subnet in the spoke>
+```
+
+For example:
+
+```shell
+az keyvault network-rule add --name kv-sxavntrshfiwsfx-dev --subnet /subscriptions/1234/resourceGroups/rg-contosospoke7-dev/providers/microsoft.network/virtualNetworks/spoke-vnet-contosospoke7-dev/subnets/serverFarm
+```
+
+Navigate to the Key Vault in the Azure portal and select **Networking**.  You should see something similar to the following:
+
+![Key Vault Networking](./assets/keyvault-network.png)

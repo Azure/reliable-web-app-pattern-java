@@ -51,3 +51,17 @@ Run the following command to create the infrastructure and deploy the app:
 ```shell
 azd up
 ```
+### 6. Record the output
+
+The output of the deployment will be displayed in the terminal.  Record the following values for use in the next step:
+
+```
+Outputs:
+
+spoke_subnet_ids = [
+  "/subscriptions/<id>/resourceGroups/rg-contosospoke7-dev/providers/Microsoft.Network/virtualNetworks/spoke-vnet-contosospoke7-dev/subnets/serverFarm",
+  "/subscriptions/<id>/resourceGroups/rg-contosospoke7-dev/providers/Microsoft.Network/virtualNetworks/spoke-vnet-contosospoke7-dev/subnets/ingress",
+  "/subscriptions/<id>/resourceGroups/rg-contosospoke7-dev/providers/Microsoft.Network/virtualNetworks/spoke-vnet-contosospoke7-dev/subnets/privateLink",
+  "/subscriptions/<id>/resourceGroups/rg-contosospoke7-dev/providers/Microsoft.Network/virtualNetworks/spoke-vnet-contosospoke7-dev/subnets/fs",
+]
+```

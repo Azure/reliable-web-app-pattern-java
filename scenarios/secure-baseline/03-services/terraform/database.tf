@@ -1,13 +1,12 @@
 # Generate password if none provided
 resource "random_password" "password" {
-  count            = var.database_administrator_password == null ? 1 : 0
   length           = 16
   special          = true
   override_special = "!#$%&*()-_=+[]{}<>:?"
 }
 
 locals {
-  database_administrator_password = var.database_administrator_password == null ? random_password.password[0].result : var.database_administrator_password
+  database_administrator_password = coalesce(var.database_administrator_password, random_password.password.result)
 }
 
 data "azurerm_subnet" "postgresql_subnet" {
