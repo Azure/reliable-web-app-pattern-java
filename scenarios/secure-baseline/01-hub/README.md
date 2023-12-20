@@ -24,9 +24,11 @@ Run the following commands to set these values and create a new environment:
 azd env new contosohub
 ```
 
-### 3. (Optional) Update Terraform Values
+### 3. Update Terraform Values
 
-If you want to change the defaults, update the `terraform.tfvars`.
+Update the `terraform.tfvars` file with the following values:
+
+- `jumpbox_password` - This is the password for the jump box.
 
 ### 4. Select a region for deployment
 
