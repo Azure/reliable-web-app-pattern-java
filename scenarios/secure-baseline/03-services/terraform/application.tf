@@ -24,6 +24,10 @@ module "application" {
     postgresql_database_url = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.contoso_database_url.id})"
     postgresql_database_user = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.contoso_database_admin.id})"
     postgresql_database_password = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.contoso_database_admin_password.id})"
+
+    redis_host_name = module.cache.cache_hostname
+    redis_port = module.cache.cache_ssl_port
+    redis_password = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.contoso_cache_secret.id})"
   }
 
   frontdoor_host_name     = module.frontdoor.host_name

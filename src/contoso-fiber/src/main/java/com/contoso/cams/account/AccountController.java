@@ -107,7 +107,7 @@ public class AccountController {
         log.info("getAccountDetails: {}", id);
 
         try {
-            AccountDetail accountDetail = accountService.getAccountDetails(id);
+            AccountDetail accountDetail = accountService.getAccountDetail(id);
             model.addAttribute("account", accountDetail);
             model.addAttribute("servicePlans", accountService.findAllServicePlans());
             return "pages/account/detail";
@@ -129,8 +129,8 @@ public class AccountController {
                 throw new IllegalArgumentException("Validation errors while submitting new account - " + errorMessage);
             }
 
-            Account updatedAccount = accountService.updateAccount(account);
-            return "redirect:/accounts/details?id=" + updatedAccount.getId();
+            AccountDetail updatedAccount = accountService.updateAccount(account);
+            return "redirect:/accounts/details?id=" + updatedAccount.getAccountId();
         } catch (IllegalArgumentException ex) {
             model.addAttribute("message", ex.getMessage());
             model.addAttribute("servicePlans", accountService.findAllServicePlans());
@@ -144,8 +144,8 @@ public class AccountController {
         log.info("deactivateAccount: {}", id);
 
         try {
-            Account deactivatedAccount = accountService.setActive(id, false);
-            return "redirect:/accounts/details?id=" + deactivatedAccount.getId();
+            AccountDetail deactivatedAccount = accountService.setActive(id, false);
+            return "redirect:/accounts/details?id=" + deactivatedAccount.getAccountId();
         } catch (IllegalArgumentException ex) {
             model.addAttribute("message", ex.getMessage());
             return "redirect:/account/list";
@@ -158,8 +158,8 @@ public class AccountController {
         log.info("activateAccount: {}", id);
 
         try {
-            Account activatedAccount = accountService.setActive(id, true);
-            return "redirect:/accounts/details?id=" + activatedAccount.getId();
+            AccountDetail activatedAccount = accountService.setActive(id, true);
+            return "redirect:/accounts/details?id=" + activatedAccount.getAccountId();
         } catch (IllegalArgumentException ex) {
             model.addAttribute("message", ex.getMessage());
             return "redirect:/account/list";

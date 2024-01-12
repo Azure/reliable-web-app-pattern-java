@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 
 @SpringBootApplication
+@EnableCaching
 public class CamsApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(CamsApplication.class, args);

@@ -18,7 +18,7 @@ resource "azurerm_service_plan" "application" {
   name                         = azurecaf_name.app_service_plan.result
   resource_group_name          = var.resource_group
   location                     = var.location
-  
+
   sku_name = var.environment == "prod" ? "P2v3" : "P1v3"
   os_type  = "Linux"
 
@@ -60,7 +60,7 @@ resource "azurerm_linux_web_app" "application" {
   site_config {
     vnet_route_all_enabled = true
     use_32_bit_worker      = false
-    
+
     ftps_state              = "Disabled"
     minimum_tls_version     = "1.2"
     always_on               = true
@@ -100,10 +100,14 @@ resource "azurerm_linux_web_app" "application" {
     SPRING_DATASOURCE_URL      = var.contoso_webapp_options.postgresql_database_url
     SPRING_DATASOURCE_USERNAME = var.contoso_webapp_options.postgresql_database_user
     SPRING_DATASOURCE_PASSWORD = var.contoso_webapp_options.postgresql_database_password
-    
+
     SPRING_CLOUD_AZURE_ACTIVE_DIRECTORY_CREDENTIAL_CLIENT_ID     = var.contoso_webapp_options.contoso_active_directory_client_id
     SPRING_CLOUD_AZURE_ACTIVE_DIRECTORY_CREDENTIAL_CLIENT_SECRET = var.contoso_webapp_options.contoso_active_directory_client_secret
     SPRING_CLOUD_AZURE_ACTIVE_DIRECTORY_PROFILE_TENANT_ID        = var.contoso_webapp_options.contoso_active_directory_tenant_id
+
+    SPRING_DATA_REDIS_HOST = var.contoso_webapp_options.redis_host_name
+    SPRING_DATA_REDIS_PORT = var.contoso_webapp_options.redis_port
+    SPRING_DATA_REDIS_PASSWORD = var.contoso_webapp_options.redis_password
   }
 
   logs {
@@ -146,7 +150,7 @@ resource "azurerm_monitor_diagnostic_setting" "app_service_diagnostic" {
   metric {
     category = "AllMetrics"
     enabled  = true
-    
+
     ## `retention_policy` has been deprecated in favor of `azurerm_storage_management_policy` resource - to learn more https://aka.ms/diagnostic_settings_log_retention
     # retention_policy {
     #   days    = 0

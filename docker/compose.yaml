@@ -3,8 +3,32 @@ volumes:
     name: contoso_fiber_postgres_postgres_data
   pgadmin:
     name: contoso_fiber_postgres_pgadmin_data
+  redis:
+    name: contoso_fiber_redis_data
 
 services:
+  redis:
+    container_name: contoso_fiber_redis
+    hostname: redis
+    image: "redislabs/redismod"
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis:/data
+    entrypoint: >
+      redis-server
+        --loadmodule /usr/lib/redis/modules/redisai.so
+        --loadmodule /usr/lib/redis/modules/redisearch.so
+        --loadmodule /usr/lib/redis/modules/redisgraph.so
+        --loadmodule /usr/lib/redis/modules/redistimeseries.so
+        --loadmodule /usr/lib/redis/modules/rejson.so
+        --loadmodule /usr/lib/redis/modules/redisbloom.so
+        --appendonly yes
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
   postgres:
     container_name: contoso_fiber_postgres
     image: postgres:15
