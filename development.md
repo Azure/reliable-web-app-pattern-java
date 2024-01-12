@@ -1,8 +1,12 @@
 # Development
 
-## PostgresSQL and pgAdmin
+## Setup 
 
-1. Create the file *docker/.env* and add the following environment variables. 
+1. Create the file *docker/.env*
+
+### PostgresSQL and pgAdmin
+
+1. Add the following environment variables to the file *docker/.env*. 
 
     ```
     PG_PASSWORD=secret
@@ -16,13 +20,13 @@ After creating the file, the *docker/.env* file should look like the following.
     PG_PASSWORD=secret
     ```
 
+## Docker Compose
+
 1. Start the docker containers for PostgreSQL and pgAdmin.
 
     ```
     docker compose -f docker/compose.yaml up
     ```
-
-1. Navigate to the [pgAdmin](https://www.pgadmin.org/) UI at [http://localhost:5050](http://localhost:5050)
 
 1. Stop the containers
     ```
@@ -34,6 +38,32 @@ After creating the file, the *docker/.env* file should look like the following.
     ```
     docker compose -f ./docker/compose.yaml down -v
     ```
+
+
+## PGAdmin
+
+1. Navigate to the [pgAdmin](https://www.pgadmin.org/) UI at [http://localhost:5050](http://localhost:5050)
+
+
+## Redis
+
+Run bash in the container and then start the redis-cli
+
+```
+docker exec -it contoso_fiber_redis bash
+root@redis:/data# redis-cli
+```
+
+### Testing our Redis instance
+
+Issue the PING command to test the connection.
+
+```
+127.0.0.1:6379> PING
+PONG
+```
+
+If you see the response *PONG*, then you have successfully connected to the Redis instance.
 
 ## Dev Container
 
@@ -85,6 +115,9 @@ TENANT_ID: 567890ab-5678-5678-5678-567890abcdef
 > - *ad-app.json* - contains the output of the `az ad app create` command.
 > - *ad-credentials.json* - contains the output of the `az ad app credential reset` command.
 
+Go into the Azure Portal and assign the `Account Manager` and `Field Service` roles.  You can find the roles in the `Enterprise Applications` section of the Azure Entra blade.
+
+![image of Microsoft Entra ID Enterprise Applications Role Assignment](docs/assets/contoso-fiber-app-role-assignment.png)
 
 ## Build
 

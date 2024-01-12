@@ -12,11 +12,15 @@ import com.contoso.cams.model.SupportCase;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
+@CacheConfig(cacheNames={"accounts"})
 public class AccountService {
     private static final Logger log = LoggerFactory.getLogger(AccountService.class);
 
@@ -108,15 +112,12 @@ public class AccountService {
         }
     }
 
-    public Optional<Account> findById(Long id) {
-        return accountRepository.findById(id);
-    }
-
     public List<ServicePlan> findAllServicePlans() {
         return servicePlanRepository.findAll();
     }
 
-    public Account updateAccount(AccountDetail accountDetail) {
+    @CachePut(value="account-details", key="#accountDetail.accountId")
+    public AccountDetail updateAccount(AccountDetail accountDetail) {
 
         // Update the customer email and phone number
         Optional<Customer> optionalCustomer = customerRepository.findById(accountDetail.getCustomerId());
@@ -141,10 +142,11 @@ public class AccountService {
         Account account = optionalAccount.get();
         account.setServicePlan(servicePlan);
 
-        return accountRepository.save(account);
+        return mapToAccountDetail(accountRepository.save(account));
     }
 
-    public Account setActive(Long id, boolean isActive) {
+    @CachePut(value="account-details", key="#id")
+    public AccountDetail setActive(Long id, boolean isActive) {
         Optional<Account> optionalAccount = accountRepository.findById(id);
         if (optionalAccount.isEmpty()) {
             throw new IllegalArgumentException("Account ID " + id + " does not exist");
@@ -152,17 +154,23 @@ public class AccountService {
 
         Account account = optionalAccount.get();
         account.setActive(isActive);
-        return accountRepository.save(account);
+        return mapToAccountDetail(accountRepository.save(account));
     }
 
-    public AccountDetail getAccountDetails(Long id) {
+    @Cacheable(value="account-details", key="#id")
+    public AccountDetail getAccountDetail(Long id) {
         Optional<Account> optionalAccount = accountRepository.findById(id);
         if (optionalAccount.isEmpty()) {
             throw new IllegalArgumentException("Account ID " + id + " does not exist");
         }
 
         Account account = optionalAccount.get();
+        AccountDetail accountDetail = mapToAccountDetail(account);
 
+        return accountDetail;
+    }
+
+    private AccountDetail mapToAccountDetail(Account account) {
         AccountDetail accountDetail = new AccountDetail();
         accountDetail.setAccountId(account.getId());
         accountDetail.setAddress(account.getAddress());
@@ -180,7 +188,6 @@ public class AccountService {
                     .map(s -> new SupportCaseDetail(s.getId(), s.getDescription(), s.getQueue().toString(), s.getTimestamp().toString(), s.getAssignedTo()))
                     .collect(java.util.stream.Collectors.toList());
         accountDetail.setSupportCases(supportCaseDetails);
-
         return accountDetail;
     }
 }

@@ -19,7 +19,7 @@ Before deploying, you must be authenticated to Azure and have the appropriate su
 Run the following command to build the Contoso Fiber application:
 
 ```shell
-mvn clean package
+./mvnw clean package
 ```
 
 This will create the `jar` file cams-0.0.1-SNAPSHOT.jar in the `target` directory. This file will be used to deploy the application to Azure App Service.
@@ -29,7 +29,7 @@ This will create the `jar` file cams-0.0.1-SNAPSHOT.jar in the `target` director
 We can use the Azure CLI to deploy the Contoso Fiber application to Azure App Service. The following command will deploy the application to the `app-contosserv7-eastus-dev` App Service instance in the `rg-contosospoke7-dev` resource group.  The `app-contosserv7-eastus-dev` App Service instance was created in the [spoke](../03-services/README.md#6-record-the-output).
 
 ```shell
-az webapp deploy --name contoso-fiber --resource-group rg-contosospoke7-dev --name app-contosserv7-eastus-dev --src-path target/cams-0.0.1-SNAPSHOT.jar --type jar
+az webapp deploy --resource-group rg-contosospoke7-dev --name app-contosserv7-eastus-dev --src-path target/cams-0.0.1-SNAPSHOT.jar --type jar
 ```
 
 ### 4. Navigate to the Contoso Fiber App

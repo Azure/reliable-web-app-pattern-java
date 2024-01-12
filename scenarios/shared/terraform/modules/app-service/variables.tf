@@ -59,6 +59,10 @@ variable "contoso_webapp_options" {
     postgresql_database_url       = string
     postgresql_database_user      = string
     postgresql_database_password  = string
+
+    redis_host_name               = string
+    redis_port                    = number
+    redis_password                = string
   })
 
   description = "The options for the webapp"

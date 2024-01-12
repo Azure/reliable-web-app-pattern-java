@@ -22,6 +22,11 @@ output "key_vault_uri" {
   value       = module.key-vault.vault_uri
 }
 
+output "key_vault_name" {
+  description = "The name of the key vault."
+  value       = module.key-vault.vault_name
+}
+
 output "log_analytics_workspace_id" {
   description = "The resource ID of the log analytics workspace."
   value       = module.app_insights.log_analytics_workspace_id 
