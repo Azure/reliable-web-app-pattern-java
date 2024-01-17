@@ -74,6 +74,15 @@ resource "azurerm_key_vault_secret" "contoso_cache_secret" {
   ]
 }
 
+resource "azurerm_key_vault_secret" "contoso_app_insights_connection_string" {
+  name         = "contoso-app-insights-connection-string"
+  value        = data.azurerm_application_insights.app_insights.connection_string
+  key_vault_id = var.key_vault_id
+  depends_on = [
+    azurerm_role_assignment.kv_administrator_user_role_assignement
+  ]
+}
+
 # Give the app access to the key vault secrets - https://learn.microsoft.com/azure/key-vault/general/rbac-guide?tabs=azure-cli#secret-scope-role-assignment
 resource azurerm_role_assignment app_keyvault_role_assignment {
   scope                 = var.key_vault_id
