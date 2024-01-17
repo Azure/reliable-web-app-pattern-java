@@ -16,3 +16,32 @@ Using the Redis Console we can see that we are caching objects and http sessions
 
 ![image of Azure Cache for Redis Keys](docs/assets/redis-keys.png)
 
+# Logs
+
+Application logging is enabled. To view the logs, navigate to *Diagnose and solve problems*. From there, click on *Application Logs*.
+
+![Diagnose and solve problems](./docs/assets/appservice-diagnose-and-solve-problems.png)
+
+![Application Logs](./docs/assets/appservice-application-logs.png)
+
+## Application Insights
+
+Exceptions in the Contoso Fiber CAMS web application are reported with Application Insights. 
+
+![AppInsightsFailures](./docs/assets/appinsights_failures.png)
+
+Click on an exception to see the end-to-end details:
+
+![AppInsightsEndToEndDetails](./docs/assets/appinsights-end-to-end.png)
+
+Navigate to the Application Map blade:
+
+![AppInsightsApplicationMap](./docs/assets/appinsights_map.png)
+
+Navigate to the Performance blade:
+
+![AppInsightsPerformance](./docs/assets/appinsights_performance.png)
+
+Navigate to the Live Metrics blade to see real-time performance:
+
+![AppInsightsLiveMetrics](./docs/assets/appinsights_live_metrics.png)

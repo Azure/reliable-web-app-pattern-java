@@ -91,11 +91,13 @@ resource "azurerm_linux_web_app" "application" {
   sticky_settings {
     app_setting_names = [
       "APPLICATIONINSIGHTS_CONNECTION_STRING",
+      "ApplicationInsightsAgent_EXTENSION_VERSION"
     ]
   }
 
   app_settings = {
     APPLICATIONINSIGHTS_CONNECTION_STRING = var.app_insights_connection_string
+    ApplicationInsightsAgent_EXTENSION_VERSION = "~3"
 
     SPRING_DATASOURCE_URL      = var.contoso_webapp_options.postgresql_database_url
     SPRING_DATASOURCE_USERNAME = var.contoso_webapp_options.postgresql_database_user
