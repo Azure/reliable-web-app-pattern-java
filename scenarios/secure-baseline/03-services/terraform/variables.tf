@@ -8,6 +8,11 @@ variable "application_name" {
   }
 }
 
+variable "enable_telemetry" {
+  type        = bool
+  description = "Telemetry collection is on by default"
+}
+
 variable "environment" {
   type        = string
   description = "The environment (dev, test, prod...)"
@@ -18,12 +23,6 @@ variable "location" {
   type        = string
   description = "The Azure region where all resources in this example should be created"
   default     = "eastus"
-}
-
-variable "tags" {
-  type        = map(string)
-  description = "[Optional] Additional tags to assign to your resources"
-  default     = {}
 }
 
 #####################################
@@ -55,19 +54,13 @@ variable "spoke_vnet_id" {
   description = "The spoke virtual network id"
 }
 
+#####################################
+# Application Configuration Variables
+#####################################
 variable "database_administrator_password" {
   type        = string
   description = "The database administrator password"
   default     = null
 }
 
-variable "deployment_options" {
-  type = object({
-  })
-
-  description = "Opt-in settings for the deployment"
-
-  default = {
-  }
-}
 

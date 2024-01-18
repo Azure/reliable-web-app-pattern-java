@@ -7,7 +7,7 @@ In the previous step, we deployed the [hub](../01-hub/README.md).  Now we're goi
 The following commands should be entered in the Visual Studio code terminal if running in the Dev Container.  If running locally, open a terminal and navigate to the `scenarios/secure-baseline/02-spoke` directory.
 
 ```bash
-cd scenarios/secure-baseline/02-spoke
+cd $PROJECT_ROOT/scenarios/secure-baseline/02-spoke
 ```
 
 ### 1. Log in to Azure
@@ -16,7 +16,9 @@ Before deploying, you must be authenticated to Azure and have the appropriate su
 
 ### 2. Create a new environment
 
-The environment name should be less than 18 characters and must be comprised of lower-case, numeric, and dash characters (for example, `contosospoke`).  The environment name is used for resource group naming and specific resource naming. Also, select a password for the admin user of the database.
+The environment name should be less than 18 characters and must be comprised of lower-case, numeric, and dash characters (for example, `contosospoke`).  The environment name is used for resource group naming and specific resource naming. 
+
+**Choose a unique name for the environment**
 
 Run the following commands to set these values and create a new environment:
 
@@ -24,11 +26,25 @@ Run the following commands to set these values and create a new environment:
 azd env new contosospoke
 ```
 
-### 3. Update Terraform Values
+### 3. Set the AZD Environment Values
 
-Update the `terraform.tfvars` file with the following values:
+The following are required values that must be set:
 
-- `hub_vnet_id` - This is the id of the hub vnet created in the previous step (for example, `"/subscriptions/1234/resourceGroups/rg-contosohub-dev/providers/Microsoft.Network/virtualNetworks/hub-vnet-contosohub-dev"`).
+- `HUB_VNET_ID` - This is the resource ID of the hub VNet.
+
+Run the following commands to set these values:
+
+```shell
+azd env set HUB_VNET_ID $hub_vnet_id
+```
+
+Optionally, you can update the following values:
+
+- `APP_ENVIRONMENT` - The name of the environment.  This value is used for resource group naming and choosing service SKUs.  The default value is `dev`. Valid values are `dev` and `prod`.
+
+```shell
+azd env set APP_ENVIRONMENT prod
+```
 
 ### 4. Select a region for deployment
 
@@ -51,9 +67,10 @@ Run the following command to create the infrastructure and deploy the app:
 ```shell
 azd up
 ```
-### 6. Record the output
 
-The output of the deployment will be displayed in the terminal.  Record the following values for use in the next step:
+### 6. Set the environment variables for the next step
+
+The output of the deployment will be displayed in the terminal.
 
 ```
 Outputs:
@@ -65,3 +82,26 @@ spoke_subnet_ids = [
   "/subscriptions/<id>/resourceGroups/rg-contosospoke7-dev/providers/Microsoft.Network/virtualNetworks/spoke-vnet-contosospoke7-dev/subnets/fs",
 ]
 ```
+
+To bring the environment variables into the current shell, run the following command:
+
+```shell
+source $(azd env list --output json | jq -r '.[] | select(.IsDefault == true) | .DotEnvPath')
+```
+
+**This step is required in order to run the next steps of the deployment.**
+
+Verify the environment is set by testing one of the variables:
+
+```shell
+echo $spoke_vnet_id
+```
+
+### 7. Deploy the services
+
+Change to the services directory and follow the instructions in the [README](../03-services/README.md).
+
+```shell
+cd ../03-services
+```
+

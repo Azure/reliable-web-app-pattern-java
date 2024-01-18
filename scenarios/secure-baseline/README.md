@@ -16,10 +16,29 @@ Open the project using the Dev Container
 
 1. Select the repository *Azure/web-app-pattern-java* to clone and press Enter.
 
+## Open a Terminal and set the environment variables
+
+Before starting the deployment, we will set the PROJECT_ROOT environment variable. The following commands should be entered in the Visual Studio code terminal if running in the Dev Container.  If running locally, open a terminal.
+
+```shell
+PROJECT_ROOT=$PWD
+```
+
+You can verify the value by running the following command:
+
+```shell
+echo $PROJECT_ROOT
+```
+
+You should see the following output:
+
+```shell
+/workspaces/web-app-pattern-java
+```
 
 ## Deploy the Azure Infrastructure
 
-Before deploying, you must be authenticated to Azure and have the appropriate subscription selected. The following commands should be entered in the Visual Studio code terminal if running in the Dev Container.  If running locally, open a terminal. To authenticate:
+Before deploying, you must be authenticated to Azure and have the appropriate subscription selected.  To authenticate:
 
 ```shell
 az login --scope https://graph.microsoft.com//.default
