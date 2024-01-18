@@ -43,12 +43,12 @@ module "vnet" {
   name            = azurecaf_name.spoke_vnet_name.result
   resource_group  = azurerm_resource_group.spoke.name
   location        = azurerm_resource_group.spoke.location
-  vnet_cidr       = var.spoke_vnet_cidr
+  vnet_cidr       = local.spoke_vnet_cidr
 
   subnets = [
     {
       name              = local.app_service_subnet_name
-      subnet_cidr       = var.appsvc_subnet_cidr
+      subnet_cidr       = local.appsvc_subnet_cidr
       service_endpoints = [ "Microsoft.Storage", "Microsoft.KeyVault"]
       delegation = {
         name = "Microsoft.Web/serverFarms"
@@ -60,19 +60,19 @@ module "vnet" {
     },
     {
       name              = local.ingress_subnet_name
-      subnet_cidr       = var.front_door_subnet_cidr
+      subnet_cidr       = local.front_door_subnet_cidr
       service_endpoints = null
       delegation        = null
     },
     {
       name              = local.private_link_subnet_name
-      subnet_cidr       = var.private_link_subnet_cidr
+      subnet_cidr       = local.private_link_subnet_cidr
       service_endpoints = null
       delegation        = null
     },
     {
       name = local.postgresql_subnet_name
-      subnet_cidr = var.postgresql_subnet_cidr
+      subnet_cidr = local.postgresql_subnet_cidr
 
       service_endpoints = ["Microsoft.Storage"]
 

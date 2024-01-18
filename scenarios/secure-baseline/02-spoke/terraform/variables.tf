@@ -8,6 +8,11 @@ variable "application_name" {
   }
 }
 
+variable "enable_telemetry" {
+  type        = bool
+  description = "Telemetry collection is on by default"
+}
+
 variable "environment" {
   type        = string
   description = "The environment (dev, test, prod...)"
@@ -20,12 +25,6 @@ variable "location" {
   default     = "eastus"
 }
 
-variable "tags" {
-  type        = map(string)
-  description = "[Optional] Additional tags to assign to your resources"
-  default     = {}
-}
-
 #####################################
 # Hub Network Configuration Variables
 #####################################
@@ -34,43 +33,3 @@ variable "hub_vnet_id" {
   type = string
   description = "The hub virtual network id"
 }
-
-########################################
-# Spoke Resource Configuration Variables
-########################################
-
-variable "spoke_vnet_cidr" {
-  type        = list(string)
-  description = "[Optional] The CIDR block(s) for the virtual network for whitelisting on the firewall. Defaults to 10.240.0.0/20"
-}
-
-variable "appsvc_subnet_cidr" {
-  type        = list(string)
-  description = "The CIDR block for the subnet."
-}
-
-variable "front_door_subnet_cidr" {
-  type        = list(string)
-  description = "The CIDR block for the subnet."
-}
-
-variable "postgresql_subnet_cidr" {
-  type        = list(string)
-  description = "The CIDR block for the subnet."
-}
-
-variable "private_link_subnet_cidr" {
-  type        = list(string)
-  description = "The CIDR block for the subnet."
-}
-
-variable "deployment_options" {
-  type = object({
-  })
-
-  description = "Opt-in settings for the deployment"
-
-  default = {
-  }
-}
-

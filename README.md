@@ -6,7 +6,7 @@ Local development is supported on Windows, Linux, and macOS. Please follow the i
 
 ## Deploy Azure Infrastructure
 
-Please follow the instructions in the [azure-deploy.md](./azure-deploy.md) file to deploy the Azure infrastructure.
+Follow the instructions in the [README.md](./scenarios/secure-baseline/README.md) to deploy the Azure Infrastructure and the Contoso Fiber CAMS application.
 
 ## Contributing
 

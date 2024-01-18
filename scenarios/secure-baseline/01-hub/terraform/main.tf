@@ -45,30 +45,30 @@ module "vnet" {
   name            = azurecaf_name.hub_virtual_network_name.result
   resource_group  = azurerm_resource_group.hub.name
   location        = azurerm_resource_group.hub.location
-  vnet_cidr       = var.hub_vnet_cidr
+  vnet_cidr       = local.hub_vnet_cidr
 
   subnets = [
     {
       name        = local.firewall_subnet_name
-      subnet_cidr = var.firewall_subnet_cidr
+      subnet_cidr = local.firewall_subnet_cidr
       service_endpoints = null
       delegation  = null
     },
     {
       name        = local.bastion_subnet_name
-      subnet_cidr = var.bastion_subnet_cidr
+      subnet_cidr = local.bastion_subnet_cidr
       service_endpoints = null
       delegation  = null
     },
     {
       name        = local.devops_subnet_name
-      subnet_cidr = var.devops_subnet_cidr
+      subnet_cidr = local.devops_subnet_cidr
       service_endpoints = null
       delegation  = null
     },
     {
       name        = local.private_link_subnet_name
-      subnet_cidr = var.private_link_subnet_cidr
+      subnet_cidr = local.private_link_subnet_cidr
       service_endpoints = null
       delegation  = null
     }
@@ -93,9 +93,9 @@ module "firewall" {
   resource_group = azurerm_resource_group.hub.name
   location       = azurerm_resource_group.hub.location
 
-  firewall_rules_source_addresses = concat(var.hub_vnet_cidr, var.spoke_vnet_cidr)
+  firewall_rules_source_addresses = concat(local.hub_vnet_cidr, local.spoke_vnet_cidr)
 
-  devops_subnet_cidr = var.devops_subnet_cidr
+  devops_subnet_cidr = local.devops_subnet_cidr
 
   tags = local.base_tags
 }
@@ -107,7 +107,7 @@ resource "azurecaf_name" "bastion_name" {
 }
 
 module "bastion" {
-  count = var.deployment_options.deploy_bastion ? 1 : 0
+  count = var.deploy_bastion ? 1 : 0
 
   source = "../../../shared/terraform/modules/bastion"
 

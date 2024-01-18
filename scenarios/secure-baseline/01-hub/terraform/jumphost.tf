@@ -1,8 +1,10 @@
 module "vm" {
+  count = var.deploy_jumpbox ? 1 : 0
+
   source            = "../../../shared/terraform/modules/vms"
   vm_name           = "vm-jumpbox"
   location          = var.location
-  tags              = var.tags
+  tags              = local.base_tags
   admin_username    = var.jumpbox_username
   admin_password    = var.jumpbox_password
   resource_group    = azurerm_resource_group.hub.name

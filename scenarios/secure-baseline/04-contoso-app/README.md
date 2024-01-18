@@ -7,7 +7,7 @@ In the previous step, we deployed the [services](../03-services/README.md) and n
 The following commands should be entered in the Visual Studio code terminal if running in the Dev Container.  If running locally, open a terminal and navigate to the `src/contoso-fiber` directory.
 
 ```bash
-cd src/contoso-fiber
+cd $PROJECT_ROOT/src/contoso-fiber
 ```
 
 ### 1. Log in to Azure
@@ -26,12 +26,19 @@ This will create the `jar` file cams-0.0.1-SNAPSHOT.jar in the `target` director
 
 ### 3. Deploy Contoso Fiber to Azure App Service
 
-We can use the Azure CLI to deploy the Contoso Fiber application to Azure App Service. The following command will deploy the application to the `app-contosserv7-eastus-dev` App Service instance in the `rg-contosospoke7-dev` resource group.  The `app-contosserv7-eastus-dev` App Service instance was created in the [spoke](../03-services/README.md#6-record-the-output).
+We can use the Azure CLI to deploy the Contoso Fiber application to Azure App Service. The following command will deploy the application to the App Service instance was created in the [spoke](../03-services/README.md#6-record-the-output).
 
 ```shell
-az webapp deploy --resource-group rg-contosospoke7-dev --name app-contosserv7-eastus-dev --src-path target/cams-0.0.1-SNAPSHOT.jar --type jar
+az webapp deploy --resource-group $spoke_resource_group --name $app_service_name --src-path target/cams-0.0.1-SNAPSHOT.jar --type jar
 ```
 
 ### 4. Navigate to the Contoso Fiber App
 
 We deployed `Azure Front Door` in the previous step. The Front Door URL was displayed in the output of the [services deployment](../03-services/README.md#6-record-the-output) .  Navigate to the Front Door URL in a browser to view the Contoso Fiber application.
+
+You can get the Front Door URL by running the following command:
+
+```shell
+echo $frontdoor_url
+```
+
