@@ -24,6 +24,71 @@ Application logging is enabled. To view the logs, navigate to *Diagnose and solv
 
 ![Application Logs](./docs/assets/appservice-application-logs.png)
 
+## Auto Scaling
+
+Auto scaling is enabled and the default instance count is set to 2. To view the auto scaling settings, navigate to *Scale out (App Service plan)*.
+
+![Scale out](./docs/assets/appservice-scale-out.png)
+
+Click on *Manage Rules Based Settings* to view the auto scaling rules.
+
+![Scale out rules](./docs/assets/appservice-autoscale-rules.png)
+
+These rules are defined in *Terraform* as follows:
+
+```
+resource "azurerm_monitor_autoscale_setting" "app_service_scaling" {
+  name                = "contosocamsscaling"
+  resource_group_name = var.resource_group
+  location            = var.location
+  target_resource_id  = azurerm_service_plan.application.id
+  profile {
+    name = "default"
+    capacity {
+      default = 2
+      minimum = 2
+      maximum = 10
+    }
+    rule {
+      metric_trigger {
+        metric_name         = "CpuPercentage"
+        metric_resource_id  = azurerm_service_plan.application.id
+        time_grain          = "PT1M"
+        statistic           = "Average"
+        time_window         = "PT5M"
+        time_aggregation    = "Average"
+        operator            = "GreaterThan"
+        threshold           = 85
+      }
+      scale_action {
+        direction = "Increase"
+        type      = "ChangeCount"
+        value     = "1"
+        cooldown  = "PT1M"
+      }
+    }
+    rule {
+      metric_trigger {
+        metric_name         = "CpuPercentage"
+        metric_resource_id  = azurerm_service_plan.application.id
+        time_grain          = "PT1M"
+        statistic           = "Average"
+        time_window         = "PT5M"
+        time_aggregation    = "Average"
+        operator            = "LessThan"
+        threshold           = 65
+      }
+      scale_action {
+        direction = "Decrease"
+        type      = "ChangeCount"
+        value     = "1"
+        cooldown  = "PT1M"
+      }
+    }
+  }
+}
+```
+
 ## Application Insights
 
 Exceptions in the Contoso Fiber CAMS web application are reported with Application Insights. 
