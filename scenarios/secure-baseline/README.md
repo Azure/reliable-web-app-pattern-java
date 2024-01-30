@@ -10,11 +10,19 @@ TODO: update image with Java Web App
 
 ## Deployment
 
-Open the project using the Dev Container
+Clone the repository and open the project using the Dev Container.
 
-1. Start VS Code and run Dev Containers: Clone Repository in Container Volume... from the Command Palette (F1).
+```shell
+git clone https://github.com/Azure/web-app-pattern-java.git
 
-1. Select the repository *Azure/web-app-pattern-java* to clone and press Enter.
+cd web-app-pattern-java
+```
+
+If you don't see the popup to *Reopen in Container*, open the Visual Studio Code Command Palette to execute the command. There are three ways to open the command palette:
+
+- For Mac users, use the keyboard shortcut ⇧⌘P
+- For Windows and Linux users, use Ctrl+Shift+P
+- From the Visual Studio Code top menu, navigate to View -> Command Palette.
 
 ## Open a Terminal and set the environment variables
 
@@ -68,10 +76,127 @@ Enable the Terraform Alpha provider:
 azd config set alpha.terraform on
 ```
 
-### 1. Deploy the HUB.  See [01-hub/README.md](./01-hub/README.md) for instructions.
+Go to the `secure-baseline` directory:
 
-### 2. Deploy the SPOKE.   See [02-spoke/README.md](./02-spoke/README.md) for instructions.
+```shell
+cd $PROJECT_ROOT/scenarios/secure-baseline/
+```
 
-### 3. Deploy the Services.  See [03-services/README.md](./03-services/README.md) for instructions.
+### 1. Create a new environment
 
-### 4. Deploy the Contoso Fiber App.  See [04-contoso-app/README.md](./04-contoso-app/README.md) for instructions.
+The environment name should be less than 18 characters and must be comprised of lower-case, numeric, and dash characters (for example, `contosocams`).  The environment name is used for resource group naming and specific resource naming. 
+
+**Choose a unique name for the environment**
+
+Run the following commands to set these values and create a new environment:
+
+```shell
+azd env new contosocams
+```
+
+### 2. Set the AZD Environment Values
+
+The following are required values that must be set:
+
+- `JUMPBOX_PASSWORD` - This is the password for the jump box. The password has to fulfill 3 out of these 4 conditions: Has lower characters, Has upper characters, Has a digit, Has a special character other than "_"
+
+Run the following commands to set these values:
+
+```shell
+azd env set JUMPBOX_PASSWORD <password>
+```
+
+The following are optional values that can be set:
+
+- `JUMPBOX_USERNAME` - This is the username for the jump box.  The default is `azureuser`.
+- `JUMPBOX_VM_SIZE` - This is the size of the jump box VM.  The default is `Standard_B2s`.
+
+These values can be set by running the following commands:
+
+```shell
+azd env set <variable> <value>
+```
+
+### 3. Select a region for deployment
+
+You can find a list of available Azure regions by running the following Azure CLI command.
+
+> ```shell
+> az account list-locations --query "[].name" -o tsv
+> ```
+
+Set the `AZURE_LOCATION` to the primary region:
+
+```shell
+azd env set AZURE_LOCATION eastus
+```
+
+### 4. Provision infrastructure
+
+Run the following command to create the infrastructure and deploy the app:
+
+```shell
+azd up
+```
+
+### 5. Set the environment variables for the next step
+
+The output of the deployment will be displayed in the terminal.
+
+```
+Outputs:
+
+app_service_name = "app-cfnickrwa-eastus-prod"
+frontdoor_url = "https://fd-cfnickrwa-prod-atfmd3dadecebmgf.b01.azurefd.net"
+spoke_resource_group = "rg-cfnickrwa-spoke-prod"
+```
+
+> To bring the environment variables into the current shell, run the following command:
+
+> ```shell
+> source $(azd env list --output json | jq -r '.[] | select(.IsDefault == true) | .DotEnvPath')
+> ```
+
+> **This step is required in order to run the next steps of the deployment.**
+
+Verify the environment is set by testing one of the variables:
+
+```shell
+echo $frontdoor_url
+```
+
+## Deploy the Contoso Fiber App
+
+The following commands should be entered in the Visual Studio code terminal if running in the Dev Container.  If running locally, open a terminal and navigate to the `src/contoso-fiber` directory.
+
+```bash
+cd $PROJECT_ROOT/src/contoso-fiber
+```
+
+### 1. Build Contoso Fiber
+
+Run the following command to build the Contoso Fiber application:
+
+```shell
+./mvnw clean package
+```
+
+This will create the `jar` file cams-0.0.1-SNAPSHOT.jar in the `target` directory. This file will be used to deploy the application to Azure App Service.
+
+### 2. Deploy Contoso Fiber to Azure App Service
+
+We can use the Azure CLI to deploy the Contoso Fiber application to Azure App Service. The following command will deploy the application to the App Service instance was created in the spoke.
+
+```shell
+az webapp deploy --resource-group $spoke_resource_group --name $app_service_name --src-path target/cams-0.0.1-SNAPSHOT.jar --type jar
+```
+
+### 3. Navigate to the Contoso Fiber App
+
+We deployed `Azure Front Door` in the previous step.   Navigate to the Front Door URL in a browser to view the Contoso Fiber application.
+
+You can get the Front Door URL by running the following command:
+
+```shell
+echo $frontdoor_url
+```

@@ -1,26 +1,7 @@
-terraform {
-  backend "azurerm" {
-  }
-}
-
-provider "azurerm" {
-  features {
-    resource_group {
-      prevent_deletion_if_contains_resources = false
-    }
-
-    virtual_machine {
-      delete_os_disk_on_deletion     = true
-      graceful_shutdown              = false
-      skip_shutdown_and_force_delete = true
-    }
-  }
-}
-
 resource "azurecaf_name" "spoke_resource_group" {
   name          = var.application_name
   resource_type = "azurerm_resource_group"
-  suffixes      = [local.environment]
+  suffixes      = ["spoke", local.environment]
 }
 
 resource "azurerm_resource_group" "spoke" {
@@ -37,8 +18,8 @@ resource "azurecaf_name" "spoke_vnet_name" {
   suffixes      = [local.environment]
 }
 
-module "vnet" {
-  source = "../../../shared/terraform/modules/networking/vnet"
+module "spoke_vnet" {
+  source = "../../shared/terraform/modules/networking/vnet"
 
   name            = azurecaf_name.spoke_vnet_name.result
   resource_group  = azurerm_resource_group.spoke.name
@@ -66,7 +47,7 @@ module "vnet" {
     },
     {
       name              = local.private_link_subnet_name
-      subnet_cidr       = local.private_link_subnet_cidr
+      subnet_cidr       = local.spoke_private_link_subnet_cidr
       service_endpoints = null
       delegation        = null
     },
@@ -90,19 +71,19 @@ module "vnet" {
 }
 
 module "peeringSpokeToHub" {
-  source         = "../../../shared/terraform/modules/networking/peering"
-  
-  local_vnet_name  = module.vnet.vnet_name
-  remote_vnet_id   = var.hub_vnet_id
-  remote_vnet_name = local.hub_vnet_name
+  source         = "../../shared/terraform/modules/networking/peering"
+
+  local_vnet_name  = module.spoke_vnet.vnet_name
+  remote_vnet_id   = module.hub_vnet.vnet_id
+  remote_vnet_name = module.hub_vnet.vnet_name
   remote_resource_group_name = azurerm_resource_group.spoke.name
 }
 
 module "peeringHubToSpoke" {
-  source         = "../../../shared/terraform/modules/networking/peering"
+  source         = "../../shared/terraform/modules/networking/peering"
 
-  local_vnet_name  = local.hub_vnet_name
-  remote_vnet_id   = module.vnet.vnet_id
-  remote_vnet_name = local.hub_vnet_name
-  remote_resource_group_name = local.hub_vnet_resource_group
+  local_vnet_name  = module.hub_vnet.vnet_name
+  remote_vnet_id   = module.spoke_vnet.vnet_id
+  remote_vnet_name = module.spoke_vnet.vnet_name
+  remote_resource_group_name = azurerm_resource_group.hub.name
 }

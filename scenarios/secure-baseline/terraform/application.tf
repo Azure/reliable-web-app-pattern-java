@@ -1,20 +1,14 @@
-data "azurerm_subnet" "app_service_subnet" {
-  name                 = local.app_service_subnet_name
-  resource_group_name  = local.spoke_vnet_resource_group
-  virtual_network_name = local.spoke_vnet_name
-}
-
 module "application" {
-  source             = "../../../shared/terraform/modules/app-service"
-  resource_group     = local.spoke_vnet_resource_group
+  source             = "../../shared/terraform/modules/app-service"
+  resource_group     = azurerm_resource_group.spoke.name
   application_name   = var.application_name
   environment        = local.environment
   location           = var.location
 
-  subnet_id          = data.azurerm_subnet.app_service_subnet.id
+  subnet_id          = module.spoke_vnet.subnets[local.app_service_subnet_name].id
 
-  app_insights_connection_string = data.azurerm_application_insights.app_insights.connection_string
-  log_analytics_workspace_id     = var.log_analytics_workspace_id
+  app_insights_connection_string = module.app_insights.connection_string
+  log_analytics_workspace_id     = module.app_insights.log_analytics_workspace_id
 
   contoso_webapp_options = {
     contoso_active_directory_tenant_id = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.contoso_application_tenant_id.id})"

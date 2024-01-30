@@ -7,13 +7,13 @@
     <artifactId>web-app-pattern-java</artifactId>
     <version>1-SNAPSHOT</version>
     <packaging>pom</packaging>
-    
+
     <name>Web App Pattern for Java</name>
 
     <modules>
         <module>src/contoso-fiber</module>
-    </modules>   
-    
+    </modules>
+
     <build>
         <pluginManagement>
             <plugins>

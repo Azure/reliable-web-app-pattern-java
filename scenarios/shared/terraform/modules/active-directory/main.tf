@@ -112,3 +112,9 @@ resource "azuread_app_role_assignment" "application_role_current_user" {
   principal_object_id = data.azuread_client_config.current.object_id
   resource_object_id  = azuread_service_principal.application_service_principal.object_id
 }
+
+resource "azuread_app_role_assignment" "application_role_current_user_l1" {
+  app_role_id         = azuread_service_principal.application_service_principal.app_role_ids["L1Support"]
+  principal_object_id = data.azuread_client_config.current.object_id
+  resource_object_id  = azuread_service_principal.application_service_principal.object_id
+}
