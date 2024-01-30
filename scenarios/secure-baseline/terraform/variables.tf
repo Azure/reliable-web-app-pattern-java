@@ -13,23 +13,34 @@ variable "enable_telemetry" {
   description = "Telemetry collection is on by default"
 }
 
-variable "environment" {
-  type        = string
-  description = "The environment (dev, test, prod...)"
-  default     = "dev"
-}
-
 variable "location" {
   type        = string
   description = "The Azure region where all resources in this example should be created"
   default     = "eastus"
 }
 
-#####################################
-# Hub Network Configuration Variables
-#####################################
+variable "jumpbox_username" {
+  type        = string
+  description = "The username for the jumpbox."
+}
 
-variable "hub_vnet_id" {
-  type = string
-  description = "The hub virtual network id"
+variable "jumpbox_password" {
+  type        = string
+  description = "The password for the jumpbox."
+  sensitive   = true
+}
+
+variable "jumpbox_vm_size" {
+  type        = string
+  description = "The size of the jumpbox."
+  default     = "Standard_B2ms"
+}
+
+#####################################
+# Application Configuration Variables
+#####################################
+variable "database_administrator_password" {
+  type        = string
+  description = "The database administrator password"
+  default     = null
 }

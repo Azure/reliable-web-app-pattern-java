@@ -152,6 +152,6 @@ Now, you can run the app by executing the following command.
 
 ```
 export SPRING_PROFILES_ACTIVE=local
-./mvnw -pl src/contoso-fiber spring-boot:run
+./mvnw -pl contoso-fiber spring-boot:run
 ```
 

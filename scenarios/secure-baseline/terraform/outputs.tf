@@ -1,3 +1,8 @@
+output "spoke_resource_group" {
+  value = azurerm_resource_group.spoke.name
+  description = "value of the spoke resource group name"
+}
+
 output "frontdoor_url" {
   value       = "https://${module.frontdoor.host_name}"
   description = "The Web application Front Door URL."
