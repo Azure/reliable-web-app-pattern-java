@@ -15,12 +15,11 @@ Follow these steps to set up this test:
 1. Changing a application setting will cause the App Service to restart. Wait for the app to restart.
 
 1. We added Spring Actuator Dependencies to the Proseware project. This enables actuator endpoints. Navigate to the following sites.
-    * https://<APP_NAME>.azurewebsites.net/actuator
-    * https://<APP_NAME>.azurewebsites.net/actuator/retryevents
-    * https://<APP_NAME>.azurewebsites.net/actuator/retryevents
-    * https://<APP_NAME>.azurewebsites.net/actuator/metrics/resilience4j.circuitbreaker.not.permitted.calls
+    * https://<FRONT_DOOR_URL>/actuator
+    * https://<FRONT_DOOR_URL>/actuator/retryevents
+    * https://<FRONT_DOOR_URL>/actuator/metrics/resilience4j.circuitbreaker.not.permitted.calls
 
-1. Navigate to https://<APP_NAME>.azurewebsites.net/index and refresh the page. Every time you refresh the page, a call to GitHub is made.
+1. Navigate to https://<FRONT_DOOR_URL>/index and refresh the page. Every time you refresh the page, a call to GitHub is made.
 
 1. Make note of the retry events and circuit breaker in the actuator endpoints.
 
