@@ -167,13 +167,55 @@ echo $frontdoor_url
 
 ## Deploy the Contoso Fiber App
 
-The following commands should be entered in the Visual Studio code terminal if running in the Dev Container.  If running locally, open a terminal and navigate to the `src/contoso-fiber` directory.
+In order to deploy the Contoso Fiber CAMS application, we will need to log into the Jump Box and run the deployment commands from there. Log into the Jump Box by navigating to the Microsoft Azure Portal. From there, find the hub resource group and click on the `vm-jumpbox` resource.
 
-```bash
-cd $PROJECT_ROOT/src/contoso-fiber
+![Jump Box Resource Group](./assets/jumpbox-resource-group.png)
+
+Click on the `Connect` menu item and choose `Bastion`. Enter the username and password you set in the environment variables. Use the following command if you don't remember the password.
+
+```shell
+echo $JUMPBOX_PASSWORD
 ```
 
-### 1. Build Contoso Fiber
+Finally click the `Connect` button. 
+
+![Connect to Jump Box](./assets/jumpbox-bastion.png)
+
+This will open a new tab in the browser and allow you to connect to the Jump Box.
+
+![Jump Box Terminal](./assets/jumpbox-terminal.png)
+
+Once connected to the Jump Box, you can run the following commands to deploy the Contoso Fiber application.
+
+### 1. Log into Azure
+
+```shell
+az login --use-device-code
+```
+
+Navigate to the URL and enter the code provided.  Once authenticated, you can close the browser and return to the terminal.
+
+### 2. Set the active subscription:
+
+```shell
+export AZURE_SUBSCRIPTION_ID="<your-subscription-id>"
+
+az account set --subscription $AZURE_SUBSCRIPTION_ID
+```
+
+### 3. Clone the Repository
+
+Before cloning the repository, you will need to authenticate to GitHub. There are many ways to do this, but one way is to set up a [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token).
+
+Once you have the token, you can use the following command to clone the repository:
+
+```shell
+git clone https://github.com/Azure/web-app-pattern-java.git
+
+cd web-app-pattern-java
+```
+
+### 4. Build Contoso Fiber
 
 Run the following command to build the Contoso Fiber application:
 
@@ -183,19 +225,28 @@ Run the following command to build the Contoso Fiber application:
 
 This will create the `jar` file cams-0.0.1-SNAPSHOT.jar in the `target` directory. This file will be used to deploy the application to Azure App Service.
 
-### 2. Deploy Contoso Fiber to Azure App Service
+### 5. Deploy Contoso Fiber to Azure App Service
 
-We can use the Azure CLI to deploy the Contoso Fiber application to Azure App Service. The following command will deploy the application to the App Service instance was created in the spoke.
+Rhe Azure CLI is used to deploy the Contoso Fiber application to Azure App Service. The following command will deploy the application to the App Service instance was created in the spoke.
+
+Get the spoke resource group name and the app service name from the environment variables. Run these commands from your dev container:
 
 ```shell
-az webapp deploy --resource-group $spoke_resource_group --name $app_service_name --src-path target/cams-0.0.1-SNAPSHOT.jar --type jar
+echo $spoke_resource_group
+echo $app_service_name
 ```
 
-### 3. Navigate to the Contoso Fiber App
+Now in the Jump Box terminal, run the following command replacing the values for the resource group and app service name from the previous step:
 
-We deployed `Azure Front Door` in the previous step.   Navigate to the Front Door URL in a browser to view the Contoso Fiber application.
+```shell
+az webapp deploy --resource-group <spoke_resource_group> --name <app_service_name> --src-path src/contoso-fiber/target/cams-0.0.1-SNAPSHOT.jar --type jar
+```
 
-You can get the Front Door URL by running the following command:
+## Navigate to the Contoso Fiber App
+
+Navigate to the Front Door URL in a browser to view the Contoso Fiber CAMS application.
+
+You can get the Front Door URL by running the following command in the dev container terminal:
 
 ```shell
 echo $frontdoor_url
