@@ -31,3 +31,8 @@ output "SERVICE_APPLICATION_ENDPOINTS" {
   value       = ["https://${module.frontdoor.host_name}"]
   description = "The Web application Front Door URL."
 }
+
+output "AZURE_RESOURCE_GROUP" {
+  value       = azurerm_resource_group.main.name
+  description = "The resource group that contains the app service."
+}
