@@ -41,27 +41,3 @@ BadRequest: Azure subscription is not registered with CDN Provider.
     "/subscriptions/{subscriptionId}/providers/Microsoft.Cdn"
     ]
     ```
-
-
-## The deployment <azd-env-name> already exists in location
-This error most often happens when trying a new region with the same for a deployment with the same name used for the AZD environment name (e.g. by default it would be `dotnetwebapp`).
-
-When the `azd provision` command runs it creates a deployment resource in your subscription. You must delete this deployment before you can change the Azure region.
-
-### Workaround
-
-> The following steps assume you are logged in with `az` cli.
-
-1. Find the name of the Deployment you want to delete
-
-    ```sh
-    az deployment sub list --query "[].name" -o tsv
-    ```
-
-1. Delete the deployment by name
-
-    ```sh
-    az deployment sub delete -n <deployment-name>
-    ```
-
-1. You should now be able to run the `azd provision` command and resume your deployment.
