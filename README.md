@@ -135,6 +135,12 @@ az account set --subscription $AZURE_SUBSCRIPTION
 azd config set defaults.subscription $AZURE_SUBSCRIPTION
 ```
 
+You can also use the following command to set the active subscription to the default subscription:
+
+```shell
+AZURE_SUBSCRIPTION="$(az account list --query "[?isDefault].id" --output tsv)"
+```
+
 ### 4. Create a new environment
 
 The environment name should be less than 18 characters and must be comprised of lower-case, numeric, and dash characters (for example, `eap-javarwa`).  The environment name is used for resource group naming and specific resource naming. Also, select a password for the admin user of the database.
