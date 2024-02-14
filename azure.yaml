@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+
+name: reliable-java-web
+metadata:
+  template: reliable-java-web@1.1.0
+infra:
+    provider: "terraform"
+    path: "./infra/terraform"
+hooks:
+  preprovision:
+    interactive: true
+    run: "./scripts/set-tfstate-vars.sh"
+  postdown:
+    interactive: true
+    run: "./scripts/teardown-tfstate.sh"
+

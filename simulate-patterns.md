@@ -110,3 +110,11 @@ Navigate to the Performance blade:
 Navigate to the Live Metrics blade to see real-time performance:
 
 ![AppInsightsLiveMetrics](./docs/assets/appinsights_live_metrics.png)
+
+## Resiliency with Multi-Region
+
+The Contoso Fiber CAMS web application is deployed in two regions. All traffic is initially routed to the primary region. In the event of an outage in the active region, traffic can be routed to the secondary region. This proccess in not automatic and requires manual intervention.
+
+![image of Azure Front Door Origin Group](./docs/assets/front-door-origin-group.png)
+
+An **Azure Database for PostgreSQL Flexible Server** is in the secondary region. This database is a read replica of the primary database. In the event of an outage in the primary region, the application can continue to function using the secondary database. For more information on read replicas, see [Read replicas in Azure Database for PostgreSQL - Flexible Server](https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-read-replicas). 

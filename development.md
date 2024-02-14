@@ -131,12 +131,12 @@ Go into the Azure Portal and assign the `Account Manager` and `Field Service` ro
 ./mvnw -pl src/contoso-fiber compile
 ```
 
-## Run
+## Running the app
 
-If you're running the Contoso Fiber app inside of a dev container, make sure to set the property *spring.datasource.url* inside *src/contoso-fiber/src/main/resources/application-local.properties*  file appropriately to use *host.docker.internal* to connect to the PostgreSQL container.
+The first step is to set the environment variable *SPRING_PROFILES_ACTIVE* to *local*.
 
 ```
-spring.datasource.url=jdbc:postgresql://host.docker.internal:54321/contoso_fiber
+export SPRING_PROFILES_ACTIVE=local
 ```
 
 Next, update the application-local.properties with the PostgreSQL username and password.
@@ -148,10 +148,35 @@ spring.datasource.username=CHANGE-ME
 spring.datasource.password=CHANGE-ME
 ```
 
+There are certain differences when running the app in a dev container as opposed to running the app locally. The Redis and PostgreSQL resolve to *host.docker.internal* when running the app in a dev container. Below are the two configurations for running the app locally and in a dev container.
+
+### Running the app locally
+
+The app connects to the PostgreSQL and Redis instances using *localhost*.
+
+```
+spring.datasource.url=jdbc:postgresql://localhost:54321/contoso_fiber
+```
+
+```
+spring.data.redis.host=localhost
+```
+
+### Running the app in a dev container
+
+The app connects to the PostgreSQL and Redis instances using *host.docker.internal*.
+
+```
+spring.datasource.url=jdbc:postgresql://host.docker.internal:54321/contoso_fiber
+```
+
+```
+spring.data.redis.host=host.docker.internal
+```
+
 Now, you can run the app by executing the following command.
 
 ```
-export SPRING_PROFILES_ACTIVE=local
-./mvnw -pl contoso-fiber spring-boot:run
+./mvnw -pl src/contoso-fiber spring-boot:run
 ```
 
