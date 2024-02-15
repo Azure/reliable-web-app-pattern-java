@@ -117,8 +117,6 @@ Make sure the secondary region is a paired region with the primary region (`AZUR
 | AZURE_LOCATION | AZURE_SECONDARY_LOCATION |
 | ----- | ----- |
 | westus3 | eastus |
-| westeurope | northeurope |
-| australiaeast | australiasoutheast |
 
  Set the `AZURE_SECONDARY_LOCATION` to the secondary region:
 
@@ -236,7 +234,7 @@ Navigate to the Front Door URL in a browser to view the Contoso Fiber CAMS appli
 
 ## Local Development
 
-Local development is supported on Windows, Linux, and macOS. Please follow the instructions in the [development.md](./development.md) file to get started.
+Local development is supported on Windows, Linux, and macOS. Please follow the instructions in the [development.md](./local-development.md) file to get started.
 
 ## Contributing
 
@@ -265,6 +263,6 @@ Any use of third-party trademarks or logos are subject to those third-party's po
 - [Known issues](known-issues.md)
 - [Troubleshooting](troubleshooting.md)
 - [Developer patterns](simulate-patterns.md)
-- [Local Development](development.md)
+- [Local Development](local-development.md)
 - [Report security concerns](SECURITY.md)
 - [Find Support](SUPPORT.md)
