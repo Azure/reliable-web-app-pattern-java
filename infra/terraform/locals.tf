@@ -3,19 +3,16 @@ locals {
   #####################################
   # Shared Variables
   #####################################
-  environment = "prod"
   telemetryId = "92141f6a-c03e-4141-bc1c-2113e4772c8d-${var.location}"
 
   base_tags = {
     "terraform"         = true
-    "environment"       = local.environment
+    "environment"       = var.environment
     "application-name"  = var.application_name
     "contoso-version"   = "1.0"
     "app-pattern-name"  = "java-rwa"
     "azd-env-name"     = var.application_name
   }
-
-  is_multi_region          = local.environment == "prod" ? true : false
 
   #####################################
   # Common
@@ -58,6 +55,6 @@ locals {
   #####################################
   # Application Configuration Variables
   #####################################
-  front_door_sku_name = "Premium_AzureFrontDoor"
-  postgresql_sku_name = "GP_Standard_D4s_v3"
+  front_door_sku_name = var.environment == "prod" ? "Premium_AzureFrontDoor" : "Standard_AzureFrontDoor"
+  postgresql_sku_name = var.environment == "prod" ? "GP_Standard_D4s_v3" : "B_Standard_B1ms"
 }

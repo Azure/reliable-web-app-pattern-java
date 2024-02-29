@@ -21,7 +21,7 @@ if [[ $existing_container_name != 'null' ]]; then
     exit 0
 fi
 
-random_string=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 11 | head -n 1)
+random_string=$RANDOM
 
 # values must be set by GitHub pipeline as vars that are consistent across workflows because we have one that deploys and another that does teardown
 rs_storage_account=stprosedevops${random_string}

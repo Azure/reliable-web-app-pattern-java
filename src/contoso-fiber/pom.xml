@@ -145,6 +145,7 @@
 	</dependencyManagement>
 
 	<build>
+		<finalName>cams</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

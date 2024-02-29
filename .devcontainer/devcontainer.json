@@ -12,7 +12,7 @@
 	},
 	"features": {
 		// https://containers.dev/features
-		"docker-from-docker": "latest",
+		"docker-in-docker": "latest",
 		"ghcr.io/devcontainers/features/azure-cli:1": {
 			"version": "latest"
 		},

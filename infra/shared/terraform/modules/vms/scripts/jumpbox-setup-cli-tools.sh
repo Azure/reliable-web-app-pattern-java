@@ -16,9 +16,3 @@ echo "#############################" >> $logpath
 echo "Installing Azure CLI" >> $logpath
 echo "#############################" >> $logpath
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-
-# Install Java 17
-echo "#############################" >> $logpath
-echo "Installing Java 17" >> $logpath
-echo "#############################" >> $logpath
-sudo apt-get install -y openjdk-17-jdk >> $logpath

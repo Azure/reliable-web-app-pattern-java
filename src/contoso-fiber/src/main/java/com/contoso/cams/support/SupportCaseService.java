@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,6 +48,7 @@ public class SupportCaseService {
     }
 
     @Transactional
+    @CacheEvict(value = "account-details", key = "#newSupportCaseRequest.getAccountId()")
     public void createSupportCase(NewSupportCaseRequest newSupportCaseRequest) {
         Optional<Account> account = accountRepository.findById(newSupportCaseRequest.getAccountId());
         if (account.isEmpty()) {

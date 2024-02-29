@@ -1,7 +1,7 @@
-AD_DISPLAY_NAME=contoso-fiber-app-nickdala
+AD_DISPLAY_NAME=contoso-fiber-app-$RANDOM
 
 # Registering the Azure AD application
-echo "Registering Azure AD application..."
+echo "Registering Azure AD application $AD_DISPLAY_NAME..."
 az ad app create --display-name $AD_DISPLAY_NAME --sign-in-audience AzureADMyOrg --web-redirect-uris http://localhost:8080/login/oauth2/code/ --app-roles @manifest.json --enable-id-token-issuance > ad-app.json
 
 # Retrieve the Application ID and get the client secret

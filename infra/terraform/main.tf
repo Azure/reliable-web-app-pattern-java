@@ -26,12 +26,14 @@ data "http" "myip" {
 locals {
   myip = chomp(data.http.myip.response_body)
   mynetwork = "${cidrhost("${local.myip}/16", 0)}/16"
+  prod_enable_telemetry = var.environment == "prod" ? var.enable_telemetry : false
+  dev_enable_telemetry = var.environment == "dev" ? var.enable_telemetry : false
 }
 
 resource "azurerm_resource_group_template_deployment" "deploymenttelemetry" {
-  count               = var.enable_telemetry ? 1 : 0
+  count               = local.prod_enable_telemetry ? 1 : 0
   name                = local.telemetryId
-  resource_group_name = azurerm_resource_group.hub.name
+  resource_group_name = azurerm_resource_group.hub[0].name
   deployment_mode     = "Incremental"
   
   template_content = <<TEMPLATE
@@ -43,4 +45,35 @@ resource "azurerm_resource_group_template_deployment" "deploymenttelemetry" {
     "resources": []
   }
   TEMPLATE
+}
+
+resource "azurerm_resource_group_template_deployment" "dev_deploymenttelemetry" {
+  count               = local.dev_enable_telemetry ? 1 : 0
+  name                = local.telemetryId
+  resource_group_name = azurerm_resource_group.dev[0].name
+  deployment_mode     = "Incremental"
+  
+  template_content = <<TEMPLATE
+  {
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "variables": {},
+    "resources": []
+  }
+  TEMPLATE
+}
+
+resource "azurecaf_name" "dev_resource_group" {
+  count         = var.environment == "dev" ? 1 : 0
+  name          = var.application_name
+  resource_type = "azurerm_resource_group"
+  suffixes      = ["dev"]
+}
+
+resource "azurerm_resource_group" "dev" {
+  count    = var.environment == "dev" ? 1 : 0
+  name     = azurecaf_name.dev_resource_group[0].result
+  location = var.location
+  tags     = local.base_tags
 }

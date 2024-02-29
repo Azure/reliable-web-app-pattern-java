@@ -31,7 +31,7 @@ services:
 
   postgres:
     container_name: contoso_fiber_postgres
-    image: postgres:15
+    image: postgres:16.2
     environment:
       POSTGRES_DB: contoso_fiber
       POSTGRES_USER: postgres
@@ -45,7 +45,7 @@ services:
 
   pgadmin:
     container_name: contoso_fiber_pgadmin
-    image: dpage/pgadmin4:7.8
+    image: dpage/pgadmin4:8.3
     environment:
         PGADMIN_DEFAULT_EMAIL: admin@contosofiber.com
         PGADMIN_DEFAULT_PASSWORD: admin

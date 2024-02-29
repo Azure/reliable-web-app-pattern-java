@@ -33,18 +33,21 @@ resource "azurerm_redis_cache" "cache" {
 # resolve domain names in a virtual network without the need to add a custom DNS solution
 # https://docs.microsoft.com/azure/dns/private-dns-privatednszone
 resource "azurerm_private_dns_zone" "dns_for_cache" {
+  count               = var.environment == "prod" ? 1 : 0
   name                = "privatelink.redis.cache.windows.net"
   resource_group_name = var.resource_group
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "virtual_network_link_redis" {
+  count                 = var.environment == "prod" ? 1 : 0
   name                  = "privatelink.redis.cache.windows.net"
-  private_dns_zone_name = azurerm_private_dns_zone.dns_for_cache.name
+  private_dns_zone_name = azurerm_private_dns_zone.dns_for_cache[0].name
   virtual_network_id    = var.private_endpoint_vnet_id
   resource_group_name   = var.resource_group
 }
 
 resource "azurerm_private_endpoint" "redis_pe_redis" {
+  count               = var.environment == "prod" ? 1 : 0
   name                = "private-endpoint-redis"
   location            = var.location
   resource_group_name = var.resource_group
@@ -52,7 +55,7 @@ resource "azurerm_private_endpoint" "redis_pe_redis" {
 
    private_dns_zone_group {
     name                 = "privatednsrediszonegroup"
-    private_dns_zone_ids = [azurerm_private_dns_zone.dns_for_cache.id]
+    private_dns_zone_ids = [azurerm_private_dns_zone.dns_for_cache[0].id]
   }
 
   private_service_connection {

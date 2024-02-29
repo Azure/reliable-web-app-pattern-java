@@ -1,3 +1,9 @@
+variable "environment" {
+  type        = string
+  description = "The environment (dev / prod)"
+  default     = "dev"
+}
+
 variable "application_name" {
   type        = string
   description = "The application name"
