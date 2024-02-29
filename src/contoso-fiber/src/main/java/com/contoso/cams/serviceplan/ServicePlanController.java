@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +24,12 @@ public class ServicePlanController {
 
     private final ServicePlanService planService;
 
+    private static final String SERVICE_PLAN = "servicePlan";
+
     @GetMapping("/list")
     @PreAuthorize("hasAnyAuthority('APPROLE_AccountManager')")
+    @CircuitBreaker(name = SERVICE_PLAN)
+    @Retry(name = SERVICE_PLAN)
     public String listServicePlans(Model model) {
         List<ServicePlanDto> servicePlans = planService.getServicePlans();
         model.addAttribute("servicePlans", servicePlans);

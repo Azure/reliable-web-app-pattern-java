@@ -110,6 +110,8 @@ resource "azurerm_linux_web_app" "application" {
     SPRING_DATA_REDIS_HOST = var.contoso_webapp_options.redis_host_name
     SPRING_DATA_REDIS_PORT = var.contoso_webapp_options.redis_port
     SPRING_DATA_REDIS_PASSWORD = var.contoso_webapp_options.redis_password
+
+    CONTOSO_RETRY_DEMO = "0"
   }
 
   logs {
