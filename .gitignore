@@ -39,3 +39,4 @@ docker/.env
 *.terraform.lock.hcl
 .terraform/
 *.tfplan
+.DS_Store

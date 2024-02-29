@@ -13,4 +13,8 @@ hooks:
   postdown:
     interactive: true
     run: "./scripts/teardown-tfstate.sh"
-
+services:
+  application:
+    project: ./src/contoso-fiber
+    language: java
+    host: appservice

@@ -1,29 +1,53 @@
+// ---------------------------------------------------------------------------
+//  Production
+// ---------------------------------------------------------------------------
+
+# -----------------------------------
+#  Primary Spoke Resource Group Name
+# -----------------------------------
+
 resource "azurecaf_name" "spoke_resource_group" {
+  count         = var.environment == "prod" ? 1 : 0
   name          = var.application_name
   resource_type = "azurerm_resource_group"
-  suffixes      = ["spoke", local.environment]
+  suffixes      = ["spoke", var.environment]
 }
 
+# ------------------------------
+#  Primary Spoke Resource Group 
+# ------------------------------
+
 resource "azurerm_resource_group" "spoke" {
-  name     = azurecaf_name.spoke_resource_group.result
+  count    = var.environment == "prod" ? 1 : 0
+  name     = azurecaf_name.spoke_resource_group[0].result
   location = var.location
   tags     = local.base_tags
 }
 
+# -------------------------
+#  Primary Spoke VNET Name
+# -------------------------
+
 resource "azurecaf_name" "spoke_vnet_name" {
+  count         = var.environment == "prod" ? 1 : 0
   name          = var.application_name
   resource_type = "azurerm_virtual_network"
   prefixes      = ["spoke"]
-  suffixes      = [local.environment]
+  suffixes      = [var.environment]
 }
 
-module "spoke_vnet" {
-  source = "../shared/terraform/modules/networking/vnet"
+# --------------------
+#  Primary Spoke VNET 
+# --------------------
 
-  name            = azurecaf_name.spoke_vnet_name.result
-  resource_group  = azurerm_resource_group.spoke.name
-  location        = azurerm_resource_group.spoke.location
+module "spoke_vnet" {
+  count           = var.environment == "prod" ? 1 : 0
+  source          = "../shared/terraform/modules/networking/vnet"
+  name            = azurecaf_name.spoke_vnet_name[0].result
+  resource_group  = azurerm_resource_group.spoke[0].name
+  location        = azurerm_resource_group.spoke[0].location
   vnet_cidr       = local.spoke_vnet_cidr
+  tags            = local.base_tags
 
   subnets = [
     {
@@ -65,72 +89,78 @@ module "spoke_vnet" {
       }
     }
   ]
-
-  tags = local.base_tags
 }
-
+ 
 module "peeringSpokeToHub" {
-  source = "../shared/terraform/modules/networking/peering"
-
-  local_vnet_name     = module.spoke_vnet.vnet_name
-  resource_group_name = azurerm_resource_group.spoke.name
-  remote_vnet_id      = module.hub_vnet.vnet_id
+  count               = var.environment == "prod" ? 1 : 0
+  source              = "../shared/terraform/modules/networking/peering"
+  local_vnet_name     = module.spoke_vnet[0].vnet_name
+  resource_group_name = azurerm_resource_group.spoke[0].name
+  remote_vnet_id      = module.hub_vnet[0].vnet_id
 }
 
 module "peeringHubToSpoke" {
-  source = "../shared/terraform/modules/networking/peering"
-
-  local_vnet_name     = module.hub_vnet.vnet_name
-  resource_group_name = azurerm_resource_group.hub.name
-  remote_vnet_id      = module.spoke_vnet.vnet_id
+  count               = var.environment == "prod" ? 1 : 0
+  source              = "../shared/terraform/modules/networking/peering"
+  local_vnet_name     = module.hub_vnet[0].vnet_name
+  resource_group_name = azurerm_resource_group.hub[0].name
+  remote_vnet_id      = module.spoke_vnet[0].vnet_id
 }
 
-# ----------------------------------------------------------------------------------------------
-# 2nd region
-# ----------------------------------------------------------------------------------------------
+# -------------------------------------
+#  Secondary Spoke Resource Group Name
+# -------------------------------------
 
 resource "azurecaf_name" "secondary_spoke_resource_group" {
-  count         = local.is_multi_region ? 1 : 0
-
+  count         = var.environment == "prod" ? 1 : 0
   name          = var.application_name
   resource_type = "azurerm_resource_group"
-  suffixes      = ["spoke2", local.environment]
+  suffixes      = ["spoke2", var.environment]
 }
 
-resource "azurerm_resource_group" "secondary_spoke" {
-  count    = local.is_multi_region ? 1 : 0
+# --------------------------------
+#  Secondary Spoke Resource Group 
+# --------------------------------
 
+resource "azurerm_resource_group" "secondary_spoke" {
+  count    = var.environment == "prod" ? 1 : 0
   name     = azurecaf_name.secondary_spoke_resource_group[0].result
   location = var.secondary_location
   tags     = local.base_tags
 }
 
-resource "azurecaf_name" "secondary_spoke_vnet_name" {
-  count         = local.is_multi_region ? 1 : 0
+# ---------------------------
+#  Secondary Spoke VNET Name
+# ---------------------------
 
+resource "azurecaf_name" "secondary_spoke_vnet_name" {
+  count         = var.environment == "prod" ? 1 : 0
   name          = var.application_name
   resource_type = "azurerm_virtual_network"
   prefixes      = ["spoke2"]
-  suffixes      = [local.environment]
+  suffixes      = [var.environment]
 }
 
+# ----------------------
+#  Secondary Spoke VNET 
+# ----------------------
+
 module "secondary_spoke_vnet" {
-  count         = local.is_multi_region ? 1 : 0
-
-  source = "../shared/terraform/modules/networking/vnet"
-
+  count           = var.environment == "prod" ? 1 : 0
+  source          = "../shared/terraform/modules/networking/vnet"
   name            = azurecaf_name.secondary_spoke_vnet_name[0].result
   resource_group  = azurerm_resource_group.secondary_spoke[0].name
   location        = azurerm_resource_group.secondary_spoke[0].location
   vnet_cidr       = local.secondary_spoke_vnet_cidr
+  tags            = local.base_tags
 
   subnets = [
     {
       name              = local.app_service_subnet_name
       subnet_cidr       = local.secondary_appsvc_subnet_cidr
       service_endpoints = [ "Microsoft.Storage", "Microsoft.KeyVault"]
-      delegation = {
-        name = "Microsoft.Web/serverFarms"
+      delegation        = {
+        name               = "Microsoft.Web/serverFarms"
         service_delegation = {
           name    = "Microsoft.Web/serverFarms"
           actions = ["Microsoft.Network/virtualNetworks/subnets/action"]
@@ -150,60 +180,48 @@ module "secondary_spoke_vnet" {
       delegation        = null
     },
     {
-      name = local.postgresql_subnet_name
-      subnet_cidr = local.secondary_postgresql_subnet_cidr
-
+      name              = local.postgresql_subnet_name
+      subnet_cidr       = local.secondary_postgresql_subnet_cidr
       service_endpoints = ["Microsoft.Storage"]
-
-      delegation = {
-        name = "Microsoft.DBforPostgreSQL/flexibleServers"
+      delegation        = {
+        name               = "Microsoft.DBforPostgreSQL/flexibleServers"
         service_delegation = {
-          name    = "Microsoft.DBforPostgreSQL/flexibleServers"
-          actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
+            name    = "Microsoft.DBforPostgreSQL/flexibleServers"
+            actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
         }
       }
     }
   ]
-
-  tags = local.base_tags
 }
-
+ 
 module "peeringSpoke2ToHub" {
-  count = local.is_multi_region ? 1 : 0
-
-  source = "../shared/terraform/modules/networking/peering"
-
+  count               = var.environment == "prod" ? 1 : 0
+  source              = "../shared/terraform/modules/networking/peering"
   local_vnet_name     = module.secondary_spoke_vnet[0].vnet_name
   resource_group_name = azurerm_resource_group.secondary_spoke[0].name
-  remote_vnet_id      = module.hub_vnet.vnet_id
+  remote_vnet_id      = module.hub_vnet[0].vnet_id
 }
 
 module "peeringHubToSpoke2" {
-  count = local.is_multi_region ? 1 : 0
-
-  source = "../shared/terraform/modules/networking/peering"
-
-  local_vnet_name     = module.hub_vnet.vnet_name
-  resource_group_name = azurerm_resource_group.hub.name
+  count               = var.environment == "prod" ? 1 : 0
+  source              = "../shared/terraform/modules/networking/peering"
+  local_vnet_name     = module.hub_vnet[0].vnet_name
+  resource_group_name = azurerm_resource_group.hub[0].name
   remote_vnet_id      = module.secondary_spoke_vnet[0].vnet_id
 }
 
 module "peeringSpokeToSpoke2" {
-  count = local.is_multi_region ? 1 : 0
-
-  source = "../shared/terraform/modules/networking/peering"
-
-  local_vnet_name     = module.spoke_vnet.vnet_name
-  resource_group_name = azurerm_resource_group.spoke.name
+  count               = var.environment == "prod" ? 1 : 0
+  source              = "../shared/terraform/modules/networking/peering"
+  local_vnet_name     = module.spoke_vnet[0].vnet_name
+  resource_group_name = azurerm_resource_group.spoke[0].name
   remote_vnet_id      = module.secondary_spoke_vnet[0].vnet_id
 }
 
 module "peeringSpoke2ToSpoke" {
-  count = local.is_multi_region ? 1 : 0
-
-  source = "../shared/terraform/modules/networking/peering"
-
+  count               = var.environment == "prod" ? 1 : 0
+  source              = "../shared/terraform/modules/networking/peering"
   local_vnet_name     = module.secondary_spoke_vnet[0].vnet_name
   resource_group_name = azurerm_resource_group.secondary_spoke[0].name
-  remote_vnet_id      = module.spoke_vnet.vnet_id
+  remote_vnet_id      = module.spoke_vnet[0].vnet_id
 }

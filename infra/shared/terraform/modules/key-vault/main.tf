@@ -45,18 +45,21 @@ resource "azurerm_key_vault" "application" {
 # resolve domain names in a virtual network without the need to add a custom DNS solution
 # https://docs.microsoft.com/azure/dns/private-dns-privatednszone
 resource "azurerm_private_dns_zone" "key_vault_dns_zone" {
+  count               = var.environment == "prod" ? 1 : 0
   name                = "privatelink.vaultcore.azure.net"
   resource_group_name = var.resource_group
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "virtual_network_link_vault" {
+  count                 = var.environment == "prod" ? 1 : 0
   name                  = "privatelink.vaultcore.azure.net"
-  private_dns_zone_name = azurerm_private_dns_zone.key_vault_dns_zone.name
+  private_dns_zone_name = azurerm_private_dns_zone.key_vault_dns_zone[0].name
   virtual_network_id    = var.virtual_network_id
   resource_group_name   = var.resource_group
 }
 
 resource "azurerm_private_endpoint" "keyvault_private_endpoint" {
+  count                = var.environment == "prod" ? 1 : 0
   name                = format("%s-private-endpoint", azurecaf_name.key_vault.result)
   location            = var.location
   resource_group_name = var.resource_group
@@ -64,7 +67,7 @@ resource "azurerm_private_endpoint" "keyvault_private_endpoint" {
 
   private_dns_zone_group {
     name                 = "privatednskeyvaultzonegroup"
-    private_dns_zone_ids = [azurerm_private_dns_zone.key_vault_dns_zone.id]
+    private_dns_zone_ids = [azurerm_private_dns_zone.key_vault_dns_zone[0].id]
   }
   
   private_service_connection {

@@ -8,32 +8,38 @@ resource "random_password" "password" {
 locals {
   database_administrator_password = coalesce(var.database_administrator_password, random_password.password.result)
 }
+ 
+# ----------------------------------------------------------------------------------------------
+# Database - Prod - Primary Region
+# ----------------------------------------------------------------------------------------------
 
 module "postresql_database" {
+  count                       = var.environment == "prod" ? 1 : 0
   source                      = "../shared/terraform/modules/postresql"
   azure_ad_tenant_id          = data.azuread_client_config.current.tenant_id
-  resource_group              = azurerm_resource_group.spoke.name
+  resource_group              = azurerm_resource_group.spoke[0].name
   application_name            = var.application_name
-  environment                 = local.environment
+  environment                 = var.environment
   location                    = var.location
-  virtual_network_id          = module.spoke_vnet.vnet_id
-
-  subnet_network_id           = module.spoke_vnet.subnets[local.postgresql_subnet_name].id
-
+  virtual_network_id          = module.spoke_vnet[0].vnet_id
+  subnet_network_id           = module.spoke_vnet[0].subnets[local.postgresql_subnet_name].id
   administrator_password      = local.database_administrator_password
-  log_analytics_workspace_id  = module.app_insights.log_analytics_workspace_id
+  log_analytics_workspace_id  = module.hub_app_insights[0].log_analytics_workspace_id
   sku_name                    = local.postgresql_sku_name
 }
 
 resource "azurerm_postgresql_flexible_server_database" "postresql_database" {
-  name                = "${var.application_name}db"
-  server_id           = module.postresql_database.database_server_id
+  count     = var.environment == "prod" ? 1 : 0
+  name      = "${var.application_name}db"
+  server_id = module.postresql_database[0].database_server_id
 }
+
 
 # Demo purposes only: assign current user as admin to the created DB
 resource "azurerm_postgresql_flexible_server_active_directory_administrator" "contoso-ad-admin" {
-  server_name         = module.postresql_database.database_name
-  resource_group_name = azurerm_resource_group.spoke.name
+  count               = var.environment == "prod" ? 1 : 0
+  server_name         = module.postresql_database[0].database_name
+  resource_group_name = azurerm_resource_group.spoke[0].name
   tenant_id           = data.azuread_client_config.current.tenant_id
   object_id           = data.azuread_client_config.current.object_id
   principal_name      = data.azuread_client_config.current.object_id
@@ -45,25 +51,50 @@ resource "azurerm_postgresql_flexible_server_active_directory_administrator" "co
 # ----------------------------------------------------------------------------------------------
 
 module "secondary_postresql_database" {
-  count = local.is_multi_region ? 1 : 0
-
+  count                       = var.environment == "prod" ? 1 : 0
   source                      = "../shared/terraform/modules/postresql"
   azure_ad_tenant_id          = data.azuread_client_config.current.tenant_id
   resource_group              = azurerm_resource_group.secondary_spoke[0].name
   application_name            = var.application_name
-  environment                 = local.environment
+  environment                 = var.environment
   location                    = var.secondary_location
   virtual_network_id          = module.secondary_spoke_vnet[0].vnet_id
   subnet_network_id           = module.secondary_spoke_vnet[0].subnets[local.postgresql_subnet_name].id
-  source_server_id            = module.postresql_database.database_server_id
+  source_server_id            = module.postresql_database[0].database_server_id
   administrator_password      = local.database_administrator_password
-  log_analytics_workspace_id  = module.app_insights.log_analytics_workspace_id
+  log_analytics_workspace_id  = module.hub_app_insights[0].log_analytics_workspace_id
   sku_name                    = local.postgresql_sku_name
 
   depends_on = [
-    module.spoke_vnet,
+    module.spoke_vnet[0],
     module.secondary_spoke_vnet[0],
-    module.peeringSpoke2ToSpoke,
-    module.peeringSpokeToSpoke2
+    module.peeringSpoke2ToSpoke[0],
+    module.peeringSpokeToSpoke2[0]
   ]
+}
+
+# ----------------------------------------------------------------------------------------------
+#  Dev - PostgreSQL
+# ----------------------------------------------------------------------------------------------
+
+module "dev_postresql_database" {
+  count                       = var.environment == "dev" ? 1 : 0
+  source                      = "../shared/terraform/modules/postresql"
+  azure_ad_tenant_id          = data.azuread_client_config.current.tenant_id
+  resource_group              = azurerm_resource_group.dev[0].name
+  application_name            = var.application_name
+  environment                 = var.environment
+  location                    = var.location
+  virtual_network_id          = null
+  subnet_network_id           = null
+  source_server_id            = null
+  administrator_password      = local.database_administrator_password
+  log_analytics_workspace_id  = module.dev_app_insights[0].log_analytics_workspace_id
+  sku_name                    = local.postgresql_sku_name
+}
+
+resource "azurerm_postgresql_flexible_server_database" "dev_postresql_database_db" {
+  count     = var.environment == "dev" ? 1 : 0
+  name      = "${var.application_name}db"
+  server_id = module.dev_postresql_database[0].dev_database_server_id
 }

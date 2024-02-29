@@ -25,3 +25,17 @@ Error: updating Flexible Server (Subscription: "a1fe858c-e1c9-4131-8937-14ef5215
 ```
 
 There is no workaround for this error. You must delete the deployment and start over.
+
+## Access to the Azure Redis Cache console error
+
+You can launch the console for Azure Redis Cache through the Azure Portal.
+
+![Redis Console](docs/assets/azure-redis-console.png)
+
+You may encounter the following errors when issuing Redis commands.
+
+![Redis Error](docs/assets/azure-redis-private-console-error.png)
+
+Enable *public network access* to use the console.
+
+![Redis Enable Public Access](docs/assets/azure-redis-enable-public-network-access.png)
