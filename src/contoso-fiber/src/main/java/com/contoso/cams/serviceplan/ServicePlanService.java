@@ -29,6 +29,8 @@ public class ServicePlanService {
                 servicePlan.getIsDefault()))
             .collect(Collectors.toList());
 
+        ServicePlanExceptionSimulator.checkAndthrowExceptionIfEnabled(); 
+        
         return servicePlanDtos;
     }
 

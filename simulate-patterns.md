@@ -2,6 +2,29 @@
 
 You can test and configure the three code-level design patterns with this implementation: retry, circuit-breaker, and cache-aside. The following paragraphs detail steps to test the three code-level design patterns.
 
+## Retry and Circuit Break Pattern
+
+We built an app configuration setting that lets you simulate and test a transient failure when making a web request to get Service Plans within the Contoso Fiber application. The reference implementation uses `Spring Boot Actuator` to monitor retries. After deploying the application, navigate to your site’s `/actuator` endpoint to see a list of Spring Boot Actuator endpoints. Navigate to `/actuator/retryevents` to see retried calls. Set the `CONTOSO_RETRY_DEMO` application setting to 1. This will simulate a failure for every web request to get Service plans. A value of 2 generates a 503 error for every other request.
+
+Follow these steps to set up this test:
+
+1. Set the `CONTOSO_RETRY_DEMO` setting to 1 or 2 in the App Service Configuration. The default value of 0 disables the simulated failures.
+
+1. Changing a application setting will cause the App Service to restart. Wait for the app to restart.
+
+1. We added Spring Actuator Dependencies to the Contoso Fiber project. This enables actuator endpoints. Navigate to the following sites.
+    * https://<FRONT_DOOR_URL>/actuator
+    * https://<FRONT_DOOR_URL>/actuator/retryevents
+    * https://<FRONT_DOOR_URL>/actuator/metrics/resilience4j.circuitbreaker.not.permitted.calls
+
+1. Navigate to https://<FRONT_DOOR_URL>/plans/list and refresh the page. Every time you refresh the page, a GET call is made to retrive a list of all service plans.
+
+1. Make note of the retry events and circuit breaker in the actuator endpoints.
+
+    ![airsonic-retry-demo](docs/assets/contoso-retries.png)
+
+    ![airsonic-retry-demo](docs/assets/contoso-circuit-breaker.png)
+
 ## Cache-Aside Pattern
 
 Azure Cache for Redis is a fully managed, open-source compatible in-memory data store that powers fast, high-performing applications, with caching and advanced data structures.
