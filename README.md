@@ -1,17 +1,26 @@
 # Reliable web app pattern for Java
 
-> :mega: **Got feedback?** Fill out [this survey](https://aka.ms/eap/rwa/dotnet/survey) to help us shape the future of Enterprise App Patterns and understand whether we're focusing on the business goals and features important to you. [Microsoft Privacy Statement](https://go.microsoft.com/fwlink/?LinkId=521839)
+> :mega: **Got feedback?** Fill out [this survey](https://aka.ms/eap/rwa/java/survey) to help us shape the future of Enterprise App Patterns and understand whether we're focusing on the business goals and features important to you. [Microsoft Privacy Statement](https://go.microsoft.com/fwlink/?LinkId=521839)
 
-The reference implementation provides a production-grade web application that uses best practices from our guidance and gives developers concrete examples to build their own Reliable Web Application in Azure.
+The reference implementation provides a production-grade web application that uses best practices from our guidance and gives developers concrete examples to build their own Reliable Web Application in Azure. This repository specifically demonstrates a Customer Account Management System (CAMS) application for the fictional company Contoso Fiber, embodying the reliable web app pattern with a focus on Java technologies. It guides developers through a simulated migration from an on-premises web application to Azure, detailing the architectural changes and enhancements that capitalize on the cloud's strengths during the initial adoption phase. 
+
+This project has a [a companion article in the Azure Architecture Center](https://aka.ms/eap/rwa/java/doc) that describes design patterns and best practices and [a six-part video series (YouTube)](https://aka.ms/eap/rwa/java/videos) that details the reliable web app pattern for Java web app. Here's an outline of the contents in this readme:
+
+- [Architecture](#architecture)
+- [Workflow](#workflow)
+- [Steps to deploy the reference implementation](#steps-to-deploy-the-reference-implementation)
+- [Additional links](#additional-links)
+- [Data Collection](#data-collection)
 
 ## Architecture
 
-TODO: update image with Java Web App
+Contoso Fiber aligned to a hub and spoke network topology in the production deployment architecture to centralize common resources. This network topology provided cost savings, enhanced security, and facilitated network integration (platform and hybrid):
 
-![Architecture](./docs/assets/relecloud-solution-diagram.png)
+![Architecture](./docs/icons/reliable-web-app-java.svg)
 
+This diagram describes the production deployment which is described in the [prod-deployment.md](./prod-deployment.md) file. The following steps below are for a [development deployment](./docs/icoms/reliable-web-app-java-dev.svg) which is a simplified version.
 
-## Deployment
+## Steps to deploy the reference implementation
 
 Clone the repository and open the project using the Dev Container.
 
@@ -35,20 +44,6 @@ The Reliable Web App pattern for Java can be deployed using the following option
 - [Local Development](./local-development.md)
 - [Dev deployment](./dev-deployment.md)
 - [Production Deployment](./prod-deployment.md)
-
-## Contributing
-
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
-Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit https://cla.opensource.microsoft.com.
-
-When you submit a pull request, a CLA bot will automatically determine whether you need to provide
-a CLA and decorate the PR appropriately (e.g., status check, comment). Simply follow the instructions
-provided by the bot. You will only need to do this once across all repos using our CLA.
-
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
-For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
-contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
 ## Additional links
 
