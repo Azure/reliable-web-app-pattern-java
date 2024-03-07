@@ -54,12 +54,14 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 - [Known issues](known-issues.md)
 - [Troubleshooting](troubleshooting.md)
-- [Developer patterns](simulate-patterns.md)
-- [Local Development](local-development.md)
+- [Pattern Simulations](demo.md)
+- [Developer Experience](developer-experience.md)
+- [Calculating SLA](./assets/sla-calculation.md)
 - [Logging](docs/logging.md)
 - [Redis](docs/REDIS.md)
 - [Report security concerns](SECURITY.md)
 - [Find Support](SUPPORT.md)
+- [Contributing](CONTRIBUTING.md)
 
 ## Trademarks
 
