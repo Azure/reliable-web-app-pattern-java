@@ -81,52 +81,52 @@ Once the command palette is open, search for `Dev Containers: Rebuild and Reopen
 
 ### 3. Log in to Azure
 
-Login into Azure using the following command:
+Before deploying, you must be authenticated to Azure and have the appropriate subscription selected. Run the following command to authenticate:
+
+If you are not using PowerShell 7+, run the following command (you can use [$PSVersionTable.PSVersion](https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_powershell_editions) to check your version):
 
 ```shell
 az login --scope https://graph.microsoft.com//.default
 ```
 
-Login into AZD using the following command:
-
-```shell
-azd auth login
-```
-
-Set the environment variable to the subscription to be used:
+Set the subscription to the one you want to use (you can use [az account list](https://learn.microsoft.com/en-us/cli/azure/account?view=azure-cli-latest#az-account-list) to list available subscriptions):
 
 ```shell
 export AZURE_SUBSCRIPTION_ID="<your-subscription-id>"
 ```
 
-To set the active subscription to be used by Azure CLI, run the following command:
-
-```shell
+```pwsh
 az account set --subscription $AZURE_SUBSCRIPTION_ID
 ```
 
-Set the default subscription to be used by the Azure Developer CLI:
+Use the next command to login with the Azure Dev CLI (AZD) tool:
 
-```shell
-azd config set defaults.subscription $AZURE_SUBSCRIPTION_ID
+```pwsh
+azd auth login
 ```
 
-Enable the Terraform Alpha provider:
 
-```shell
-azd config set alpha.terraform on
-```
+### 4. Create a new environment
 
-Create a new environment with a globally unique name using:
+Next we provide the AZD tool with variables that it uses to create the deployment. The first thing we initialize is the AZD environment with a name.
+
+The environment name should be less than 18 characters and must be comprised of lower-case, numeric, and dash characters (for example, `dotnetwebapp`).  The environment name is used for resource group naming and specific resource naming.
+
+By default, Azure resources are sized for a development deployment. If doing a production deployment, see the [production deployment](./prod-deployment.md) instructions for more detail.
 
 ```shell
 azd env new <pick_a_name>
 ```
 
-Set the environment to 'dev' using:
+Enable the AZD Terraform provider:
 
 ```shell
-azd env set ENVIRONMENT dev
+azd config set alpha.terraform on
+```
+
+Select the subscription that will be used for the deployment:
+```shell
+azd env set AZURE_SUBSCRIPTION_ID $AZURE_SUBSCRIPTION_ID
 ```
 
 Set the Azure region to be used:
@@ -135,19 +135,17 @@ Set the Azure region to be used:
 azd env set AZURE_LOCATION <pick_a_region>
 ```
 
-Telemetry collection is on by default.
+### 5. Create the Azure resources and deploy the code
 
-To opt out, set the environment variable ENABLE_TELEMETRY to false.
-
-```shell
-azd env set ENABLE_TELEMETRY false
-```
-
-Now provision the infrastructure using:
+Run the following command to create the Azure resources and deploy the code (about 15-minutes to complete):
 
 ```shell
 azd up
 ```
+
+### 6. Open and use the application
+
+Navigate to the Front Door URL in a browser to view the Contoso Fiber CAMS application. Use the Endpoint URL from the output of the deployment.
 
 You will see an output similar to the following:
 
@@ -155,28 +153,18 @@ You will see an output similar to the following:
 Deploying services (azd deploy)
 
   (✓) Done: Deploying service application
-  - Endpoint: https://fd-nickcams-dev-frcfgefndcctbgdh.z02.azurefd.net
+  - Endpoint: https://fd-contosocams-dev-frcfgefndcctbgdh.z02.azurefd.net
 ```
 
-Navigate to the Contoso Fiber App
+You can learn more about the web app by reading the [Pattern Simulations](demo.md) documentation.
 
-Navigate to the Front Door URL in a browser to view the Contoso Fiber CAMS application. Use the Endpoint URL from the output of the deployment.
+### 7. Tear down the deployment
 
-## Tear down the environment
+Run the following command to tear down the deployment:
 
-When you are done you can cleanup all the resources using:
-
-```shell
-azd down --force --purge
+```pwsh
+azd down --purge --force
 ```
-
-## Deployment Options
-
-The Reliable Web App pattern for Java can be deployed using the following options:
-
-- [Local Development](./local-development.md)
-- [Dev deployment](./dev-deployment.md)
-- [Production Deployment](./prod-deployment.md)
 
 ## Additional links
 
