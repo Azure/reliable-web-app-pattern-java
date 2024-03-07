@@ -39,6 +39,16 @@ This description details the workflow for Contoso Fiber's CAMs application. It h
 
 ## Steps to deploy the reference implementation
 
+The following detailed deployment steps assume you are using a Dev Container inside Visual Studio Code.
+
+### 1. Clone the repo
+
+> For Windows users, we recommend using Windows Subsystem for Linux (WSL) to [improve Dev Container performance](https://code.visualstudio.com/remote/advancedcontainers/improve-performance).
+
+```pwsh
+wsl
+```
+
 Clone the repository and open the project using the Dev Container.
 
 ```shell
@@ -47,11 +57,29 @@ git clone https://github.com/Azure/web-app-pattern-java.git
 cd web-app-pattern-java
 ```
 
-If you don't see the popup to *Reopen in Container*, open the Visual Studio Code Command Palette to execute the command. There are three ways to open the command palette:
+### 2. Open Dev Container in Visual Studio Code
+
+If required, ensure Docker Desktop is started. Open the repository folder in Visual Studio Code. You can do this from the command prompt:
+
+```shell
+code .
+```
+
+Once Visual Studio Code is launched, you should see a popup allowing you to click on the button **Reopen in Container**.
+
+![Reopen in Container](docs/assets/vscode-reopen-in-container.png)
+
+If you don't see the popup, open the Visual Studio Code Command Palette to execute the command. There are three ways to open the command palette:
 
 - For Mac users, use the keyboard shortcut ⇧⌘P
 - For Windows and Linux users, use Ctrl+Shift+P
 - From the Visual Studio Code top menu, navigate to View -> Command Palette.
+
+Once the command palette is open, search for `Dev Containers: Rebuild and Reopen in Container`.
+
+![WSL Ubuntu](docs/assets/vscode-reopen-in-container-command.png)
+
+### 3. Log in to Azure
 
 Login into Azure using the following command:
 
