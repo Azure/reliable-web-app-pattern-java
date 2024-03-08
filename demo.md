@@ -1,45 +1,122 @@
-# Simulate the Patterns
+# Pattern Simulations
 
 You can test and configure the three code-level design patterns with this implementation: retry, circuit-breaker, and cache-aside. The following paragraphs detail steps to test the three code-level design patterns.
 
-## Retry and Circuit Break Pattern
+## Retry pattern
 
-We built an app configuration setting that lets you simulate and test a transient failure when making a web request to get Service Plans within the Contoso Fiber application. The reference implementation uses `Spring Boot Actuator` to monitor retries. After deploying the application, navigate to your site’s `/actuator` endpoint to see a list of Spring Boot Actuator endpoints. Navigate to `/actuator/retryevents` to see retried calls. Set the `CONTOSO_RETRY_DEMO` application setting to 1. This will simulate a failure for every web request to get Service plans. A value of 2 generates a 503 error for every other request.
+We built a configuration setting that lets you simulate and test a failure from the web app. The setting is called `CONTOSO_RETRY_DEMO`. We've included this configuration in the deployable code. The `CONTOSO_RETRY_DEMO` setting simulates an error when the end user tries to get Service Plans within the Contoso Fiber application. `CONTOSO_RETRY_DEMO` is an editable setting that determines the number of back-to-back errors between a successful request. A value of 2 generates 1 error after returning one successful response. This is disabled by default.  Removing the setting, or changing the value to 0 will disable the feature.
 
 Follow these steps to set up this test:
 
-1. Set the `CONTOSO_RETRY_DEMO` setting to 1 or 2 in the App Service Configuration. The default value of 0 disables the simulated failures.
+1. Update the setting App Service.
+    - Go to the App Service in the Azure Portal
+    - Navigate to the "Environment variables" by clicking the link in the left-hand blade under "Settings"
+    - Enter the following data and then click "Apply":
 
-1. Changing a application setting will cause the App Service to restart. Wait for the app to restart.
+    |Name|Value|
+    |-----|-----|
+    |*Key*|CONTOSO_RETRY_DEMO|
+    |*Value*|2|
 
-1. We added Spring Actuator Dependencies to the Contoso Fiber project. This enables actuator endpoints. Navigate to the following sites.
-    * https://<FRONT_DOOR_URL>/actuator
+  > It will take a few minutes for the App Service to restart. When it restarts, the application will use the `CONTOSO_RETRY_DEMO` configuration.
+
+  We recommend observing telemetry to see the effect of this change and how the Retry pattern helps solve intermittent errors. We've configured Application Insights to collect telemetry and we added Spring Actuator Dependencies to the Contoso Fiber project. Using the actuator endpoints, you can see the retry events and the number of retries while browsing the site.
+
+  > App Insights can take up to a minute to aggregate the data it receives, and failed requests might not appear right away in the Failures view.
+
+To see the Retry pattern in action you can follow these steps:
+
+1. Click on the "Service Plans" link in the left-side menu of the Contoso Fiber application. This will try to make a query to retrieve a list of all service plans.
+
+  ![Service plans page](docs/assets/contoso-service-plans-page.png)
+
+1. Navigate to the following page in your browser to observe the retry events.
     * https://<FRONT_DOOR_URL>/actuator/retryevents
+
+    ![Spring actuator endpoint displaying messages for retry events](docs/assets/contoso-retries.png)
+
+## Circuit Breaker pattern
+
+We built a configuration setting that lets you simulate and test a failure from the web app. The setting is called `CONTOSO_RETRY_DEMO`. We've included this configuration in the deployable code. The `CONTOSO_RETRY_DEMO` setting simulates an error when the end user tries to get Service Plans within the Contoso Fiber application. `CONTOSO_RETRY_DEMO` is an editable setting that determines the number of back-to-back errors between a successful request. A value of 2 generates 1 error after returning one successful response. A value of 1 will always cause the simulated error response. This is disabled by default.  Removing the setting, or changing the value to 0 will disable the feature.
+
+Follow these steps to set up this test:
+
+1. Update the setting App Service.
+    - Go to the App Service in the Azure Portal
+    - Navigate to the "Environment variables" by clicking the link in the left-hand blade under "Settings"
+    - Enter the following data and then click "Apply":
+
+    |Name|Value|
+    |-----|-----|
+    |*Key*|CONTOSO_RETRY_DEMO|
+    |*Value*|1|
+
+  > It will take a few minutes for the App Service to restart. When it restarts, the application will use the `CONTOSO_RETRY_DEMO` configuration.
+
+  > App Insights can take up to a minute to aggregate the data it receives, and failed requests might not appear right away in the Failures view.
+
+To see the Circuit Breaker pattern in action you can follow these steps:
+
+1. Click on the "Service Plans" link in the left-side menu of the Contoso Fiber application. This will try to make a query to retrieve a list of all service plans. And, because the `CONTOSO_RETRY_DEMO` setting is set to 1, the application will return an error.
+
+    ![Service plans error page](docs/assets/contoso-service-plans-page-error.png)
+
+1. Navigate to the following page in your browser to observe the retry events that now describe circuit breaker behavior.
+    * https://<FRONT_DOOR_URL>/actuator/retryevents
+
+    ![Spring actuator endpoint displaying messages for retry events](docs/assets/contoso-retries-3-fails.png)
+
+1. Navigate to the following page in your browser to observe the circuit breaker behavior.
     * https://<FRONT_DOOR_URL>/actuator/metrics/resilience4j.circuitbreaker.not.permitted.calls
 
-1. Navigate to https://<FRONT_DOOR_URL>/plans/list and refresh the page. Every time you refresh the page, a GET call is made to retrive a list of all service plans.
+    ![Spring actuator endpoint displaying messages for circuitbreaker](docs/assets/contoso-circuit-breaker.png)
 
-1. Make note of the retry events and circuit breaker in the actuator endpoints.
 
-    ![airsonic-retry-demo](docs/assets/contoso-retries.png)
+## Cache-Aside pattern
 
-    ![airsonic-retry-demo](docs/assets/contoso-circuit-breaker.png)
+The Cache-Aside pattern enables us to limit read queries to  the Azure PostgreSQL Flexible Server. It also provides a layer of redundancy that can keep parts of our application running in the event of issue with Azure PostgreSQL Database.
 
-## Cache-Aside Pattern
+For more information, see [Cache-Aside pattern](https://learn.microsoft.com/azure/architecture/patterns/cache-aside).
 
-Azure Cache for Redis is a fully managed, open-source compatible in-memory data store that powers fast, high-performing applications, with caching and advanced data structures.
+We can observe this behavior in the web app by following these steps:
 
-The cache-aside pattern enables us to limit read queries to  the Azure PostgreSQL Flexible Server. It also provides a layer of redundancy that can keep parts of our application running in the event of issue with Azure PostgreSQL Database.
+1. Click on the "Accounts" link in the left-side menu of the Contoso Fiber application.
 
-For more information, see [cache-aside pattern](https://learn.microsoft.com/azure/architecture/patterns/cache-aside).
+![Accounts page](docs/assets/contoso-accounts-page.png)
 
-Using the Redis Console we can see that we are caching objects and http sessions from Contoso Fiber in Redis.
+1. Fill out the form and click "Add Account". This will create a new account and store it in the Azure PostgreSQL Flexible Server.
+
+![New account page](docs/assets/contoso-account-new-page.png)
+
+1. When successful, the account details page is shown.
+
+![Account details page](docs/assets/contoso-account-details-page.png)
+
+Using the (PREVIEW) Redis Console we can see this data stored in Redis.
+
+Open the Redis Console by navigating to the Azure Cache for Redis resource in the Azure Portal and clicking the "Console" link above the overview details for this resource.
 
 ![image of Azure Cache for Redis Console](docs/assets/redis-console.png)
 
+Run the following command to see all cached keys:
+
+```
+SCAN 0 COUNT 1000 MATCH *
+```
+
+Run the next command to see the cached account details data:
+
+```
+GET com.contoso.cams.account-details::1 
+```
+
 ![image of Azure Cache for Redis Keys](docs/assets/redis-keys.png)
 
-# Logs
+
+# Other interesting features
+The Contoso Fiber CAMS web application has several other interesting features that are worth exploring such as logging, auto scaling, Application Insights, and resiliency with multi-region.
+
+## Logs
 
 Application logging is enabled. To view the logs, navigate to *Diagnose and solve problems*. From there, click on *Application Logs*.
 
@@ -136,7 +213,7 @@ Navigate to the Live Metrics blade to see real-time performance:
 
 ## Resiliency with Multi-Region
 
-The Contoso Fiber CAMS web application is deployed in two regions. All traffic is initially routed to the primary region. In the event of an outage in the active region, traffic can be routed to the secondary region. This proccess in not automatic and requires manual intervention.
+The Contoso Fiber CAMS web application is deployed in two regions. All traffic is initially routed to the primary region. In the event of an outage in the active region, traffic can be routed to the secondary region. This process in not automatic and requires manual intervention.
 
 ![image of Azure Front Door Origin Group](./docs/assets/front-door-origin-group.png)
 
