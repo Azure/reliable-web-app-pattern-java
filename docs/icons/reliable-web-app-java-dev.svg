@@ -308,7 +308,6 @@
 				<v:ud v:nameU="Embellishment" v:prompt="" v:val="VT0(2):26"/>
 				<v:ud v:nameU="visMasterStencil" v:prompt="" v:val="VT4(SDCONT_U.vssx)"/>
 				<v:ud v:nameU="BaseColor" v:prompt="" v:val="VT5(#ffffff)"/>
-				<v:ud v:nameU="LineColor" v:prompt="" v:val="VT5(#d5d5d5)"/>
 			</v:userDefs>
 			<title>Plain</title>
 			<g id="group1012-2" v:mID="1012" v:groupContext="group" v:layerMember="1">
@@ -1557,7 +1556,7 @@
 				<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
 			</v:userDefs>
 			<title>Azure Database PostgreSQL Server</title>
-			<desc>Azure Database PostgreSQL Server</desc>
+			<desc>Azure Database for PostgreSQL</desc>
 			<g id="shape1005-447" v:mID="1005" v:groupContext="shape">
 				<title>Sheet.1005</title>
 				<v:userDefs>
@@ -1641,8 +1640,8 @@
 			<g id="shape1004-459" v:mID="1004" v:groupContext="groupContent">
 				<v:textBlock v:margins="rect(0,0,0,0)"/>
 				<v:textRect cx="12.8356" cy="624.962" width="72" height="21.6036"/>
-				<text x="-15.84" y="622.26" class="st13" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Azure Database <tspan
-							x="-20.78" dy="1.2em" class="st9">PostgreSQL Server</tspan></text>			</g>
+				<text x="-22.17" y="622.26" class="st13" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Azure Database for <tspan
+							x="-8.04" dy="1.2em" class="st9">PostgreSQL</tspan></text>			</g>
 		</g>
 		<g id="shape1010-462" v:mID="1010" v:groupContext="shape" v:layerMember="0" transform="translate(365.372,-255.089)">
 			<title>Dynamic connector.1010</title>

@@ -69,7 +69,7 @@
 		.st55 {fill:url(#grad0-609);stroke:none;stroke-linecap:butt;stroke-width:0.75}
 		.st56 {fill:#999999;stroke:none;stroke-linecap:butt;stroke-width:0.75}
 		.st57 {fill:#f2f2f2;stroke:#bfbfbf;stroke-linecap:round;stroke-linejoin:round;stroke-width:1}
-		.st58 {fill:url(#grad0-625);stroke:none;stroke-linecap:butt;stroke-width:0.75}
+		.st58 {fill:url(#grad0-624);stroke:none;stroke-linecap:butt;stroke-width:0.75}
 		.st59 {fill:#e8e8e8;stroke:none;stroke-linecap:butt;stroke-width:0.75}
 		.st60 {fill:#32bedd;stroke:none;stroke-linecap:butt;stroke-width:0.75}
 		.st61 {fill:#50e6ff}
@@ -172,7 +172,7 @@
 			<stop offset="0.99" stop-color="#8b7ddc" stop-opacity="1"/>
 			<stop offset="1" stop-color="#897bdc" stop-opacity="1"/>
 		</linearGradient>
-		<linearGradient id="grad0-625" x1="0" y1="0" x2="1" y2="0" gradientTransform="rotate(0 0.5 0.5)">
+		<linearGradient id="grad0-624" x1="0" y1="0" x2="1" y2="0" gradientTransform="rotate(0 0.5 0.5)">
 			<stop offset="0" stop-color="#005ba1" stop-opacity="1"/>
 			<stop offset="0.07" stop-color="#0060a9" stop-opacity="1"/>
 			<stop offset="0.36" stop-color="#0071c8" stop-opacity="1"/>
@@ -1033,26 +1033,26 @@
 			<v:textRect cx="59.76" cy="710.406" width="119.53" height="20.8005"/>
 			<rect x="0" y="700.006" width="119.52" height="20.8005" class="st20"/>
 			<text x="17.63" y="714.01" class="st45" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Primary region</text>		</g>
-		<g id="shape1933-351" v:mID="1933" v:groupContext="shape" transform="translate(211.018,914.364) rotate(180)">
+		<g id="shape1933-351" v:mID="1933" v:groupContext="shape" transform="translate(210.098,914.363) rotate(-179.927)">
 			<title>Sheet.1933</title>
-			<path d="M0 720.81 L58.92 720.81" class="st46"/>
+			<path d="M0 720.81 L54.89 720.81" class="st46"/>
 		</g>
 		<g id="shape1936-357" v:mID="1936" v:groupContext="shape" transform="translate(1206.75,-13.5) scale(-1,1)">
 			<title>Sheet.1936</title>
 			<rect x="0" y="108.865" width="530.573" height="611.942" class="st3"/>
 		</g>
-		<g id="shape2005-359" v:mID="2005" v:groupContext="shape" transform="translate(1044.75,-298.457) scale(-1,1)">
+		<g id="shape2005-359" v:mID="2005" v:groupContext="shape" transform="translate(1038.56,-298.457) scale(-1,1)">
 			<title>Sheet.2005</title>
 			<path d="M0 720.81 L162 720.81 L162 428.34 L0 428.34 L0 720.81 Z" class="st9"/>
 		</g>
-		<g id="shape2006-361" v:mID="2006" v:groupContext="shape" transform="translate(1019.25,-560.449) scale(-1,1)">
+		<g id="shape2006-361" v:mID="2006" v:groupContext="shape" transform="translate(1013.06,-560.449) scale(-1,1)">
 			<title>Sheet.2006</title>
 			<desc>Spoke virtual network 2</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)"/>
 			<v:textRect cx="69.75" cy="710.406" width="139.51" height="20.8005"/>
 			<rect x="0" y="700.006" width="139.5" height="20.8005" class="st20"/>
 			<text x="-132.1" y="714.01" transform="scale(-1,1)" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Spoke virtual network 2</text>		</g>
-		<g id="group2007-364" transform="translate(1017,-558.778)" v:mID="2007" v:groupContext="group">
+		<g id="group2007-364" transform="translate(1010.81,-558.778)" v:mID="2007" v:groupContext="group">
 			<title>Sheet.2007</title>
 			<g id="shape2008-365" v:mID="2008" v:groupContext="shape" transform="translate(15.716,-11.1217)">
 				<title>Sheet.2008</title>
@@ -1089,11 +1089,11 @@
 							 711.76 Z" class="st25"/>
 			</g>
 		</g>
-		<g id="shape2015-382" v:mID="2015" v:groupContext="shape" transform="translate(1026.8,-399.035) scale(-1,1)">
+		<g id="shape2015-382" v:mID="2015" v:groupContext="shape" transform="translate(1020.62,-399.035) scale(-1,1)">
 			<title>Sheet.2015</title>
 			<path d="M0 720.81 L126 720.81 L126 689.53 L0 689.53 L0 720.81 Z" class="st2"/>
 		</g>
-		<g id="shape2016-384" v:mID="2016" v:groupContext="shape" transform="translate(1023.56,-404.107) scale(-1,1)">
+		<g id="shape2016-384" v:mID="2016" v:groupContext="shape" transform="translate(1017.38,-404.107) scale(-1,1)">
 			<title>Sheet.2016</title>
 			<desc>Frontend app integration subnet</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)"/>
@@ -1101,11 +1101,11 @@
 			<rect x="0" y="702.807" width="119.52" height="18" class="st20"/>
 			<text x="-95.54" y="708.21" transform="scale(-1,1)" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Frontend app <tspan
 						x="-108.53" dy="1.2em" class="st12">integration subnet</tspan></text>		</g>
-		<g id="shape2017-388" v:mID="2017" v:groupContext="shape" transform="translate(1026.8,-437.577) scale(-1,1)">
+		<g id="shape2017-388" v:mID="2017" v:groupContext="shape" transform="translate(1020.62,-437.577) scale(-1,1)">
 			<title>Sheet.2017</title>
 			<path d="M0 720.81 L126 720.81 L126 689.53 L0 689.53 L0 720.81 Z" class="st2"/>
 		</g>
-		<g id="shape2018-390" v:mID="2018" v:groupContext="shape" transform="translate(1023.56,-444.216) scale(-1,1)">
+		<g id="shape2018-390" v:mID="2018" v:groupContext="shape" transform="translate(1017.38,-444.216) scale(-1,1)">
 			<title>Sheet.2018</title>
 			<desc>Backend app integration subnet</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)"/>
@@ -1129,11 +1129,11 @@
 			<rect x="0" y="701.682" width="74.5312" height="19.125" class="st32"/>
 			<text x="-68.48" y="700.44" transform="scale(-1,1)" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>App Service <v:newlineChar/><tspan
 						x="-60.02" dy="1.2em" class="st12">web app<v:newlineChar/></tspan><tspan x="-63.29" dy="1.2em" class="st12">(backend)</tspan></text>		</g>
-		<g id="shape2049-404" v:mID="2049" v:groupContext="shape" transform="translate(1026.8,-318.476) scale(-1,1)">
+		<g id="shape2049-404" v:mID="2049" v:groupContext="shape" transform="translate(1020.62,-318.476) scale(-1,1)">
 			<title>Sheet.2049</title>
 			<path d="M0 720.81 L126 720.81 L126 689.53 L0 689.53 L0 720.81 Z" class="st2"/>
 		</g>
-		<g id="shape2050-406" v:mID="2050" v:groupContext="shape" transform="translate(1023.56,-323.548) scale(-1,1)">
+		<g id="shape2050-406" v:mID="2050" v:groupContext="shape" transform="translate(1017.38,-323.548) scale(-1,1)">
 			<title>Sheet.2050</title>
 			<desc>Frontend app private endpoint subnet</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)"/>
@@ -1141,11 +1141,11 @@
 			<rect x="0" y="702.807" width="119.52" height="18" class="st20"/>
 			<text x="-115.35" y="708.21" transform="scale(-1,1)" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Frontend app private <tspan
 						x="-103.43" dy="1.2em" class="st12">endpoint subnet</tspan></text>		</g>
-		<g id="shape2051-410" v:mID="2051" v:groupContext="shape" transform="translate(1026.8,-358.755) scale(-1,1)">
+		<g id="shape2051-410" v:mID="2051" v:groupContext="shape" transform="translate(1020.62,-358.755) scale(-1,1)">
 			<title>Sheet.2051</title>
 			<path d="M0 720.81 L126 720.81 L126 689.53 L0 689.53 L0 720.81 Z" class="st2"/>
 		</g>
-		<g id="shape2052-412" v:mID="2052" v:groupContext="shape" transform="translate(1023.56,-363.827) scale(-1,1)">
+		<g id="shape2052-412" v:mID="2052" v:groupContext="shape" transform="translate(1017.38,-363.827) scale(-1,1)">
 			<title>Sheet.2052</title>
 			<desc>Backend app private endpoint subnet</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)"/>
@@ -1153,11 +1153,11 @@
 			<rect x="0" y="702.807" width="119.52" height="18" class="st20"/>
 			<text x="-113.63" y="708.21" transform="scale(-1,1)" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Backend app private <tspan
 						x="-103.43" dy="1.2em" class="st12">endpoint subnet</tspan></text>		</g>
-		<g id="shape2053-416" v:mID="2053" v:groupContext="shape" transform="translate(1026.8,-513.895) scale(-1,1)">
+		<g id="shape2053-416" v:mID="2053" v:groupContext="shape" transform="translate(1020.62,-513.895) scale(-1,1)">
 			<title>Sheet.2053</title>
 			<path d="M0 720.81 L126 720.81 L126 689.53 L0 689.53 L0 720.81 Z" class="st2"/>
 		</g>
-		<g id="shape2054-418" v:mID="2054" v:groupContext="shape" transform="translate(1023.56,-518.967) scale(-1,1)">
+		<g id="shape2054-418" v:mID="2054" v:groupContext="shape" transform="translate(1017.38,-518.967) scale(-1,1)">
 			<title>Sheet.2054</title>
 			<desc>Other private endpoints subnet</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)"/>
@@ -1165,11 +1165,11 @@
 			<rect x="0" y="702.807" width="119.52" height="18" class="st20"/>
 			<text x="-94.74" y="708.21" transform="scale(-1,1)" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Other private <tspan
 						x="-105.98" dy="1.2em" class="st12">endpoints subnet</tspan></text>		</g>
-		<g id="shape2073-422" v:mID="2073" v:groupContext="shape" transform="translate(1026.8,-475.535) scale(-1,1)">
+		<g id="shape2073-422" v:mID="2073" v:groupContext="shape" transform="translate(1020.62,-475.535) scale(-1,1)">
 			<title>Sheet.2073</title>
 			<path d="M0 720.81 L126 720.81 L126 689.53 L0 689.53 L0 720.81 Z" class="st2"/>
 		</g>
-		<g id="shape2074-424" v:mID="2074" v:groupContext="shape" transform="translate(1023.56,-482.175) scale(-1,1)">
+		<g id="shape2074-424" v:mID="2074" v:groupContext="shape" transform="translate(1017.38,-482.175) scale(-1,1)">
 			<title>Sheet.2074</title>
 			<desc>DevOps subnet</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)"/>
@@ -1178,11 +1178,11 @@
 			<text x="-100.25" y="715.41" transform="scale(-1,1)" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>DevOps subnet</text>		</g>
 		<g id="shape2075-427" v:mID="2075" v:groupContext="shape" transform="translate(815.258,932.364) scale(1,-1)">
 			<title>Sheet.2075</title>
-			<path d="M6.18 720.81 L6.54 720.81 L60.94 720.81" class="st47"/>
+			<path d="M6.18 720.81 L6.54 720.81 L54.76 720.81" class="st47"/>
 		</g>
 		<g id="shape2076-434" v:mID="2076" v:groupContext="shape" transform="translate(815.551,1054.99) scale(1,-1)">
 			<title>Sheet.2076</title>
-			<path d="M6.18 720.81 L6.54 720.81 L60.66 720.81" class="st47"/>
+			<path d="M6.18 720.81 L6.54 720.81 L54.47 720.81" class="st47"/>
 		</g>
 		<g id="shape2077-441" v:mID="2077" v:groupContext="shape" transform="translate(803.572,-597.042) scale(-1,1)">
 			<title>Sheet.2077</title>
@@ -1260,18 +1260,18 @@
 				<text x="10" y="707.08" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Log Analytics<v:newlineChar/><tspan
 							x="17.04" dy="1.2em" class="st12">workspace</tspan></text>			</g>
 		</g>
-		<g id="shape2360-483" v:mID="2360" v:groupContext="shape" transform="translate(1031.25,912.114) scale(1,-1)">
+		<g id="shape2360-483" v:mID="2360" v:groupContext="shape" transform="translate(1038.56,912.114) scale(1,-1)">
 			<title>Sheet.2360</title>
-			<path d="M0 720.81 L62.09 720.81" class="st46"/>
+			<path d="M0 720.81 L51.83 720.81" class="st46"/>
 		</g>
 		<g id="shape2361-488" v:mID="2361" v:groupContext="shape"
-				transform="translate(884.043,-307.312) rotate(0.0282634) scale(-1,1)">
+				transform="translate(876.918,-307.316) rotate(0.0282634) scale(-1,1)">
 			<title>Sheet.2361</title>
-			<path d="M6.18 720.81 L6.54 720.81 L262.69 720.81" class="st38"/>
+			<path d="M6.18 720.81 L6.54 720.81 L255.56 720.81" class="st38"/>
 		</g>
 		<g id="shape2363-493" v:mID="2363" v:groupContext="shape" transform="translate(489.375,-206.192)">
 			<title>Sheet.2363</title>
-			<path d="M6.18 720.81 L6.54 720.81 L483.37 720.81 L483.37 628.54" class="st38"/>
+			<path d="M6.18 720.81 L6.54 720.81 L469.12 720.81 L469.12 628.54" class="st38"/>
 		</g>
 		<g id="group2364-498" transform="translate(769.924,-488.92)" v:mID="2364" v:groupContext="group">
 			<title>Icon-web-41.2364</title>
@@ -1494,447 +1494,451 @@
 				<text x="39.7" y="706.81" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Application <v:newlineChar/><tspan
 							x="49.25" dy="1.2em" class="st12">Insights</tspan></text>			</g>
 		</g>
-		<g id="group2433-618" transform="translate(1085.81,-361.699)" v:mID="2433" v:groupContext="group">
-			<title>Sheet.2433</title>
-			<g id="shape2325-619" v:mID="2325" v:groupContext="shape" transform="translate(14.625,-29.8005)">
-				<title>Rectangle.2325</title>
-				<v:userDefs>
-					<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
-				</v:userDefs>
-				<rect x="0" y="521.379" width="83.25" height="199.427" class="st57"/>
-			</g>
-			<g id="group2337-621" transform="translate(39.9375,-71.7405)" v:mID="2337" v:groupContext="group">
-				<title>Cache Redis.2337</title>
-				<desc>Azure Cache for Redis</desc>
-				<g id="shape2338-622" v:mID="2338" v:groupContext="shape" transform="translate(18.2965,-11.2956)">
-					<title>Sheet.2338</title>
-					<v:userDefs>
-						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
-					</v:userDefs>
-					<path d="M8.13 703.9 C3.64 703.9 0 702.48 0 700.71 L0 717.64 C0 719.36 3.58 720.78 8.03 720.81 L8.13 720.81 C12.62
-								 720.81 16.26 719.39 16.26 717.64 L16.26 700.71 C16.26 702.48 12.62 703.9 8.13 703.9 Z"
-							class="st58"/>
-				</g>
-				<g id="shape2339-626" v:mID="2339" v:groupContext="shape" transform="translate(18.2965,-28.2016)">
-					<title>Sheet.2339</title>
-					<v:userDefs>
-						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
-					</v:userDefs>
-					<path d="M16.26 717.62 C16.26 719.39 12.62 720.81 8.13 720.81 C3.64 720.81 0 719.39 0 717.62 C0 715.84 3.64 714.45
-								 8.13 714.45 C12.62 714.45 16.26 715.87 16.26 717.62 Z" class="st59"/>
-				</g>
-				<g id="shape2340-628" v:mID="2340" v:groupContext="shape" transform="translate(20.1871,-29.6229)">
-					<title>Sheet.2340</title>
-					<v:userDefs>
-						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
-					</v:userDefs>
-					<path d="M12.48 718.79 C12.48 719.91 9.68 720.81 6.24 720.81 C2.81 720.81 0 719.91 0 718.79 C0 717.66 2.81 716.77
-								 6.24 716.77 C9.68 716.77 12.48 717.66 12.48 718.79 Z" class="st33"/>
-				</g>
-				<g id="shape2341-630" v:mID="2341" v:groupContext="shape" transform="translate(21.4882,-29.6229)">
-					<title>Sheet.2341</title>
-					<v:userDefs>
-						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
-					</v:userDefs>
-					<path d="M4.94 719.26 A17.5849 21.5688 -180 0 0 0 720.01 A15.8569 19.4494 -180 0 0 4.94 720.81 A15.8569 19.4494
-								 -180 0 0 9.88 720.01 A17.5849 21.5688 -180 0 0 4.94 719.26 Z" class="st60"/>
-				</g>
-				<g id="shape2342-632" v:mID="2342" v:groupContext="shape" transform="translate(0,-11.2956)">
-					<title>Sheet.2342</title>
-					<v:userDefs>
-						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
-					</v:userDefs>
-					<path d="M8.13 703.9 C3.64 703.9 0 702.48 0 700.71 L0 717.64 C0 719.36 3.58 720.78 8.13 720.81 C12.62 720.81
-								 16.26 719.39 16.26 717.64 L16.26 700.71 C16.26 702.48 12.62 703.9 8.13 703.9 Z" class="st58"/>
-				</g>
-				<g id="shape2343-635" v:mID="2343" v:groupContext="shape" transform="translate(0,-28.2016)">
-					<title>Sheet.2343</title>
-					<v:userDefs>
-						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
-					</v:userDefs>
-					<path d="M16.26 717.62 C16.26 719.39 12.62 720.81 8.13 720.81 C3.64 720.81 0 719.39 0 717.62 C0 715.84 3.64 714.45
-								 8.13 714.45 C12.62 714.45 16.26 715.87 16.26 717.62 Z" class="st59"/>
-				</g>
-				<g id="shape2344-637" v:mID="2344" v:groupContext="shape" transform="translate(1.89064,-29.6229)">
-					<title>Sheet.2344</title>
-					<v:userDefs>
-						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
-					</v:userDefs>
-					<path d="M12.48 718.79 C12.48 719.91 9.68 720.81 6.24 720.81 C2.81 720.81 0 719.91 0 718.79 C0 717.66 2.81 716.77
-								 6.24 716.77 C9.68 716.77 12.48 717.66 12.48 718.79 Z" class="st33"/>
-				</g>
-				<g id="shape2345-639" v:mID="2345" v:groupContext="shape" transform="translate(3.19172,-29.6229)">
-					<title>Sheet.2345</title>
-					<v:userDefs>
-						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
-					</v:userDefs>
-					<path d="M4.94 719.26 A17.5849 21.5688 -180 0 0 0 720.01 A15.8569 19.4494 -180 0 0 4.94 720.81 A15.8569 19.4494
-								 -180 0 0 9.88 720.01 A17.5849 21.5688 -180 0 0 4.94 719.26 Z" class="st60"/>
-				</g>
-				<g id="shape2346-641" v:mID="2346" v:groupContext="shape" transform="translate(9.14824,0)">
-					<title>Sheet.2346</title>
-					<v:userDefs>
-						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
-					</v:userDefs>
-					<path d="M8.13 703.9 C3.64 703.9 0 702.48 0 700.71 L0 717.64 C0 719.39 3.58 720.78 8.03 720.81 L8.13 720.81 C12.62
-								 720.81 16.26 719.39 16.26 717.64 L16.26 700.71 C16.26 702.48 12.62 703.9 8.13 703.9 Z"
-							class="st58"/>
-				</g>
-				<g id="shape2347-644" v:mID="2347" v:groupContext="shape" transform="translate(9.14824,-16.906)">
-					<title>Sheet.2347</title>
-					<v:userDefs>
-						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
-					</v:userDefs>
-					<path d="M16.26 717.62 C16.26 719.39 12.62 720.81 8.13 720.81 C3.64 720.81 0 719.39 0 717.62 C0 715.84 3.64 714.45
-								 8.13 714.45 C12.62 714.45 16.26 715.87 16.26 717.62 Z" class="st59"/>
-				</g>
-				<g id="shape2348-646" v:mID="2348" v:groupContext="shape" transform="translate(11.0389,-18.3273)">
-					<title>Sheet.2348</title>
-					<v:userDefs>
-						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
-					</v:userDefs>
-					<path d="M12.48 718.79 C12.48 719.91 9.68 720.81 6.24 720.81 C2.81 720.81 0 719.91 0 718.79 C0 717.66 2.81 716.87
-								 6.24 716.87 C9.68 716.87 12.48 717.76 12.48 718.89 L12.48 718.79 Z" class="st61"/>
-					<path d="M12.48 718.79 C12.48 719.91 9.68 720.81 6.24 720.81 C2.81 720.81 0 719.91 0 718.79 C0 717.66 2.81 716.87
-								 6.24 716.87 C9.68 716.87 12.48 717.76 12.48 718.89" class="st62"/>
-				</g>
-				<g id="shape2349-649" v:mID="2349" v:groupContext="shape" transform="translate(12.34,-18.3273)">
-					<title>Sheet.2349</title>
-					<v:userDefs>
-						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
-					</v:userDefs>
-					<path d="M4.94 719.36 A17.5849 21.5688 -180 0 0 0 720.11 A15.8569 19.4494 -180 0 0 4.94 720.81 A15.8569 19.4494
-								 -180 0 0 9.88 720.01 A17.5849 21.5688 -180 0 0 4.94 719.36 Z" class="st60"/>
-				</g>
-				<g id="shape2337-651" v:mID="2337" v:groupContext="groupContent">
-					<v:textBlock v:margins="rect(0,0,0,0)"/>
-					<v:textRect cx="17.28" cy="735.209" width="72" height="28.8038"/>
-					<text x="-15.64" y="731.61" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Azure Cache <v:newlineChar/><tspan
-								x="-6.1" dy="1.2em" class="st12">for Redis</tspan></text>				</g>
-			</g>
-			<g id="shape2351-654" v:mID="2351" v:groupContext="shape">
-				<title>Sheet.2351</title>
-				<desc>Private endpoint connected services</desc>
-				<v:textBlock v:margins="rect(4,4,4,4)"/>
-				<v:textRect cx="56.25" cy="710.406" width="112.5" height="20.8005"/>
-				<rect x="0" y="700.006" width="112.5" height="20.8005" class="st20"/>
-				<text x="12.62" y="706.81" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Private endpoint <v:newlineChar/><tspan
-							x="6.36" dy="1.2em" class="st12">connected services</tspan></text>			</g>
-			<g id="group2427-658" transform="translate(34.5314,-156.701)" v:mID="2427" v:groupContext="group">
-				<v:userDefs>
-					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
-				</v:userDefs>
-				<title>Azure Database PostgreSQL Server</title>
-				<desc>Azure PostgreSQL</desc>
-				<g id="shape2428-659" v:mID="2428" v:groupContext="shape">
-					<title>Sheet.2428</title>
-					<v:userDefs>
-						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
-					</v:userDefs>
-					<path d="M21.72 678.93 C9.72 678.93 0 675.54 0 671.07 L0 712.95 C0 717.25 9.55 720.74 21.41 720.81 L21.72 720.81
-								 C33.71 720.81 43.44 717.42 43.44 712.95 L43.44 671.07 C43.44 675.4 33.71 678.93 21.72 678.93 Z"
-							class="st63"/>
-				</g>
-				<g id="shape2429-663" v:mID="2429" v:groupContext="shape" transform="translate(0,-41.8786)">
-					<title>Sheet.2429</title>
-					<v:userDefs>
-						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
-					</v:userDefs>
-					<path d="M43.44 712.95 C43.44 717.28 33.71 720.81 21.72 720.81 C9.72 720.81 0 717.42 0 712.95 C0 708.47 9.72
-								 705.09 21.72 705.09 C33.71 705.09 43.44 708.47 43.44 712.95 Z" class="st59"/>
-				</g>
-				<g id="shape2430-665" v:mID="2430" v:groupContext="shape" transform="translate(5.04847,-45.3685)">
-					<title>Sheet.2430</title>
-					<v:userDefs>
-						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
-					</v:userDefs>
-					<path d="M33.31 715.79 C33.31 718.57 25.85 720.81 16.67 720.81 C7.49 720.81 0 718.57 0 715.83 C0 713.08 7.45
-								 710.81 16.67 710.81 C25.89 710.81 33.31 713.05 33.31 715.79 Z" class="st33"/>
-				</g>
-				<g id="shape2431-667" v:mID="2431" v:groupContext="shape" transform="translate(8.50447,-45.3685)">
-					<title>Sheet.2431</title>
-					<v:userDefs>
-						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
-					</v:userDefs>
-					<path d="M13.21 717.05 A39.4729 39.4729 -180 0 0 0 718.98 A39.0664 39.0664 -180 0 0 13.21 720.81 A38.8631 38.8631
-								 -180 0 0 26.39 718.84 A40.4216 40.4216 -180 0 0 13.21 717.05 Z" class="st64"/>
-				</g>
-				<g id="shape2432-669" v:mID="2432" v:groupContext="shape" transform="translate(6.47153,-5.99718)">
-					<title>Sheet.2432</title>
-					<v:userDefs>
-						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
-					</v:userDefs>
-					<path d="M25.41 698 C25.41 698.27 25.41 698.82 25.41 699.43 A17.3478 17.3478 -180 0 0 25.14 701.56 C25.14 701.97
-								 25.14 702.58 25.31 703.12 C25.48 703.66 25.31 704.03 25.31 704.34 A5.69224 5.69224 0 0 1 24.46 707.25
-								 A1.45694 1.45694 -180 0 0 24.46 707.49 L24.8 707.9 A35.7459 35.7459 -180 0 0 28.39 699.83 C29.34
-								 696.61 29.44 694.31 28.7 693.33 A8.74165 8.74165 -180 0 0 19.62 690.41 A11.1473 11.1473 0 0 1 22.7
-								 692.68 A7.72518 7.72518 0 0 1 25.41 698 ZM24.36 698.27 A3.89647 3.89647 -180 0 0 21.68 698.58 C20.7
-								 699.19 21.01 700.44 21.68 701.97 A26.3266 26.3266 -180 0 0 22.87 704.85 L23.18 705.39 C23.34 705.66
-								 23.45 705.9 23.55 706.07 L23.82 706.51 A4.33694 4.33694 -180 0 0 24.43 704.31 A9.69035 9.69035 -180
-								 0 0 24.43 703.19 C24.43 702.61 24.43 701.97 24.26 701.53 A20.6682 20.6682 0 0 1 24.53 699.19 C24.43
-								 698.82 24.46 698.44 24.5 698.17 L24.36 698.27 ZM23.34 699.66 A1.35529 1.35529 0 0 1 22.74 700 A1.11812
-								 1.11812 0 0 1 22.26 700 a0.779294 0.779294 0 0 1 -0.237176 -0.643765 C22.02 699.12 22.4 698.92 22.84
-								 698.85 L23.48 698.85 C23.48 698.85 23.79 698.85 23.79 699.12 a0.677647 0.677647 0 0 1 -0.304941
-								 0.440471 L23.34 699.66 ZM7.45 702.68 C7.45 702.44 7.45 702.24 7.45 702.1 A3.38824 3.38824 -180 0
-								 0 7.45 701.53 A18.8047 18.8047 0 0 1 7.45 698.14 A17.6866 17.6866 0 0 1 8.47 694.41 A8.16565 8.16565
-								 0 0 1 10.44 691.23 A16.1958 16.1958 -180 0 0 5.86 690.55 A6.336 6.336 -180 0 0 2.13 691.57 A6.77647
-								 6.77647 -180 0 0 0 697.73 A41.5736 41.5736 -180 0 0 1.69 705.32 C2.85 709.19 4.17 711.56 5.32 711.93
-								 C5.83 712.1 6.37 711.93 6.91 711.22 C7.86 710.07 8.74 709.08 9.25 708.51 A6.36988 6.36988 0 0 1
-								 7.59 702.58 L7.45 702.68 ZM8.34 704.03 A7.38635 7.38635 -180 0 0 8.54 705.93 A5.08235 5.08235 -180
-								 0 0 9.42 707.42 A3.62541 3.62541 -180 0 0 10.61 708.27 A3.69318 3.69318 -180 0 0 11.93 708.54 C11.93
-								 707.97 12.4 707.25 12.71 706.51 A14.7388 14.7388 -180 0 0 13.42 704.51 A22.3962 22.3962 -180 0 0
-								 13.42 700.75 C13.42 700.44 13.42 700.1 13.21 699.73 A1.52471 1.52471 -180 0 0 12.81 698.82 A2.23624
-								 2.23624 -180 0 0 11.86 698.27 L11.18 698.27 A5.28565 5.28565 -180 0 0 9.55 698.75 A6.77647 6.77647
-								 -180 0 0 8.47 699.39 L8.47 699.77 C8.47 700.44 8.47 701.15 8.47 701.83 A2.91388 2.91388 0 0 1 8.47
-								 702.34 L8.47 703.66 L8.34 704.03 ZM10.57 699.49 A1.55859 1.55859 0 0 1 11.52 699.49 A2.03294 2.03294
-								 0 0 1 12.16 699.7 C12.47 699.7 12.5 700.07 12.47 700.17 A1.25365 1.25365 0 0 1 12.06 700.61 A1.01647
-								 1.01647 0 0 1 11.86 700.48 A1.152 1.152 0 0 1 10.91 699.53 L10.57 699.49 ZM13.08 709.66 a0.779294
-								 0.779294 -180 0 0 -0.440471 0.203294 L12.16 710.44 C11.59 711.15 11.35 711.39 9.69 711.73 A1.76188
-								 1.76188 -180 0 0 8.81 712.07 A1.96518 1.96518 -180 0 0 9.62 712.44 A3.99812 3.99812 -180 0 0 12.06
-								 712.44 A5.76 5.76 -180 0 0 13.38 711.56 A2.06682 2.06682 -180 0 0 14.06 710.51 A1.21976 1.21976
-								 -180 0 0 13.72 709.56 a0.508235 0.508235 -180 0 0 -0.508235 -0.0677647 L13.08 709.66 ZM28.7 709.66
-								 A5.52282 5.52282 0 0 1 24.87 709.66 a0.745412 0.745412 -180 0 0 -0.474353 0 A1.01647 1.01647 -180
-								 0 0 23.82 710.13 A3.69318 3.69318 -180 0 0 23.82 711.18 A6.09882 6.09882 -180 0 0 27.55 710.85 A4.608
-								 4.608 -180 0 0 29.17 709.69 L28.7 709.66 ZM20.57 702.41 C20.09 701.02 19.41 699.02 21.18 697.8 A4.57412
-								 4.57412 0 0 1 24.19 697.29 A10.7746 10.7746 -180 0 0 22.02 693.4 L21.68 693.06 L21.48 692.85 A1.152
-								 1.152 -180 0 0 21.28 692.65 A7.92847 7.92847 -180 0 0 19.01 691.23 A8.91106 8.91106 -180 0 0 15.25
-								 690.48 A5.15012 5.15012 -180 0 0 12.88 690.85 A5.99718 5.99718 -180 0 0 11.86 691.23 A7.11529 7.11529
-								 -180 0 0 9.35 694.62 A19.7873 19.7873 -180 0 0 8.64 698 A5.62447 5.62447 0 0 1 12.03 697.22 A2.84612
-								 2.84612 0 0 1 14.64 700.31 A24.5986 24.5986 0 0 1 14.64 704.61 A13.1125 13.1125 0 0 1 13.86 706.75
-								 C13.65 707.32 13.38 707.93 13.25 708.41 A1.69412 1.69412 0 0 1 14.54 708.88 A2.23624 2.23624 0 0
-								 1 15.18 710.68 L15.25 710.68 C15.25 710.95 15.25 711.22 15.25 711.49 A22.1929 22.1929 -180 0 0 16.06
-								 719.76 A1.82965 1.82965 -180 0 0 16.87 720.47 A2.03294 2.03294 -180 0 0 17.92 720.81 A4.40471 4.40471
-								 -180 0 0 21.31 719.65 A3.55765 3.55765 -180 0 0 22.29 717.42 C22.53 715.89 23.04 711.66 23.11 710.64
-								 A2.43953 2.43953 0 0 1 23.41 709.15 A2.13459 2.13459 0 0 1 24.33 708.34 A18.1609 18.1609 0 0 1 20.7
-								 702.21 L20.57 702.41 Z" class="st44"/>
-				</g>
-				<g id="shape2427-671" v:mID="2427" v:groupContext="groupContent">
-					<v:textBlock v:margins="rect(0,0,0,0)"/>
-					<v:textRect cx="21.7186" cy="738.089" width="72" height="28.8038"/>
-					<text x="6.52" y="734.49" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Azure<v:newlineChar/><tspan
-								x="-9.03" dy="1.2em" class="st12">PostgreSQL</tspan></text>				</g>
-			</g>
+		<g id="shape2435-618" v:mID="2435" v:groupContext="shape" transform="translate(53.37,-378)">
+			<title>Rectangle.2325</title>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<rect x="0" y="509.258" width="95.13" height="211.549" class="st57"/>
 		</g>
-		<g id="group2434-674" transform="translate(47.25,-360.321)" v:mID="2434" v:groupContext="group">
-			<title>Sheet.2434</title>
-			<g id="shape2435-675" v:mID="2435" v:groupContext="shape" transform="translate(14.625,-29.8005)">
-				<title>Rectangle.2325</title>
+		<g id="group2436-620" transform="translate(81.5814,-418.5)" v:mID="2436" v:groupContext="group">
+			<title>Cache Redis.2337</title>
+			<desc>Azure Cache for Redis</desc>
+			<g id="shape2437-621" v:mID="2437" v:groupContext="shape" transform="translate(20.492,-11.2956)">
+				<title>Sheet.2437</title>
 				<v:userDefs>
-					<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
+					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
 				</v:userDefs>
-				<rect x="0" y="521.379" width="83.25" height="199.427" class="st57"/>
+				<path d="M9.11 703.9 C4.08 703.9 0 702.48 0 700.71 L0 717.64 C0 719.36 4.01 720.78 8.99 720.81 L9.11 720.81 C14.14
+							 720.81 18.22 719.39 18.22 717.64 L18.22 700.71 C18.22 702.48 14.14 703.9 9.11 703.9 Z" class="st58"/>
 			</g>
-			<g id="group2436-677" transform="translate(39.9375,-71.7405)" v:mID="2436" v:groupContext="group">
-				<title>Cache Redis.2337</title>
-				<desc>Azure Cache for Redis</desc>
-				<g id="shape2437-678" v:mID="2437" v:groupContext="shape" transform="translate(18.2965,-11.2956)">
-					<title>Sheet.2437</title>
-					<v:userDefs>
-						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
-					</v:userDefs>
-					<path d="M8.13 703.9 C3.64 703.9 0 702.48 0 700.71 L0 717.64 C0 719.36 3.58 720.78 8.03 720.81 L8.13 720.81 C12.62
-								 720.81 16.26 719.39 16.26 717.64 L16.26 700.71 C16.26 702.48 12.62 703.9 8.13 703.9 Z"
-							class="st58"/>
-				</g>
-				<g id="shape2438-681" v:mID="2438" v:groupContext="shape" transform="translate(18.2965,-28.2016)">
-					<title>Sheet.2438</title>
-					<v:userDefs>
-						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
-					</v:userDefs>
-					<path d="M16.26 717.62 C16.26 719.39 12.62 720.81 8.13 720.81 C3.64 720.81 0 719.39 0 717.62 C0 715.84 3.64 714.45
-								 8.13 714.45 C12.62 714.45 16.26 715.87 16.26 717.62 Z" class="st59"/>
-				</g>
-				<g id="shape2439-683" v:mID="2439" v:groupContext="shape" transform="translate(20.1871,-29.6229)">
-					<title>Sheet.2439</title>
-					<v:userDefs>
-						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
-					</v:userDefs>
-					<path d="M12.48 718.79 C12.48 719.91 9.68 720.81 6.24 720.81 C2.81 720.81 0 719.91 0 718.79 C0 717.66 2.81 716.77
-								 6.24 716.77 C9.68 716.77 12.48 717.66 12.48 718.79 Z" class="st33"/>
-				</g>
-				<g id="shape2440-685" v:mID="2440" v:groupContext="shape" transform="translate(21.4882,-29.6229)">
-					<title>Sheet.2440</title>
-					<v:userDefs>
-						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
-					</v:userDefs>
-					<path d="M4.94 719.26 A17.5849 21.5688 -180 0 0 0 720.01 A15.8569 19.4494 -180 0 0 4.94 720.81 A15.8569 19.4494
-								 -180 0 0 9.88 720.01 A17.5849 21.5688 -180 0 0 4.94 719.26 Z" class="st60"/>
-				</g>
-				<g id="shape2441-687" v:mID="2441" v:groupContext="shape" transform="translate(0,-11.2956)">
-					<title>Sheet.2441</title>
-					<v:userDefs>
-						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
-					</v:userDefs>
-					<path d="M8.13 703.9 C3.64 703.9 0 702.48 0 700.71 L0 717.64 C0 719.36 3.58 720.78 8.13 720.81 C12.62 720.81
-								 16.26 719.39 16.26 717.64 L16.26 700.71 C16.26 702.48 12.62 703.9 8.13 703.9 Z" class="st58"/>
-				</g>
-				<g id="shape2442-690" v:mID="2442" v:groupContext="shape" transform="translate(0,-28.2016)">
-					<title>Sheet.2442</title>
-					<v:userDefs>
-						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
-					</v:userDefs>
-					<path d="M16.26 717.62 C16.26 719.39 12.62 720.81 8.13 720.81 C3.64 720.81 0 719.39 0 717.62 C0 715.84 3.64 714.45
-								 8.13 714.45 C12.62 714.45 16.26 715.87 16.26 717.62 Z" class="st59"/>
-				</g>
-				<g id="shape2443-692" v:mID="2443" v:groupContext="shape" transform="translate(1.89064,-29.6229)">
-					<title>Sheet.2443</title>
-					<v:userDefs>
-						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
-					</v:userDefs>
-					<path d="M12.48 718.79 C12.48 719.91 9.68 720.81 6.24 720.81 C2.81 720.81 0 719.91 0 718.79 C0 717.66 2.81 716.77
-								 6.24 716.77 C9.68 716.77 12.48 717.66 12.48 718.79 Z" class="st33"/>
-				</g>
-				<g id="shape2444-694" v:mID="2444" v:groupContext="shape" transform="translate(3.19172,-29.6229)">
-					<title>Sheet.2444</title>
-					<v:userDefs>
-						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
-					</v:userDefs>
-					<path d="M4.94 719.26 A17.5849 21.5688 -180 0 0 0 720.01 A15.8569 19.4494 -180 0 0 4.94 720.81 A15.8569 19.4494
-								 -180 0 0 9.88 720.01 A17.5849 21.5688 -180 0 0 4.94 719.26 Z" class="st60"/>
-				</g>
-				<g id="shape2445-696" v:mID="2445" v:groupContext="shape" transform="translate(9.14824,0)">
-					<title>Sheet.2445</title>
-					<v:userDefs>
-						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
-					</v:userDefs>
-					<path d="M8.13 703.9 C3.64 703.9 0 702.48 0 700.71 L0 717.64 C0 719.39 3.58 720.78 8.03 720.81 L8.13 720.81 C12.62
-								 720.81 16.26 719.39 16.26 717.64 L16.26 700.71 C16.26 702.48 12.62 703.9 8.13 703.9 Z"
-							class="st58"/>
-				</g>
-				<g id="shape2446-699" v:mID="2446" v:groupContext="shape" transform="translate(9.14824,-16.906)">
-					<title>Sheet.2446</title>
-					<v:userDefs>
-						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
-					</v:userDefs>
-					<path d="M16.26 717.62 C16.26 719.39 12.62 720.81 8.13 720.81 C3.64 720.81 0 719.39 0 717.62 C0 715.84 3.64 714.45
-								 8.13 714.45 C12.62 714.45 16.26 715.87 16.26 717.62 Z" class="st59"/>
-				</g>
-				<g id="shape2447-701" v:mID="2447" v:groupContext="shape" transform="translate(11.0389,-18.3273)">
-					<title>Sheet.2447</title>
-					<v:userDefs>
-						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
-					</v:userDefs>
-					<path d="M12.48 718.79 C12.48 719.91 9.68 720.81 6.24 720.81 C2.81 720.81 0 719.91 0 718.79 C0 717.66 2.81 716.87
-								 6.24 716.87 C9.68 716.87 12.48 717.76 12.48 718.89 L12.48 718.79 Z" class="st61"/>
-					<path d="M12.48 718.79 C12.48 719.91 9.68 720.81 6.24 720.81 C2.81 720.81 0 719.91 0 718.79 C0 717.66 2.81 716.87
-								 6.24 716.87 C9.68 716.87 12.48 717.76 12.48 718.89" class="st62"/>
-				</g>
-				<g id="shape2448-704" v:mID="2448" v:groupContext="shape" transform="translate(12.34,-18.3273)">
-					<title>Sheet.2448</title>
-					<v:userDefs>
-						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
-					</v:userDefs>
-					<path d="M4.94 719.36 A17.5849 21.5688 -180 0 0 0 720.11 A15.8569 19.4494 -180 0 0 4.94 720.81 A15.8569 19.4494
-								 -180 0 0 9.88 720.01 A17.5849 21.5688 -180 0 0 4.94 719.36 Z" class="st60"/>
-				</g>
-				<g id="shape2436-706" v:mID="2436" v:groupContext="groupContent">
-					<v:textBlock v:margins="rect(0,0,0,0)"/>
-					<v:textRect cx="17.28" cy="735.209" width="72" height="28.8038"/>
-					<text x="-15.64" y="731.61" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Azure Cache <v:newlineChar/><tspan
-								x="-6.1" dy="1.2em" class="st12">for Redis</tspan></text>				</g>
+			<g id="shape2438-625" v:mID="2438" v:groupContext="shape" transform="translate(20.492,-28.2016)">
+				<title>Sheet.2438</title>
+				<v:userDefs>
+					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
+				</v:userDefs>
+				<path d="M18.22 717.62 C18.22 719.39 14.14 720.81 9.11 720.81 C4.08 720.81 0 719.39 0 717.62 C0 715.84 4.08 714.45
+							 9.11 714.45 C14.14 714.45 18.22 715.87 18.22 717.62 Z" class="st59"/>
 			</g>
-			<g id="shape2449-709" v:mID="2449" v:groupContext="shape">
-				<title>Sheet.2449</title>
-				<desc>Private endpoint connected services</desc>
-				<v:textBlock v:margins="rect(4,4,4,4)"/>
-				<v:textRect cx="56.25" cy="710.406" width="112.5" height="20.8005"/>
-				<rect x="0" y="700.006" width="112.5" height="20.8005" class="st20"/>
-				<text x="12.62" y="706.81" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Private endpoint <v:newlineChar/><tspan
-							x="6.36" dy="1.2em" class="st12">connected services</tspan></text>			</g>
-			<g id="group2450-713" transform="translate(34.5314,-156.701)" v:mID="2450" v:groupContext="group">
+			<g id="shape2439-627" v:mID="2439" v:groupContext="shape" transform="translate(22.6096,-29.6229)">
+				<title>Sheet.2439</title>
+				<v:userDefs>
+					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
+				</v:userDefs>
+				<path d="M13.98 718.79 C13.98 719.91 10.84 720.81 6.99 720.81 C3.14 720.81 0 719.91 0 718.79 C0 717.66 3.14 716.77
+							 6.99 716.77 C10.84 716.77 13.98 717.66 13.98 718.79 Z" class="st33"/>
+			</g>
+			<g id="shape2440-629" v:mID="2440" v:groupContext="shape" transform="translate(24.0668,-29.6229)">
+				<title>Sheet.2440</title>
+				<v:userDefs>
+					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
+				</v:userDefs>
+				<path d="M5.53 719.26 A19.6951 21.5688 -180 0 0 0 720.01 A17.7598 19.4494 -180 0 0 5.53 720.81 A17.7598 19.4494 -180
+							 0 0 11.07 720.01 A19.6951 21.5688 -180 0 0 5.53 719.26 Z" class="st60"/>
+			</g>
+			<g id="shape2441-631" v:mID="2441" v:groupContext="shape" transform="translate(0,-11.2956)">
+				<title>Sheet.2441</title>
+				<v:userDefs>
+					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
+				</v:userDefs>
+				<path d="M9.11 703.9 C4.08 703.9 0 702.48 0 700.71 L0 717.64 C0 719.36 4.01 720.78 9.11 720.81 C14.14 720.81 18.22
+							 719.39 18.22 717.64 L18.22 700.71 C18.22 702.48 14.14 703.9 9.11 703.9 Z" class="st58"/>
+			</g>
+			<g id="shape2442-634" v:mID="2442" v:groupContext="shape" transform="translate(0,-28.2016)">
+				<title>Sheet.2442</title>
+				<v:userDefs>
+					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
+				</v:userDefs>
+				<path d="M18.22 717.62 C18.22 719.39 14.14 720.81 9.11 720.81 C4.08 720.81 0 719.39 0 717.62 C0 715.84 4.08 714.45
+							 9.11 714.45 C14.14 714.45 18.22 715.87 18.22 717.62 Z" class="st59"/>
+			</g>
+			<g id="shape2443-636" v:mID="2443" v:groupContext="shape" transform="translate(2.11751,-29.6229)">
+				<title>Sheet.2443</title>
+				<v:userDefs>
+					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
+				</v:userDefs>
+				<path d="M13.98 718.79 C13.98 719.91 10.84 720.81 6.99 720.81 C3.14 720.81 0 719.91 0 718.79 C0 717.66 3.14 716.77
+							 6.99 716.77 C10.84 716.77 13.98 717.66 13.98 718.79 Z" class="st33"/>
+			</g>
+			<g id="shape2444-638" v:mID="2444" v:groupContext="shape" transform="translate(3.57472,-29.6229)">
+				<title>Sheet.2444</title>
+				<v:userDefs>
+					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
+				</v:userDefs>
+				<path d="M5.53 719.26 A19.6951 21.5688 -180 0 0 -0 720.01 A17.7598 19.4494 -180 0 0 5.53 720.81 A17.7598 19.4494
+							 -180 0 0 11.07 720.01 A19.6951 21.5688 -180 0 0 5.53 719.26 Z" class="st60"/>
+			</g>
+			<g id="shape2445-640" v:mID="2445" v:groupContext="shape" transform="translate(10.246,0)">
+				<title>Sheet.2445</title>
+				<v:userDefs>
+					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
+				</v:userDefs>
+				<path d="M9.11 703.9 C4.08 703.9 0 702.48 0 700.71 L0 717.64 C0 719.39 4.01 720.78 8.99 720.81 L9.11 720.81 C14.14
+							 720.81 18.22 719.39 18.22 717.64 L18.22 700.71 C18.22 702.48 14.14 703.9 9.11 703.9 Z" class="st58"/>
+			</g>
+			<g id="shape2446-643" v:mID="2446" v:groupContext="shape" transform="translate(10.246,-16.906)">
+				<title>Sheet.2446</title>
+				<v:userDefs>
+					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
+				</v:userDefs>
+				<path d="M18.22 717.62 C18.22 719.39 14.14 720.81 9.11 720.81 C4.08 720.81 0 719.39 0 717.62 C0 715.84 4.08 714.45
+							 9.11 714.45 C14.14 714.45 18.22 715.87 18.22 717.62 Z" class="st59"/>
+			</g>
+			<g id="shape2447-645" v:mID="2447" v:groupContext="shape" transform="translate(12.3635,-18.3273)">
+				<title>Sheet.2447</title>
+				<v:userDefs>
+					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
+				</v:userDefs>
+				<path d="M13.98 718.79 C13.98 719.91 10.84 720.81 6.99 720.81 C3.14 720.81 0 719.91 0 718.79 C0 717.66 3.14 716.87
+							 6.99 716.87 C10.84 716.87 13.98 717.76 13.98 718.89 L13.98 718.79 Z" class="st61"/>
+				<path d="M13.98 718.79 C13.98 719.91 10.84 720.81 6.99 720.81 C3.14 720.81 0 719.91 0 718.79 C0 717.66 3.14 716.87
+							 6.99 716.87 C10.84 716.87 13.98 717.76 13.98 718.89" class="st62"/>
+			</g>
+			<g id="shape2448-648" v:mID="2448" v:groupContext="shape" transform="translate(13.8207,-18.3273)">
+				<title>Sheet.2448</title>
+				<v:userDefs>
+					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
+				</v:userDefs>
+				<path d="M5.53 719.36 A19.6951 21.5688 -180 0 0 0 720.11 A17.7598 19.4494 -180 0 0 5.53 720.81 A17.7598 19.4494 -180
+							 0 0 11.07 720.01 A19.6951 21.5688 -180 0 0 5.53 719.36 Z" class="st60"/>
+			</g>
+			<g id="shape2436-650" v:mID="2436" v:groupContext="groupContent">
+				<v:textBlock v:margins="rect(0,0,0,0)"/>
+				<v:textRect cx="19.3536" cy="735.209" width="72" height="28.8038"/>
+				<text x="-13.56" y="731.61" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Azure Cache <v:newlineChar/><tspan
+							x="-4.03" dy="1.2em" class="st12">for Redis</tspan></text>			</g>
+		</g>
+		<g id="shape2449-653" v:mID="2449" v:groupContext="shape" transform="translate(37.935,-346.5)">
+			<title>Sheet.2449</title>
+			<desc>Private endpoint connected services</desc>
+			<v:textBlock v:margins="rect(4,4,4,4)"/>
+			<v:textRect cx="63" cy="710.406" width="126.01" height="20.8005"/>
+			<rect x="0" y="700.006" width="126" height="20.8005" class="st20"/>
+			<text x="19.37" y="706.81" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Private endpoint <v:newlineChar/><tspan
+						x="13.11" dy="1.2em" class="st12">connected services</tspan></text>		</g>
+		<g id="group2458-657" transform="translate(49.185,-481.5)" v:mID="2458" v:groupContext="group">
+			<title>Sheet.2458</title>
+			<g id="group2450-658" transform="translate(32.3964,-47.2929)" v:mID="2450" v:groupContext="group">
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
 				</v:userDefs>
 				<title>Azure Database PostgreSQL Server</title>
-				<desc>Azure PostgreSQL</desc>
-				<g id="shape2451-714" v:mID="2451" v:groupContext="shape">
+				<g id="shape2451-659" v:mID="2451" v:groupContext="shape">
 					<title>Sheet.2451</title>
 					<v:userDefs>
 						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
 					</v:userDefs>
-					<path d="M21.72 678.93 C9.72 678.93 0 675.54 0 671.07 L0 712.95 C0 717.25 9.55 720.74 21.41 720.81 L21.72 720.81
-								 C33.71 720.81 43.44 717.42 43.44 712.95 L43.44 671.07 C43.44 675.4 33.71 678.93 21.72 678.93 Z"
+					<path d="M19.35 687.49 C8.67 687.49 0 684.79 0 681.23 L0 714.55 C0 717.98 8.51 720.75 19.08 720.81 L19.35 720.81
+								 C30.04 720.81 38.71 718.11 38.71 714.55 L38.71 681.23 C38.71 684.68 30.04 687.49 19.35 687.49 Z"
 							class="st63"/>
 				</g>
-				<g id="shape2452-717" v:mID="2452" v:groupContext="shape" transform="translate(0,-41.8786)">
+				<g id="shape2452-663" v:mID="2452" v:groupContext="shape" transform="translate(0,-33.3199)">
 					<title>Sheet.2452</title>
 					<v:userDefs>
 						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
 					</v:userDefs>
-					<path d="M43.44 712.95 C43.44 717.28 33.71 720.81 21.72 720.81 C9.72 720.81 0 717.42 0 712.95 C0 708.47 9.72
-								 705.09 21.72 705.09 C33.71 705.09 43.44 708.47 43.44 712.95 Z" class="st59"/>
+					<path d="M38.71 714.55 C38.71 718 30.04 720.81 19.35 720.81 C8.67 720.81 0 718.11 0 714.55 C0 710.99 8.67 708.3
+								 19.35 708.3 C30.04 708.3 38.71 710.99 38.71 714.55 Z" class="st59"/>
 				</g>
-				<g id="shape2453-719" v:mID="2453" v:groupContext="shape" transform="translate(5.04847,-45.3685)">
+				<g id="shape2453-665" v:mID="2453" v:groupContext="shape" transform="translate(4.49873,-36.0966)">
 					<title>Sheet.2453</title>
 					<v:userDefs>
 						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
 					</v:userDefs>
-					<path d="M33.31 715.79 C33.31 718.57 25.85 720.81 16.67 720.81 C7.49 720.81 0 718.57 0 715.83 C0 713.08 7.45
-								 710.81 16.67 710.81 C25.89 710.81 33.31 713.05 33.31 715.79 Z" class="st33"/>
+					<path d="M29.68 716.82 C29.68 719.03 23.04 720.81 14.85 720.81 C6.67 720.81 0 719.03 0 716.84 C0 714.66 6.64
+								 712.85 14.85 712.85 C23.07 712.85 29.68 714.63 29.68 716.82 Z" class="st33"/>
 				</g>
-				<g id="shape2454-721" v:mID="2454" v:groupContext="shape" transform="translate(8.50447,-45.3685)">
+				<g id="shape2454-667" v:mID="2454" v:groupContext="shape" transform="translate(7.5784,-36.0966)">
 					<title>Sheet.2454</title>
 					<v:userDefs>
 						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
 					</v:userDefs>
-					<path d="M13.21 717.05 A39.4729 39.4729 -180 0 0 0 718.98 A39.0664 39.0664 -180 0 0 13.21 720.81 A38.8631 38.8631
-								 -180 0 0 26.39 718.84 A40.4216 40.4216 -180 0 0 13.21 717.05 Z" class="st64"/>
+					<path d="M11.78 717.81 A35.1746 31.4059 -180 0 0 0 719.35 A34.8123 31.0824 -180 0 0 11.78 720.81 A34.6312 30.9207
+								 -180 0 0 23.52 719.24 A36.02 32.1607 -180 0 0 11.78 717.81 Z" class="st64"/>
 				</g>
-				<g id="shape2455-723" v:mID="2455" v:groupContext="shape" transform="translate(6.47153,-5.99718)">
+				<g id="shape2455-669" v:mID="2455" v:groupContext="shape" transform="translate(5.76683,-4.77154)">
 					<title>Sheet.2455</title>
 					<v:userDefs>
 						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
 					</v:userDefs>
-					<path d="M25.41 698 C25.41 698.27 25.41 698.82 25.41 699.43 A17.3478 17.3478 -180 0 0 25.14 701.56 C25.14 701.97
-								 25.14 702.58 25.31 703.12 C25.48 703.66 25.31 704.03 25.31 704.34 A5.69224 5.69224 0 0 1 24.46 707.25
-								 A1.45694 1.45694 -180 0 0 24.46 707.49 L24.8 707.9 A35.7459 35.7459 -180 0 0 28.39 699.83 C29.34
-								 696.61 29.44 694.31 28.7 693.33 A8.74165 8.74165 -180 0 0 19.62 690.41 A11.1473 11.1473 0 0 1 22.7
-								 692.68 A7.72518 7.72518 0 0 1 25.41 698 ZM24.36 698.27 A3.89647 3.89647 -180 0 0 21.68 698.58 C20.7
-								 699.19 21.01 700.44 21.68 701.97 A26.3266 26.3266 -180 0 0 22.87 704.85 L23.18 705.39 C23.34 705.66
-								 23.45 705.9 23.55 706.07 L23.82 706.51 A4.33694 4.33694 -180 0 0 24.43 704.31 A9.69035 9.69035 -180
-								 0 0 24.43 703.19 C24.43 702.61 24.43 701.97 24.26 701.53 A20.6682 20.6682 0 0 1 24.53 699.19 C24.43
-								 698.82 24.46 698.44 24.5 698.17 L24.36 698.27 ZM23.34 699.66 A1.35529 1.35529 0 0 1 22.74 700 A1.11812
-								 1.11812 0 0 1 22.26 700 a0.779294 0.779294 0 0 1 -0.237176 -0.643765 C22.02 699.12 22.4 698.92 22.84
-								 698.85 L23.48 698.85 C23.48 698.85 23.79 698.85 23.79 699.12 a0.677647 0.677647 0 0 1 -0.304941
-								 0.440471 L23.34 699.66 ZM7.45 702.68 C7.45 702.44 7.45 702.24 7.45 702.1 A3.38824 3.38824 -180 0
-								 0 7.45 701.53 A18.8047 18.8047 0 0 1 7.45 698.14 A17.6866 17.6866 0 0 1 8.47 694.41 A8.16565 8.16565
-								 0 0 1 10.44 691.23 A16.1958 16.1958 -180 0 0 5.86 690.55 A6.336 6.336 -180 0 0 2.13 691.57 A6.77647
-								 6.77647 -180 0 0 0 697.73 A41.5736 41.5736 -180 0 0 1.69 705.32 C2.85 709.19 4.17 711.56 5.32 711.93
-								 C5.83 712.1 6.37 711.93 6.91 711.22 C7.86 710.07 8.74 709.08 9.25 708.51 A6.36988 6.36988 0 0 1
-								 7.59 702.58 L7.45 702.68 ZM8.34 704.03 A7.38635 7.38635 -180 0 0 8.54 705.93 A5.08235 5.08235 -180
-								 0 0 9.42 707.42 A3.62541 3.62541 -180 0 0 10.61 708.27 A3.69318 3.69318 -180 0 0 11.93 708.54 C11.93
-								 707.97 12.4 707.25 12.71 706.51 A14.7388 14.7388 -180 0 0 13.42 704.51 A22.3962 22.3962 -180 0 0
-								 13.42 700.75 C13.42 700.44 13.42 700.1 13.21 699.73 A1.52471 1.52471 -180 0 0 12.81 698.82 A2.23624
-								 2.23624 -180 0 0 11.86 698.27 L11.18 698.27 A5.28565 5.28565 -180 0 0 9.55 698.75 A6.77647 6.77647
-								 -180 0 0 8.47 699.39 L8.47 699.77 C8.47 700.44 8.47 701.15 8.47 701.83 A2.91388 2.91388 0 0 1 8.47
-								 702.34 L8.47 703.66 L8.34 704.03 ZM10.57 699.49 A1.55859 1.55859 0 0 1 11.52 699.49 A2.03294 2.03294
-								 0 0 1 12.16 699.7 C12.47 699.7 12.5 700.07 12.47 700.17 A1.25365 1.25365 0 0 1 12.06 700.61 A1.01647
-								 1.01647 0 0 1 11.86 700.48 A1.152 1.152 0 0 1 10.91 699.53 L10.57 699.49 ZM13.08 709.66 a0.779294
-								 0.779294 -180 0 0 -0.440471 0.203294 L12.16 710.44 C11.59 711.15 11.35 711.39 9.69 711.73 A1.76188
-								 1.76188 -180 0 0 8.81 712.07 A1.96518 1.96518 -180 0 0 9.62 712.44 A3.99812 3.99812 -180 0 0 12.06
-								 712.44 A5.76 5.76 -180 0 0 13.38 711.56 A2.06682 2.06682 -180 0 0 14.06 710.51 A1.21976 1.21976
-								 -180 0 0 13.72 709.56 a0.508235 0.508235 -180 0 0 -0.508235 -0.0677647 L13.08 709.66 ZM28.7 709.66
-								 A5.52282 5.52282 0 0 1 24.87 709.66 a0.745412 0.745412 -180 0 0 -0.474353 0 A1.01647 1.01647 -180
-								 0 0 23.82 710.13 A3.69318 3.69318 -180 0 0 23.82 711.18 A6.09882 6.09882 -180 0 0 27.55 710.85 A4.608
-								 4.608 -180 0 0 29.17 709.69 L28.7 709.66 ZM20.57 702.41 C20.09 701.02 19.41 699.02 21.18 697.8 A4.57412
-								 4.57412 0 0 1 24.19 697.29 A10.7746 10.7746 -180 0 0 22.02 693.4 L21.68 693.06 L21.48 692.85 A1.152
-								 1.152 -180 0 0 21.28 692.65 A7.92847 7.92847 -180 0 0 19.01 691.23 A8.91106 8.91106 -180 0 0 15.25
-								 690.48 A5.15012 5.15012 -180 0 0 12.88 690.85 A5.99718 5.99718 -180 0 0 11.86 691.23 A7.11529 7.11529
-								 -180 0 0 9.35 694.62 A19.7873 19.7873 -180 0 0 8.64 698 A5.62447 5.62447 0 0 1 12.03 697.22 A2.84612
-								 2.84612 0 0 1 14.64 700.31 A24.5986 24.5986 0 0 1 14.64 704.61 A13.1125 13.1125 0 0 1 13.86 706.75
-								 C13.65 707.32 13.38 707.93 13.25 708.41 A1.69412 1.69412 0 0 1 14.54 708.88 A2.23624 2.23624 0 0
-								 1 15.18 710.68 L15.25 710.68 C15.25 710.95 15.25 711.22 15.25 711.49 A22.1929 22.1929 -180 0 0 16.06
-								 719.76 A1.82965 1.82965 -180 0 0 16.87 720.47 A2.03294 2.03294 -180 0 0 17.92 720.81 A4.40471 4.40471
-								 -180 0 0 21.31 719.65 A3.55765 3.55765 -180 0 0 22.29 717.42 C22.53 715.89 23.04 711.66 23.11 710.64
-								 A2.43953 2.43953 0 0 1 23.41 709.15 A2.13459 2.13459 0 0 1 24.33 708.34 A18.1609 18.1609 0 0 1 20.7
-								 702.21 L20.57 702.41 Z" class="st44"/>
+					<path d="M22.64 702.66 C22.64 702.88 22.64 703.31 22.64 703.8 A15.4587 13.8024 -180 0 0 22.4 705.49 C22.4 705.82
+								 22.4 706.3 22.55 706.73 C22.71 707.17 22.55 707.46 22.55 707.71 A5.0724 4.52892 0 0 1 21.8 710.02
+								 A1.29829 1.15919 -180 0 0 21.8 710.21 L22.1 710.54 A31.8534 28.4406 -180 0 0 25.3 704.12 C26.15
+								 701.56 26.24 699.73 25.57 698.94 A7.78975 6.95513 -180 0 0 17.48 696.63 A9.93344 8.86914 0 0 1 20.23
+								 698.43 A6.88396 6.1464 0 0 1 22.64 702.66 ZM21.71 702.88 A3.47218 3.10016 -180 0 0 19.32 703.12
+								 C18.45 703.61 18.72 704.61 19.32 705.82 A23.4598 20.9463 -180 0 0 20.38 708.11 L20.65 708.54 C20.8
+								 708.76 20.89 708.95 20.98 709.08 L21.23 709.43 A3.86468 3.45061 -180 0 0 21.77 707.68 A8.63515 7.70995
+								 -180 0 0 21.77 706.79 C21.77 706.33 21.77 705.82 21.62 705.47 A18.4176 16.4443 0 0 1 21.86 703.61
+								 C21.77 703.31 21.8 703.01 21.83 702.8 L21.71 702.88 ZM20.8 703.99 A1.20771 1.07832 0 0 1 20.26 704.25
+								 a0.996363 0.88961 0 0 1 -0.4227 0 a0.694435 0.620031 0 0 1 -0.21135 -0.5122 C19.63 703.55 19.96
+								 703.39 20.35 703.34 L20.92 703.34 C20.92 703.34 21.2 703.34 21.2 703.55 a0.603857 0.539158 0 0 1
+								 -0.271735 0.350452 L20.8 703.99 ZM6.64 706.38 C6.64 706.2 6.64 706.03 6.64 705.93 A3.01928 2.69579
+								 -180 0 0 6.64 705.47 A16.757 14.9616 0 0 1 6.64 702.77 A15.7607 14.072 0 0 1 7.55 699.81 A7.27647
+								 6.49685 0 0 1 9.3 697.27 A14.4322 12.8859 -180 0 0 5.22 696.73 A5.64606 5.04112 -180 0 0 1.9 697.54
+								 A6.03857 5.39158 -180 0 0 -0 702.45 A37.0466 33.0773 -180 0 0 1.51 708.49 C2.54 711.56 3.71 713.45
+								 4.74 713.74 C5.19 713.88 5.68 713.74 6.16 713.18 C7 712.26 7.79 711.48 8.24 711.02 A5.67625 5.06808
+								 0 0 1 6.76 706.3 L6.64 706.38 ZM7.43 707.46 A6.58204 5.87682 -180 0 0 7.61 708.97 A4.52892 4.04368
+								 -180 0 0 8.39 710.16 A3.23063 2.88449 -180 0 0 9.45 710.83 A3.29102 2.93841 -180 0 0 10.63 711.05
+								 C10.63 710.59 11.05 710.02 11.32 709.43 A13.1339 11.7267 -180 0 0 11.96 707.84 A19.9575 17.8192
+								 -180 0 0 11.96 704.85 C11.96 704.61 11.96 704.34 11.78 704.04 A1.35868 1.2131 -180 0 0 11.41 703.31
+								 A1.99273 1.77922 -180 0 0 10.57 702.88 L9.96 702.88 A4.71008 4.20543 -180 0 0 8.51 703.26 A6.03857
+								 5.39158 -180 0 0 7.55 703.77 L7.55 704.07 C7.55 704.61 7.55 705.17 7.55 705.71 A2.59658 2.31838
+								 0 0 1 7.55 706.11 L7.55 707.17 L7.43 707.46 ZM9.42 703.85 A1.38887 1.24006 0 0 1 10.27 703.85 A1.81157
+								 1.61747 0 0 1 10.84 704.01 C11.11 704.01 11.14 704.31 11.11 704.39 a1.11713 0.997441 0 0 1 -0.362314
+								 0.350452 a0.905785 0.808736 0 0 1 -0.181157 -0.107832 a1.02656 0.916568 0 0 1 -0.845399 -0.754821
+								 L9.42 703.85 ZM11.65 711.94 a0.694435 0.620031 -180 0 0 -0.392507 0.161747 L10.84 712.56 C10.33
+								 713.12 10.11 713.31 8.64 713.58 A1.57003 1.40181 -180 0 0 7.85 713.85 A1.75118 1.56356 -180 0 0
+								 8.57 714.15 A3.56275 3.18103 -180 0 0 10.75 714.15 A5.13278 4.58284 -180 0 0 11.93 713.45 A1.84176
+								 1.64443 -180 0 0 12.53 712.61 a1.08694 0.970484 -180 0 0 -0.301928 -0.754821 a0.452892 0.404368
+								 -180 0 0 -0.452892 -0.0539158 L11.65 711.94 ZM25.57 711.94 A4.92143 4.39413 0 0 1 22.16 711.94 a0.664242
+								 0.593073 -180 0 0 -0.4227 1.13687E-13 a0.905785 0.808736 -180 0 0 -0.513278 0.37741 A3.29102 2.93841
+								 -180 0 0 21.23 713.15 A5.43471 4.85242 -180 0 0 24.55 712.88 A4.10622 3.66627 -180 0 0 26 711.96
+								 L25.57 711.94 ZM18.33 706.17 C17.9 705.06 17.3 703.47 18.87 702.5 A4.07603 3.63931 0 0 1 21.56 702.1
+								 A9.60132 8.57261 -180 0 0 19.63 699 L19.32 698.73 L19.14 698.57 a1.02656 0.916568 -180 0 0 -0.181157
+								 -0.161747 A7.06512 6.30814 -180 0 0 16.94 697.27 A7.94071 7.08992 -180 0 0 13.59 696.68 A4.58931
+								 4.0976 -180 0 0 11.47 696.98 A5.34413 4.77154 -180 0 0 10.57 697.27 A6.34049 5.66115 -180 0 0 8.33
+								 699.97 A17.6326 15.7434 -180 0 0 7.7 702.66 A5.01201 4.47501 0 0 1 10.72 702.04 A2.5362 2.26446
+								 0 0 1 13.04 704.5 A21.92 19.5714 0 0 1 13.04 707.92 A11.6846 10.4327 0 0 1 12.35 709.62 C12.17 710.08
+								 11.93 710.56 11.81 710.94 A1.50964 1.34789 0 0 1 12.95 711.32 A1.99273 1.77922 0 0 1 13.53 712.75
+								 L13.59 712.75 C13.59 712.96 13.59 713.18 13.59 713.39 A19.7763 17.6574 -180 0 0 14.31 719.97 A1.63041
+								 1.45573 -180 0 0 15.04 720.54 A1.81157 1.61747 -180 0 0 15.97 720.81 A3.92507 3.50452 -180 0 0 18.99
+								 719.89 A3.17025 2.83058 -180 0 0 19.87 718.11 C20.08 716.9 20.53 713.53 20.59 712.72 A2.17388 1.94097
+								 0 0 1 20.86 711.53 A1.90215 1.69835 0 0 1 21.68 710.89 A16.1834 14.4494 0 0 1 18.45 706.01 L18.33
+								 706.17 Z" class="st44"/>
 				</g>
-				<g id="shape2450-725" v:mID="2450" v:groupContext="groupContent">
-					<v:textBlock v:margins="rect(0,0,0,0)"/>
-					<v:textRect cx="21.7186" cy="738.089" width="72" height="28.8038"/>
-					<text x="6.52" y="734.49" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Azure<v:newlineChar/><tspan
-								x="-9.03" dy="1.2em" class="st12">PostgreSQL</tspan></text>				</g>
 			</g>
+			<g id="shape2456-671" v:mID="2456" v:groupContext="shape">
+				<title>Sheet.2456</title>
+				<desc>Azure Database for PostgreSQL Flexible Server</desc>
+				<v:textBlock v:margins="rect(4,4,4,4)"/>
+				<v:textRect cx="51.75" cy="697.893" width="103.5" height="45.8284"/>
+				<rect x="0" y="674.978" width="103.5" height="45.8284" class="st20"/>
+				<text x="10.29" y="687.09" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Azure Database <tspan
+							x="11.88" dy="1.2em" class="st12">for PostgreSQL<v:newlineChar/></tspan><tspan x="12.11" dy="1.2em"
+							class="st12"> </tspan>Flexible Server</text>			</g>
+		</g>
+		<g id="shape2460-676" v:mID="2460" v:groupContext="shape" transform="translate(1096.93,-379.379)">
+			<title>Rectangle.2460</title>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<rect x="0" y="509.258" width="95.13" height="211.549" class="st57"/>
+		</g>
+		<g id="group2461-678" transform="translate(1125.15,-418.476)" v:mID="2461" v:groupContext="group">
+			<title>Cache Redis.2461</title>
+			<desc>Azure Cache for Redis</desc>
+			<g id="shape2462-679" v:mID="2462" v:groupContext="shape" transform="translate(20.492,-11.2956)">
+				<title>Sheet.2462</title>
+				<v:userDefs>
+					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
+				</v:userDefs>
+				<path d="M9.11 703.9 C4.08 703.9 0 702.48 0 700.71 L0 717.64 C0 719.36 4.01 720.78 8.99 720.81 L9.11 720.81 C14.14
+							 720.81 18.22 719.39 18.22 717.64 L18.22 700.71 C18.22 702.48 14.14 703.9 9.11 703.9 Z" class="st58"/>
+			</g>
+			<g id="shape2463-682" v:mID="2463" v:groupContext="shape" transform="translate(20.492,-28.2016)">
+				<title>Sheet.2463</title>
+				<v:userDefs>
+					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
+				</v:userDefs>
+				<path d="M18.22 717.62 C18.22 719.39 14.14 720.81 9.11 720.81 C4.08 720.81 0 719.39 0 717.62 C0 715.84 4.08 714.45
+							 9.11 714.45 C14.14 714.45 18.22 715.87 18.22 717.62 Z" class="st59"/>
+			</g>
+			<g id="shape2464-684" v:mID="2464" v:groupContext="shape" transform="translate(22.6096,-29.6229)">
+				<title>Sheet.2464</title>
+				<v:userDefs>
+					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
+				</v:userDefs>
+				<path d="M13.98 718.79 C13.98 719.91 10.84 720.81 6.99 720.81 C3.14 720.81 0 719.91 0 718.79 C0 717.66 3.14 716.77
+							 6.99 716.77 C10.84 716.77 13.98 717.66 13.98 718.79 Z" class="st33"/>
+			</g>
+			<g id="shape2465-686" v:mID="2465" v:groupContext="shape" transform="translate(24.0668,-29.6229)">
+				<title>Sheet.2465</title>
+				<v:userDefs>
+					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
+				</v:userDefs>
+				<path d="M5.53 719.26 A19.6951 21.5688 -180 0 0 0 720.01 A17.7598 19.4494 -180 0 0 5.53 720.81 A17.7598 19.4494 -180
+							 0 0 11.07 720.01 A19.6951 21.5688 -180 0 0 5.53 719.26 Z" class="st60"/>
+			</g>
+			<g id="shape2466-688" v:mID="2466" v:groupContext="shape" transform="translate(0,-11.2956)">
+				<title>Sheet.2466</title>
+				<v:userDefs>
+					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
+				</v:userDefs>
+				<path d="M9.11 703.9 C4.08 703.9 0 702.48 0 700.71 L0 717.64 C0 719.36 4.01 720.78 9.11 720.81 C14.14 720.81 18.22
+							 719.39 18.22 717.64 L18.22 700.71 C18.22 702.48 14.14 703.9 9.11 703.9 Z" class="st58"/>
+			</g>
+			<g id="shape2467-691" v:mID="2467" v:groupContext="shape" transform="translate(0,-28.2016)">
+				<title>Sheet.2467</title>
+				<v:userDefs>
+					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
+				</v:userDefs>
+				<path d="M18.22 717.62 C18.22 719.39 14.14 720.81 9.11 720.81 C4.08 720.81 0 719.39 0 717.62 C0 715.84 4.08 714.45
+							 9.11 714.45 C14.14 714.45 18.22 715.87 18.22 717.62 Z" class="st59"/>
+			</g>
+			<g id="shape2468-693" v:mID="2468" v:groupContext="shape" transform="translate(2.11751,-29.6229)">
+				<title>Sheet.2468</title>
+				<v:userDefs>
+					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
+				</v:userDefs>
+				<path d="M13.98 718.79 C13.98 719.91 10.84 720.81 6.99 720.81 C3.14 720.81 0 719.91 0 718.79 C0 717.66 3.14 716.77
+							 6.99 716.77 C10.84 716.77 13.98 717.66 13.98 718.79 Z" class="st33"/>
+			</g>
+			<g id="shape2469-695" v:mID="2469" v:groupContext="shape" transform="translate(3.57472,-29.6229)">
+				<title>Sheet.2469</title>
+				<v:userDefs>
+					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
+				</v:userDefs>
+				<path d="M5.53 719.26 A19.6951 21.5688 -180 0 0 -0 720.01 A17.7598 19.4494 -180 0 0 5.53 720.81 A17.7598 19.4494
+							 -180 0 0 11.07 720.01 A19.6951 21.5688 -180 0 0 5.53 719.26 Z" class="st60"/>
+			</g>
+			<g id="shape2470-697" v:mID="2470" v:groupContext="shape" transform="translate(10.246,0)">
+				<title>Sheet.2470</title>
+				<v:userDefs>
+					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
+				</v:userDefs>
+				<path d="M9.11 703.9 C4.08 703.9 0 702.48 0 700.71 L0 717.64 C0 719.39 4.01 720.78 8.99 720.81 L9.11 720.81 C14.14
+							 720.81 18.22 719.39 18.22 717.64 L18.22 700.71 C18.22 702.48 14.14 703.9 9.11 703.9 Z" class="st58"/>
+			</g>
+			<g id="shape2471-700" v:mID="2471" v:groupContext="shape" transform="translate(10.246,-16.906)">
+				<title>Sheet.2471</title>
+				<v:userDefs>
+					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
+				</v:userDefs>
+				<path d="M18.22 717.62 C18.22 719.39 14.14 720.81 9.11 720.81 C4.08 720.81 0 719.39 0 717.62 C0 715.84 4.08 714.45
+							 9.11 714.45 C14.14 714.45 18.22 715.87 18.22 717.62 Z" class="st59"/>
+			</g>
+			<g id="shape2472-702" v:mID="2472" v:groupContext="shape" transform="translate(12.3635,-18.3273)">
+				<title>Sheet.2472</title>
+				<v:userDefs>
+					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
+				</v:userDefs>
+				<path d="M13.98 718.79 C13.98 719.91 10.84 720.81 6.99 720.81 C3.14 720.81 0 719.91 0 718.79 C0 717.66 3.14 716.87
+							 6.99 716.87 C10.84 716.87 13.98 717.76 13.98 718.89 L13.98 718.79 Z" class="st61"/>
+				<path d="M13.98 718.79 C13.98 719.91 10.84 720.81 6.99 720.81 C3.14 720.81 0 719.91 0 718.79 C0 717.66 3.14 716.87
+							 6.99 716.87 C10.84 716.87 13.98 717.76 13.98 718.89" class="st62"/>
+			</g>
+			<g id="shape2473-705" v:mID="2473" v:groupContext="shape" transform="translate(13.8207,-18.3273)">
+				<title>Sheet.2473</title>
+				<v:userDefs>
+					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
+				</v:userDefs>
+				<path d="M5.53 719.36 A19.6951 21.5688 -180 0 0 0 720.11 A17.7598 19.4494 -180 0 0 5.53 720.81 A17.7598 19.4494 -180
+							 0 0 11.07 720.01 A19.6951 21.5688 -180 0 0 5.53 719.36 Z" class="st60"/>
+			</g>
+			<g id="shape2461-707" v:mID="2461" v:groupContext="groupContent">
+				<v:textBlock v:margins="rect(0,0,0,0)"/>
+				<v:textRect cx="19.3536" cy="735.209" width="72" height="28.8038"/>
+				<text x="-13.56" y="731.61" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Azure Cache <v:newlineChar/><tspan
+							x="-4.03" dy="1.2em" class="st12">for Redis</tspan></text>			</g>
+		</g>
+		<g id="shape2474-710" v:mID="2474" v:groupContext="shape" transform="translate(1081.5,-346.476)">
+			<title>Sheet.2474</title>
+			<desc>Private endpoint connected services</desc>
+			<v:textBlock v:margins="rect(4,4,4,4)"/>
+			<v:textRect cx="63" cy="710.406" width="126.01" height="20.8005"/>
+			<rect x="0" y="700.006" width="126" height="20.8005" class="st20"/>
+			<text x="19.37" y="706.81" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Private endpoint <v:newlineChar/><tspan
+						x="13.11" dy="1.2em" class="st12">connected services</tspan></text>		</g>
+		<g id="group2475-714" transform="translate(1092.75,-481.476)" v:mID="2475" v:groupContext="group">
+			<title>Sheet.2475</title>
+			<g id="group2476-715" transform="translate(32.3964,-47.2929)" v:mID="2476" v:groupContext="group">
+				<v:userDefs>
+					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
+				</v:userDefs>
+				<title>Azure Database PostgreSQL Server</title>
+				<g id="shape2477-716" v:mID="2477" v:groupContext="shape">
+					<title>Sheet.2477</title>
+					<v:userDefs>
+						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
+					</v:userDefs>
+					<path d="M19.35 687.49 C8.67 687.49 0 684.79 0 681.23 L0 714.55 C0 717.98 8.51 720.75 19.08 720.81 L19.35 720.81
+								 C30.04 720.81 38.71 718.11 38.71 714.55 L38.71 681.23 C38.71 684.68 30.04 687.49 19.35 687.49 Z"
+							class="st63"/>
+				</g>
+				<g id="shape2478-719" v:mID="2478" v:groupContext="shape" transform="translate(0,-33.3199)">
+					<title>Sheet.2478</title>
+					<v:userDefs>
+						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
+					</v:userDefs>
+					<path d="M38.71 714.55 C38.71 718 30.04 720.81 19.35 720.81 C8.67 720.81 0 718.11 0 714.55 C0 710.99 8.67 708.3
+								 19.35 708.3 C30.04 708.3 38.71 710.99 38.71 714.55 Z" class="st59"/>
+				</g>
+				<g id="shape2479-721" v:mID="2479" v:groupContext="shape" transform="translate(4.49873,-36.0966)">
+					<title>Sheet.2479</title>
+					<v:userDefs>
+						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
+					</v:userDefs>
+					<path d="M29.68 716.82 C29.68 719.03 23.04 720.81 14.85 720.81 C6.67 720.81 0 719.03 0 716.84 C0 714.66 6.64
+								 712.85 14.85 712.85 C23.07 712.85 29.68 714.63 29.68 716.82 Z" class="st33"/>
+				</g>
+				<g id="shape2480-723" v:mID="2480" v:groupContext="shape" transform="translate(7.5784,-36.0966)">
+					<title>Sheet.2480</title>
+					<v:userDefs>
+						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
+					</v:userDefs>
+					<path d="M11.78 717.81 A35.1746 31.4059 -180 0 0 0 719.35 A34.8123 31.0824 -180 0 0 11.78 720.81 A34.6312 30.9207
+								 -180 0 0 23.52 719.24 A36.02 32.1607 -180 0 0 11.78 717.81 Z" class="st64"/>
+				</g>
+				<g id="shape2481-725" v:mID="2481" v:groupContext="shape" transform="translate(5.76683,-4.77154)">
+					<title>Sheet.2481</title>
+					<v:userDefs>
+						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
+					</v:userDefs>
+					<path d="M22.64 702.66 C22.64 702.88 22.64 703.31 22.64 703.8 A15.4587 13.8024 -180 0 0 22.4 705.49 C22.4 705.82
+								 22.4 706.3 22.55 706.73 C22.71 707.17 22.55 707.46 22.55 707.71 A5.0724 4.52892 0 0 1 21.8 710.02
+								 A1.29829 1.15919 -180 0 0 21.8 710.21 L22.1 710.54 A31.8534 28.4406 -180 0 0 25.3 704.12 C26.15
+								 701.56 26.24 699.73 25.57 698.94 A7.78975 6.95513 -180 0 0 17.48 696.63 A9.93344 8.86914 0 0 1 20.23
+								 698.43 A6.88396 6.1464 0 0 1 22.64 702.66 ZM21.71 702.88 A3.47218 3.10016 -180 0 0 19.32 703.12
+								 C18.45 703.61 18.72 704.61 19.32 705.82 A23.4598 20.9463 -180 0 0 20.38 708.11 L20.65 708.54 C20.8
+								 708.76 20.89 708.95 20.98 709.08 L21.23 709.43 A3.86468 3.45061 -180 0 0 21.77 707.68 A8.63515 7.70995
+								 -180 0 0 21.77 706.79 C21.77 706.33 21.77 705.82 21.62 705.47 A18.4176 16.4443 0 0 1 21.86 703.61
+								 C21.77 703.31 21.8 703.01 21.83 702.8 L21.71 702.88 ZM20.8 703.99 A1.20771 1.07832 0 0 1 20.26 704.25
+								 a0.996363 0.88961 0 0 1 -0.4227 0 a0.694435 0.620031 0 0 1 -0.21135 -0.5122 C19.63 703.55 19.96
+								 703.39 20.35 703.34 L20.92 703.34 C20.92 703.34 21.2 703.34 21.2 703.55 a0.603857 0.539158 0 0 1
+								 -0.271735 0.350452 L20.8 703.99 ZM6.64 706.38 C6.64 706.2 6.64 706.03 6.64 705.93 A3.01928 2.69579
+								 -180 0 0 6.64 705.47 A16.757 14.9616 0 0 1 6.64 702.77 A15.7607 14.072 0 0 1 7.55 699.81 A7.27647
+								 6.49685 0 0 1 9.3 697.27 A14.4322 12.8859 -180 0 0 5.22 696.73 A5.64606 5.04112 -180 0 0 1.9 697.54
+								 A6.03857 5.39158 -180 0 0 -0 702.45 A37.0466 33.0773 -180 0 0 1.51 708.49 C2.54 711.56 3.71 713.45
+								 4.74 713.74 C5.19 713.88 5.68 713.74 6.16 713.18 C7 712.26 7.79 711.48 8.24 711.02 A5.67625 5.06808
+								 0 0 1 6.76 706.3 L6.64 706.38 ZM7.43 707.46 A6.58204 5.87682 -180 0 0 7.61 708.97 A4.52892 4.04368
+								 -180 0 0 8.39 710.16 A3.23063 2.88449 -180 0 0 9.45 710.83 A3.29102 2.93841 -180 0 0 10.63 711.05
+								 C10.63 710.59 11.05 710.02 11.32 709.43 A13.1339 11.7267 -180 0 0 11.96 707.84 A19.9575 17.8192
+								 -180 0 0 11.96 704.85 C11.96 704.61 11.96 704.34 11.78 704.04 A1.35868 1.2131 -180 0 0 11.41 703.31
+								 A1.99273 1.77922 -180 0 0 10.57 702.88 L9.96 702.88 A4.71008 4.20543 -180 0 0 8.51 703.26 A6.03857
+								 5.39158 -180 0 0 7.55 703.77 L7.55 704.07 C7.55 704.61 7.55 705.17 7.55 705.71 A2.59658 2.31838
+								 0 0 1 7.55 706.11 L7.55 707.17 L7.43 707.46 ZM9.42 703.85 A1.38887 1.24006 0 0 1 10.27 703.85 A1.81157
+								 1.61747 0 0 1 10.84 704.01 C11.11 704.01 11.14 704.31 11.11 704.39 a1.11713 0.997441 0 0 1 -0.362314
+								 0.350452 a0.905785 0.808736 0 0 1 -0.181157 -0.107832 a1.02656 0.916568 0 0 1 -0.845399 -0.754821
+								 L9.42 703.85 ZM11.65 711.94 a0.694435 0.620031 -180 0 0 -0.392507 0.161747 L10.84 712.56 C10.33
+								 713.12 10.11 713.31 8.64 713.58 A1.57003 1.40181 -180 0 0 7.85 713.85 A1.75118 1.56356 -180 0 0
+								 8.57 714.15 A3.56275 3.18103 -180 0 0 10.75 714.15 A5.13278 4.58284 -180 0 0 11.93 713.45 A1.84176
+								 1.64443 -180 0 0 12.53 712.61 a1.08694 0.970484 -180 0 0 -0.301928 -0.754821 a0.452892 0.404368
+								 -180 0 0 -0.452892 -0.0539158 L11.65 711.94 ZM25.57 711.94 A4.92143 4.39413 0 0 1 22.16 711.94 a0.664242
+								 0.593073 -180 0 0 -0.4227 1.13687E-13 a0.905785 0.808736 -180 0 0 -0.513278 0.37741 A3.29102 2.93841
+								 -180 0 0 21.23 713.15 A5.43471 4.85242 -180 0 0 24.55 712.88 A4.10622 3.66627 -180 0 0 26 711.96
+								 L25.57 711.94 ZM18.33 706.17 C17.9 705.06 17.3 703.47 18.87 702.5 A4.07603 3.63931 0 0 1 21.56 702.1
+								 A9.60132 8.57261 -180 0 0 19.63 699 L19.32 698.73 L19.14 698.57 a1.02656 0.916568 -180 0 0 -0.181157
+								 -0.161747 A7.06512 6.30814 -180 0 0 16.94 697.27 A7.94071 7.08992 -180 0 0 13.59 696.68 A4.58931
+								 4.0976 -180 0 0 11.47 696.98 A5.34413 4.77154 -180 0 0 10.57 697.27 A6.34049 5.66115 -180 0 0 8.33
+								 699.97 A17.6326 15.7434 -180 0 0 7.7 702.66 A5.01201 4.47501 0 0 1 10.72 702.04 A2.5362 2.26446
+								 0 0 1 13.04 704.5 A21.92 19.5714 0 0 1 13.04 707.92 A11.6846 10.4327 0 0 1 12.35 709.62 C12.17 710.08
+								 11.93 710.56 11.81 710.94 A1.50964 1.34789 0 0 1 12.95 711.32 A1.99273 1.77922 0 0 1 13.53 712.75
+								 L13.59 712.75 C13.59 712.96 13.59 713.18 13.59 713.39 A19.7763 17.6574 -180 0 0 14.31 719.97 A1.63041
+								 1.45573 -180 0 0 15.04 720.54 A1.81157 1.61747 -180 0 0 15.97 720.81 A3.92507 3.50452 -180 0 0 18.99
+								 719.89 A3.17025 2.83058 -180 0 0 19.87 718.11 C20.08 716.9 20.53 713.53 20.59 712.72 A2.17388 1.94097
+								 0 0 1 20.86 711.53 A1.90215 1.69835 0 0 1 21.68 710.89 A16.1834 14.4494 0 0 1 18.45 706.01 L18.33
+								 706.17 Z" class="st44"/>
+				</g>
+			</g>
+			<g id="shape2482-727" v:mID="2482" v:groupContext="shape">
+				<title>Sheet.2482</title>
+				<desc>Azure Database for PostgreSQL Flexible Server</desc>
+				<v:textBlock v:margins="rect(4,4,4,4)"/>
+				<v:textRect cx="51.75" cy="697.893" width="103.5" height="45.8284"/>
+				<rect x="0" y="674.978" width="103.5" height="45.8284" class="st20"/>
+				<text x="10.29" y="687.09" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Azure Database <tspan
+							x="11.88" dy="1.2em" class="st12">for PostgreSQL<v:newlineChar/></tspan><tspan x="12.11" dy="1.2em"
+							class="st12"> </tspan>Flexible Server</text>			</g>
 		</g>
 	</g>
 </svg>
