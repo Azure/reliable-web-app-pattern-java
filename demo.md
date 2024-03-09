@@ -18,17 +18,17 @@ Follow these steps to set up this test:
     |*Key*|CONTOSO_RETRY_DEMO|
     |*Value*|2|
 
-  > It will take a few minutes for the App Service to restart. When it restarts, the application will use the `CONTOSO_RETRY_DEMO` configuration.
+    > It will take a few minutes for the App Service to restart. When it restarts, the application will use the `CONTOSO_RETRY_DEMO` configuration.
 
-  We recommend observing telemetry to see the effect of this change and how the Retry pattern helps solve intermittent errors. We've configured Application Insights to collect telemetry and we added Spring Actuator Dependencies to the Contoso Fiber project. Using the actuator endpoints, you can see the retry events and the number of retries while browsing the site.
+    We recommend observing telemetry to see the effect of this change and how the Retry pattern helps solve intermittent errors. We've configured Application Insights to collect telemetry and we added Spring Actuator Dependencies to the Contoso Fiber project. Using the actuator endpoints, you can see the retry events and the number of retries while browsing the site.
 
-  > App Insights can take up to a minute to aggregate the data it receives, and failed requests might not appear right away in the Failures view.
+    > App Insights can take up to a minute to aggregate the data it receives, and failed requests might not appear right away in the Failures view.
 
-To see the Retry pattern in action you can follow these steps:
+    To see the Retry pattern in action you can follow these steps:
 
 1. Click on the "Service Plans" link in the left-side menu of the Contoso Fiber application. This will try to make a query to retrieve a list of all service plans.
 
-  ![Service plans page](docs/assets/contoso-service-plans-page.png)
+    ![Service plans page](docs/assets/contoso-service-plans-page.png)
 
 1. Navigate to the following page in your browser to observe the retry events.
     * https://<FRONT_DOOR_URL>/actuator/retryevents
@@ -51,11 +51,11 @@ Follow these steps to set up this test:
     |*Key*|CONTOSO_RETRY_DEMO|
     |*Value*|1|
 
-  > It will take a few minutes for the App Service to restart. When it restarts, the application will use the `CONTOSO_RETRY_DEMO` configuration.
+    > It will take a few minutes for the App Service to restart. When it restarts, the application will use the `CONTOSO_RETRY_DEMO` configuration.
 
-  > App Insights can take up to a minute to aggregate the data it receives, and failed requests might not appear right away in the Failures view.
+    > App Insights can take up to a minute to aggregate the data it receives, and failed requests might not appear right away in the Failures view.
 
-To see the Circuit Breaker pattern in action you can follow these steps:
+    To see the Circuit Breaker pattern in action you can follow these steps:
 
 1. Click on the "Service Plans" link in the left-side menu of the Contoso Fiber application. This will try to make a query to retrieve a list of all service plans. And, because the `CONTOSO_RETRY_DEMO` setting is set to 1, the application will return an error.
 
@@ -82,35 +82,35 @@ We can observe this behavior in the web app by following these steps:
 
 1. Click on the "Accounts" link in the left-side menu of the Contoso Fiber application.
 
-![Accounts page](docs/assets/contoso-accounts-page.png)
+    ![Accounts page](docs/assets/contoso-accounts-page.png)
 
 1. Fill out the form and click "Add Account". This will create a new account and store it in the Azure PostgreSQL Flexible Server.
 
-![New account page](docs/assets/contoso-account-new-page.png)
+    ![New account page](docs/assets/contoso-account-new-page.png)
 
 1. When successful, the account details page is shown.
 
-![Account details page](docs/assets/contoso-account-details-page.png)
+      ![Account details page](docs/assets/contoso-account-details-page.png)
 
-Using the (PREVIEW) Redis Console we can see this data stored in Redis.
+    Using the (PREVIEW) Redis Console we can see this data stored in Redis.
 
-Open the Redis Console by navigating to the Azure Cache for Redis resource in the Azure Portal and clicking the "Console" link above the overview details for this resource.
+    Open the Redis Console by navigating to the Azure Cache for Redis resource in the Azure Portal and clicking the "Console" link above the overview details for this resource.
 
-![image of Azure Cache for Redis Console](docs/assets/redis-console.png)
+    ![image of Azure Cache for Redis Console](docs/assets/redis-console.png)
 
-Run the following command to see all cached keys:
+    Run the following command to see all cached keys:
 
-```
-SCAN 0 COUNT 1000 MATCH *
-```
+    ```
+    SCAN 0 COUNT 1000 MATCH *
+    ```
 
-Run the next command to see the cached account details data:
+    Run the next command to see the cached account details data:
 
-```
-GET com.contoso.cams.account-details::1 
-```
+    ```
+    GET com.contoso.cams.account-details::1 
+    ```
 
-![image of Azure Cache for Redis Keys](docs/assets/redis-keys.png)
+    ![image of Azure Cache for Redis Keys](docs/assets/redis-keys.png)
 
 
 # Other interesting features
