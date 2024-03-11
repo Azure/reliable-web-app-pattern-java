@@ -73,9 +73,9 @@ Connect to PostgreSQL from the dev container using *host.docker.internal*. From 
 psql -h host.docker.internal -p 54321 -U postgres
 ```
 
-# Azure AD
+# Microsoft Entra ID
 
-Contoso Fiber uses Azure AD for authentication. To register the app, follow the steps below.
+Contoso Fiber uses Entra ID for authentication. To register the app, follow the steps below.
 
 Before running the following commands, make sure you are in the scripts/azure-ad directory.
 
@@ -91,9 +91,9 @@ Login to Azure using the Azure CLI.
 az login
 ```
 
-## 2. Register Application with Azure AD
+## 2. Register Application with Microsoft Entra ID
 
-Run the following command to register the application with Azure AD.  You can modify the script to change the application name by modifying the `AD_DISPLAY_NAME` variable.
+Run the following command to register the application with Entra ID.  You can modify the script to change the application name by modifying the `AD_DISPLAY_NAME` variable.
 
 ```shell
 ./register-app.sh
