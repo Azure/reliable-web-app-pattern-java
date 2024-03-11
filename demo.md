@@ -138,7 +138,7 @@ Application logging is enabled. To view the logs, navigate to *Diagnose and solv
 
 ## Auto Scaling
 
-Auto scaling is enabled and the default instance count is set to 2. To view the auto scaling settings, navigate to *Scale out (App Service plan)*.
+Auto scaling is enabled and the default instance count is set to 1 for development deployments and 2 for production deployments. To view the auto scaling settings, navigate to *Scale out (App Service plan)*.
 
 ![Scale out](./docs/assets/appservice-scale-out.png)
 
