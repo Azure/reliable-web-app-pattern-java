@@ -18,6 +18,8 @@ module "frontdoor" {
   web_app_id                   = module.application[0].web_app_id
   private_link_target_type     = "sites"
   host_name2                   = module.secondary_application[0].application_fqdn
+  secondary_web_app_id         = module.secondary_application[0].web_app_id
+  secondary_location           = var.secondary_location
 }
 
 // ---------------------------------------------------------------------------
@@ -40,4 +42,6 @@ module "dev_frontdoor" {
   web_app_id                   = module.dev_application[0].web_app_id
   private_link_target_type     = "sites"
   host_name2                   = ""
+  secondary_web_app_id         = ""
+  secondary_location           = "" 
 }

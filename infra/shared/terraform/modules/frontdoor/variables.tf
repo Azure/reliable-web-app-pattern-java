@@ -46,8 +46,17 @@ variable "private_link_target_type" {
 # ----------------------------------------------------------------------------------------------
 #  Everything below this comment is for provisioning the 2nd region (if AZURE_LOCATION2 was set)
 # ----------------------------------------------------------------------------------------------
+variable "secondary_location" {
+  type        = string
+  description = "The Azure region where all resources in this example should be created for the secondary location"
+}
 
 variable "host_name2" {
   type        = string
   description = "The IPv4 address, IPv6 address or Domain name of the secondary Origin."
+}
+
+variable "secondary_web_app_id" {
+  type        = string
+  description = "The ID of the web app in the secondary region."
 }

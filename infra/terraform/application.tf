@@ -13,11 +13,14 @@ module "application" {
   application_name               = var.application_name
   environment                    = var.environment
   location                       = var.location
-  subnet_id                      = module.spoke_vnet[0].subnets[local.app_service_subnet_name].id
+  private_dns_resource_group     = azurerm_resource_group.hub[0].name
+  appsvc_subnet_id               = module.spoke_vnet[0].subnets[local.app_service_subnet_name].id
+  private_endpoint_subnet_id     = module.spoke_vnet[0].subnets[local.private_link_subnet_name].id
   app_insights_connection_string = module.hub_app_insights[0].connection_string
   log_analytics_workspace_id     = module.hub_app_insights[0].log_analytics_workspace_id
   frontdoor_host_name            = module.frontdoor[0].host_name
   frontdoor_profile_uuid         = module.frontdoor[0].resource_guid
+  public_network_access_enabled  = false
 
   contoso_webapp_options = {
     contoso_active_directory_tenant_id = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.contoso_application_tenant_id[0].id})"
@@ -43,11 +46,14 @@ module "secondary_application" {
   application_name               = var.application_name
   environment                    = var.environment
   location                       = var.secondary_location
-  subnet_id                      = module.secondary_spoke_vnet[0].subnets[local.app_service_subnet_name].id
+  private_dns_resource_group     = azurerm_resource_group.hub[0].name
+  appsvc_subnet_id               = module.secondary_spoke_vnet[0].subnets[local.app_service_subnet_name].id
+  private_endpoint_subnet_id  = module.secondary_spoke_vnet[0].subnets[local.private_link_subnet_name].id
   app_insights_connection_string = module.hub_app_insights[0].connection_string
   log_analytics_workspace_id     = module.hub_app_insights[0].log_analytics_workspace_id
   frontdoor_host_name            = module.frontdoor[0].host_name
   frontdoor_profile_uuid         = module.frontdoor[0].resource_guid
+  public_network_access_enabled  = false
 
   contoso_webapp_options = {
     contoso_active_directory_tenant_id = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.contoso_application_tenant_id[0].id})"
@@ -77,11 +83,14 @@ module "dev_application" {
   application_name               = var.application_name
   environment                    = var.environment
   location                       = var.location
-  subnet_id                      = null
+  private_dns_resource_group     = null
+  appsvc_subnet_id               = null
+  private_endpoint_subnet_id     = null
   app_insights_connection_string = module.dev_app_insights[0].connection_string
   log_analytics_workspace_id     = module.dev_app_insights[0].log_analytics_workspace_id
   frontdoor_host_name            = module.dev_frontdoor[0].host_name
   frontdoor_profile_uuid         = module.dev_frontdoor[0].resource_guid
+  public_network_access_enabled  = true
 
   contoso_webapp_options = {
     contoso_active_directory_tenant_id     = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.dev_contoso_application_tenant_id[0].id})"
