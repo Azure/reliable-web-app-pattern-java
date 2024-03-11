@@ -174,8 +174,8 @@ resource "azurerm_monitor_autoscale_setting" "app_service_scaling" {
   profile {
     name = "default"
     capacity {
-      default = 2
-      minimum = 2
+      default = var.environment == "prod" ? 2 : 1
+      minimum = var.environment == "prod" ? 2 : 1
       maximum = 10
     }
     rule {
