@@ -2,6 +2,9 @@
 
 You can test and configure the three code-level design patterns with this implementation: retry, circuit-breaker, and cache-aside. The following paragraphs detail steps to test the three code-level design patterns.
 
+The Contoso Fiber Customer Account Management System (CAMS) web application is used by the team to manage customer accounts and help them with support tickets related to interruptions in their internet or cable services. To demo the full application, you can click on the "Account" page in the left side menu to add an Account. Then 
+1. Create an Account
+
 ## Retry pattern
 
 We built a configuration setting that lets you simulate and test a failure from the web app. The setting is called `CONTOSO_RETRY_DEMO`. We've included this configuration in the deployable code. The `CONTOSO_RETRY_DEMO` setting simulates an error when the end user tries to get Service Plans within the Contoso Fiber application. `CONTOSO_RETRY_DEMO` is an editable setting that determines the number of back-to-back errors between a successful request. A value of 2 generates 1 error after returning one successful response. This is disabled by default.  Removing the setting, or changing the value to 0 will disable the feature.
