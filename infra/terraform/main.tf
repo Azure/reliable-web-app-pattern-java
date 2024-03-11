@@ -77,3 +77,38 @@ resource "azurerm_resource_group" "dev" {
   location = var.location
   tags     = local.base_tags
 }
+
+resource "null_resource" "fround_door_route_approval_app1" {
+  count = var.environment == "prod" ? 1 : 0
+  
+  triggers = {
+    always_run = "${timestamp()}"
+  }
+
+  provisioner "local-exec" {
+    command = "bash ../scripts/front-door-route-approval.sh ${azurerm_resource_group.spoke[0].name}"
+  }
+
+  depends_on = [
+    module.frontdoor,
+    module.application
+  ]
+}
+
+
+resource "null_resource" "fround_door_route_approval_app2" {
+  count = var.environment == "prod" ? 1 : 0
+  
+  triggers = {
+    always_run = "${timestamp()}"
+  }
+
+  provisioner "local-exec" {
+    command = "bash ../scripts/front-door-route-approval.sh ${azurerm_resource_group.secondary_spoke[0].name}"
+  }
+
+  depends_on = [
+    module.frontdoor,
+    module.secondary_application
+  ]
+}

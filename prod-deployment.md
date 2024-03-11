@@ -169,6 +169,11 @@ Login into Azure using:
 ```shell
 az login --use-device-code
 ```
+Set the subscription id:
+
+```shell
+az account set --subscription <subscription_id>
+```
 
 Deploy the application to the primary region using:
 

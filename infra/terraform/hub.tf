@@ -98,3 +98,45 @@ module "firewall" {
   devops_subnet_cidr              = local.devops_subnet_cidr
   tags                            = local.base_tags
 }
+
+###############################################
+# privatelink.azurewebsites.net
+###############################################
+resource "azurerm_private_dns_zone" "app_dns_zone" {
+  count               = var.environment == "prod" ? 1 : 0
+  name                = "privatelink.azurewebsites.net"
+  resource_group_name = azurerm_resource_group.hub[0].name
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "spoke_virtual_network_link" {
+  count                 = var.environment == "prod" ? 1 : 0
+  name                  = "spoke-link"
+  private_dns_zone_name = azurerm_private_dns_zone.app_dns_zone[0].name
+  virtual_network_id    = module.spoke_vnet[0].vnet_id
+  resource_group_name   = azurerm_resource_group.hub[0].name
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "secondary_spoke_virtual_network_link" {
+  count                 = var.environment == "prod" ? 1 : 0
+  name                  = "secondary-spoke-link"
+  private_dns_zone_name = azurerm_private_dns_zone.app_dns_zone[0].name
+  virtual_network_id    = module.secondary_spoke_vnet[0].vnet_id
+  resource_group_name   = azurerm_resource_group.hub[0].name
+  
+  depends_on = [
+    azurerm_private_dns_zone_virtual_network_link.spoke_virtual_network_link 
+  ]
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "hub_virtual_network_link" {
+  count                 = var.environment == "prod" ? 1 : 0
+  name                  = "hub-link"
+  private_dns_zone_name = azurerm_private_dns_zone.app_dns_zone[0].name
+  virtual_network_id    = module.hub_vnet[0].vnet_id
+  resource_group_name   = azurerm_resource_group.hub[0].name
+
+  depends_on = [
+    azurerm_private_dns_zone_virtual_network_link.spoke_virtual_network_link, 
+    azurerm_private_dns_zone_virtual_network_link.secondary_spoke_virtual_network_link
+  ]
+}

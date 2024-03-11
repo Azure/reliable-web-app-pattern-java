@@ -48,7 +48,7 @@ resource "azurerm_cdn_frontdoor_origin_group" "origin_group" {
   }
 
   health_probe {
-    path                = "/"
+    path                = "/actuator/health"
     request_type        = "HEAD"
     protocol            = "Https"
     interval_in_seconds = 100
@@ -72,14 +72,19 @@ resource "azurerm_cdn_frontdoor_origin" "app_service_origin" {
   origin_host_header             = var.host_name
   priority                       = 1
   weight                         = 1000
-  certificate_name_check_enabled = false
+  certificate_name_check_enabled = true
 
-  #private_link {
-  #  request_message        = "Request access for CDN Frontdoor Private Link Origin to Web App 2"
-  #  target_type            = var.private_link_target_type
-  #  location               = var.location
-  #  private_link_target_id = var.web_app_id
-  #}
+  dynamic private_link {
+
+    for_each = var.environment == "prod" ? ["this"] : []
+
+    content {
+      request_message        = "Request access for CDN Frontdoor Private Link Origin to Web App"
+      target_type            = var.private_link_target_type
+      location               = var.location
+      private_link_target_id = var.web_app_id
+    }
+  }
 }
 
 resource "azurecaf_name" "front_door_route_name" {
@@ -160,5 +165,17 @@ resource "azurerm_cdn_frontdoor_origin" "app_service_origin2" {
   origin_host_header             = length(var.host_name2) > 0 ? var.host_name2 : var.host_name
   priority                       = 2
   weight                         = 1000
-  certificate_name_check_enabled = false
+  certificate_name_check_enabled = true
+
+  dynamic private_link {
+
+    for_each = var.environment == "prod" ? ["this"] : []
+
+    content {
+      request_message        = "Request access for CDN Frontdoor Private Link Origin to Web App 2"
+      target_type            = var.private_link_target_type
+      location               = var.secondary_location
+      private_link_target_id = length(var.secondary_web_app_id) > 0 ? var.secondary_web_app_id : var.web_app_id 
+    }
+  }
 }

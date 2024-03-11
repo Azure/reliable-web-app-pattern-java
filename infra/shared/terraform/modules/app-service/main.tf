@@ -45,7 +45,7 @@ resource "azurerm_linux_web_app" "application" {
 
   public_network_access_enabled = var.public_network_access_enabled
 
-  virtual_network_subnet_id = var.subnet_id
+  virtual_network_subnet_id = var.appsvc_subnet_id
 
   identity {
     type = "SystemAssigned"
@@ -64,7 +64,7 @@ resource "azurerm_linux_web_app" "application" {
     ftps_state              = "Disabled"
     minimum_tls_version     = "1.2"
     always_on               = true
-    health_check_path       = "/"
+    health_check_path       = "/actuator/health"
 
     application_stack {
       java_server = "JAVA"
@@ -124,6 +124,17 @@ resource "azurerm_linux_web_app" "application" {
   }
 }
 
+module "private_endpoint" {
+  count                       = var.environment == "prod" ? 1 : 0
+  source                      = "./private-endpoint"
+  resource_group              = var.resource_group
+  location                    = var.location
+  app_service_name            = azurerm_linux_web_app.application.name
+  appsvc_webapp_id            = azurerm_linux_web_app.application.id 
+  private_endpoint_subnet_id  = var.private_endpoint_subnet_id
+  private_dns_resource_group  = var.private_dns_resource_group
+}
+
 # Configure Diagnostic Settings for App Service
 resource "azurerm_monitor_diagnostic_setting" "app_service_diagnostic" {
   name                           = "app-service-diagnostic-settings"
@@ -133,16 +144,6 @@ resource "azurerm_monitor_diagnostic_setting" "app_service_diagnostic" {
 
   enabled_log {
     category_group = "allLogs"
-
-    ## `retention_policy` has been deprecated in favor of `azurerm_storage_management_policy` resource - to learn more https://aka.ms/diagnostic_settings_log_retention
-    # retention_policy {
-    #   days    = 0
-    #   enabled = false
-    # }
-  }
-
-  enabled_log {
-    category_group = "audit"
 
     ## `retention_policy` has been deprecated in favor of `azurerm_storage_management_policy` resource - to learn more https://aka.ms/diagnostic_settings_log_retention
     # retention_policy {
