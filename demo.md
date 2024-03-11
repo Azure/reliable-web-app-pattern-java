@@ -230,3 +230,45 @@ The Contoso Fiber CAMS web application is deployed in two regions. All traffic i
 ![image of Azure Front Door Origin Group](./docs/assets/front-door-origin-group.png)
 
 An **Azure Database for PostgreSQL Flexible Server** is in the secondary region. This database is a read replica of the primary database. In the event of an outage in the primary region, the application can continue to function using the secondary database. For more information on read replicas, see [Read replicas in Azure Database for PostgreSQL - Flexible Server](https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-read-replicas). 
+
+## Using Microsoft Entra ID RBAC to control access in the application
+The web app also includes a role-based access control (RBAC) feature. The Contoso Fiber team uses Microsoft Entra ID for authentication. This system has an "Account Manager" role and a "Field Service" role. The "Account Manager" role has access to create new Accounts.
+
+![image of Microsoft Entra ID Enterprise Applications Role Assignment](docs/assets/contoso-fiber-app-role-assignment.png)
+
+From the code, we can see that the "Account Manager" role has access to the "Add Account" button.
+
+```html
+<div id="toolbar" sec:authorize="hasAuthority('APPROLE_AccountManager')">
+            <a id="addAccount" class="btn btn-primary" th:href=@{~/accounts/new}>
+                <i class="fa fa-plus"></i> Add Account
+            </a>
+        </div>
+```
+> Code snippet from the `list.html` file in the `src/main/resources/templates/pages/account` directory.
+
+And, the `AccountController` class has a method that is only accessible to the "Account Manager" role.
+
+```java
+    @PostMapping("/new")
+    @PreAuthorize("hasAnyAuthority('APPROLE_AccountManager')")
+    public String newAccount(Model model, @Valid @ModelAttribute("account") NewAccountRequest newAccountRequest, BindingResult result) {
+        log.info("submitNewCustomer: {}", newAccountRequest);
+
+        try {
+            if (result.hasErrors()) {
+                String errorMessage = result.getAllErrors().get(0).getDefaultMessage();
+                log.error("Validation errors while submitting new account: {}", errorMessage);
+                throw new IllegalArgumentException("Validation errors while submitting new account - " + errorMessage);
+            }
+
+            Account newAccount = accountService.createAccount(newAccountRequest);
+            return "redirect:/accounts/details?id=" + newAccount.getId();
+        } catch (IllegalArgumentException ex) {
+            model.addAttribute("message", ex.getMessage());
+            model.addAttribute("servicePlans", accountService.findAllServicePlans());
+            return "pages/account/new";
+        }
+    }
+```
+> Code snippet from the `AccountController` class in the `src/main/java/cams/account` directory.
