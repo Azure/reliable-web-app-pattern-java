@@ -2,7 +2,7 @@
 
 You can test and configure the three code-level design patterns with this implementation: retry, circuit-breaker, and cache-aside. The following paragraphs detail steps to test the three code-level design patterns.
 
-The Contoso Fiber Customer Account Management System (CAMS) web application is used by the team to manage customer accounts and help them with support tickets related to interruptions in their internet or cable services. To demo the full application, you can:
+The Contoso Fiber Customer Account Management System (CAMS) web application is used by the team to manage customer accounts and help them with support tickets related to their internet or cable services. To demo the full application, you can:
 1. Click on the "Account" page in the left side menu
 1. Click on the "Add Account" button in the list of accounts
 1. Create an Account
