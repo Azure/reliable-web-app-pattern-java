@@ -1,5 +1,6 @@
 package com.contoso.cams.security;
 
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -22,6 +23,7 @@ public class AadOAuth2LoginSecurityConfig {
         http.apply(AadWebApplicationHttpSecurityConfigurer.aadWebApplication())
             .and()
                 .authorizeHttpRequests()
+            .requestMatchers(EndpointRequest.to("health")).permitAll()
             .anyRequest().authenticated()
             .and()
                 .logout(logout -> logout
