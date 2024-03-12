@@ -6,9 +6,9 @@ The project has the following prerequisites:
 
 1. [Java 17.0.7](https://learn.microsoft.com//java/openjdk/download)
 1. [Maven 3.8.6](https://maven.apache.org/download.cgi)
-1. [Azure CLI 2.50.0](https://learn.microsoft.com/cli/azure/install-azure-cli-macos)
-1. [Azure Dev CLI 1.1.0](https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd)
-1. [Terraform 1.5.3](https://developer.hashicorp.com/terraform/downloads)
+1. [Azure CLI 2.57.0](https://learn.microsoft.com/cli/azure/install-azure-cli-macos)
+1. [Azure Dev CLI 1.7.0](https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd)
+1. [Terraform 1.7.4](https://developer.hashicorp.com/terraform/downloads)
 1. [JQ 1.6](https://jqlang.github.io/jq/download/)
 
 ## Platform compatibility
