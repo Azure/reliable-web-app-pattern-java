@@ -1,4 +1,25 @@
-# Production Deployment
+# Steps to deploy the production deployment
+This section describes the deployment steps for the reference implementation of a reliable web application pattern with .NET on Microsoft Azure. These steps guide you through using the jump host that is deployed when performing a network isolated deployment because access to resources will be restricted from public network access and must be performed from a machine connected to the vnet.
+
+![Diagram showing the network focused architecture of the reference implementation.](./docs/icons/reliable-web-app-vnet.svg)
+
+## Prerequisites
+
+We recommend that you use a Dev Container to deploy this application.  The requirements are as follows:
+
+- [Azure Subscription](https://azure.microsoft.com/pricing/member-offers/msdn-benefits-details/).
+- [Visual Studio Code](https://code.visualstudio.com/).
+- [Docker Desktop](https://www.docker.com/get-started/).
+- [Permissions to register an application in Microsoft Entra ID](https://learn.microsoft.com/azure/active-directory/develop/quickstart-register-app).
+- Visual Studio Code [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers).
+
+If you do not wish to use a Dev Container, please refer to the [prerequisites](prerequisites.md) for detailed information on how to set up your development system to build, run, and deploy the application.
+
+> **Note**
+>
+> These steps are used to connect to a Linux jump host where you can deploy the code. The jump host is not designed to be a build server. You should use a devOps pipeline to manage build agents and deploy code into the environment. Also note that for this content the jump host is a Linux VM. This can be swapped with a Windows VM based on your organization's requirements.
+
+## Steps to deploy the reference implementation
 
 After starting the Dev Container, open a terminal in Visual Studio Code.
 
