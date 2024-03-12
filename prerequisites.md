@@ -8,7 +8,6 @@ The project has the following prerequisites:
 1. [Maven 3.8.6](https://maven.apache.org/download.cgi)
 1. [Azure CLI 2.50.0](https://learn.microsoft.com/cli/azure/install-azure-cli-macos)
 1. [Azure Dev CLI 1.1.0](https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd)
-1. [AzCopy 10.19.0](https://learn.microsoft.com/azure/storage/common/storage-use-azcopy-v10)
 1. [Terraform 1.5.3](https://developer.hashicorp.com/terraform/downloads)
 1. [JQ 1.6](https://jqlang.github.io/jq/download/)
 
@@ -20,7 +19,6 @@ The project has the following prerequisites:
 | Windows WSL |    ✅     |      ✅      |
 | macOS       |    ✅     |      ✅      |
 | macOS arm64 |    ✅     |      ✅      |
-| Linux       |    ✅     |      ✅      |
 
 ## Recommended VSCode extensions
 
