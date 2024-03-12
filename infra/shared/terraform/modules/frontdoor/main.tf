@@ -49,7 +49,7 @@ resource "azurerm_cdn_frontdoor_origin_group" "origin_group" {
 
   health_probe {
     path                = "/actuator/health"
-    request_type        = "HEAD"
+    request_type        = "GET"
     protocol            = "Https"
     interval_in_seconds = 100
   }
