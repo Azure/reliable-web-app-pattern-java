@@ -41,6 +41,8 @@ This description details the workflow for Contoso Fiber's CAMs application. It h
 
 The following detailed deployment steps assume you are using a Dev Container inside Visual Studio Code.
 
+> For your convenience, we use Dev Containers with a fully-featured development environment. If you prefer to use another editor, we recommend installing the necessary [dependencies](./prerequisites.md) and skip to the deployment instructions starting in [Step 3](#3-log-in-to-azure).
+
 ### 1. Clone the repo
 
 > For Windows users, we recommend using Windows Subsystem for Linux (WSL) to [improve Dev Container performance](https://code.visualstudio.com/remote/advancedcontainers/improve-performance).
