@@ -4,7 +4,7 @@
 
 The reference implementation provides a production-grade web application that uses best practices from our guidance and gives developers concrete examples to build their own Reliable Web Application in Azure. This repository specifically demonstrates a Customer Account Management System (CAMS) application for the fictional company Contoso Fiber, embodying the reliable web app pattern with a focus on Java technologies. It guides developers through a simulated migration from an on-premises web application to Azure, detailing the architectural changes and enhancements that capitalize on the cloud's strengths during the initial adoption phase. 
 
-This project has [a companion article in the Azure Architecture Center](https://aka.ms/eap/rwa/java/doc) that describes design patterns and best practices and [a six-part video series (YouTube)](https://aka.ms/eap/rwa/java/videos) that details the reliable web app pattern for Java web app. Here's an outline of the contents in this readme:
+This project has [a companion article in the Azure Architecture Center](https://aka.ms/eap/rwa/java/doc) that describes design patterns and best practices that details the reliable web app pattern for Java web app. Here's an outline of the contents in this readme:
 
 - [Architecture](#architecture)
 - [Workflow](#workflow)
