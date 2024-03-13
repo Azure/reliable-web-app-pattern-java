@@ -21,137 +21,113 @@ If you do not wish to use a Dev Container, please refer to the [prerequisites](p
 
 ## Steps to deploy the reference implementation
 
-After starting the Dev Container, open a terminal in Visual Studio Code.
+The following detailed deployment steps assume you are using a Dev Container inside Visual Studio Code.
 
-You must first be authenticated to Azure and have the appropriate subscription selected.  To authenticate:
+### 1. Log in to Azure
 
-```shell
-az login --scope https://graph.microsoft.com//.default
 
-azd auth login
-```
+1. Start a terminal in the dev container:
+    ```sh
+    az login --scope https://graph.microsoft.com//.default
+    ```
 
-Each command will open a browser allowing you to authenticate.  To list the subscriptions you have access to:
+1. Set the subscription to the one you want to use (you can use [az account list]https://learn.microsoft.com/en-us/cli/azure/account?view=azure-cli-latest) to list available subscriptions):
 
-```shell
-az account list
-```
+
+    ```sh
+    export AZURE_SUBSCRIPTION_ID="<your-subscription-id>"
+    ```
+
+    ```sh
+    az account set --subscription $AZURE_SUBSCRIPTION_ID
+    ```
+
+1. Azure Developer CLI (azd) has its own authentication context. Run the following command to authenticate to Azure:
 
 To set the active subscription:
 
-```shell
-export AZURE_SUBSCRIPTION_ID="<your-subscription-id>"
+    ```sh
+    azd auth login
+    ```
 
-az account set --subscription $AZURE_SUBSCRIPTION_ID
+1. To use Terraform as a provider, you need to enable the feature:
 
-azd config set defaults.subscription $AZURE_SUBSCRIPTION_ID
-```
+    ```sh
+    azd config set alpha.terraform on
+    ```
 
-Enable the Terraform Alpha provider:
+### 2. Provision the app
 
-```shell
-azd config set alpha.terraform on
-```
+1. Create a new AZD environment to store your deployment configuration values:
 
-## Create a new environment
+    ```sh
+    azd env new <pick_a_name>
+    ```
 
-The environment name should be less than 18 characters and must be comprised of lower-case, numeric, and dash characters (for example, `contosocams`).  The environment name is used for resource group naming and specific resource naming. 
+1. Set the default subscription for the azd context:
 
-**Choose a unique name for the environment**
+    ```sh
+    azd env set AZURE_SUBSCRIPTION_ID $AZURE_SUBSCRIPTION_ID
+    ```
 
-Run the following commands to set these values and create a new environment:
+1. To create the prod deployment:
 
-```shell
-azd env new <pick_a_name>
-```
+    ```pwsh
+    azd env set ENVIRONMENT prod
+    ```
 
->By default, Azure resources are sized for a "development" mode. If doing a Production deployment, see the [prod Deployment](./README-prod.md) instructions for more detail.
+1. Production is a multi-region deployment. Choose an Azure region for the primary deployment (Run `(Get-AzLocation).Location` to see a list of locations):
 
-## Set the AZD Environment Values
+    ```pwsh
+    azd env set AZURE_LOCATION <pick_a_region>
+    ```
 
-Set the environment to 'prod' using:
+    *You want to make sure the region has availability zones. Azure Database for PostgreSQL - Flexible Server [zone-redundant high availability](https://learn.microsoft.com/azure/postgresql/flexible-server/concepts-high-availability) requires availability zones.*
 
-```shell
-azd env set ENVIRONMENT prod
-```
+1. Choose an Azure region for the secondary deployment:
 
-The following are required values that must be set:
+    ```pwsh
+    azd env set AZURE_SECONDARY_LOCATION <pick_a_region>
+    ```
 
-- `JUMPBOX_PASSWORD` - This is the password for the jump box. The password has to fulfill 3 out of these 4 conditions: Has lower characters, Has upper characters, Has a digit, Has a special character other than "_"
+    *We encourage readers to choose paired regions for multi-regional web apps. Paired regions typically offer low network latency, data residency in the same geography, and sequential updating. Read [Azure paired regions](https://learn.microsoft.com/en-us/azure/reliability/cross-region-replication-azure#azure-paired-regions) to learn more about these regions.*
 
-Run the following commands to set these values:
+1. The following are required values that must be set:
 
-```shell
-azd env set JUMPBOX_PASSWORD <password>
-```
+    - `JUMPBOX_PASSWORD` - This is the password for the jump box. The password has to fulfill 3 out of these 4 conditions: Has lower characters, Has upper characters, Has a digit, Has a special character other than "_"
 
-The following are optional values that can be set:
+    Run the following commands to set these values:
 
-- `JUMPBOX_USERNAME` - This is the username for the jump box.  The default is `azureuser`.
-- `JUMPBOX_VM_SIZE` - This is the size of the jump box VM.  The default is `Standard_B2s`.
+    ```shell
+    azd env set JUMPBOX_PASSWORD <password>
+    ```
 
-These values can be set by running the following commands:
+1. Run the following command to create the Azure resources (about 45-minutes to provision):
 
-```shell
-azd env set <variable> <value>
-```
+    ```pwsh
+    azd provision
+    ```
 
-## Select a region for deployment
+    When successful the output of the deployment will be displayed in the terminal.
 
-The application can be deployed in either a single region or multi-region manner. PROD deployments are multi-region. You can find a list of available Azure regions by running the following Azure CLI command.
+    ```md
+      Outputs:
+      
+      bastion_host_name = "vnet-bast-nickcontosocams-prod"
+      frontdoor_url = "https://fd-nickcontosocams-prod-facscqd0a2gqf2eh.z02.azurefd.net"
+      hub_resource_group = "rg-nickcontosocams-hub-prod"
+      jumpbox_resource_id = "/subscriptions/1234/resourceGroups/rg-nickcontosocams-hub-prod/providers/Microsoft.Compute/virtualMachines/vm-jumpbox"
+      primary_app_service_name = "app-nickcontosocams-eastus-prod"
+      primary_spoke_resource_group = "rg-nickcontosocams-spoke-prod"
+      secondary_app_service_name = "app-nickcontosocams-centralus-prod"
+      secondary_spoke_resource_group = "rg-nickcontosocams-spoke2-prod"
+    ```
 
-> ```shell
-> az account list-locations --query "[].name" -o tsv
-> ```
+### 3. Upload the code to the jump host
 
-Set the `AZURE_LOCATION` to the primary region:
-
-```shell
-azd env set AZURE_LOCATION <pick_a_region>
-```
-
-You want to make sure the region has availability zones. Azure Database for PostgreSQL - Flexible Server [zone-redundant high availability](https://learn.microsoft.com/azure/postgresql/flexible-server/concepts-high-availability) requires availability zones.
-
-Make sure the secondary region is a paired region with the primary region (`AZURE_LOCATION`). For a full list of region pairs, see [Azure region pairs](https://learn.microsoft.com/azure/reliability/cross-region-replication-azure#azure-cross-region-replication-pairings-for-all-geographies). We have validated the following paired regions.
-
- Set the `AZURE_SECONDARY_LOCATION` to the secondary region:
-
-```shell
-azd env set AZURE_SECONDARY_LOCATION <pick_a_region>
-```
-
-## Telemetry
-
-Telemetry collection is on by default.
-
-To opt out, set the environment variable ENABLE_TELEMETRY to false.
-
-```shell
-azd env set ENABLE_TELEMETRY false
-```
-
-## Provision infrastructure
-
-Run the following command to create the infrastructure and deploy the app:
-
-```shell
-azd provision
-```
 
 The output of the deployment will be displayed in the terminal.
 
-```
-Outputs:
-
-bastion_host_name = "vnet-bast-nickcontosocams-prod"
-frontdoor_url = "https://fd-nickcontosocams-prod-facscqd0a2gqf2eh.z02.azurefd.net"
-hub_resource_group = "rg-nickcontosocams-hub-prod"
-jumpbox_resource_id = "/subscriptions/1234/resourceGroups/rg-nickcontosocams-hub-prod/providers/Microsoft.Compute/virtualMachines/vm-jumpbox"
-primary_app_service_name = "app-nickcontosocams-eastus-prod"
-primary_spoke_resource_group = "rg-nickcontosocams-spoke-prod"
-secondary_app_service_name = "app-nickcontosocams-centralus-prod"
-secondary_spoke_resource_group = "rg-nickcontosocams-spoke2-prod"
-```
 
 > **Record the output. The values are required in order to run the next steps of the deployment.**
 
