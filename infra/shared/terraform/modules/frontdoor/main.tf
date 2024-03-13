@@ -149,13 +149,15 @@ resource "azurerm_cdn_frontdoor_security_policy" "web_app_waf" {
 # ----------------------------------------------------------------------------------------------
 
 resource "azurecaf_name" "front_door_origin_name2" {
+  count         = var.environment == "prod" ? 1 : 0
   name          = "${var.application_name}s"
   resource_type = "azurerm_frontdoor"
   suffixes      = ["origin", "group", var.environment]
 }
 
 resource "azurerm_cdn_frontdoor_origin" "app_service_origin2" {
-  name                          = azurecaf_name.front_door_origin_name2.result
+  count                         = var.environment == "prod" ? 1 : 0
+  name                          = azurecaf_name.front_door_origin_name2[0].result
   cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.origin_group.id
 
   enabled                        = false
