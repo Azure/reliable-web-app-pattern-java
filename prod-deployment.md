@@ -31,7 +31,7 @@ The following detailed deployment steps assume you are using a Dev Container ins
     az login --scope https://graph.microsoft.com//.default
     ```
 
-1. Set the subscription to the one you want to use (you can use [az account list]https://learn.microsoft.com/en-us/cli/azure/account?view=azure-cli-latest) to list available subscriptions):
+1. Set the subscription to the one you want to use (you can use [az account list](https://learn.microsoft.com/en-us/cli/azure/account?view=azure-cli-latest) to list available subscriptions):
 
 
     ```sh
@@ -44,7 +44,7 @@ The following detailed deployment steps assume you are using a Dev Container ins
 
 1. Azure Developer CLI (azd) has its own authentication context. Run the following command to authenticate to Azure:
 
-To set the active subscription:
+    To set the active subscription:
 
     ```sh
     azd auth login
@@ -76,7 +76,7 @@ To set the active subscription:
     azd env set ENVIRONMENT prod
     ```
 
-1. Production is a multi-region deployment. Choose an Azure region for the primary deployment (Run `(Get-AzLocation).Location` to see a list of locations):
+1. Production is a multi-region deployment. Choose an Azure region for the primary deployment (Run [az account list-locations --query '[].{Location: name}'](https://learn.microsoft.com/en-us/cli/azure/account?view=azure-cli-latest) to see a list of locations):
 
     ```pwsh
     azd env set AZURE_LOCATION <pick_a_region>
@@ -110,7 +110,7 @@ To set the active subscription:
 
     When successful the output of the deployment will be displayed in the terminal.
 
-    ```md
+    ```sh
       Outputs:
       
       bastion_host_name = "vnet-bast-nickcontosocams-prod"
@@ -123,87 +123,106 @@ To set the active subscription:
       secondary_spoke_resource_group = "rg-nickcontosocams-spoke2-prod"
     ```
 
-### 3. Upload the code to the jump host
+    **Record the output. The values are required in order to run the next steps of the deployment.**
+
+### 3. Upload the code to the jump box
+
+1. Run the following command to build the Contoso Fiber application:
+
+    ```shell
+    ./mvnw clean package
+    ```
+
+    This will create the `jar` file cams-0.0.1-SNAPSHOT.jar in the `target` directory. This file will be used to deploy the application to Azure App Service.
+
+1. Start a *new* terminal in the dev container
+
+1. Run the following to set the environment variables for the bastion tunnel:
+
+    ```sh
+    $bastion_host_name=$(azd env get-values --output json | jq -r .bastion_host_name)
+    $hub_resource_group=$(azd env get-values --output json | jq -r .hub_resource_group)
+    $jumpbox_resource_id=$(azd env get-values --output json | jq -r .jumpbox_resource_id)
+    ```
+
+    We use the [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/) to create a bastion tunnel that allows us to connect to the jump box:
+
+1. Run the following command to create a bastion tunnel to the jump box:
+
+    ```sh
+    az network bastion tunnel --name $bastion_host_name --resource-group $hub_resource_group --target-resource-id $jumpbox_resource_id --resource-port 22 --port 50022
+    ```
+
+    > **NOTE**
+    >
+    > Now that the tunnel is open, change back to use the original terminal session to deploy the code.
+
+1. From the first terminal, use the following SCP command to upload the code to the jump host (use the JUMPBOX_PASSWORD you created to authenticate the SCP command):
+
+    ```shell
+    scp -P 50022 -r src/contoso-fiber/target/*.jar azureuser@localhost:/home/azureuser
+    ```
+
+1. Run the following command to start a shell session on the jump host:
 
 
-The output of the deployment will be displayed in the terminal.
+    ```shell
+    ssh -p 50022 azureuser@localhost
+    ```
+
+### 4. Deploy code from the jump box
+
+1. Login into Azure using:
+
+    ```shell
+    az login --use-device-code
+    ```
+
+1. Set the subscription id:
+
+    ```shell
+    az account set --subscription <subscription_id>
+    ```
+
+1. Deploy the application to the primary region using:
+
+    ```shell
+    az webapp deploy --resource-group <primary_spoke_resource_group> --name <primary_app_service_name> --src-path cams.jar --type jar
+    ```
+
+1. Deploy the application to the secondary region using:
+
+    ```shell
+    az webapp deploy --resource-group <secondary_spoke_resource_group> --name <secondary_app_service_name> --src-path cams.jar --type jar
+    ```
+
+    > **WARNING**
+    >
+    > In some scenarios, the DNS entries for resources secured with Private Endpoint may have been cached incorrectly. It can take up to 10-minutes for the DNS cache to expire.
+
+1. Navigate to the Front Door URL in a browser to view the Contoso Fiber CAMS application.
+
+    ![Image of the account details page](docs/assets/contoso-account-details-page.png)
+
+    > You can learn more about the web app by reading the [Pattern Simulations](demo.md) documentation.
 
 
-> **Record the output. The values are required in order to run the next steps of the deployment.**
+### 5. Teardown
 
-## Build Contoso Fiber CAMS
+1. Exit the jumpbox using:
 
-Run the following command to build the Contoso Fiber application:
+    ```shell
+    exit
+    ```
 
-```shell
-./mvnw clean package
-```
+1. Close the tunnel in the SEPARATE terminal using:
 
-This will create the `jar` file cams-0.0.1-SNAPSHOT.jar in the `target` directory. This file will be used to deploy the application to Azure App Service.
+    ```shell
+    CTRL+C
+    ```
 
-## Deploy the Contoso Fiber App
+1. When you are done you can cleanup all the resources using:
 
-Create the SSH tunnel to the jumpbox using a SEPARATE terminal:
-
-```shell
-az network bastion tunnel --name <bastion_name> --resource-group <hub_resource_group> --target-resource-id <jumpbox_resource_id> --resource-port 22 --port 50022
-```
-
-Copy the JAR file to the jumpbox using:
-
-```shell
-scp -P 50022 -r src/contoso-fiber/target/*.jar azureuser@localhost:/home/azureuser
-```
-
-Login into the jumpbox with the jumpbox password using:
-
-```shell
-ssh -p 50022 azureuser@localhost
-```
-
-Login into Azure using:
-
-```shell
-az login --use-device-code
-```
-Set the subscription id:
-
-```shell
-az account set --subscription <subscription_id>
-```
-
-Deploy the application to the primary region using:
-
-```shell
-az webapp deploy --resource-group <primary_spoke_resource_group> --name <primary_app_service_name> --src-path cams.jar --type jar
-```
-
-Deploy the application to the secondary region using:
-
-```shell
-az webapp deploy --resource-group <secondary_spoke_resource_group> --name <secondary_app_service_name> --src-path cams.jar --type jar
-```
-
-Exit the jumpbox using:
-
-```shell
-  exit
-```
-
-Close the tunnel in the SEPARATE terminal using:
-
-```shell
-  CTRL+C
-```
-
-## Navigate to the Contoso Fiber App
-
-Navigate to the Front Door URL in a browser to view the Contoso Fiber CAMS application.
-
-## Tear down the environment
-
-When you are done you can cleanup all the resources using:
-
-```shell
-azd down --force --purge
-```
+    ```shell
+    azd down --force --purge
+    ```
