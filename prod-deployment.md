@@ -138,9 +138,9 @@ The following detailed deployment steps assume you are using a Dev Container ins
 1. Run the following to set the environment variables for the bastion tunnel:
 
     ```sh
-    $bastion_host_name=$(azd env get-values --output json | jq -r .bastion_host_name)
-    $hub_resource_group=$(azd env get-values --output json | jq -r .hub_resource_group)
-    $jumpbox_resource_id=$(azd env get-values --output json | jq -r .jumpbox_resource_id)
+    bastion_host_name=$(azd env get-values --output json | jq -r .bastion_host_name)
+    hub_resource_group=$(azd env get-values --output json | jq -r .hub_resource_group)
+    jumpbox_resource_id=$(azd env get-values --output json | jq -r .jumpbox_resource_id)
     ```
 
     We use the [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/) to create a bastion tunnel that allows us to connect to the jump box:
@@ -155,13 +155,13 @@ The following detailed deployment steps assume you are using a Dev Container ins
     >
     > Now that the tunnel is open, change back to use the original terminal session to deploy the code.
 
-1. From the first terminal, use the following SCP command to upload the code to the jump host (use the JUMPBOX_PASSWORD you created to authenticate the SCP command):
+1. From the first terminal, use the following SCP command to upload the code to the jump box (use the JUMPBOX_PASSWORD you created to authenticate the SCP command):
 
     ```shell
     scp -P 50022 -r src/contoso-fiber/target/*.jar azureuser@localhost:/home/azureuser
     ```
 
-1. Run the following command to start a shell session on the jump host:
+1. Run the following command to start a shell session on the jump box:
 
 
     ```shell
