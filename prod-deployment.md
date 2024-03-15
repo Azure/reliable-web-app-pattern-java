@@ -1,5 +1,5 @@
 # Steps to deploy the production deployment
-This section describes the deployment steps for the reference implementation of a reliable web application pattern with .NET on Microsoft Azure. These steps guide you through using the jump host that is deployed when performing a network isolated deployment because access to resources will be restricted from public network access and must be performed from a machine connected to the vnet.
+This section describes the deployment steps for the reference implementation of a reliable web application pattern with Java on Microsoft Azure. These steps guide you through using the jump box that is deployed when performing a network isolated deployment because access to resources will be restricted from public network access and must be performed from a machine connected to the vnet.
 
 ![Diagram showing the network focused architecture of the reference implementation.](./docs/icons/reliable-web-app-vnet.svg)
 
@@ -17,7 +17,7 @@ If you do not wish to use a Dev Container, please refer to the [prerequisites](p
 
 > **Note**
 >
-> These steps are used to connect to a Linux jump host where you can deploy the code. The jump host is not designed to be a build server. You should use a devOps pipeline to manage build agents and deploy code into the environment. Also note that for this content the jump host is a Linux VM. This can be swapped with a Windows VM based on your organization's requirements.
+> These steps are used to connect to a Linux jump box where you can deploy the code. The jump box is not designed to be a build server. You should use a devOps pipeline to manage build agents and deploy code into the environment. Also note that for this content the jump box is a Linux VM. This can be swapped with a Windows VM based on your organization's requirements.
 
 ## Steps to deploy the reference implementation
 
@@ -43,8 +43,6 @@ The following detailed deployment steps assume you are using a Dev Container ins
     ```
 
 1. Azure Developer CLI (azd) has its own authentication context. Run the following command to authenticate to Azure:
-
-    To set the active subscription:
 
     ```sh
     azd auth login
