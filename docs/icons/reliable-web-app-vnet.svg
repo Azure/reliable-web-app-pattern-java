@@ -2727,7 +2727,7 @@
 					<v:textRect cx="11.88" cy="952.202" width="72" height="32.4036"/>
 					<text x="-10.35" y="944.1" class="st25" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>DevOps Self-<tspan
 								x="-13.02" dy="1.2em" class="st4">Hosted Agent<v:lf/></tspan><tspan x="-10.07" dy="1.2em"
-								class="st4">(Jump Host)</tspan></text>				</g>
+								class="st4">(Jump Box)</tspan></text>				</g>
 			</g>
 		</g>
 	</g>
