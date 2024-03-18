@@ -1,5 +1,5 @@
 # Steps to deploy the production deployment
-This section describes the deployment steps for the reference implementation of a reliable web application pattern with .NET on Microsoft Azure. These steps guide you through using the jump host that is deployed when performing a network isolated deployment because access to resources will be restricted from public network access and must be performed from a machine connected to the vnet.
+This section describes the deployment steps for the reference implementation of a reliable web application pattern with Java on Microsoft Azure. These steps guide you through using the jump box that is deployed when performing a network isolated deployment because access to resources will be restricted from public network access and must be performed from a machine connected to the vnet.
 
 ![Diagram showing the network focused architecture of the reference implementation.](./docs/icons/reliable-web-app-vnet.svg)
 
@@ -17,217 +17,210 @@ If you do not wish to use a Dev Container, please refer to the [prerequisites](p
 
 > **Note**
 >
-> These steps are used to connect to a Linux jump host where you can deploy the code. The jump host is not designed to be a build server. You should use a devOps pipeline to manage build agents and deploy code into the environment. Also note that for this content the jump host is a Linux VM. This can be swapped with a Windows VM based on your organization's requirements.
+> These steps are used to connect to a Linux jump box where you can deploy the code. The jump box is not designed to be a build server. You should use a devOps pipeline to manage build agents and deploy code into the environment. Also note that for this content the jump box is a Linux VM. This can be swapped with a Windows VM based on your organization's requirements.
 
 ## Steps to deploy the reference implementation
 
-After starting the Dev Container, open a terminal in Visual Studio Code.
+The following detailed deployment steps assume you are using a Dev Container inside Visual Studio Code.
 
-You must first be authenticated to Azure and have the appropriate subscription selected.  To authenticate:
+### 1. Log in to Azure
 
-```shell
-az login --scope https://graph.microsoft.com//.default
 
-azd auth login
-```
+1. Start a terminal in the dev container:
+    ```sh
+    az login --scope https://graph.microsoft.com//.default
+    ```
 
-Each command will open a browser allowing you to authenticate.  To list the subscriptions you have access to:
+1. Set the subscription to the one you want to use (you can use [az account list](https://learn.microsoft.com/en-us/cli/azure/account?view=azure-cli-latest) to list available subscriptions):
 
-```shell
-az account list
-```
 
-To set the active subscription:
+    ```sh
+    export AZURE_SUBSCRIPTION_ID="<your-subscription-id>"
+    ```
 
-```shell
-export AZURE_SUBSCRIPTION_ID="<your-subscription-id>"
+    ```sh
+    az account set --subscription $AZURE_SUBSCRIPTION_ID
+    ```
 
-az account set --subscription $AZURE_SUBSCRIPTION_ID
+1. Azure Developer CLI (azd) has its own authentication context. Run the following command to authenticate to Azure:
 
-azd config set defaults.subscription $AZURE_SUBSCRIPTION_ID
-```
+    ```sh
+    azd auth login
+    ```
 
-Enable the Terraform Alpha provider:
+1. To use Terraform as a provider, you need to enable the feature:
 
-```shell
-azd config set alpha.terraform on
-```
+    ```sh
+    azd config set alpha.terraform on
+    ```
 
-## Create a new environment
+### 2. Provision the app
 
-The environment name should be less than 18 characters and must be comprised of lower-case, numeric, and dash characters (for example, `contosocams`).  The environment name is used for resource group naming and specific resource naming. 
+1. Create a new AZD environment to store your deployment configuration values:
 
-**Choose a unique name for the environment**
+    ```sh
+    azd env new <pick_a_name>
+    ```
 
-Run the following commands to set these values and create a new environment:
+1. Set the default subscription for the azd context:
 
-```shell
-azd env new <pick_a_name>
-```
+    ```sh
+    azd env set AZURE_SUBSCRIPTION_ID $AZURE_SUBSCRIPTION_ID
+    ```
 
->By default, Azure resources are sized for a "development" mode. If doing a Production deployment, see the [prod Deployment](./README-prod.md) instructions for more detail.
+1. To create the prod deployment:
 
-## Set the AZD Environment Values
+    ```pwsh
+    azd env set ENVIRONMENT prod
+    ```
 
-Set the environment to 'prod' using:
+1. Production is a multi-region deployment. Choose an Azure region for the primary deployment (Run [az account list-locations --query '[].{Location: name}'](https://learn.microsoft.com/en-us/cli/azure/account?view=azure-cli-latest) to see a list of locations):
 
-```shell
-azd env set ENVIRONMENT prod
-```
+    ```pwsh
+    azd env set AZURE_LOCATION <pick_a_region>
+    ```
 
-The following are required values that must be set:
+    *You want to make sure the region has availability zones. Azure Database for PostgreSQL - Flexible Server [zone-redundant high availability](https://learn.microsoft.com/azure/postgresql/flexible-server/concepts-high-availability) requires availability zones.*
 
-- `JUMPBOX_PASSWORD` - This is the password for the jump box. The password has to fulfill 3 out of these 4 conditions: Has lower characters, Has upper characters, Has a digit, Has a special character other than "_"
+1. Choose an Azure region for the secondary deployment:
 
-Run the following commands to set these values:
+    ```pwsh
+    azd env set AZURE_SECONDARY_LOCATION <pick_a_region>
+    ```
 
-```shell
-azd env set JUMPBOX_PASSWORD <password>
-```
+    *We encourage readers to choose paired regions for multi-regional web apps. Paired regions typically offer low network latency, data residency in the same geography, and sequential updating. Read [Azure paired regions](https://learn.microsoft.com/en-us/azure/reliability/cross-region-replication-azure#azure-paired-regions) to learn more about these regions.*
 
-The following are optional values that can be set:
+1. The following are required values that must be set:
 
-- `JUMPBOX_USERNAME` - This is the username for the jump box.  The default is `azureuser`.
-- `JUMPBOX_VM_SIZE` - This is the size of the jump box VM.  The default is `Standard_B2s`.
+    - `JUMPBOX_PASSWORD` - This is the password for the jump box. The password has to fulfill 3 out of these 4 conditions: Has lower characters, Has upper characters, Has a digit, Has a special character other than "_"
 
-These values can be set by running the following commands:
+    Run the following commands to set these values:
 
-```shell
-azd env set <variable> <value>
-```
+    ```shell
+    azd env set JUMPBOX_PASSWORD <password>
+    ```
 
-## Select a region for deployment
+1. Run the following command to create the Azure resources (about 45-minutes to provision):
 
-The application can be deployed in either a single region or multi-region manner. PROD deployments are multi-region. You can find a list of available Azure regions by running the following Azure CLI command.
+    ```pwsh
+    azd provision
+    ```
 
-> ```shell
-> az account list-locations --query "[].name" -o tsv
-> ```
+    When successful the output of the deployment will be displayed in the terminal.
 
-Set the `AZURE_LOCATION` to the primary region:
+    ```sh
+      Outputs:
+      
+      bastion_host_name = "vnet-bast-nickcontosocams-prod"
+      frontdoor_url = "https://fd-nickcontosocams-prod-facscqd0a2gqf2eh.z02.azurefd.net"
+      hub_resource_group = "rg-nickcontosocams-hub-prod"
+      jumpbox_resource_id = "/subscriptions/1234/resourceGroups/rg-nickcontosocams-hub-prod/providers/Microsoft.Compute/virtualMachines/vm-jumpbox"
+      primary_app_service_name = "app-nickcontosocams-eastus-prod"
+      primary_spoke_resource_group = "rg-nickcontosocams-spoke-prod"
+      secondary_app_service_name = "app-nickcontosocams-centralus-prod"
+      secondary_spoke_resource_group = "rg-nickcontosocams-spoke2-prod"
+    ```
 
-```shell
-azd env set AZURE_LOCATION <pick_a_region>
-```
+    **Record the output. The values are required in order to run the next steps of the deployment.**
 
-You want to make sure the region has availability zones. Azure Database for PostgreSQL - Flexible Server [zone-redundant high availability](https://learn.microsoft.com/azure/postgresql/flexible-server/concepts-high-availability) requires availability zones.
+### 3. Upload the code to the jump box
 
-Make sure the secondary region is a paired region with the primary region (`AZURE_LOCATION`). For a full list of region pairs, see [Azure region pairs](https://learn.microsoft.com/azure/reliability/cross-region-replication-azure#azure-cross-region-replication-pairings-for-all-geographies). We have validated the following paired regions.
+1. Run the following command to build the Contoso Fiber application:
 
- Set the `AZURE_SECONDARY_LOCATION` to the secondary region:
+    ```shell
+    ./mvnw clean package
+    ```
 
-```shell
-azd env set AZURE_SECONDARY_LOCATION <pick_a_region>
-```
+    This will create the `jar` file cams-0.0.1-SNAPSHOT.jar in the `target` directory. This file will be used to deploy the application to Azure App Service.
 
-## Telemetry
+1. Start a *new* terminal in the dev container
 
-Telemetry collection is on by default.
+1. Run the following to set the environment variables for the bastion tunnel:
 
-To opt out, set the environment variable ENABLE_TELEMETRY to false.
+    ```sh
+    bastion_host_name=$(azd env get-values --output json | jq -r .bastion_host_name)
+    hub_resource_group=$(azd env get-values --output json | jq -r .hub_resource_group)
+    jumpbox_resource_id=$(azd env get-values --output json | jq -r .jumpbox_resource_id)
+    ```
 
-```shell
-azd env set ENABLE_TELEMETRY false
-```
+    We use the [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/) to create a bastion tunnel that allows us to connect to the jump box:
 
-## Provision infrastructure
+1. Run the following command to create a bastion tunnel to the jump box:
 
-Run the following command to create the infrastructure and deploy the app:
+    ```sh
+    az network bastion tunnel --name $bastion_host_name --resource-group $hub_resource_group --target-resource-id $jumpbox_resource_id --resource-port 22 --port 50022
+    ```
 
-```shell
-azd provision
-```
+    > **NOTE**
+    >
+    > Now that the tunnel is open, change back to use the original terminal session to deploy the code.
 
-The output of the deployment will be displayed in the terminal.
+1. From the first terminal, use the following SCP command to upload the code to the jump box (use the JUMPBOX_PASSWORD you created to authenticate the SCP command):
 
-```
-Outputs:
+    ```shell
+    scp -P 50022 -r src/contoso-fiber/target/*.jar azureuser@localhost:/home/azureuser
+    ```
 
-bastion_host_name = "vnet-bast-nickcontosocams-prod"
-frontdoor_url = "https://fd-nickcontosocams-prod-facscqd0a2gqf2eh.z02.azurefd.net"
-hub_resource_group = "rg-nickcontosocams-hub-prod"
-jumpbox_resource_id = "/subscriptions/1234/resourceGroups/rg-nickcontosocams-hub-prod/providers/Microsoft.Compute/virtualMachines/vm-jumpbox"
-primary_app_service_name = "app-nickcontosocams-eastus-prod"
-primary_spoke_resource_group = "rg-nickcontosocams-spoke-prod"
-secondary_app_service_name = "app-nickcontosocams-centralus-prod"
-secondary_spoke_resource_group = "rg-nickcontosocams-spoke2-prod"
-```
+1. Run the following command to start a shell session on the jump box:
 
-> **Record the output. The values are required in order to run the next steps of the deployment.**
 
-## Build Contoso Fiber CAMS
+    ```shell
+    ssh -p 50022 azureuser@localhost
+    ```
 
-Run the following command to build the Contoso Fiber application:
+### 4. Deploy code from the jump box
 
-```shell
-./mvnw clean package
-```
+1. Login into Azure using:
 
-This will create the `jar` file cams-0.0.1-SNAPSHOT.jar in the `target` directory. This file will be used to deploy the application to Azure App Service.
+    ```shell
+    az login --use-device-code
+    ```
 
-## Deploy the Contoso Fiber App
+1. Set the subscription id:
 
-Create the SSH tunnel to the jumpbox using a SEPARATE terminal:
+    ```shell
+    az account set --subscription <subscription_id>
+    ```
 
-```shell
-az network bastion tunnel --name <bastion_name> --resource-group <hub_resource_group> --target-resource-id <jumpbox_resource_id> --resource-port 22 --port 50022
-```
+1. Deploy the application to the primary region using:
 
-Copy the JAR file to the jumpbox using:
+    ```shell
+    az webapp deploy --resource-group <primary_spoke_resource_group> --name <primary_app_service_name> --src-path cams.jar --type jar
+    ```
 
-```shell
-scp -P 50022 -r src/contoso-fiber/target/*.jar azureuser@localhost:/home/azureuser
-```
+1. Deploy the application to the secondary region using:
 
-Login into the jumpbox with the jumpbox password using:
+    ```shell
+    az webapp deploy --resource-group <secondary_spoke_resource_group> --name <secondary_app_service_name> --src-path cams.jar --type jar
+    ```
 
-```shell
-ssh -p 50022 azureuser@localhost
-```
+    > **WARNING**
+    >
+    > In some scenarios, the DNS entries for resources secured with Private Endpoint may have been cached incorrectly. It can take up to 10-minutes for the DNS cache to expire.
 
-Login into Azure using:
+1. Navigate to the Front Door URL in a browser to view the Contoso Fiber CAMS application.
 
-```shell
-az login --use-device-code
-```
-Set the subscription id:
+    ![Image of the account details page](docs/assets/contoso-account-details-page.png)
 
-```shell
-az account set --subscription <subscription_id>
-```
+    > You can learn more about the web app by reading the [Pattern Simulations](demo.md) documentation.
 
-Deploy the application to the primary region using:
 
-```shell
-az webapp deploy --resource-group <primary_spoke_resource_group> --name <primary_app_service_name> --src-path cams.jar --type jar
-```
+### 5. Teardown
 
-Deploy the application to the secondary region using:
+1. Exit the jumpbox using:
 
-```shell
-az webapp deploy --resource-group <secondary_spoke_resource_group> --name <secondary_app_service_name> --src-path cams.jar --type jar
-```
+    ```shell
+    exit
+    ```
 
-Exit the jumpbox using:
+1. Close the tunnel in the SEPARATE terminal using:
 
-```shell
-  exit
-```
+    ```shell
+    CTRL+C
+    ```
 
-Close the tunnel in the SEPARATE terminal using:
+1. When you are done you can cleanup all the resources using:
 
-```shell
-  CTRL+C
-```
-
-## Navigate to the Contoso Fiber App
-
-Navigate to the Front Door URL in a browser to view the Contoso Fiber CAMS application.
-
-## Tear down the environment
-
-When you are done you can cleanup all the resources using:
-
-```shell
-azd down --force --purge
-```
+    ```shell
+    azd down --force --purge
+    ```
