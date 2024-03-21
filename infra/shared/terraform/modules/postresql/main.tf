@@ -40,7 +40,6 @@ resource "azurecaf_name" "postgresql_server" {
 # It's recommended to use fine-grained access control in PostgreSQL when connecting to the database.
 # https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/how-to-create-users
 # https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-azure-ad-authentication
-
 resource "azurerm_postgresql_flexible_server" "postgresql_database" {
   count               = var.environment == "prod" ? 1 : 0 
   name                = azurecaf_name.postgresql_server[0].result
@@ -58,8 +57,9 @@ resource "azurerm_postgresql_flexible_server" "postgresql_database" {
 
   geo_redundant_backup_enabled = false
 
+  # High Availability is only available in prod and is not available for the Read replica.
   dynamic high_availability {
-    for_each = var.environment == "prod" ? ["this"] : []
+    for_each = var.environment == "prod" && var.source_server_id == null ? ["this"] : []
 
     content {
       mode = "ZoneRedundant"
