@@ -1,0 +1,42 @@
+{
+	"name": "reliable-java-web-app",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"args": {
+			"VARIANT": "jammy"
+		}
+	},
+	"remoteUser": "vscode",
+	"containerEnv": {
+		"M2": "/home/vscode" // required because the java feature is not setting this correctly
+	},
+	"features": {
+		"powershell": "latest",
+		"ghcr.io/devcontainers/features/azure-cli:1": {
+			"version": "latest"
+		},
+		"ghcr.io/devcontainers/features/java:1": {
+			"version": "17",
+			"installMaven": "true",
+			"mavenVersion": "3.8.6",
+			"installGradle": "false"
+		},
+		"ghcr.io/devcontainers/features/terraform:1": {},
+		"ghcr.io/eitsupi/devcontainer-features/jq-likes:1": {},
+		"ghcr.io/azure/azure-dev/azd:latest": {}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-azuretools.azure-dev",
+				"vscjava.vscode-java-pack",
+				"Pivotal.vscode-spring-boot",
+				"redhat.vscode-yaml",
+				"ms-azuretools.vscode-docker"
+			]
+		}
+	},
+	"hostRequirements": {
+		"cpus": 2
+	}
+}

@@ -1,0 +1,30 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <include file="hsqldb-timestamp-precision.xml" relativeToChangelogFile="true"/>
+    <include file="drop-player-columns.xml" relativeToChangelogFile="true"/>
+    <include file="rename-play-queue-current-id.xml" relativeToChangelogFile="true"/>
+    <include file="drop-rename-transcoding.xml" relativeToChangelogFile="true"/>
+    <include file="drop-duration-seconds.xml" relativeToChangelogFile="true"/>
+    <include file="user-settings-json.xml" relativeToChangelogFile="true"/>
+    <include file="user-roles-json.xml" relativeToChangelogFile="true"/>
+    <include file="remove-password-column.xml" relativeToChangelogFile="true"/>
+    <include file="add-sonos-table-link.xml" relativeToChangelogFile="true"/>
+    <include file="podcast-description-text.xml" relativeToChangelogFile="true"/>
+    <include file="insert-mod-transcoding.xml" relativeToChangelogFile="true"/>
+    <include file="add-player-id-autoincrement.xml" relativeToChangelogFile="true"/>
+    <include file="remove-java-jukebox.xml" relativeToChangelogFile="true"/>
+    <include file="podcast-channel-rules.xml" relativeToChangelogFile="true"/>
+    <include file="avatar-storage.xml" relativeToChangelogFile="true"/>
+    <include file="move-user-table.xml" relativeToChangelogFile="true"/>
+    <include file="add-wavpack.xml" relativeToChangelogFile="true"/>
+    <include file="postgresql-add-rand-function.xml" relativeToChangelogFile="true"/>
+    <include file="podcast-episode-guid.xml" relativeToChangelogFile="true"/>
+    <include file="relative-media-file-paths.xml" relativeToChangelogFile="true"/>
+    <include file="cover-art-table.xml" relativeToChangelogFile="true"/>
+    <include file="media-file-music-folder-link.xml" relativeToChangelogFile="true"/>
+    <include file="delete-first-player.xml" relativeToChangelogFile="true"/>
+    <include file="explicit-fk-indices.xml" relativeToChangelogFile="true"/>
+    <include file="podcast-episode-indices.xml" relativeToChangelogFile="true"/>
+</databaseChangeLog>

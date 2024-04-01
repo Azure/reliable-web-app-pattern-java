@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+
+name: reliable-java-web-app
+metadata:
+  template: reliable-java-web@0.0.1-beta
+infra:
+    provider: "terraform"
+    path: "terraform"
+hooks:
+  preprovision:
+    shell: sh
+    interactive: true
+    run: "./scripts/set-tfstate-vars.sh"
+  postprovision:
+    shell: sh
+    interactive: true
+    run: "./scripts/download-trainings.sh && ./scripts/upload-trainings.sh && ./scripts/set-default-rg.sh"
+  postdown:
+    interactive: true
+    run: "./scripts/teardown-tfstate.sh"
+services:
+  application:
+    project: ./src/airsonic-advanced
+    dist: airsonic-main/target
+    language: java
+    host: appservice

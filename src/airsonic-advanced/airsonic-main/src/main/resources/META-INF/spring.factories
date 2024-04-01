@@ -1,0 +1,3 @@
+org.springframework.context.ApplicationListener=\
+  org.airsonic.player.spring.CustomPropertySourceConfigurer,\
+  org.airsonic.player.spring.StartupEventListener
