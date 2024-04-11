@@ -179,6 +179,10 @@ azd down --purge --force
 - [Find Support](SUPPORT.md)
 - [Contributing](CONTRIBUTING.md)
 
+## RWA 1.0 Proseware
+
+The RWA 1.0 Proseware implementation can be found in the [proseware branch](https://github.com/Azure/reliable-web-app-pattern-java/tree/proseware).
+
 ## Trademarks
 
 This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft 
