@@ -108,7 +108,7 @@ We can observe this behavior in the web app by following these steps:
 
     Open the Redis Console by navigating to the Azure Cache for Redis resource in the Azure Portal and clicking the "Console" link above the overview details for this resource.
 
-    ![image of Azure Cache for Redis Console](docs/assets/redis-console.png)
+    ![image of Azure Cache for Redis Console](docs/assets/azure-redis-console.png)
 
     Run the following command to see all cached keys:
 
