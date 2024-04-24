@@ -54,9 +54,9 @@ wsl
 Clone the repository and open the project using the Dev Container.
 
 ```shell
-git clone https://github.com/Azure/web-app-pattern-java.git
+git clone https://github.com/Azure/reliable-web-app-pattern-java.git
 
-cd web-app-pattern-java
+cd reliable-web-app-pattern-java
 ```
 
 ### 2. Open Dev Container in Visual Studio Code
