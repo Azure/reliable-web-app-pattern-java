@@ -48,12 +48,6 @@ The following detailed deployment steps assume you are using a Dev Container ins
     azd auth login
     ```
 
-1. To use Terraform as a provider, you need to enable the feature:
-
-    ```sh
-    azd config set alpha.terraform on
-    ```
-
 ### 2. Provision the app
 
 1. Create a new AZD environment to store your deployment configuration values:
@@ -89,16 +83,6 @@ The following detailed deployment steps assume you are using a Dev Container ins
     ```
 
     *We encourage readers to choose paired regions for multi-regional web apps. Paired regions typically offer low network latency, data residency in the same geography, and sequential updating. Read [Azure paired regions](https://learn.microsoft.com/en-us/azure/reliability/cross-region-replication-azure#azure-paired-regions) to learn more about these regions.*
-
-1. The following are required values that must be set:
-
-    - `JUMPBOX_PASSWORD` - This is the password for the jump box. The password has to fulfill 3 out of these 4 conditions: Has lower characters, Has upper characters, Has a digit, Has a special character other than "_"
-
-    Run the following commands to set these values:
-
-    ```shell
-    azd env set JUMPBOX_PASSWORD <password>
-    ```
 
 1. Run the following command to create the Azure resources (about 45-minutes to provision):
 

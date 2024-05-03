@@ -1,4 +1,3 @@
-
 # ---------------
 #  Hub - Jumpbox
 # ---------------
@@ -10,7 +9,6 @@ module "hub_jumpbox" {
   location        = var.location
   tags            = local.base_tags
   admin_username  = var.jumpbox_username
-  admin_password  = var.jumpbox_password
   resource_group  = azurerm_resource_group.hub[0].name
   size            = var.jumpbox_vm_size
   subnet_id       = module.hub_vnet[0].subnets[local.devops_subnet_name].id
