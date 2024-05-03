@@ -173,6 +173,7 @@ azd down --purge --force
 - [Pattern Simulations](demo.md)
 - [Developer Experience](developer-experience.md)
 - [Calculating SLA](sla-calculation.md)
+- [Find additional resources](additional-resources.md)
 - [Logging](docs/logging.md)
 - [Redis](docs/REDIS.md)
 - [Report security concerns](SECURITY.md)
