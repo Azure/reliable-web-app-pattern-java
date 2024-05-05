@@ -28,4 +28,4 @@ For more information, refer to the [Spring Boot Actuator documentation](https://
 
 ## Application Insights
 
-Check out [Simulate Patterns - Logs](./demo.md#logs) to see how to monitor the app with Application Insights.
+Check out [Simulate Patterns - Logs](../demo.md#logs) to see how to monitor the app with Application Insights.
