@@ -23,6 +23,11 @@ variable "admin_username" {
   default = null
 }
 
+variable "admin_password" {
+  type    = string
+  default = null
+}
+
 variable "subnet_id" {
   type = string
 }

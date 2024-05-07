@@ -2,6 +2,15 @@
 #  Hub - Jumpbox
 # ---------------
 
+resource "random_password" "jumpbox_password" {
+  length           = 16
+  numeric          = true
+  lower            = true
+  upper            = true
+  special          = true
+  override_special = "!#$%&*()-=+[]{}<>:?"
+}
+
 module "hub_jumpbox" {
   count           = var.environment == "prod" ? 1 : 0
   source          = "../shared/terraform/modules/vms"
@@ -9,6 +18,7 @@ module "hub_jumpbox" {
   location        = var.location
   tags            = local.base_tags
   admin_username  = var.jumpbox_username
+  admin_password  = random_password.jumpbox_password.result
   resource_group  = azurerm_resource_group.hub[0].name
   size            = var.jumpbox_vm_size
   subnet_id       = module.hub_vnet[0].subnets[local.devops_subnet_name].id

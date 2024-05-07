@@ -6,7 +6,6 @@
 			"VARIANT": "jammy"
 		}
 	},
-    "postCreateCommand": "ssh-keygen -f ~/.ssh/id_rsa -m PEM -t rsa -b 4096 -N ''",
 	"remoteUser": "vscode",
 	"containerEnv": {
 		"M2": "/home/vscode" // required because the java feature is not setting this correctly
