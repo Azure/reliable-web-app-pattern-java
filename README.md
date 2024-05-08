@@ -105,7 +105,6 @@ Use the next command to login with the Azure Dev CLI (AZD) tool:
 azd auth login
 ```
 
-
 ### 4. Create a new environment
 
 Next we provide the AZD tool with variables that it uses to create the deployment. The first thing we initialize is the AZD environment with a name.
@@ -116,12 +115,6 @@ By default, Azure resources are sized for a development deployment. If doing a p
 
 ```shell
 azd env new <pick_a_name>
-```
-
-Enable the AZD Terraform provider:
-
-```shell
-azd config set alpha.terraform on
 ```
 
 Select the subscription that will be used for the deployment:

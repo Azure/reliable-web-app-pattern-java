@@ -34,12 +34,6 @@ variable "jumpbox_username" {
   description = "The username for the jumpbox."
 }
 
-variable "jumpbox_password" {
-  type        = string
-  description = "The password for the jumpbox."
-  sensitive   = true
-}
-
 variable "jumpbox_vm_size" {
   type        = string
   description = "The size of the jumpbox."

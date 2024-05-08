@@ -48,12 +48,6 @@ The following detailed deployment steps assume you are using a Dev Container ins
     azd auth login
     ```
 
-1. To use Terraform as a provider, you need to enable the feature:
-
-    ```sh
-    azd config set alpha.terraform on
-    ```
-
 ### 2. Provision the app
 
 1. Create a new AZD environment to store your deployment configuration values:
@@ -90,16 +84,6 @@ The following detailed deployment steps assume you are using a Dev Container ins
 
     *We encourage readers to choose paired regions for multi-regional web apps. Paired regions typically offer low network latency, data residency in the same geography, and sequential updating. Read [Azure paired regions](https://learn.microsoft.com/en-us/azure/reliability/cross-region-replication-azure#azure-paired-regions) to learn more about these regions.*
 
-1. The following are required values that must be set:
-
-    - `JUMPBOX_PASSWORD` - This is the password for the jump box. The password has to fulfill 3 out of these 4 conditions: Has lower characters, Has upper characters, Has a digit, Has a special character other than "_"
-
-    Run the following commands to set these values:
-
-    ```shell
-    azd env set JUMPBOX_PASSWORD <password>
-    ```
-
 1. Run the following command to create the Azure resources (about 45-minutes to provision):
 
     ```pwsh
@@ -131,7 +115,7 @@ The following detailed deployment steps assume you are using a Dev Container ins
     ./mvnw clean package
     ```
 
-    This will create the `jar` file cams-0.0.1-SNAPSHOT.jar in the `target` directory. This file will be used to deploy the application to Azure App Service.
+    This will create the jar file `cams.jar` in the `src/contoso-fiber/target/` directory. This file will be used to deploy the application to Azure App Service.
 
 1. Start a *new* terminal in the dev container
 
@@ -155,14 +139,24 @@ The following detailed deployment steps assume you are using a Dev Container ins
     >
     > Now that the tunnel is open, change back to use the original terminal session to deploy the code.
 
-1. From the first terminal, use the following SCP command to upload the code to the jump box (use the JUMPBOX_PASSWORD you created to authenticate the SCP command):
+1. Retrieve the generated username and password for your jump box:
+
+    - Locate the Hub resource group in the Azure Portal.
+    - Open the Azure Key Vault from the list of resources.
+    - Select **Secrets** from the menu sidebar.
+    - Select **Jumpbox--AdministratorPassword**.
+    - Select the currently enabled version.
+    - Press **Show Secret Value**.
+    - Note the secret value for later use.
+    - Repeat the proecess for the **Jumpbox--AdministratorUsername** secret.
+
+1. From the first terminal, use the following SCP command to upload the code to the jump box. Replace `azureuser` with the username you retrieved from the Key Vault:
 
     ```shell
     scp -P 50022 -r src/contoso-fiber/target/*.jar azureuser@localhost:/home/azureuser
     ```
 
 1. Run the following command to start a shell session on the jump box:
-
 
     ```shell
     ssh -p 50022 azureuser@localhost
