@@ -1,4 +1,4 @@
- 
+
 locals {
   contoso_client_id     = var.environment == "prod" ? module.ad[0].application_registration_id : null
   contoso_tenant_id     = data.azuread_client_config.current.tenant_id
@@ -12,6 +12,26 @@ resource azurerm_role_assignment kv_administrator_user_role_assignement {
   scope                 = module.hub_key_vault[0].vault_id
   role_definition_name  = "Key Vault Administrator"
   principal_id          = data.azuread_client_config.current.object_id
+}
+
+resource "azurerm_key_vault_secret" "jumpbox_username" {
+  count        = var.environment == "prod" ? 1 : 0
+  name         = "Jumpbox--AdministratorUsername"
+  value        = var.jumpbox_username
+  key_vault_id = module.hub_key_vault[0].vault_id
+  depends_on = [
+    azurerm_role_assignment.kv_administrator_user_role_assignement
+  ]
+}
+
+resource "azurerm_key_vault_secret" "jumpbox_password_secret" {
+  count        = var.environment == "prod" ? 1 : 0
+  name         = "Jumpbox--AdministratorPassword"
+  value        = random_password.jumpbox_password.result
+  key_vault_id = module.hub_key_vault[0].vault_id
+  depends_on = [
+    azurerm_role_assignment.kv_administrator_user_role_assignement
+  ]
 }
 
 resource "azurerm_key_vault_secret" "contoso_database_url" {
@@ -99,7 +119,7 @@ resource "azurerm_key_vault_secret" "contoso_app_insights_connection_string" {
 # ----------------------------------------------------------------------------------------------
 
 resource "azurerm_key_vault_secret" "secondary_contoso_database_url" {
-  count        = var.environment == "prod" ? 1 : 0 
+  count        = var.environment == "prod" ? 1 : 0
   name         = "contoso-secondary-database-url"
   value        = "jdbc:postgresql://${module.secondary_postresql_database[0].database_fqdn}:5432/${azurerm_postgresql_flexible_server_database.postresql_database[0].name}"
   key_vault_id = module.hub_key_vault[0].vault_id
