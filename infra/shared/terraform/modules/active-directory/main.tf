@@ -4,10 +4,6 @@ terraform {
       source  = "aztfmod/azurecaf"
       version = "1.2.26"
     }
-    azuread = {
-      source = "hashicorp/azuread"
-      version = "2.46.0"
-    }
   }
 }
 
@@ -92,6 +88,8 @@ resource "azuread_application" "app_registration" {
       id_token_issuance_enabled     = true
     }
   }
+
+  service_management_reference = var.service_management_reference
 }
 
 resource "azuread_service_principal" "application_service_principal" {
@@ -102,11 +100,11 @@ resource "azuread_service_principal" "application_service_principal" {
 
 resource "azuread_application_password" "application_password" {
   application_id = azuread_application.app_registration.id
-  end_date_relative = "4320h"
+  end_date = timeadd(timestamp(), "4320h") # 6 months
 }
 
-# This is not guidance and is done for demo purposes. The resource below will add the 
-# "L1Support", "AccountManager", and "BusinessOwner" app role assignment for the application 
+# This is not guidance and is done for demo purposes. The resource below will add the
+# "L1Support", "AccountManager", and "BusinessOwner" app role assignment for the application
 # of the current user deploying this sample.
 resource "azuread_app_role_assignment" "application_role_current_user" {
   app_role_id         = azuread_service_principal.application_service_principal.app_role_ids["AccountManager"]
