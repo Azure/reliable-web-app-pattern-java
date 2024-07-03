@@ -48,3 +48,9 @@ variable "database_administrator_password" {
   description = "The database administrator password"
   default     = null
 }
+
+variable "service_management_reference" {
+  type = string
+  description = "value for the service management reference"
+  default = null
+}

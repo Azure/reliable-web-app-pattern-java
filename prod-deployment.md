@@ -84,6 +84,12 @@ The following detailed deployment steps assume you are using a Dev Container ins
 
     *We encourage readers to choose paired regions for multi-regional web apps. Paired regions typically offer low network latency, data residency in the same geography, and sequential updating. Read [Azure paired regions](https://learn.microsoft.com/en-us/azure/reliability/cross-region-replication-azure#azure-paired-regions) to learn more about these regions.*
 
+1. Optional: Set the App Registration Service Management Reference:
+
+    ```shell
+    azd env set AZURE_SERVICE_MANAGEMENT_REFERENCE <service_management_reference>
+    ```
+
 1. Run the following command to create the Azure resources (about 45-minutes to provision):
 
     ```pwsh

@@ -12,6 +12,7 @@ module "ad" {
   application_name             = var.application_name
   environment                  = var.environment
   frontdoor_host_name          = module.frontdoor[0].host_name
+  service_management_reference = var.service_management_reference
 }
 
 // ---------------------------------------------------------------------------
@@ -28,4 +29,5 @@ module "dev_ad" {
   application_name             = var.application_name
   environment                  = var.environment
   frontdoor_host_name          = module.dev_frontdoor[0].host_name
+  service_management_reference = var.service_management_reference
 }
