@@ -36,3 +36,7 @@ variable "size" {
   type    = string
   default = "Standard_B2ms"
 }
+
+variable "admin_principal_id" {
+  type    = string
+}

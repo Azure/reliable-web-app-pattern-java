@@ -20,6 +20,10 @@ resource "azurerm_linux_virtual_machine" "linux_vm" {
   disable_password_authentication = false
   size                            = var.size
 
+  identity {
+    type = "SystemAssigned"
+  }
+
   network_interface_ids = [
     azurerm_network_interface.vm_nic.id
   ]
@@ -31,8 +35,8 @@ resource "azurerm_linux_virtual_machine" "linux_vm" {
 
   source_image_reference {
     publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "18.04-LTS"
+    offer     = "0001-com-ubuntu-server-focal"
+    sku       = "20_04-lts-gen2"
     version   = "latest"
   }
 }
@@ -48,4 +52,20 @@ resource "azurerm_virtual_machine_extension" "vm_extension_linux" {
       "script": "${filebase64("${path.module}/scripts/jumpbox-setup-cli-tools.sh")}"
     }
 SETTINGS
+}
+
+
+resource "azurerm_virtual_machine_extension" "vm_extension_aad" {
+  name                 = "vm-aad-extension-linux"
+  virtual_machine_id   = azurerm_linux_virtual_machine.linux_vm.id
+  publisher            = "Microsoft.Azure.ActiveDirectory"
+  type                 = "AADSSHLoginForLinux"
+  type_handler_version = "1.0"
+  auto_upgrade_minor_version = true
+}
+
+resource "azurerm_role_assignment" "vm-admin-role" {
+  scope                = azurerm_linux_virtual_machine.linux_vm.id
+  role_definition_name = "Virtual Machine Administrator Login"
+  principal_id         = var.admin_principal_id
 }
