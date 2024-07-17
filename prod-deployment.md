@@ -145,27 +145,28 @@ The following detailed deployment steps assume you are using a Dev Container ins
     >
     > Now that the tunnel is open, change back to use the original terminal session to deploy the code.
 
-1. Retrieve the generated username and password for your jump box:
-
-    - Locate the Hub resource group in the Azure Portal.
-    - Open the Azure Key Vault from the list of resources.
-    - Select **Secrets** from the menu sidebar.
-    - Select **Jumpbox--AdministratorPassword**.
-    - Select the currently enabled version.
-    - Press **Show Secret Value**.
-    - Note the secret value for later use.
-    - Repeat the proecess for the **Jumpbox--AdministratorUsername** secret.
-
-1. From the first terminal, use the following SCP command to upload the code to the jump box. Replace `azureuser` with the username you retrieved from the Key Vault:
+1. Install the SSH extension for Azure CLI:
 
     ```shell
-    scp -P 50022 -r src/contoso-fiber/target/*.jar azureuser@localhost:/home/azureuser
+    az extension add --name ssh
+    ```
+
+1. Obtain an SSH key from entra:
+    
+    ```shell
+    az ssh config --ip 127.0.0.1 -f ./ssh-config
+    ```
+
+1. From the first terminal, use the following command to upload the code to the jump box. 
+
+    ```shell
+    rsync -av -e "ssh -F ./ssh-config -p 50022" src/contoso-fiber/target/cams.jar 127.0.0.1:~/cams.jar
     ```
 
 1. Run the following command to start a shell session on the jump box:
 
     ```shell
-    ssh -p 50022 azureuser@localhost
+    az ssh vm --ip 127.0.0.1 --port 50022
     ```
 
 ### 4. Deploy code from the jump box
