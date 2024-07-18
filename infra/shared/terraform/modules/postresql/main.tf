@@ -41,7 +41,7 @@ resource "azurecaf_name" "postgresql_server" {
 # https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/how-to-create-users
 # https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-azure-ad-authentication
 resource "azurerm_postgresql_flexible_server" "postgresql_database" {
-  count               = var.environment == "prod" ? 1 : 0 
+  count               = var.environment == "prod" ? 1 : 0
   name                = azurecaf_name.postgresql_server[0].result
   resource_group_name = var.resource_group
   location            = var.location
@@ -52,6 +52,7 @@ resource "azurerm_postgresql_flexible_server" "postgresql_database" {
   sku_name                     = var.sku_name
   version                      = "16"
 
+  public_network_access_enabled = false
   delegated_subnet_id          = var.subnet_network_id
   private_dns_zone_id          = azurerm_private_dns_zone.postgresql_database[0].id
 
@@ -76,7 +77,7 @@ resource "azurerm_postgresql_flexible_server" "postgresql_database" {
   authentication {
     active_directory_auth_enabled  = true
     password_auth_enabled          = true
-    
+
     tenant_id = var.azure_ad_tenant_id
   }
 
@@ -135,7 +136,7 @@ resource "azurecaf_name" "dev_postgresql_server" {
 }
 
 resource "azurerm_postgresql_flexible_server" "dev_postresql_database" {
-  count                         = var.environment == "dev" ? 1 : 0 
+  count                         = var.environment == "dev" ? 1 : 0
   name                          = azurecaf_name.dev_postgresql_server[0].result
   resource_group_name           = var.resource_group
   location                      = var.location
@@ -160,7 +161,7 @@ resource "azurerm_postgresql_flexible_server" "dev_postresql_database" {
 }
 
 resource "azurerm_postgresql_flexible_server_firewall_rule" "dev_postresql_database_allow_access_rule" {
-  count            = var.environment == "dev" ? 1 : 0 
+  count            = var.environment == "dev" ? 1 : 0
   name             = "allow-access-from-azure-services"
   server_id        = azurerm_postgresql_flexible_server.dev_postresql_database[0].id
   start_ip_address = "0.0.0.0"

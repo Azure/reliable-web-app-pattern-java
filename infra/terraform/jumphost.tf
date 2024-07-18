@@ -12,16 +12,17 @@ resource "random_password" "jumpbox_password" {
 }
 
 module "hub_jumpbox" {
-  count           = var.environment == "prod" ? 1 : 0
-  source          = "../shared/terraform/modules/vms"
-  vm_name         = "vm-jumpbox"
-  location        = var.location
-  tags            = local.base_tags
-  admin_username  = var.jumpbox_username
-  admin_password  = random_password.jumpbox_password.result
-  resource_group  = azurerm_resource_group.hub[0].name
-  size            = var.jumpbox_vm_size
-  subnet_id       = module.hub_vnet[0].subnets[local.devops_subnet_name].id
+  count                 = var.environment == "prod" ? 1 : 0
+  source                = "../shared/terraform/modules/vms"
+  vm_name               = "vm-jumpbox"
+  location              = var.location
+  tags                  = local.base_tags
+  admin_username        = var.jumpbox_username
+  admin_password        = random_password.jumpbox_password.result
+  admin_principal_id    = data.azuread_client_config.current.object_id
+  resource_group        = azurerm_resource_group.hub[0].name
+  size                  = var.jumpbox_vm_size
+  subnet_id             = module.hub_vnet[0].subnets[local.devops_subnet_name].id
 }
 
 # --------------------
