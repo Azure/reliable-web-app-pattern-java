@@ -26,6 +26,8 @@ resource "azurerm_redis_cache" "cache" {
 
   # https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-configure#default-redis-server-configuration
   redis_configuration {
+    enable_authentication = true
+    active_directory_authentication_enabled = true
   }
 }
 

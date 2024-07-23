@@ -1,6 +1,6 @@
-output "cache_secret" {
-  value       = azurerm_redis_cache.cache.primary_access_key
-  description = "The secret to use when connecting to Azure Cache for Redis"
+output "cache_id" {
+  value       = azurerm_redis_cache.cache.id
+  description = "The id of the Azure Cache for Redis"
 }
 
 output "cache_hostname" {
