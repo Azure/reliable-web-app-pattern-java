@@ -48,7 +48,8 @@ resource "azurerm_linux_web_app" "application" {
   virtual_network_subnet_id = var.appsvc_subnet_id
 
   identity {
-    type = "SystemAssigned"
+    type         = var.identity.type
+    identity_ids = var.identity.type == "SystemAssigned" ? [] : var.identity.identity_ids
   }
 
   tags = {
@@ -107,9 +108,9 @@ resource "azurerm_linux_web_app" "application" {
     SPRING_CLOUD_AZURE_ACTIVE_DIRECTORY_CREDENTIAL_CLIENT_SECRET = var.contoso_webapp_options.contoso_active_directory_client_secret
     SPRING_CLOUD_AZURE_ACTIVE_DIRECTORY_PROFILE_TENANT_ID        = var.contoso_webapp_options.contoso_active_directory_tenant_id
 
-    SPRING_DATA_REDIS_HOST = var.contoso_webapp_options.redis_host_name
-    SPRING_DATA_REDIS_PORT = var.contoso_webapp_options.redis_port
-    SPRING_DATA_REDIS_PASSWORD = var.contoso_webapp_options.redis_password
+    AZURE_CACHE_REDIS_HOST = var.contoso_webapp_options.redis_host_name
+    AZURE_CACHE_REDIS_PORT = var.contoso_webapp_options.redis_port
+    AZURE_CACHE_REDIS_CLIENT_ID = var.contoso_webapp_options.redis_user_client_id
 
     CONTOSO_RETRY_DEMO = "0"
   }
