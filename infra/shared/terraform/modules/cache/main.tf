@@ -24,7 +24,6 @@ resource "azurerm_redis_cache" "cache" {
   # public network access will be allowed for non-prod so devs can do integration testing while debugging locally
   public_network_access_enabled = var.environment == "prod" ? false : true
 
-  # https://learn.microsoft.com/azure/azure-cache-for-redis/cache-configure#default-redis-server-configuration
   redis_configuration {
     enable_authentication = true
     active_directory_authentication_enabled = true
