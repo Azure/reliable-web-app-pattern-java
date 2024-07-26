@@ -19,7 +19,7 @@ resource "azurerm_redis_cache_access_policy_assignment" "primary_current_user" {
   count              = var.environment == "prod" ? 1 : 0
   name               = "primarycurrentuser"
   redis_cache_id     = module.cache[0].cache_id
-  access_policy_name = "Data Owner"
+  access_policy_name = "Data Contributor"
   object_id          = data.azuread_client_config.current.object_id
   object_id_alias    = "currentuser"
 }
@@ -56,7 +56,7 @@ resource "azurerm_redis_cache_access_policy_assignment" "secondary_current_user"
   count              = var.environment == "prod" ? 1 : 0
   name               = "secondarycurrentuser"
   redis_cache_id     = module.secondary_cache[0].cache_id
-  access_policy_name = "Data Owner"
+  access_policy_name = "Data Contributor"
   object_id          = data.azuread_client_config.current.object_id
   object_id_alias    = "currentuser"
 }
@@ -93,7 +93,7 @@ resource "azurerm_redis_cache_access_policy_assignment" "dev_current_user" {
   count              = var.environment == "dev" ? 1 : 0
   name               = "devcurrentuser"
   redis_cache_id     = module.dev-cache[0].cache_id
-  access_policy_name = "Data Owner"
+  access_policy_name = "Data Contributor"
   object_id          = data.azuread_client_config.current.object_id
   object_id_alias    = "currentuser"
 }
