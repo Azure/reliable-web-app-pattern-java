@@ -98,29 +98,15 @@ resource "azurerm_monitor_diagnostic_setting" "postgresql_diagnostic" {
 
   enabled_log {
     category_group = "audit"
-
-    retention_policy {
-      days    = 0
-      enabled = false
-    }
   }
 
   enabled_log {
     category_group = "allLogs"
-
-    retention_policy {
-      days    = 0
-      enabled = false
-    }
   }
 
   metric {
     category = "AllMetrics"
     enabled  = true
-    retention_policy {
-      enabled = false
-      days    = 0
-    }
   }
 }
 
