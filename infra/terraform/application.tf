@@ -35,6 +35,18 @@ module "application" {
   }
 }
 
+resource "azurerm_app_service_connection" "primary_app_service_connection" {
+  count               = var.environment == "prod" ? 1 : 0  
+  name                = "primaryappserviceconnection"
+  app_service_id      = module.application[0].web_app_id
+  target_resource_id  = azurerm_postgresql_flexible_server_database.postresql_database[0].id
+  client_type         = "none"
+
+  authentication {
+    type              = "systemAssignedIdentity"
+  }
+}
+
 # -----------------------
 #  Secondary App Service
 # -----------------------
@@ -102,5 +114,17 @@ module "dev_application" {
     redis_host_name                        = module.dev-cache[0].cache_hostname
     redis_port                             = module.dev-cache[0].cache_ssl_port
     redis_password                         = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.dev_contoso_cache_secret[0].id})"
+  }
+}
+
+resource "azurerm_app_service_connection" "dev_app_service_connection" {
+  count               = var.environment == "dev" ? 1 : 0  
+  name                = "devappserviceconnection"
+  app_service_id      = module.dev_application[0].web_app_id
+  target_resource_id  = azurerm_postgresql_flexible_server_database.dev_postresql_database_db[0].id
+  client_type         = "none"
+
+  authentication {
+    type              = "systemAssignedIdentity"
   }
 }
