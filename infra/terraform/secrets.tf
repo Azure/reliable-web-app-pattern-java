@@ -94,10 +94,10 @@ resource "azurerm_key_vault_secret" "contoso_application_client_secret" {
   ]
 }
 
-resource "azurerm_key_vault_secret" "contoso_cache_secret" {
+resource "azurerm_key_vault_secret" "primary_redis_user_secret" {
   count        = var.environment == "prod" ? 1 : 0
-  name         = "contoso-redis-password"
-  value        = module.cache[0].cache_secret
+  name         = "contoso-primary-redis-user-object-id"
+  value        = azurerm_user_assigned_identity.primary_app_service_identity[0].client_id
   key_vault_id = module.hub_key_vault[0].vault_id
   depends_on = [
     azurerm_role_assignment.kv_administrator_user_role_assignement
@@ -122,6 +122,16 @@ resource "azurerm_key_vault_secret" "secondary_contoso_database_url" {
   count        = var.environment == "prod" ? 1 : 0
   name         = "contoso-secondary-database-url"
   value        = "jdbc:postgresql://${module.secondary_postresql_database[0].database_fqdn}:5432/${azurerm_postgresql_flexible_server_database.postresql_database[0].name}"
+  key_vault_id = module.hub_key_vault[0].vault_id
+  depends_on = [
+    azurerm_role_assignment.kv_administrator_user_role_assignement
+  ]
+}
+
+resource "azurerm_key_vault_secret" "secondary_redis_user_secret" {
+  count        = var.environment == "prod" ? 1 : 0
+  name         = "contoso-secondary-redis-user-object-id"
+  value        = azurerm_user_assigned_identity.secondary_app_service_identity[0].client_id
   key_vault_id = module.hub_key_vault[0].vault_id
   depends_on = [
     azurerm_role_assignment.kv_administrator_user_role_assignement
@@ -216,10 +226,10 @@ resource "azurerm_key_vault_secret" "dev_contoso_application_client_secret" {
   ]
 }
 
-resource "azurerm_key_vault_secret" "dev_contoso_cache_secret" {
+resource "azurerm_key_vault_secret" "dev_redis_user_secret" {
   count        = var.environment == "dev" ? 1 : 0
-  name         = "contoso-redis-password"
-  value        = module.dev-cache[0].cache_secret
+  name         = "contoso-dev-redis-user-object-id"
+  value        = azurerm_user_assigned_identity.dev_app_service_identity[0].client_id
   key_vault_id = module.dev_key_vault[0].vault_id
   depends_on = [
     azurerm_role_assignment.dev_kv_administrator_user_role_assignement
