@@ -32,6 +32,7 @@ resource "azurerm_redis_cache_access_policy_assignment" "app_user" {
   object_id          = azurerm_user_assigned_identity.primary_app_service_identity[0].principal_id
   object_id_alias    = azurerm_user_assigned_identity.primary_app_service_identity[0].principal_id
 
+  # Ensure that the current user has been created before creating the app user
   depends_on = [
     azurerm_redis_cache_access_policy_assignment.primary_current_user
   ]
@@ -69,6 +70,7 @@ resource "azurerm_redis_cache_access_policy_assignment" "secondary_app_user" {
   object_id          = azurerm_user_assigned_identity.secondary_app_service_identity[0].principal_id
   object_id_alias    = azurerm_user_assigned_identity.secondary_app_service_identity[0].principal_id
 
+  # Ensure that the current user has been created before creating the app user
   depends_on = [
     azurerm_redis_cache_access_policy_assignment.secondary_current_user
   ]
@@ -106,6 +108,7 @@ resource "azurerm_redis_cache_access_policy_assignment" "dev_app_user" {
   object_id          = azurerm_user_assigned_identity.dev_app_service_identity[0].principal_id
   object_id_alias    = azurerm_user_assigned_identity.dev_app_service_identity[0].principal_id
 
+  # Ensure that the current user has been created before creating the app user
   depends_on = [
     azurerm_redis_cache_access_policy_assignment.dev_current_user
   ]
