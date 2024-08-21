@@ -99,10 +99,6 @@ resource "azurerm_linux_web_app" "application" {
     APPLICATIONINSIGHTS_CONNECTION_STRING = var.app_insights_connection_string
     ApplicationInsightsAgent_EXTENSION_VERSION = "~3"
 
-    SPRING_DATASOURCE_URL      = var.contoso_webapp_options.postgresql_database_url
-    SPRING_DATASOURCE_USERNAME = var.contoso_webapp_options.postgresql_database_user
-    SPRING_DATASOURCE_PASSWORD = var.contoso_webapp_options.postgresql_database_password
-
     SPRING_CLOUD_AZURE_ACTIVE_DIRECTORY_CREDENTIAL_CLIENT_ID     = var.contoso_webapp_options.contoso_active_directory_client_id
     SPRING_CLOUD_AZURE_ACTIVE_DIRECTORY_CREDENTIAL_CLIENT_SECRET = var.contoso_webapp_options.contoso_active_directory_client_secret
     SPRING_CLOUD_AZURE_ACTIVE_DIRECTORY_PROFILE_TENANT_ID        = var.contoso_webapp_options.contoso_active_directory_tenant_id

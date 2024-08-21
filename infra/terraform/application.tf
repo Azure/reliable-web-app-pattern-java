@@ -26,25 +26,30 @@ module "application" {
     contoso_active_directory_tenant_id = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.contoso_application_tenant_id[0].id})"
     contoso_active_directory_client_id = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.contoso_application_client_id[0].id})"
     contoso_active_directory_client_secret = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.contoso_application_client_secret[0].id})"
-    postgresql_database_url = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.contoso_database_url[0].id})"
-    postgresql_database_user = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.contoso_database_admin[0].id})"
-    postgresql_database_password = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.contoso_database_admin_password[0].id})"
     redis_host_name = module.cache[0].cache_hostname
     redis_port = module.cache[0].cache_ssl_port
     redis_password = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.contoso_cache_secret[0].id})"
   }
 }
 
-resource "azurerm_app_service_connection" "primary_app_service_connection" {
-  count               = var.environment == "prod" ? 1 : 0  
-  name                = "primaryappserviceconnection"
-  app_service_id      = module.application[0].web_app_id
-  target_resource_id  = azurerm_postgresql_flexible_server_database.postresql_database[0].id
-  client_type         = "none"
 
-  authentication {
-    type              = "systemAssignedIdentity"
+
+resource "null_resource" "primary_service_connector" {
+  count               = var.environment == "prod" ? 1 : 0
+
+  triggers = {
+    always_run = "${timestamp()}"
   }
+
+  provisioner "local-exec" {
+    command = "bash ../scripts/setup-service-connector.sh ${module.application[0].web_app_id} ${azurerm_postgresql_flexible_server_database.postresql_database[0].id}"
+  }
+
+  depends_on = [
+    module.application,
+    azurerm_postgresql_flexible_server_database.postresql_database,
+    azurerm_postgresql_flexible_server_active_directory_administrator.contoso-ad-admin
+  ]
 }
 
 # -----------------------
@@ -71,9 +76,6 @@ module "secondary_application" {
     contoso_active_directory_tenant_id = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.contoso_application_tenant_id[0].id})"
     contoso_active_directory_client_id = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.contoso_application_client_id[0].id})"
     contoso_active_directory_client_secret = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.contoso_application_client_secret[0].id})"
-    postgresql_database_url = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.secondary_contoso_database_url[0].id})"
-    postgresql_database_user = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.contoso_database_admin[0].id})"
-    postgresql_database_password = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.contoso_database_admin_password[0].id})"
     redis_host_name = module.secondary_cache[0].cache_hostname
     redis_port = module.secondary_cache[0].cache_ssl_port
     redis_password = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.contoso_cache_secret[0].id})"
@@ -108,23 +110,27 @@ module "dev_application" {
     contoso_active_directory_tenant_id     = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.dev_contoso_application_tenant_id[0].id})"
     contoso_active_directory_client_id     = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.dev_contoso_application_client_id[0].id})"
     contoso_active_directory_client_secret = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.dev_contoso_application_client_secret[0].id})"
-    postgresql_database_url                = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.dev_contoso_database_url[0].id})"
-    postgresql_database_user               = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.dev_contoso_database_admin[0].id})"
-    postgresql_database_password           = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.dev_contoso_database_admin_password[0].id})"
     redis_host_name                        = module.dev-cache[0].cache_hostname
     redis_port                             = module.dev-cache[0].cache_ssl_port
     redis_password                         = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.dev_contoso_cache_secret[0].id})"
   }
 }
 
-resource "azurerm_app_service_connection" "dev_app_service_connection" {
-  count               = var.environment == "dev" ? 1 : 0  
-  name                = "devappserviceconnection"
-  app_service_id      = module.dev_application[0].web_app_id
-  target_resource_id  = azurerm_postgresql_flexible_server_database.dev_postresql_database_db[0].id
-  client_type         = "none"
 
-  authentication {
-    type              = "systemAssignedIdentity"
+resource "null_resource" "dev_service_connector" {
+  count               = var.environment == "dev" ? 1 : 0
+
+  triggers = {
+    always_run = "${timestamp()}"
   }
+
+  provisioner "local-exec" {
+    command = "bash ../scripts/setup-service-connector.sh ${module.dev_application[0].web_app_id} ${azurerm_postgresql_flexible_server_database.dev_postresql_database_db[0].id}"
+  }
+
+  depends_on = [
+    module.dev_application,
+    azurerm_postgresql_flexible_server_database.dev_postresql_database_db,
+    azurerm_postgresql_flexible_server_active_directory_administrator.dev-contoso-ad-admin
+  ]
 }

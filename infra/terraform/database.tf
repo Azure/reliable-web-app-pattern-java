@@ -34,8 +34,7 @@ resource "azurerm_postgresql_flexible_server_database" "postresql_database" {
   server_id = module.postresql_database[0].database_server_id
 }
 
-
-# Demo purposes only: assign current user as admin to the created DB
+# Demo purposes only: assign current user as admin for the primary DB
 resource "azurerm_postgresql_flexible_server_active_directory_administrator" "contoso-ad-admin" {
   count               = var.environment == "prod" ? 1 : 0
   server_name         = module.postresql_database[0].database_name
@@ -73,6 +72,17 @@ module "secondary_postresql_database" {
   ]
 }
 
+# Demo purposes only: assign current user as admin for the secondary DB
+resource "azurerm_postgresql_flexible_server_active_directory_administrator" "secondary-contoso-ad-admin" {
+  count               = var.environment == "prod" ? 1 : 0
+  server_name         = module.secondary_postresql_database[0].database_name
+  resource_group_name = azurerm_resource_group.secondary_spoke[0].name
+  tenant_id           = data.azuread_client_config.current.tenant_id
+  object_id           = data.azuread_client_config.current.object_id
+  principal_name      = data.azuread_client_config.current.object_id
+  principal_type      = "User"
+}
+
 # ----------------------------------------------------------------------------------------------
 #  Dev - PostgreSQL
 # ----------------------------------------------------------------------------------------------
@@ -91,6 +101,25 @@ module "dev_postresql_database" {
   administrator_password      = local.database_administrator_password
   log_analytics_workspace_id  = module.dev_app_insights[0].log_analytics_workspace_id
   sku_name                    = local.postgresql_sku_name
+}
+
+resource "azurerm_postgresql_flexible_server_firewall_rule" "dev_postresql_database_allow_access_rule_local_ip" {
+  count            = var.environment == "dev" ? 1 : 0
+  name             = "allow-access-from-local-ip"
+  server_id        = module.dev_postresql_database[0].dev_database_server_id
+  start_ip_address = local.myip
+  end_ip_address   = local.myip
+}
+
+# Demo purposes only: assign current user as admin for the dev DB
+resource "azurerm_postgresql_flexible_server_active_directory_administrator" "dev-contoso-ad-admin" {
+  count               = var.environment == "dev" ? 1 : 0
+  server_name         = module.dev_postresql_database[0].dev_database_name
+  resource_group_name = azurerm_resource_group.dev[0].name
+  tenant_id           = data.azuread_client_config.current.tenant_id
+  object_id           = data.azuread_client_config.current.object_id
+  principal_name      = data.azuread_client_config.current.object_id
+  principal_type      = "User"
 }
 
 resource "azurerm_postgresql_flexible_server_database" "dev_postresql_database_db" {
