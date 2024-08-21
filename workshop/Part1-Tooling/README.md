@@ -17,13 +17,15 @@ In the workshop we will only be deploying a development deployment which is a si
 
 ## Detailed deployment steps 
 
-**Note**: The teardown section previously found here has been removed to avoid redundancy and maintain clarity throughout the workshop. Teardown instructions are comprehensively covered in Part 7, ensuring that all resources are appropriately cleaned up at the conclusion of the workshop.
+**Note**: The teardown section previously found here has been removed to avoid redundancy and maintain clarity throughout the workshop. Teardown instructions are comprehensively covered in Part 7, ensuring that all resources are appropriately cleaned up at the conclusion of the workshop. 
+
+At a command prompt, open the Windows Subsystem for Linux by typing the below command:
 
 ```pwsh
 wsl
 ```
 
-Clone the repository and open the project using the Dev Container.
+then in the WSL window clone the repository and open the project using the Dev Container:
 
 ```shell
 git clone https://github.com/Azure/reliable-web-app-pattern-java.git
@@ -81,7 +83,7 @@ azd auth login
 
 Next, we provide the AZD tool with variables that it uses to create the deployment. The first thing we initialize is the AZD environment with a name.
 
-The environment name should be less than 18 characters and must be comprised of lower-case, numeric, and dash characters (for example, `contosowebapp`).  The environment name is used for resource group naming and specific resource naming.
+The environment name should be less than 18 characters and must be comprised of lower-case, numeric, and dash characters (for example, `contosowebapp`).  The environment name is used for resource group naming and specific resource naming;
 
 ```shell
 azd env new <pick_a_name>
