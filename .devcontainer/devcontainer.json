@@ -6,7 +6,7 @@
 			"VARIANT": "jammy"
 		}
 	},
-    "onCreateCommand": "./.devcontainer/scripts/onCreateCommand.sh",
+    "postStartCommand": "./.devcontainer/scripts/onCreateCommand.sh",
 	"remoteUser": "vscode",
 	"containerEnv": {
 		"M2": "/home/vscode" // required because the java feature is not setting this correctly
