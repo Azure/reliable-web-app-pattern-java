@@ -72,17 +72,6 @@ module "secondary_postresql_database" {
   ]
 }
 
-# Demo purposes only: assign current user as admin for the secondary DB
-resource "azurerm_postgresql_flexible_server_active_directory_administrator" "secondary-contoso-ad-admin" {
-  count               = var.environment == "prod" ? 1 : 0
-  server_name         = module.secondary_postresql_database[0].database_name
-  resource_group_name = azurerm_resource_group.secondary_spoke[0].name
-  tenant_id           = data.azuread_client_config.current.tenant_id
-  object_id           = data.azuread_client_config.current.object_id
-  principal_name      = data.azuread_client_config.current.object_id
-  principal_type      = "User"
-}
-
 # ----------------------------------------------------------------------------------------------
 #  Dev - PostgreSQL
 # ----------------------------------------------------------------------------------------------

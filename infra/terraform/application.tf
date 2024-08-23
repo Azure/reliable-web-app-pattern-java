@@ -32,26 +32,6 @@ module "application" {
   }
 }
 
-
-
-resource "null_resource" "primary_service_connector" {
-  count               = var.environment == "prod" ? 1 : 0
-
-  triggers = {
-    always_run = "${timestamp()}"
-  }
-
-  provisioner "local-exec" {
-    command = "bash ../scripts/setup-service-connector.sh ${module.application[0].web_app_id} ${azurerm_postgresql_flexible_server_database.postresql_database[0].id}"
-  }
-
-  depends_on = [
-    module.application,
-    azurerm_postgresql_flexible_server_database.postresql_database,
-    azurerm_postgresql_flexible_server_active_directory_administrator.contoso-ad-admin
-  ]
-}
-
 # -----------------------
 #  Secondary App Service
 # -----------------------
@@ -115,7 +95,6 @@ module "dev_application" {
     redis_password                         = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.dev_contoso_cache_secret[0].id})"
   }
 }
-
 
 resource "null_resource" "dev_service_connector" {
   count               = var.environment == "dev" ? 1 : 0

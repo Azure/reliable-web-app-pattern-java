@@ -47,6 +47,22 @@ output "secondary_app_service_name" {
   description = "The Web application name in the secondary region."
 }
 
+# ------------------------------
+# Primary Database ID
+# ------------------------------
+output "primary_database_id" {
+  value       = azurerm_postgresql_flexible_server_database.postresql_database) > 0 : azurerm_postgresql_flexible_server_database.postresql_database[0].id : null
+  description = "The ID of the primary database."
+}
+
+# ------------------------------
+# Primary App Service ID
+# ------------------------------
+output "primary_app_service_id" {
+  value       = length(module.application) > 0 ? module.application[0].web_app_id : null
+  description = "The ID of the primary web app."
+}
+
 output "bastion_host_name" {
   value       = length(module.bastion) > 0 ? module.bastion[0].name : null
   description = "The name of the Bastion Host."
@@ -71,7 +87,7 @@ output "frontdoor_url" {
 // ---------------------------------------------------------------------------
 
 # ---------------------------
-#  Dev - Resource Group Name 
+#  Dev - Resource Group Name
 # ---------------------------
 
 output "dev_resource_group" {
