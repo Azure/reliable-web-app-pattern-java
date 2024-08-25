@@ -51,7 +51,7 @@ output "secondary_app_service_name" {
 # Primary Database ID
 # ------------------------------
 output "primary_database_id" {
-  value       = azurerm_postgresql_flexible_server_database.postresql_database) > 0 : azurerm_postgresql_flexible_server_database.postresql_database[0].id : null
+  value       = length(azurerm_postgresql_flexible_server_database.postresql_database) > 0 ? azurerm_postgresql_flexible_server_database.postresql_database[0].id : null
   description = "The ID of the primary database."
 }
 
