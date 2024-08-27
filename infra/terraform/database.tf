@@ -26,6 +26,7 @@ module "postresql_database" {
   administrator_password      = local.database_administrator_password
   log_analytics_workspace_id  = module.hub_app_insights[0].log_analytics_workspace_id
   sku_name                    = local.postgresql_sku_name
+  private_dns_zone_id         = azurerm_private_dns_zone.postgres_dns_zone[0].id
 }
 
 resource "azurerm_postgresql_flexible_server_database" "postresql_database" {
@@ -63,6 +64,7 @@ module "secondary_postresql_database" {
   administrator_password      = local.database_administrator_password
   log_analytics_workspace_id  = module.hub_app_insights[0].log_analytics_workspace_id
   sku_name                    = local.postgresql_sku_name
+  private_dns_zone_id         = azurerm_private_dns_zone.postgres_dns_zone[0].id
 
   depends_on = [
     module.spoke_vnet[0],
@@ -90,6 +92,7 @@ module "dev_postresql_database" {
   administrator_password      = local.database_administrator_password
   log_analytics_workspace_id  = module.dev_app_insights[0].log_analytics_workspace_id
   sku_name                    = local.postgresql_sku_name
+  private_dns_zone_id         = null
 }
 
 resource "azurerm_postgresql_flexible_server_firewall_rule" "dev_postresql_database_allow_access_rule_local_ip" {

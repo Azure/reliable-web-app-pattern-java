@@ -14,21 +14,21 @@ terraform {
 # Azure Private DNS provides a reliable, secure DNS service to manage and
 # resolve domain names in a virtual network without the need to add a custom DNS solution
 # https://docs.microsoft.com/azure/dns/private-dns-privatednszone
-resource "azurerm_private_dns_zone" "postgresql_database" {
-  count               = var.environment == "prod" ? 1 : 0
-  name                = "privatelink.${var.location}.postgres.database.azure.com"
-  resource_group_name = var.resource_group
-}
+#resource "azurerm_private_dns_zone" "postgresql_database" {
+#  count               = var.environment == "prod" ? 1 : 0
+#  name                = "privatelink.${var.location}.postgres.database.azure.com"
+#  resource_group_name = var.resource_group
+#}
 
 # After you create a private DNS zone in Azure, you'll need to link a virtual network to it.
 # https://docs.microsoft.com/azure/dns/private-dns-virtual-network-links
-resource "azurerm_private_dns_zone_virtual_network_link" "postgresql_database" {
-  count                 = var.environment == "prod" ? 1 : 0
-  name                  = azurerm_private_dns_zone.postgresql_database[0].name
-  private_dns_zone_name = azurerm_private_dns_zone.postgresql_database[0].name
-  virtual_network_id    = var.virtual_network_id
-  resource_group_name   = var.resource_group
-}
+#resource "azurerm_private_dns_zone_virtual_network_link" "postgresql_database" {
+#  count                 = var.environment == "prod" ? 1 : 0
+#  name                  = azurerm_private_dns_zone.postgresql_database[0].name
+#  private_dns_zone_name = azurerm_private_dns_zone.postgresql_database[0].name
+#  virtual_network_id    = var.virtual_network_id
+#  resource_group_name   = var.resource_group
+#}
 
 resource "azurecaf_name" "postgresql_server" {
   count         = var.environment == "prod" ? 1 : 0
@@ -54,7 +54,7 @@ resource "azurerm_postgresql_flexible_server" "postgresql_database" {
 
   public_network_access_enabled = false
   delegated_subnet_id          = var.subnet_network_id
-  private_dns_zone_id          = azurerm_private_dns_zone.postgresql_database[0].id
+  private_dns_zone_id          = var.private_dns_zone_id #azurerm_private_dns_zone.postgresql_database[0].id
 
   geo_redundant_backup_enabled = false
 
@@ -86,7 +86,7 @@ resource "azurerm_postgresql_flexible_server" "postgresql_database" {
     "application-name" = var.application_name
   }
 
-  depends_on = [azurerm_private_dns_zone_virtual_network_link.postgresql_database]
+  #depends_on = [azurerm_private_dns_zone_virtual_network_link.postgresql_database]
 }
 
 # Configure Diagnostic Settings for PostgreSQL

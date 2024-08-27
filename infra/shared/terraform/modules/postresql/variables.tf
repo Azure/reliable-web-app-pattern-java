@@ -66,3 +66,8 @@ variable "sku_name" {
   type    = string
   default = "B_Standard_B1ms"
 }
+
+variable "private_dns_zone_id" {
+  type        = string
+  description = "The id of the private dns zone"
+}
