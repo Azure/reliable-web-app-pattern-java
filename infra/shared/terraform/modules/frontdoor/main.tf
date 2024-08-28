@@ -118,6 +118,24 @@ resource "azurerm_cdn_frontdoor_firewall_policy" "firewall_policy" {
   sku_name                          = azurerm_cdn_frontdoor_profile.front_door.sku_name
   enabled                           = true
   mode                              = "Prevention"
+
+  custom_rule {
+    name     = "RateLimitingRule"
+    priority = 100
+    type = "RateLimitRule"
+
+    match_condition {
+      match_variable = "RemoteAddr"
+      operator       = "IPMatch"
+      match_values = ["0.0.0.0/0"]
+      negation_condition = false
+    }
+  
+    rate_limit_duration_in_minutes = 1
+    rate_limit_threshold = 200
+
+    action = "Block"
+  }
 }
 
 resource "azurecaf_name" "front_door_security_policy_name" {
