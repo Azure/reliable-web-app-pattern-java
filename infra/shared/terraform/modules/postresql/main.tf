@@ -7,29 +7,6 @@ terraform {
   }
 }
 
-# Quickstart: Use Terraform to create an Azure Database for MySQL - Flexible Server
-# https://docs.microsoft.com/azure/mysql/flexible-server/quickstart-create-terraform?tabs=azure-cli
-
-
-# Azure Private DNS provides a reliable, secure DNS service to manage and
-# resolve domain names in a virtual network without the need to add a custom DNS solution
-# https://docs.microsoft.com/azure/dns/private-dns-privatednszone
-#resource "azurerm_private_dns_zone" "postgresql_database" {
-#  count               = var.environment == "prod" ? 1 : 0
-#  name                = "privatelink.${var.location}.postgres.database.azure.com"
-#  resource_group_name = var.resource_group
-#}
-
-# After you create a private DNS zone in Azure, you'll need to link a virtual network to it.
-# https://docs.microsoft.com/azure/dns/private-dns-virtual-network-links
-#resource "azurerm_private_dns_zone_virtual_network_link" "postgresql_database" {
-#  count                 = var.environment == "prod" ? 1 : 0
-#  name                  = azurerm_private_dns_zone.postgresql_database[0].name
-#  private_dns_zone_name = azurerm_private_dns_zone.postgresql_database[0].name
-#  virtual_network_id    = var.virtual_network_id
-#  resource_group_name   = var.resource_group
-#}
-
 resource "azurecaf_name" "postgresql_server" {
   count         = var.environment == "prod" ? 1 : 0
   name          = var.application_name
