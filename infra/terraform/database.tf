@@ -42,7 +42,7 @@ resource "azurerm_postgresql_flexible_server_active_directory_administrator" "co
   resource_group_name = azurerm_resource_group.spoke[0].name
   tenant_id           = data.azuread_client_config.current.tenant_id
   object_id           = data.azuread_client_config.current.object_id
-  principal_name      = data.azuread_client_config.current.object_id
+  principal_name      = data.azuread_user.current.user_principal_name
   principal_type      = "User"
 }
 
