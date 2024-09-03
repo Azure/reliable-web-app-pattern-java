@@ -14,6 +14,30 @@ module "cache" {
   log_analytics_workspace_id  = module.hub_app_insights[0].log_analytics_workspace_id
 }
 
+
+resource "azurerm_redis_cache_access_policy_assignment" "primary_current_user" {
+  count              = var.environment == "prod" ? 1 : 0
+  name               = "primarycurrentuser"
+  redis_cache_id     = module.cache[0].cache_id
+  access_policy_name = "Data Contributor"
+  object_id          = data.azuread_client_config.current.object_id
+  object_id_alias    = "currentuser"
+}
+
+resource "azurerm_redis_cache_access_policy_assignment" "app_user" {
+  count              = var.environment == "prod" ? 1 : 0
+  name               = "primaryappuser"
+  redis_cache_id     = module.cache[0].cache_id
+  access_policy_name = "Data Contributor"
+  object_id          = azurerm_user_assigned_identity.primary_app_service_identity[0].principal_id
+  object_id_alias    = azurerm_user_assigned_identity.primary_app_service_identity[0].principal_id
+
+  # Ensure that the current user has been created before creating the app user
+  depends_on = [
+    azurerm_redis_cache_access_policy_assignment.primary_current_user
+  ]
+}
+
 # ----------------------------------------------------------------------------------------------
 #  Cache - Prod - Secondary Region
 # ----------------------------------------------------------------------------------------------
@@ -29,6 +53,29 @@ module "secondary_cache" {
   log_analytics_workspace_id  = module.hub_app_insights[0].log_analytics_workspace_id
 }
 
+resource "azurerm_redis_cache_access_policy_assignment" "secondary_current_user" {
+  count              = var.environment == "prod" ? 1 : 0
+  name               = "secondarycurrentuser"
+  redis_cache_id     = module.secondary_cache[0].cache_id
+  access_policy_name = "Data Contributor"
+  object_id          = data.azuread_client_config.current.object_id
+  object_id_alias    = "currentuser"
+}
+
+resource "azurerm_redis_cache_access_policy_assignment" "secondary_app_user" {
+  count              = var.environment == "prod" ? 1 : 0
+  name               = "secondaryappuser"
+  redis_cache_id     = module.secondary_cache[0].cache_id
+  access_policy_name = "Data Contributor"
+  object_id          = azurerm_user_assigned_identity.secondary_app_service_identity[0].principal_id
+  object_id_alias    = azurerm_user_assigned_identity.secondary_app_service_identity[0].principal_id
+
+  # Ensure that the current user has been created before creating the app user
+  depends_on = [
+    azurerm_redis_cache_access_policy_assignment.secondary_current_user
+  ]
+}
+
 # ----------------------------------------------------------------------------------------------
 # Cache - Dev
 # ----------------------------------------------------------------------------------------------
@@ -42,4 +89,27 @@ module "dev-cache" {
   private_endpoint_vnet_id    = null
   private_endpoint_subnet_id  = null
   log_analytics_workspace_id  = module.dev_app_insights[0].log_analytics_workspace_id
+}
+
+resource "azurerm_redis_cache_access_policy_assignment" "dev_current_user" {
+  count              = var.environment == "dev" ? 1 : 0
+  name               = "devcurrentuser"
+  redis_cache_id     = module.dev-cache[0].cache_id
+  access_policy_name = "Data Contributor"
+  object_id          = data.azuread_client_config.current.object_id
+  object_id_alias    = "currentuser"
+}
+
+resource "azurerm_redis_cache_access_policy_assignment" "dev_app_user" {
+  count              = var.environment == "dev" ? 1 : 0
+  name               = "devappuser"
+  redis_cache_id     = module.dev-cache[0].cache_id
+  access_policy_name = "Data Contributor"
+  object_id          = azurerm_user_assigned_identity.dev_app_service_identity[0].principal_id
+  object_id_alias    = azurerm_user_assigned_identity.dev_app_service_identity[0].principal_id
+
+  # Ensure that the current user has been created before creating the app user
+  depends_on = [
+    azurerm_redis_cache_access_policy_assignment.dev_current_user
+  ]
 }

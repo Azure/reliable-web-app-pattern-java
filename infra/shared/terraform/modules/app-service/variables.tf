@@ -59,6 +59,25 @@ variable "public_network_access_enabled" {
   description = "Should public network access be enabled for the Web App."
 }
 
+variable "identity" {
+  type = object({
+    type         = string
+    identity_ids = optional(list(string))
+  })
+
+  description = "The identity type and the list of identities ids"
+
+  default = {
+    type         = "SystemAssigned"
+    identity_ids = []
+  }
+
+  validation {
+    condition     = contains(["SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned"], var.identity.type)
+    error_message = "Please, choose among one of the following identity types: SystemAssigned, UserAssigned or SystemAssigned, UserAssigned."
+  }
+}
+
 variable "contoso_webapp_options" {
   type = object({
     contoso_active_directory_tenant_id      = string
@@ -71,7 +90,7 @@ variable "contoso_webapp_options" {
 
     redis_host_name               = string
     redis_port                    = number
-    redis_password                = string
+    redis_user_client_id          = string
   })
 
   description = "The options for the webapp"
