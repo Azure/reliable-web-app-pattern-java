@@ -62,8 +62,6 @@ resource "azurerm_postgresql_flexible_server" "postgresql_database" {
     "environment"      = var.environment
     "application-name" = var.application_name
   }
-
-  #depends_on = [azurerm_private_dns_zone_virtual_network_link.postgresql_database]
 }
 
 # Configure Diagnostic Settings for PostgreSQL
