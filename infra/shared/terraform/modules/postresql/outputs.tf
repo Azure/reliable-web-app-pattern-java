@@ -27,3 +27,8 @@ output "dev_database_fqdn" {
   value       = length(azurerm_postgresql_flexible_server.dev_postresql_database) > 0 ? azurerm_postgresql_flexible_server.dev_postresql_database[0].fqdn : ""
   description = "The FQDN of the database"
 }
+
+output "dev_database_name" {
+  value       = length(azurerm_postgresql_flexible_server.dev_postresql_database) > 0 ? azurerm_postgresql_flexible_server.dev_postresql_database[0].name : ""
+  description = "The name of the database server"
+}

@@ -76,7 +76,7 @@ module "hub_vnet" {
     }
   ]
 }
- 
+
 resource "azurecaf_name" "firewall_name" {
   count         = var.environment == "prod" ? 1 : 0
   name          = var.application_name
@@ -98,6 +98,14 @@ module "firewall" {
   devops_subnet_cidr              = local.devops_subnet_cidr
   tags                            = local.base_tags
 }
+
+
+# Azure Private DNS provides a reliable, secure DNS service to manage and
+# resolve domain names in a virtual network without the need to add a custom DNS solution
+# https://docs.microsoft.com/azure/dns/private-dns-privatednszone
+#
+# After you create a private DNS zone in Azure, you'll need to link a virtual network to it.
+# https://docs.microsoft.com/azure/dns/private-dns-virtual-network-links
 
 ###############################################
 # privatelink.azurewebsites.net
@@ -122,9 +130,9 @@ resource "azurerm_private_dns_zone_virtual_network_link" "secondary_spoke_virtua
   private_dns_zone_name = azurerm_private_dns_zone.app_dns_zone[0].name
   virtual_network_id    = module.secondary_spoke_vnet[0].vnet_id
   resource_group_name   = azurerm_resource_group.hub[0].name
-  
+
   depends_on = [
-    azurerm_private_dns_zone_virtual_network_link.spoke_virtual_network_link 
+    azurerm_private_dns_zone_virtual_network_link.spoke_virtual_network_link
   ]
 }
 
@@ -136,7 +144,51 @@ resource "azurerm_private_dns_zone_virtual_network_link" "hub_virtual_network_li
   resource_group_name   = azurerm_resource_group.hub[0].name
 
   depends_on = [
-    azurerm_private_dns_zone_virtual_network_link.spoke_virtual_network_link, 
+    azurerm_private_dns_zone_virtual_network_link.spoke_virtual_network_link,
     azurerm_private_dns_zone_virtual_network_link.secondary_spoke_virtual_network_link
+  ]
+}
+
+
+###############################################
+# privatelink.postgres.database.azure.com
+###############################################
+resource "azurerm_private_dns_zone" "postgres_dns_zone" {
+  count               = var.environment == "prod" ? 1 : 0
+  name                = "privatelink.postgres.database.azure.com"
+  resource_group_name = azurerm_resource_group.hub[0].name
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "spoke_postgres_virtual_network_link" {
+  count                 = var.environment == "prod" ? 1 : 0
+  name                  = "spoke-postgres-link"
+  private_dns_zone_name = azurerm_private_dns_zone.postgres_dns_zone[0].name
+  virtual_network_id    = module.spoke_vnet[0].vnet_id
+  resource_group_name   = azurerm_resource_group.hub[0].name
+}
+
+
+resource "azurerm_private_dns_zone_virtual_network_link" "secondary_postgres_spoke_virtual_network_link" {
+  count                 = var.environment == "prod" ? 1 : 0
+  name                  = "secondary-spoke-postgres-link"
+  private_dns_zone_name = azurerm_private_dns_zone.postgres_dns_zone[0].name
+  virtual_network_id    = module.secondary_spoke_vnet[0].vnet_id
+  resource_group_name   = azurerm_resource_group.hub[0].name
+
+  depends_on = [
+    azurerm_private_dns_zone_virtual_network_link.spoke_postgres_virtual_network_link
+  ]
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "hub_postgres_virtual_network_link" {
+  count                 = var.environment == "prod" ? 1 : 0
+  name                  = "hub-postgres-link"
+  private_dns_zone_name = azurerm_private_dns_zone.postgres_dns_zone[0].name
+  virtual_network_id    = module.hub_vnet[0].vnet_id
+  resource_group_name   = azurerm_resource_group.hub[0].name
+
+  depends_on = [
+    azurerm_private_dns_zone_virtual_network_link.spoke_postgres_virtual_network_link,
+    azurerm_private_dns_zone_virtual_network_link.secondary_postgres_spoke_virtual_network_link
   ]
 }

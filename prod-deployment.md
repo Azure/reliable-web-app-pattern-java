@@ -169,9 +169,9 @@ The following detailed deployment steps assume you are using a Dev Container ins
     az ssh vm --ip 127.0.0.1 --port 50022
     ```
 
-### 4. Deploy code from the jump box
+### 4. Log in to Azure from the jump box
 
-1. Login into Azure using:
+1. Run the following command to log in to Azure from the 1. Login into Azure using:
 
     ```shell
     az login --use-device-code
@@ -182,6 +182,28 @@ The following detailed deployment steps assume you are using a Dev Container ins
     ```shell
     az account set --subscription <subscription_id>
     ```
+
+### 5. Configure Microsoft Entra authentication with Azure Database for PostgreSQL - Flexible Server
+
+We will now configure the Contoso Fiber application to use Microsoft Entra authentication with Azure Database for PostgreSQL - Flexible Server. For more information, see [Tutorial: Create a passwordless connection to a database service via Service Connector](https://learn.microsoft.com/azure/service-connector/tutorial-passwordless?tabs=user%2Cjava%2Csql-me-id-dotnet%2Cappservice&pivots=postgresql)
+
+Run the following command to install the serviceconnector-passwordless extension:
+
+```
+az extension add --name serviceconnector-passwordless --upgrade
+```
+
+Run the following commands to configure the application:
+
+```
+az webapp connection create postgres-flexible \
+    --source-id <primary_app_service_id> \
+    --target-id <primary_database_id> \
+    --client-type springBoot \
+    --system-identity
+```
+
+### 6. Deploy code from the jump box
 
 1. Deploy the application to the primary region using:
 
@@ -206,7 +228,7 @@ The following detailed deployment steps assume you are using a Dev Container ins
     > You can learn more about the web app by reading the [Pattern Simulations](demo.md) documentation.
 
 
-### 5. Teardown
+### 7. Teardown
 
 1. Exit the jumpbox using:
 

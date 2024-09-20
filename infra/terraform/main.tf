@@ -19,6 +19,10 @@ provider "azurerm" {
 
 data "azuread_client_config" "current" {}
 
+data "azuread_user" "current" {
+  object_id = data.azuread_client_config.current.object_id
+}
+
 data "http" "myip" {
   url = "https://api.ipify.org"
 }

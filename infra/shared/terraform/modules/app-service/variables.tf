@@ -65,10 +65,6 @@ variable "contoso_webapp_options" {
     contoso_active_directory_client_id      = string
     contoso_active_directory_client_secret  = string
 
-    postgresql_database_url       = string
-    postgresql_database_user      = string
-    postgresql_database_password  = string
-
     redis_host_name               = string
     redis_port                    = number
     redis_password                = string
