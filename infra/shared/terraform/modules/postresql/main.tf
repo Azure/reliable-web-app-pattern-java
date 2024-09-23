@@ -41,11 +41,9 @@ resource "azurerm_postgresql_flexible_server" "postgresql_database" {
 
     content {
       mode = "ZoneRedundant"
-      standby_availability_zone = 2
     }
   }
 
-  zone = 1
   storage_mb = 32768
 
   create_mode = var.source_server_id != null ? "Replica" : null
@@ -61,6 +59,13 @@ resource "azurerm_postgresql_flexible_server" "postgresql_database" {
   tags = {
     "environment"      = var.environment
     "application-name" = var.application_name
+  }
+
+  lifecycle {
+    ignore_changes = [
+      zone,
+      high_availability.0.standby_availability_zone
+    ]
   }
 }
 
