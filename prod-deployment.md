@@ -26,9 +26,16 @@ The following detailed deployment steps assume you are using a Dev Container ins
 ### 1. Log in to Azure
 
 
-1. Start a terminal in the dev container:
+1. Start a terminal in the dev container and authenticated to Azure and have the appropriate subscription selected. Run the following command to authenticate:
+
     ```sh
-    az login --scope https://graph.microsoft.com//.default
+    az login
+    ```
+
+    If you have multiple tenants, you can use the following command to log into the tenant:
+
+    ```sh
+    az login --tenant <tenant-id>
     ```
 
 1. Set the subscription to the one you want to use (you can use [az account list](https://learn.microsoft.com/en-us/cli/azure/account?view=azure-cli-latest) to list available subscriptions):
@@ -46,6 +53,12 @@ The following detailed deployment steps assume you are using a Dev Container ins
 
     ```sh
     azd auth login
+    ```
+
+    If you have multiple tenants, you can use the following command to log into the tenant:
+
+    ```sh
+    azd auth login --tenant-id <tenant-id>
     ```
 
 ### 2. Provision the app
