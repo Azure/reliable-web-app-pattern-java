@@ -190,6 +190,12 @@ The following detailed deployment steps assume you are using a Dev Container ins
     az login --use-device-code
     ```
 
+    If you have multiple tenants, you can use the following command to log into the tenant:
+
+    ```shell
+    az login --tenant <tenant-id> --use-device-code
+    ```
+
 1. Set the subscription id:
 
     ```shell
