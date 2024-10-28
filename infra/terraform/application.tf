@@ -100,7 +100,8 @@ resource "null_resource" "dev_service_connector" {
   count               = var.environment == "dev" ? 1 : 0
 
   triggers = {
-    always_run = "${timestamp()}"
+    web_app_id = module.dev_application[0].web_app_id
+    db_id      = azurerm_postgresql_flexible_server_database.dev_postresql_database_db[0].id
   }
 
   provisioner "local-exec" {

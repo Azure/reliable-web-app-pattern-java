@@ -101,6 +101,12 @@ resource "azuread_service_principal" "application_service_principal" {
 resource "azuread_application_password" "application_password" {
   application_id = azuread_application.app_registration.id
   end_date = timeadd(timestamp(), "4320h") # 6 months
+
+  lifecycle {
+    ignore_changes = [
+      end_date
+    ]
+  }
 }
 
 # This is not guidance and is done for demo purposes. The resource below will add the
