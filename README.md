@@ -18,6 +18,9 @@ Here's an outline of the contents in this readme:
 
 Contoso Fiber aligned to a hub and spoke network topology in the production deployment architecture to centralize common resources. This network topology provided cost savings, enhanced security, and facilitated network integration (platform and hybrid):
 
+>[!WARNING]
+> **DEPRECATED:** [Azure Cache for Redis is retired](https://learn.microsoft.com/azure/azure-cache-for-redis/cache-retired-features). We will be updating this implementation to use [Azure Managed Redis](https://learn.microsoft.com/azure/redis/migrate/migrate-overview).
+
 ![Architecture](./docs/icons/reliable-web-app-java.svg)
 
 This diagram describes the production deployment which is described in the [prod-deployment.md](./prod-deployment.md) file. The following steps below are for a [development deployment](./docs/icons/reliable-web-app-java-dev.svg) which is a simplified version.
